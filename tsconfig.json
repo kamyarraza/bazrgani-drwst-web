@@ -1,0 +1,9 @@
+{
+  "extends": "./.quasar/tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}

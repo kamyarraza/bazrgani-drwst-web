@@ -1,0 +1,27 @@
+// Quasar SCSS (& Sass) Variables
+
+// Custom palette based on your gradient
+$primary   : #2A7B9B;   // Deep blue from gradient start
+$secondary : #2A9B8F;   // Green from gradient middle
+$accent    : #EDDD53;   // Yellow from gradient end
+
+$dark      : #1D1D1D;
+$dark-page : #121212;
+
+$positive  : #57C785;   // Matches secondary/green
+$negative  : #C10015;
+$info      : #2A7B9B;   // Matches primary/blue
+$warning   : #EDDD53;   // Matches accent/yellow
+// --------------------------------------------------
+// To customize the look and feel of this app, you can override
+// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+
+// Check documentation for full list of Quasar variables
+
+// Your own variables (that are declared here) and Quasar's own
+// ones will be available out of the box in your .vue/.scss/.sass files
+
+// It's highly recommended to change the default colors
+// to match your app's branding.
+// Tip: Use the "Theme Builder" on Quasar's documentation website.
+

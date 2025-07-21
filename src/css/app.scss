@@ -1,0 +1,123 @@
+/* Import fonts with optimizations to prevent layout shifts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap');
+
+/* Global font transition - reduce to prevent flash */
+* {
+  font-display: swap;
+  transition: font-family 0.1s ease; /* Reduced from 0.3s */
+}
+
+/* Preload font families to prevent FOIT (Flash of Invisible Text) */
+body {
+  font-family: 'Noto Sans', 'Noto Sans Arabic', 'Vazirmatn', sans-serif;
+  background-color: #f7f9fc;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* reCAPTCHA badge visibility control - Hide by default */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  transition: visibility 0.3s ease, opacity 0.3s ease !important;
+  z-index: 999999 !important;
+}
+
+/* Only show when explicitly enabled via JavaScript */
+.grecaptcha-badge.show-badge {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Base font settings */
+:root {
+  --font-english: 'Noto Sans', sans-serif;
+  --font-arabic: 'Noto Sans Arabic', sans-serif;
+  --font-kurdish: 'Vazirmatn', 'Noto Sans Arabic', sans-serif;
+}
+
+/* Disable browser autofill background color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+  -webkit-box-shadow: 0 0 0 30px rgba(255,255,255,0.3) inset !important;
+}
+
+/* Set default font per language (including <body>) */
+html[lang="en-US"],
+.lang-en-US {
+  font-family: var(--font-english);
+  direction: ltr;
+  letter-spacing: 0.01rem;
+
+  body {
+    font-family: var(--font-english);
+  }
+}
+
+html[lang="ar"],
+.lang-ar {
+  font-family: var(--font-arabic);
+  direction: rtl;
+  letter-spacing: 0;
+  line-height: 1.6;
+
+  body {
+    font-family: var(--font-arabic);
+  }
+}
+
+html[lang="ckb"],
+.lang-ckb {
+  font-family: var(--font-kurdish);
+  direction: rtl;
+  letter-spacing: 0;
+  line-height: 1.6;
+  
+  body {
+    font-family: var(--font-kurdish);
+  }
+}
+
+/* RTL layout fixes */
+html[dir="rtl"],
+.q-layout--rtl {
+  .q-item__section--side:first-child {
+    padding-right: 0;
+    padding-left: 16px;
+  }
+
+  .q-item__section--side:last-child {
+    padding-left: 0;
+    padding-right: 16px;
+  }
+}
+
+/* Global Layout Constraints - Consistent Max-Width */
+.q-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Override for pages that already have page-container */
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .q-page {
+    padding: 16px;
+  }
+  
+  .page-container {
+    padding: 16px;
+  }
+}
