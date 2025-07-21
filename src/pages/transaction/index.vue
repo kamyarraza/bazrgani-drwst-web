@@ -458,18 +458,27 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
         const transaction = data.value.find(t => t.id === Number(payload.rowId))
 
         if (transaction && transaction.customer) {
-            // Calculate amount to pay (total_price - paid_price)
-            const amountToPay = transaction.total_price - transaction.paid_price
-
-            selectedTransactionData.value = {
-                customer: {
-                    id: transaction.customer.id,
-                    name: transaction.customer.name
-                },
-                amount: amountToPay > 0 ? amountToPay : 0,
-                total_price: transaction.total_price,
-                paid_price: transaction.paid_price,
-                unpaid_price: amountToPay
+            try {
+                // Fetch the full customer details by ID
+                const customerStore = await import('src/stores/customerStore');
+                const useCustomerStore = customerStore.useCustomerStore;
+                const store = useCustomerStore();
+                await store.getCustomerDetails(String(transaction.customer.id));
+                const customer = store.currentCustomer;
+                // Calculate amount to pay (total_price - paid_price)
+                const amountToPay = transaction.total_price - transaction.paid_price;
+                selectedTransactionData.value = {
+                    customer: {
+                        id: customer?.id || transaction.customer.id,
+                        name: customer ? `${customer.fname} ${customer.sname}` : transaction.customer.name
+                    },
+                    amount: amountToPay > 0 ? amountToPay : 0,
+                    total_price: transaction.total_price,
+                    paid_price: transaction.paid_price,
+                    unpaid_price: amountToPay
+                }
+            } catch (_err) {
+                selectedTransactionData.value = null;
             }
         } else {
             selectedTransactionData.value = null
@@ -481,18 +490,27 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
         const transaction = data.value.find(t => t.id === Number(payload.rowId))
 
         if (transaction && transaction.customer) {
-            // Calculate amount to receive (total_price - paid_price)
-            const amountToReceive = transaction.total_price - transaction.paid_price
-
-            selectedTransactionData.value = {
-                customer: {
-                    id: transaction.customer.id,
-                    name: transaction.customer.name
-                },
-                amount: amountToReceive > 0 ? amountToReceive : 0,
-                total_price: transaction.total_price,
-                paid_price: transaction.paid_price,
-                unpaid_price: amountToReceive
+            try {
+                // Fetch the full customer details by ID
+                const customerStore = await import('src/stores/customerStore');
+                const useCustomerStore = customerStore.useCustomerStore;
+                const store = useCustomerStore();
+                await store.getCustomerDetails(String(transaction.customer.id));
+                const customer = store.currentCustomer;
+                // Calculate amount to receive (total_price - paid_price)
+                const amountToReceive = transaction.total_price - transaction.paid_price;
+                selectedTransactionData.value = {
+                    customer: {
+                        id: customer?.id || transaction.customer.id,
+                        name: customer ? `${customer.fname} ${customer.sname}` : transaction.customer.name
+                    },
+                    amount: amountToReceive > 0 ? amountToReceive : 0,
+                    total_price: transaction.total_price,
+                    paid_price: transaction.paid_price,
+                    unpaid_price: amountToReceive
+                }
+            } catch (_err) {
+                selectedTransactionData.value = null;
             }
         } else {
             selectedTransactionData.value = null
@@ -642,7 +660,7 @@ const handleTypeChange = async (newType: 'purchase' | 'sell') => {
 };
 
 // Handle transaction added
-const handleTransactionAdded = async () => {
+const _handleTransactionAdded = async () => {
     await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
 };
 

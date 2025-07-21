@@ -262,9 +262,10 @@ const formatAmountInput = () => {
 watch(() => props.modelValue, (newVal) => {
   isVisible.value = newVal;
   if (newVal) {
-    // Fetch suppliers when modal opens
-    void store.fetchCustomers('supplier');
-
+    // Only fetch suppliers if no customer is provided
+    if (!props.transactionData || !props.transactionData.customer) {
+      void store.fetchCustomers('supplier');
+    }
     // Pre-populate form if transaction data is provided
     if (props.transactionData) {
       form.value.customer_id = props.transactionData.customer.id;

@@ -26,6 +26,7 @@ export interface AuthUser {
 export interface AuthData {
   user: AuthUser;
   token: string;
+  refresh_token: string; // Added for refresh token support
 }
 
 

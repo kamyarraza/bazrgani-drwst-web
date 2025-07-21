@@ -22,10 +22,12 @@ export const useAuthStore = defineStore('auth', () => {
   const USER_KEY = 'auth_user';
   const TOKEN_KEY = 'auth_token';
   const REMEMBER_KEY = 'auth_remember'; // New key to track remember preference
+  const REFRESH_TOKEN_KEY = 'auth_refresh_token'; // New key for refresh token
 
   const user = ref<AuthData['user'] | null>(null);
   const currentUser = ref<UserData | null>(null);
   const token = ref<string | null>(null);
+  const refreshToken = ref<string | null>(null);
   const loading = ref(false);
   const loggedIn = ref<boolean>(false);
   const error = ref<string | null>(null);
@@ -49,12 +51,14 @@ export const useAuthStore = defineStore('auth', () => {
     // Always check localStorage (simplified - no session expiry checks)
     const storedUser = localStorage.getItem(USER_KEY);
     const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
     // TEMPORARY FIX: Skip all session expiry checks - always load if data exists
     // This prevents session-related crashes and browser stopping issues
 
     user.value = storedUser ? JSON.parse(storedUser) : null;
     token.value = storedToken;
+    refreshToken.value = storedRefreshToken;
     rememberMe.value = true; // Always treat as remembered
 
     // Update loggedIn state based on token presence
@@ -78,6 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear old data first to ensure fresh state
     user.value = null;
     token.value = null;
+    refreshToken.value = null;
     currentUser.value = null;
 
     try {
@@ -93,6 +98,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Set token in memory first - this is critical for subsequent requests
       token.value = data.data.token;
+      refreshToken.value = data.data.refresh_token;
 
       // Set up auth header for immediate use in subsequent requests
       api.defaults.headers.common['Authorization'] = `Bearer ${token.value}`;
@@ -108,6 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Always use localStorage and always treat as persistent session
       localStorage.setItem(USER_KEY, JSON.stringify(user.value));
       localStorage.setItem(TOKEN_KEY, token.value);
+      localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken.value || '');
       localStorage.setItem(REMEMBER_KEY, 'true'); // Always store as true
       localStorage.setItem('user_remember_preference', userPreference.toString()); // Store actual preference for UI
 
@@ -118,6 +125,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Clear sessionStorage to avoid conflicts
       sessionStorage.removeItem(USER_KEY);
       sessionStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(REFRESH_TOKEN_KEY);
       sessionStorage.removeItem(REMEMBER_KEY);
 
       // Also load the currentUser immediately after login to ensure complete user data
@@ -176,6 +184,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear user state
     user.value = null;
     token.value = null;
+    refreshToken.value = null;
     currentUser.value = null;
     loggedIn.value = false;
     rememberMe.value = false;
@@ -191,6 +200,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear storage immediately to prevent any race conditions
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(REMEMBER_KEY);
     localStorage.removeItem('auth_session_expiry');
     localStorage.removeItem('auth_last_activity');
@@ -199,6 +209,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear sessionStorage too (for cleanup)
     sessionStorage.removeItem(USER_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(REMEMBER_KEY);
 
     try {
@@ -409,11 +420,20 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Return a properly typed object for better TypeScript support
+  // Add a method to update tokens after refresh
+  function updateTokens(newToken: string, newRefreshToken: string) {
+    token.value = newToken;
+    refreshToken.value = newRefreshToken;
+    localStorage.setItem(TOKEN_KEY, newToken);
+    localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+  }
   return {
     // State
     user,
     currentUser,
     token,
+    refreshToken,
     loading,
     error,
     isLoggedOut,
@@ -431,6 +451,7 @@ export const useAuthStore = defineStore('auth', () => {
     clearUnauthorizedError,
     setupSessionManagement,
     cleanupSessionListeners,
-    getUserRememberPreference
+    getUserRememberPreference,
+    updateTokens
   };
 });

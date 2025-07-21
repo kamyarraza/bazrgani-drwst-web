@@ -1,6 +1,6 @@
 <template>
   <div class="customer-selector q-pa-md">
-    <div class="text-caption q-mb-xs">Select Customer <span class="text-negative">*</span></div>
+    <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectCustomer') }} <span class="text-negative">*</span></div>
     <q-input
       v-model="searchQuery"
       outlined
@@ -12,13 +12,13 @@
       hide-bottom-space
       class="search-input"
       ref="inputRef"
-      hint="Type to search customers"
+      :hint="t('transactionAlpha.typeToSearchCustomers')"
     >
       <template v-slot:prepend>
         <q-icon name="person" />
       </template>
     </q-input>
-    <div v-if="errorMsg" class="text-negative q-mt-xs">{{ errorMsg }}</div>
+    <div v-if="errorMsg" class="text-negative q-mt-xs">{{ t('transactionAlpha.failedToFetchCustomers') }}</div>
     <!-- Customer Results List -->
     <div v-if="showResultsList" class="customer-results q-mt-sm">
       <q-card flat bordered class="results-card">
@@ -60,6 +60,8 @@
 import { ref, computed, watch, defineProps, defineEmits, onMounted } from 'vue';
 import { QInput, QIcon, QItem, QItemSection, QAvatar, QCard, QList } from 'quasar';
 import { useCustomerStore } from 'src/stores/customerStore';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: { type: [Number, null], default: null },
@@ -81,11 +83,25 @@ const searchQuery = ref('');
 const inputRef = ref(null);
 const isFocused = ref(false);
 const errorMsg = ref('');
+const isSelecting = ref(false);
 
 const showResultsList = computed(() => isFocused.value && customerOptions.value.length > 0);
 
+let searchTimeout: any = null;
 watch(searchQuery, (val) => {
-  void fetchCustomers(val.trim(), props.customerType as 'customer' | 'supplier');
+  if (isSelecting.value) {
+    isSelecting.value = false;
+    return;
+  }
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    const trimmed = (val || '').trim();
+    void fetchCustomers(trimmed, props.customerType as 'customer' | 'supplier');
+    if (trimmed === '') {
+      emit('update:modelValue', null);
+      emit('select', null);
+    }
+  }, 1000);
 });
 
 async function fetchCustomers(query = '', type = props.customerType as 'customer' | 'supplier') {
@@ -102,6 +118,7 @@ async function fetchCustomers(query = '', type = props.customerType as 'customer
 function selectCustomer(customer: CustomerOption) {
   emit('update:modelValue', customer.id);
   emit('select', customer);
+  isSelecting.value = true;
   searchQuery.value = customer.name;
   isFocused.value = false;
 }

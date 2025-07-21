@@ -19,6 +19,8 @@ export interface Customer {
     phone: string;
   };
   created_at: string; // ISO date string
+  sell_borrow?: number; // Amount owed to supplier
+  purchase_borrow?: number; // Amount customer owes us
 }
 export interface CustomerPayload {
   fname: string;

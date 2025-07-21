@@ -48,6 +48,13 @@ api.interceptors.request.use(
 
 // RESPONSE INTERCEPTOR
 let isLoggingOut = false; // Flag to prevent multiple logout attempts
+let isRefreshing = false; // Prevent multiple refresh attempts
+let refreshSubscribers: Array<() => void> = [];
+
+function onRefreshed() {
+  refreshSubscribers.forEach(cb => cb());
+  refreshSubscribers = [];
+}
 
 api.interceptors.response.use(
   (response) => response, // Let the caller handle success
@@ -62,38 +69,72 @@ api.interceptors.response.use(
       message = apiResponse?.message || 'An error occurred';
 
       // Handle authentication errors (401, 403) or unauthenticated messages
-      // BUT exclude device revocation requests to prevent accidental logout
-      // when revoking other devices (which may contain "token" in response)
       const isDeviceRevocationRequest = error.config?.url?.includes('/revoke-token');
-
-      if (
-        !isDeviceRevocationRequest && // Don't auto-logout during device revocation
+      const isAuthError =
+        !isDeviceRevocationRequest &&
         (
           response.status === 401 ||
           apiResponse?.message?.toLowerCase().includes('Unauthenticated.') ||
           apiResponse?.message?.toLowerCase().includes('unauthorized') ||
           apiResponse?.message?.toLowerCase().includes('token') ||
           apiResponse?.message?.toLowerCase().includes('expired')
-        )
-      ) {
-        if (!authStore.isLoggedOut && authStore.token && !isLoggingOut) {
-          isLoggingOut = true; // Prevent concurrent logout attempts
+        );
 
+      if (isAuthError) {
+        // Try refresh token logic
+        const refreshToken = authStore.refreshToken;
+        if (refreshToken && !isLoggingOut && !isRefreshing) {
+          isRefreshing = true;
           try {
-            // Call logout method to clean up user data and token
+            const { data } = await api.post('/refresh', { refresh_token: refreshToken });
+            if (data && data.status === 'success' && data.data.token && data.data.refresh_token) {
+              authStore.updateTokens(data.data.token, data.data.refresh_token);
+              onRefreshed();
+              isRefreshing = false;
+              // Reload the page to retry requests with new token
+              window.location.reload();
+              return Promise.reject(new Error('Token refreshed, reloading...'));
+            } else {
+              // Refresh failed, logout
+              await authStore.logout();
+              isRefreshing = false;
+              if (typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
+                window.location.href = '/auth/login';
+              }
+              return Promise.reject(new Error('Session expired. Please login again.'));
+            }
+          } catch (refreshError) {
             await authStore.logout();
-          } catch (logoutError) {
-            console.error('Error during logout:', logoutError);
-          } finally {
-            isLoggingOut = false;
+            isRefreshing = false;
+            if (typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
+              window.location.href = '/auth/login';
+            }
+            return Promise.reject(new Error('Session expired. Please login again.'));
           }
-
-          // Redirect to login page using window.location for immediate redirect
-          if (typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
-            window.location.href = '/auth/login';
+        } else if (!refreshToken) {
+          // No refresh token, logout
+          if (!authStore.isLoggedOut && authStore.token && !isLoggingOut) {
+            isLoggingOut = true;
+            try {
+              await authStore.logout();
+            } catch (logoutError) {
+              console.error('Error during logout:', logoutError);
+            } finally {
+              isLoggingOut = false;
+            }
+            if (typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
+              window.location.href = '/auth/login';
+            }
           }
+          return Promise.reject(new Error('Session expired. Please login again.'));
         }
-        return Promise.reject(new Error(message)); // Don't show notification for auth errors as logout handles it
+        // If already refreshing, queue the request
+        return new Promise((resolve, reject) => {
+          refreshSubscribers.push(() => {
+            // After refresh, retry original request
+            resolve(api(error.config));
+          });
+        });
       }
 
       // Handle maintenance mode (503 Service Unavailable)

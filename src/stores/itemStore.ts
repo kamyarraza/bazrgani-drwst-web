@@ -205,6 +205,50 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
+  async function fetchItemsByWarehouse(warehouseId: number | string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      // Fetch warehouse details, items are in data.items
+      const { data } = await api.get<ApiResponse<any>>(endPoints.warehouse.details(warehouseId) + '?relations=items');
+      items.value = data.data.items || [];
+      pagination.value = null;
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch warehouse items';
+      error.value = errorMessage;
+      showNotify({
+        type: 'negative',
+        message: error.value,
+        position: 'top',
+        duration: 3000,
+      });
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function searchItemsByWarehouse(searchQuery: string, warehouseId: number | string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const url = endPoints.warehouse.details(warehouseId) + `?relations=items&query=${encodeURIComponent(searchQuery)}`;
+      const { data } = await api.get<ApiResponse<any>>(url);
+      items.value = data.data.items || [];
+      pagination.value = null;
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to search warehouse items';
+      error.value = errorMessage;
+      showNotify({
+        type: 'negative',
+        message: error.value,
+        position: 'top',
+        duration: 3000,
+      });
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     items,
     currentItem,
@@ -216,6 +260,8 @@ export const useItemStore = defineStore('item', () => {
     createItem,
     getItemDetails,
     updateItem,
-    deleteItem
+    deleteItem,
+    fetchItemsByWarehouse,
+    searchItemsByWarehouse
   };
 });

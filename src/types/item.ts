@@ -36,6 +36,7 @@ export interface Product {
     id: number;
     name: string;
   };
+  quantity?: number;
   name: string;
   description: string;
   weight_kg: number;

@@ -22,6 +22,7 @@ export const endPoints = {
   auth: {
     login: '/login',
     logout: '/logout',
+    refresh: '/refresh',
     logoutAll: '/logout-all',
     me: '/me?relations=stickyNotes,branch',
     updateProfile: '/update-profile',

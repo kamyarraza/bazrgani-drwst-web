@@ -1,20 +1,19 @@
 <template>
   <div class="branch-selector q-pa-md">
-    <div class="text-caption q-mb-xs">Select Branch <span class="text-negative">*</span></div>
+    <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectBranch') }} <span class="text-negative">*</span></div>
     <q-input
       v-model="searchQuery"
       outlined
       clearable
       dense
       :loading="branchStore.loading"
-      @input="onSearchInputDebounced"
       @focus="onFocus"
       @blur="onBlur"
       hide-bottom-space
       class="branch-input"
       ref="inputRef"
       :disable="isEmployee"
-      hint="Type to search branches"
+      :hint="t('transactionAlpha.typeToSearchBranches')"
     >
       <template v-slot:prepend>
         <q-icon name="business" />
@@ -44,9 +43,9 @@
                 {{ branch.name }}
               </q-item-label>
               <q-item-label caption v-if="branch.code || branch.phone" class="branch-details">
-                <span v-if="branch.code">{{ branch.code ?? '' }}</span>
-                <span v-if="branch.code && branch.phone"> • </span>
-                <span v-if="branch.phone">{{ branch.phone ?? '' }}</span>
+                <span v-if="'code' in branch && branch.code">{{ branch.code ?? '' }}</span>
+                <span v-if="'code' in branch && branch.code && 'phone' in branch && branch.phone"> • </span>
+                <span v-if="'phone' in branch && branch.phone">{{ branch.phone ?? '' }}</span>
               </q-item-label>
             </q-item-section>
             <q-item-section side v-if="modelValue === branch.id">
@@ -64,6 +63,8 @@ import { ref, computed, watch, defineProps, defineEmits, onMounted } from 'vue';
 import { QInput, QIcon, QItem, QItemSection, QAvatar, QCard, QList } from 'quasar';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useAuthStore } from 'src/stores/authStore';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: { type: [Number, null], default: null }
@@ -103,13 +104,14 @@ function selectBranch(branch: BranchOption) {
   isFocused.value = false;
 }
 
+// Debounce utility
 let searchTimeout: any = null;
-function onSearchInputDebounced() {
+watch(searchQuery, (val) => {
   if (searchTimeout) clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
-    void fetchBranches(searchQuery.value.trim());
-  }, 400);
-}
+    void fetchBranches((val || '').trim());
+  }, 1000);
+});
 
 function onFocus() {
   isFocused.value = true;
@@ -122,11 +124,12 @@ onMounted(async () => {
   if (isAdmin.value) {
     await fetchBranches('');
   } else if (isEmployee.value && authStore.currentUser?.branch) {
-    selectedBranchId.value = authStore.currentUser.branch.id;
-    branchOptions.value = [{ id: authStore.currentUser.branch.id, name: authStore.currentUser.branch.name, code: authStore.currentUser.branch.code ? authStore.currentUser.branch.code : '', phone: authStore.currentUser.branch.phone ? authStore.currentUser.branch.phone : '' }];
-    emit('update:modelValue', authStore.currentUser.branch.id);
-    emit('select', authStore.currentUser.branch);
-    searchQuery.value = authStore.currentUser.branch.name;
+    const branch = authStore.currentUser.branch as BranchOption;
+    selectedBranchId.value = branch.id;
+    branchOptions.value = [{ id: branch.id, name: branch.name, code: branch.code ? branch.code : '', phone: branch.phone ? branch.phone : '' }];
+    emit('update:modelValue', branch.id);
+    emit('select', branch);
+    searchQuery.value = branch.name;
   }
 });
 
