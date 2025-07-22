@@ -48,112 +48,113 @@
           <div v-if="isFirstSectionComplete && hasSelectedItems">
             <q-separator color="primary" class="q-my-lg" />
             <div class="section-title q-mb-md">{{ t('transactionAlpha.debtPaymentSection') }}</div>
-            <div class="q-gutter-md">
-              <div class="row items-center q-mb-sm">
-                <div class="col-6 flex items-center">
-                  <q-icon name="paid" color="primary" class="q-mr-sm" />
-                  <span>{{ t('transactionAlpha.usdIqd') }}</span>
-                </div>
-                <div class="col-6 text-right">
-                  <span class="text-weight-bold">{{ usdIqdRate }}</span>
-                  <span class="text-grey-7 q-ml-xs">ع.د</span>
-                </div>
-              </div>
-              <div v-if="transactionType === 'purchase'">
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="store" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.supplier') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ selectedSupplier ? selectedSupplier.fname + ' ' + selectedSupplier.sname : '-' }}</span>
-                  </div>
-                </div>
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="account_balance_wallet" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.weOweSupplier') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(supplierDebt) }}</span>
-                  </div>
-                </div>
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="shopping_cart" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.totalPriceOfSelectedItems') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(totalSelectedItemsPrice) }}</span>
-                  </div>
-                </div>
-                <div v-if="selectedPaymentType === 'borrow'" class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="trending_up" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.newTotalOwed') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(newTotalOwed) }}</span>
-                  </div>
-                </div>
-              </div>
-              <div v-if="transactionType === 'sell'">
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="person" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.customer') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ selectedCustomer ? selectedCustomer.fname + ' ' + selectedCustomer.sname : '-' }}</span>
-                  </div>
-                </div>
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="account_balance_wallet" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.customerOwesUs') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(customerDebt) }}</span>
-                  </div>
-                </div>
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="shopping_cart" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.totalPriceBeforeDiscount') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(totalSelectedItemsPrice) }}</span>
-                  </div>
-                </div>
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="percent" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.discountPercent') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <q-input v-model.number="discountedRate" type="number" min="0" max="100" dense outlined style="max-width: 90px; display: inline-block;" />
-                  </div>
-                </div>
-                <div class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="attach_money" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.totalPriceAfterDiscount') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(totalAfterDiscount) }}</span>
-                  </div>
-                </div>
-                <div v-if="selectedPaymentType === 'borrow'" class="row items-center q-mb-sm">
-                  <div class="col-6 flex items-center">
-                    <q-icon name="trending_up" color="primary" class="q-mr-sm" />
-                    <span>{{ t('transactionAlpha.newTotalOwed') }}</span>
-                  </div>
-                  <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ formatCurrency(newCustomerTotalOwed) }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <q-markup-table flat bordered class="q-mb-md" style="min-width: 350px;">
+              <tbody>
+                <tr>
+                  <td class="text-left">
+                    <q-icon name="paid" color="primary" class="q-mr-sm" />
+                    {{ t('transactionAlpha.usdIqd') }}
+                  </td>
+                  <td class="text-right text-weight-bold">
+                    {{ usdIqdRate }} <span class="text-grey-7 q-ml-xs">IQD</span>
+                  </td>
+                </tr>
+                <template v-if="transactionType === 'purchase'">
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="store" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.supplier') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ selectedSupplier ? selectedSupplier.fname + ' ' + selectedSupplier.sname : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="account_balance_wallet" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.weOweSupplier') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(supplierDebt) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="shopping_cart" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.totalPriceOfSelectedItems') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(totalSelectedItemsPrice) }}
+                    </td>
+                  </tr>
+                  <tr v-if="selectedPaymentType === 'borrow'">
+                    <td class="text-left">
+                      <q-icon name="trending_up" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.newTotalOwed') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(newTotalOwed) }}
+                    </td>
+                  </tr>
+                </template>
+                <template v-if="transactionType === 'sell'">
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="person" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.customer') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ selectedCustomer ? selectedCustomer.fname + ' ' + selectedCustomer.sname : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="account_balance_wallet" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.customerOwesUs') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(customerDebt) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="shopping_cart" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.totalPriceBeforeDiscount') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(totalSelectedItemsPrice) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="percent" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.discountPercent') }}
+                    </td>
+                    <td class="text-right">
+                      <q-input v-model.number="discountedRate" type="number" min="0" max="100" dense outlined style="max-width: 90px; display: inline-block;" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-left">
+                      <q-icon name="attach_money" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.totalPriceAfterDiscount') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(totalAfterDiscount) }}
+                    </td>
+                  </tr>
+                  <tr v-if="selectedPaymentType === 'borrow'">
+                    <td class="text-left">
+                      <q-icon name="trending_up" color="primary" class="q-mr-sm" />
+                      {{ t('transactionAlpha.newTotalOwed') }}
+                    </td>
+                    <td class="text-right text-weight-bold">
+                      {{ formatCurrency(newCustomerTotalOwed) }}
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </q-markup-table>
             <q-separator color="primary" class="q-my-lg" />
             <div class="section-title q-mb-md q-mt-xl">{{ t('transactionAlpha.note') }}</div>
             <q-input

@@ -1071,6 +1071,13 @@ export default {
     error: 'خطأ'
   },
   invoice: {
+        "oldBorrowedPrice": "السعر المُقترض القديم",
+    "newBorrowedPrice": "السعر المُقترض الجديد",
+    "discount": "الخصم",
+    "totalMoney": "المبلغ الإجمالي",
+    "paidAmount": "المبلغ المدفوع",
+    "unpaidAmount": "المبلغ غير المدفوع",
+    "amountLeftToPay": "المبلغ المتبقي للدفع",
     header: {
       companyName: 'بازرگانی درووست',
       companyAddress: 'السليمانية، إقليم كردستان، العراق',

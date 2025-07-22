@@ -107,24 +107,24 @@
             <div class="totals-section">
               <div v-if="(transaction as any)?.old_borrowed_price !== undefined">
                 <div class="total-line">
-                  Old Borrowed Price: <span class="amount">{{ formatCurrencyDisplay((transaction as any).old_borrowed_price) }}</span>
+                {{ t('invoice.oldBorrowedPrice') }}: <span class="amount">{{ formatCurrencyDisplay((transaction as any).old_borrowed_price) }}</span>
                 </div>
               </div>
               <div v-if="(transaction as any)?.new_borrowed_price !== undefined">
                 <div class="total-line">
-                  New Borrowed Price: <span class="amount">{{ formatCurrencyDisplay((transaction as any).new_borrowed_price) }}</span>
+                    {{ t('invoice.newBorrowedPrice') }}: <span class="amount">{{ formatCurrencyDisplay((transaction as any).new_borrowed_price) }}</span>
                 </div>
               </div>
               <div v-if="transaction?.type === 'sell' && (transaction as any)?.discounted_rate > 0">
                 <div class="total-line">
-                  Discount: <span class="amount">{{ (transaction as any).discounted_rate }}%</span>
+                   {{ t('invoice.discount') }}: <span class="amount">{{ (transaction as any).discounted_rate }}%</span>
                 </div>
               </div>
-              <div class="total-line total-bold">Total Money: <span class="amount">{{ formatCurrencyDisplay(finalTotal) }}</span></div>
-              <div class="total-line">Paid Amount: <span class="amount">{{ formatCurrencyDisplay(transaction?.paid_price || 0) }}</span></div>
-              <div class="total-line">Unpaid Amount: <span class="amount">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0) }}</span></div>
+              <div class="total-line total-bold">  {{ t('invoice.totalMoney') }}: <span class="amount">{{ formatCurrencyDisplay(finalTotal) }}</span></div>
+              <div class="total-line">{{ t('invoice.paidAmount') }}: <span class="amount">{{ formatCurrencyDisplay(transaction?.paid_price || 0) }}</span></div>
+              <div class="total-line">{{ t('invoice.unpaidAmount') }}: <span class="amount">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0) }}</span></div>
               <div class="total-line balance-line" :class="{ 'balance-due': balanceAmount > 0 }">
-                Amount Left to Pay: <span class="amount">{{ formatCurrencyDisplay(balanceAmount) }}</span>
+                {{ t('invoice.amountLeftToPay') }}: <span class="amount">{{ formatCurrencyDisplay(balanceAmount) }}</span>
               </div>
             </div>
           </div>

@@ -1893,6 +1893,13 @@ export default {
     }
   },
   invoice: {
+      "oldBorrowedPrice": "Old Borrowed Price",
+    "newBorrowedPrice": "New Borrowed Price",
+    "discount": "Discount",
+    "totalMoney": "Total Money",
+    "paidAmount": "Paid Amount",
+    "unpaidAmount": "Unpaid Amount",
+    "amountLeftToPay": "Amount Left to Pay",
     header: {
       companyName: 'Bazrgani Drwst',
       companyAddress: 'Sulaymaniyah, Kurdistan Region, Iraq',

@@ -1521,6 +1521,13 @@ export default {
     }
   },
   invoice: {
+     "oldBorrowedPrice": "نرخی قەرزی کۆن",
+    "newBorrowedPrice": "نرخی قەرزی نوێ",
+    "discount": "داشکاندن",
+    "totalMoney": "کۆی گشتی پارە",
+    "paidAmount": "بڕی پارەی دراو",
+    "unpaidAmount": "بڕی پارەی نەدراو",
+    "amountLeftToPay": "بڕی پێویست ماوە بدرێ",
     header: {
       companyName: 'بازرگانی درووست',
       companyAddress: 'سلێمانی، هەرێمی کوردستان، عێراق',
@@ -2191,7 +2198,7 @@ export default {
     qty: 'ژمارە',
     pkg: 'پاکێج',
     pkt: 'پاکەت',
-    pieces: 'پارچە',
+    pieces: 'دانە',
     noItemsFound: 'هیچ کاڵایەک نەدۆزرایەوە.',
     selectedItems: 'کاڵاکانی هەڵبژێردراو',
     packages: 'پاکێجەکان',
@@ -2201,8 +2208,8 @@ export default {
     quantity: 'ژمارە',
     totalItems: 'کۆی گشتی: {n}',
     unitCost: 'تێچووی یەکە',
-    soloUnitCost: 'تێچووی یەکەی تاک',
-    bulkUnitCost: 'تێچووی یەکەی کۆمەڵ',
+    soloUnitCost: 'تێچووی یەکە - تاک',
+    bulkUnitCost: 'تێچووی یەکە - کۆمەڵ',
     clearAll: 'سڕینەوەی هەموو',
     selectBranch: 'هەڵبژاردنی لق',
     typeToSearchBranches: 'جۆری لق بۆ گەڕان بنووسە',

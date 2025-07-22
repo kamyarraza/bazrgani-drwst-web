@@ -197,7 +197,7 @@ defineExpose({
             <q-item-section>
               <q-item-label>{{ item.name }}</q-item-label>
               <div class="q-gutter-xs q-mt-xs">
-                <q-chip dense color="primary" text-color="white" icon="inventory_2">{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</q-chip>
+                <q-chip dense color="primary" text-color="white" v-if="props.transactionType=='sell'">{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</q-chip>
                 <q-chip v-if="item.package_units" dense color="secondary" text-color="white">{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</q-chip>
                 <q-chip v-if="item.packet_units" dense color="accent" text-color="white">{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</q-chip>
                 <q-chip v-if="item.pieces" dense color="teal" text-color="white">{{ t('transactionAlpha.pieces') }}: {{ item.pieces }}</q-chip>
