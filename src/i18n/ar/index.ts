@@ -73,6 +73,8 @@ export default {
 }
 ,
   transaction: {
+    paySupplier: "دفع للمورد",
+receiveFromCustomer: "استلام من العميل",
     addNew: 'إضافة معاملة جديدة',
     searchLabel: 'البحث بالاسم العميل أو الملاحظة',
     resetFilters: 'إعادة تعيين المرشحات',

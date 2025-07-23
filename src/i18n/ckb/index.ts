@@ -684,6 +684,8 @@ export default {
     }
   },
   transaction: {
+    paySupplier: "پارەدان بۆ دابینکەر",
+receiveFromCustomer: "وەرگرتن لە کڕیار",
     title: 'مامەڵەکان',
     header: 'داشبۆردی مامەڵەکان',
     subtitle: 'بەڕێوەبردنی مامەڵەکانی کڕین و فرۆشتنی کاڵاکان',

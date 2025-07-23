@@ -24,7 +24,7 @@
           <div class="flex-item items-center q-mt-none q-mb-none">
             <PaymentTypeSelector v-model="selectedPaymentType" />
           </div>
-          <div v-if="transactionType === 'sell'" class="flex-item items-center q-mt-none q-mb-none">
+          <div v-if="transactionType === 'sell'" class="flex-item items-center status-align">
             <div class="text-caption q-mb-xs">{{ t('transactionAlpha.transactionStatus') }}</div>
             <q-option-group
               v-model="transactionStatus"
@@ -239,8 +239,8 @@ const selectedWarehouseId = ref(null);
 const discountedRate = ref(0);
 const transactionStatus = ref<'completed' | 'reserved'>('completed');
 const statusOptions = [
-  { label: 'Complete', value: 'completed' },
-  { label: 'Reserved', value: 'reserved' }
+  { label: t('transaction.status.complete'), value: 'completed' },
+  { label: t('transaction.status.reserved'), value: 'reserved' }
 ];
 
 const customerStore = useCustomerStore();
@@ -468,5 +468,66 @@ const hasSelectedItems = computed(() => selectedItems.value.length > 0);
 }
 .fade-enter-to, .fade-leave-from {
   opacity: 1;
+}
+.status-align {
+  margin-top: 14px;
+}
+
+/* Responsive styles for mobile and tablet */
+@media (max-width: 1024px) {
+  .q-pa-lg {
+    padding: 16px !important;
+  }
+  .transaction-modal-header {
+    padding: 0 12px;
+    height: 56px;
+  }
+  .section-title {
+    font-size: 1.05rem;
+  }
+}
+@media (max-width: 768px) {
+  .flex-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .flex-item {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 12px;
+  }
+  .status-align {
+    margin-top: 0;
+  }
+  .transaction-modal-header {
+    height: 48px;
+    padding: 0 6px;
+  }
+  .q-pa-lg {
+    padding: 8px !important;
+  }
+  .submit-btn {
+    min-width: 100%;
+    max-width: 100%;
+    margin-top: 16px;
+  }
+  .note-textarea {
+    min-height: 60px;
+    margin-bottom: 16px;
+  }
+}
+@media (max-width: 480px) {
+  .full-width { width: 100vw; }
+  .full-height { height: 100vh; }
+  .transaction-modal-header {
+    height: 40px;
+    padding: 0 2px;
+  }
+  .section-title {
+    font-size: 0.98rem;
+  }
+  .q-pa-lg {
+    padding: 4px !important;
+  }
 }
 </style>

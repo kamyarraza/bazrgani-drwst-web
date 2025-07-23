@@ -14,8 +14,8 @@ declare module 'vue' {
 
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
-   baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
-    // baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
+  //  baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
+   baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
 
   withCredentials: true,
   headers: {
@@ -88,12 +88,12 @@ api.interceptors.response.use(
           try {
             const { data } = await api.post('/refresh', { refresh_token: refreshToken });
             if (data && data.status === 'success' && data.data.token && data.data.refresh_token) {
+              console.log('data', data,'and',data.data);
               authStore.updateTokens(data.data.token, data.data.refresh_token);
-              onRefreshed();
               isRefreshing = false;
-              // Reload the page to retry requests with new token
-              window.location.reload();
-              return Promise.reject(new Error('Token refreshed, reloading...'));
+              onRefreshed();
+              // Instead of reloading, retry the original request
+              return api(error.config);
             } else {
               // Refresh failed, logout
               await authStore.logout();

@@ -163,7 +163,7 @@ defineExpose({
 
 <template>
   <div class="item-selector-redesign">
-    
+
     <div class="item-selector-content">
       <div class="item-list-fullwidth">
         <div class="search-row q-mb-md">
@@ -352,4 +352,49 @@ defineExpose({
     min-width: 0;
   }
 }
-</style> 
+
+/* Additional responsive improvements for selected item card */
+@media (max-width: 768px) {
+  .selected-item-card-modern {
+    padding: 8px 4px 6px 4px;
+    border-radius: 8px;
+  }
+  .selected-item-card-modern .row.items-center.q-col-gutter-md.flex-nowrap {
+    flex-direction: column !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+  }
+  .item-info-col, .col-auto, .col {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+  .col.q-gutter-md.flex.justify-end.items-center {
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+  .q-input, .q-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .q-btn.q-ml-md {
+    margin-left: 0 !important;
+    margin-top: 8px !important;
+  }
+}
+@media (max-width: 480px) {
+  .selected-item-card-modern {
+    padding: 4px 2px 4px 2px;
+    border-radius: 6px;
+  }
+  .item-info-col {
+    font-size: 0.98rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+</style>

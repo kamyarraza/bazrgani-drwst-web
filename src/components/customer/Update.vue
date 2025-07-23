@@ -54,7 +54,7 @@
                             <Qinput
                                 v-model="form.sphone"
                                 :label="t('customer.secondPhone', 'Second Phone Number')"
-                                :rules="[val => !!val || t('validation.required', 'This field is required')]"
+                                :rules="[]"
                                 outlined
                                 class="enhanced-input"
                             >

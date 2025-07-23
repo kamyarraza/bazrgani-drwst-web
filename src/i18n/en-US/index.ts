@@ -912,6 +912,10 @@ export default {
     }
   },
   transaction: {
+    aySupplier: "Pay Supplier",
+receiveFromCustomer: "Receive from Customer",
+    header: 'Transaction Dashboard',
+    subtitle: 'Manage purchase and sales transactions',
     viewInvoice:"View Invoice",
     addNew: 'Add New Transaction',
     searchLabel: 'Search by customer name or note',

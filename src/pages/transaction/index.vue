@@ -319,7 +319,7 @@ const menuItems = computed(() => {
             const unpaidAmount = row.unpaid_price ?? (row.total_price - row.paid_price);
             if (unpaidAmount > 0) {
                 baseItems.push({
-                    label: 'Pay Supplier',
+                    label: t('transaction.paySupplier'),
                     icon: 'payment',
                     value: 'pay_supplier'
                 });
@@ -329,7 +329,7 @@ const menuItems = computed(() => {
             const unpaidAmount = row.unpaid_price ?? (row.total_price - row.paid_price);
             if (unpaidAmount > 0) {
                 baseItems.push({
-                    label: 'Receive from Customer',
+                    label: t('transaction.receiveFromCustomer'),
                     icon: 'account_balance_wallet',
                     value: 'receive_customer'
                 });
