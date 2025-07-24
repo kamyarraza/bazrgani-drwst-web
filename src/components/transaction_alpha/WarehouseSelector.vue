@@ -111,6 +111,15 @@ watch(() => props.branchId, async (branchId) => {
       code: w.code,
       location: { name: (w as any).location?.name || '' }
     }));
+    // Auto-select first warehouse if none is selected
+    if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+      const first = warehouseOptions.value[0];
+      if (first) {
+        emit('update:modelValue', first.id);
+        selectedWarehouseId.value = first.id;
+        searchQuery.value = first.name;
+      }
+    }
     loading.value = false;
   } else {
     warehouseOptions.value = [];
@@ -149,6 +158,15 @@ onMounted(async () => {
       code: w.code,
       location: { name: (w as any).location?.name || '' }
     }));
+    // Auto-select first warehouse if none is selected
+    if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+      const first = warehouseOptions.value[0];
+      if (first) {
+        emit('update:modelValue', first.id);
+        selectedWarehouseId.value = first.id;
+        searchQuery.value = first.name;
+      }
+    }
     loading.value = false;
   }
 });
