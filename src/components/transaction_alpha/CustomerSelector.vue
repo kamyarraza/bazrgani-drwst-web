@@ -87,6 +87,11 @@ const isSelecting = ref(false);
 
 const showResultsList = computed(() => isFocused.value && customerOptions.value.length > 0);
 
+defineExpose({
+  getOptions: () => customerOptions.value,
+  selectCustomer
+});
+
 let searchTimeout: any = null;
 watch(searchQuery, (val) => {
   if (isSelecting.value) {

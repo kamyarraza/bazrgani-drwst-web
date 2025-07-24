@@ -88,6 +88,11 @@ const isFocused = ref(false);
 
 const showResultsList = computed(() => isFocused.value && warehouseOptions.value.length > 0);
 
+defineExpose({
+  getOptions: () => warehouseOptions.value,
+  selectWarehouse
+});
+
 watch(() => props.modelValue, (val) => {
   selectedWarehouseId.value = val;
 });
@@ -175,4 +180,4 @@ function onBlur() {
 .warehouse-item.selected {
   background: #e0f7fa;
 }
-</style> 
+</style>

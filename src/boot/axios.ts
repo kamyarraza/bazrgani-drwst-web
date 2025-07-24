@@ -14,8 +14,8 @@ declare module 'vue' {
 
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
-  //  baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
-   baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
+    baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
+  //  baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
 
   withCredentials: true,
   headers: {

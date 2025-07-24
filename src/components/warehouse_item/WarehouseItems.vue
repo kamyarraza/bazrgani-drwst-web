@@ -168,7 +168,7 @@
           <q-td :props="props" class="text-center">
             <q-badge
               :color="props.value > 100 ? 'positive' : props.value > 50 ? 'warning' : 'negative'"
-              :label="props.value?.toLocaleString() || '0'"
+              :label="Number(props.value || 0).toLocaleString()"
               class="quantity-badge"
             />
           </q-td>
@@ -651,6 +651,10 @@ const itemColumns = [
     align: 'center' as const,
     field: 'quantity',
     sortable: true,
+    format: (val: unknown) => {
+      const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
+      return num.toLocaleString();
+    },
   },
   {
     name: 'pieces',
@@ -727,6 +731,10 @@ const blumItemColumns = [
     align: 'center' as const,
     field: 'quantity',
     sortable: true,
+    format: (val: unknown) => {
+      const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
+      return num.toLocaleString();
+    },
   },
   {
     name: 'position',
