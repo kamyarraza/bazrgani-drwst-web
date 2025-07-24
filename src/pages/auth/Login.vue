@@ -8,7 +8,8 @@
       <!-- Left side - Brand/Image -->
       <div class="login-left">
         <div class="image-overlay"></div>
-        <img src="../../assets/images/view-room-furniture-monochrome-palette.jpg" alt="Brand" class="full-background-image" />
+        <img src="../../assets/images/view-room-furniture-monochrome-palette.jpg" alt="Brand"
+          class="full-background-image" />
 
         <div class="brand-content">
           <div class="brand-logo">
@@ -28,7 +29,8 @@
               </div>
 
               <p class="testimonial-text">
-                "The robust security measures give us peace of mind. We trust the platform to safeguard our project data."
+                "The robust security measures give us peace of mind. We trust the platform to safeguard our project
+                data."
               </p>
 
               <div class="testimonial-footer">
@@ -36,7 +38,7 @@
                   <q-icon name="star" v-for="n in 5" :key="n" class="star" />
                 </div>
                 <div class="testimonial-author">
-                  <strong>Kamyar Raza</strong>
+                  <strong>Bazrgani Drwst</strong>
                   <span>IT Project Lead</span>
                 </div>
               </div>
@@ -64,54 +66,31 @@
           <q-form @submit.prevent="handleLogin" class="login-form">
             <div class="form-group q-mb-xs">
               <label class="form-label q-mb-xs">{{ $t('auth.emailOrUsername') }}</label>
-              <QInput
-                v-model="formData.username"
-                :placeholder="$t('auth.emailOrUsername')"
-                type="text"
-                :rules="[val => !!val || $t('auth.emailOrUsernameRequired')]"
-              />
+              <QInput v-model="formData.username" :placeholder="$t('auth.emailOrUsername')" type="text"
+                :rules="[val => !!val || $t('auth.emailOrUsernameRequired')]" />
             </div>
 
             <div class="form-group q-mb-xs">
               <label class="form-label q-mb-xs">{{ $t('auth.password') }}</label>
-              <QInput
-                v-model="formData.password"
-                :placeholder="$t('auth.password')"
-                :type="showPassword ? 'text' : 'password'"
-                :rules="[val => !!val || $t('auth.passwordRequired')]"
-              >
+              <QInput v-model="formData.password" :placeholder="$t('auth.password')"
+                :type="showPassword ? 'text' : 'password'" :rules="[val => !!val || $t('auth.passwordRequired')]">
                 <template v-slot:append>
-                  <q-icon
-                    :name="showPassword ? 'visibility_off' : 'visibility'"
-                    class="cursor-pointer password-toggle"
-                    @click="showPassword = !showPassword"
-                  />
+                  <q-icon :name="showPassword ? 'visibility_off' : 'visibility'" class="cursor-pointer password-toggle"
+                    @click="showPassword = !showPassword" />
                 </template>
               </QInput>
             </div>
 
             <div class="form-options q-mb-xs">
-              <q-checkbox
-                v-model="formData.remember"
-                :true-value="1"
-                :false-value="0"
-                :label="$t('auth.rememberMe')"
-                class="remember-checkbox"
-              />
+              <q-checkbox v-model="formData.remember" :true-value="1" :false-value="0" :label="$t('auth.rememberMe')"
+                class="remember-checkbox" />
               <a href="#" class="forgot-link" @click.prevent="handleForgotPassword">
                 {{ $t('auth.forgotPassword') }}
               </a>
             </div>
 
-            <QBtn
-              type="submit"
-              :loading="authStore.loading"
-              :btn-label="authStore.loading ? '' : $t('auth.login')"
-              class="login-btn bg-primary q-mb-xs"
-              size="md"
-              no-caps
-              style="min-height: 48px;"
-            >
+            <QBtn type="submit" :loading="authStore.loading" :btn-label="authStore.loading ? '' : $t('auth.login')"
+              class="login-btn bg-primary q-mb-xs" size="md" no-caps style="min-height: 48px;">
               <template #loading>
                 <q-spinner color="white" size="1.2em" />
               </template>
@@ -125,6 +104,53 @@
         </div>
       </div>
     </div>
+
+    <!-- Forgot Password Modal -->
+    <q-dialog v-model="showForgotPasswordModal" persistent transition-show="slide-up" transition-hide="slide-down"
+      position="bottom" class="mobile-modal-dialog">
+      <q-card class="forgot-password-modal">
+        <div class="modal-header">
+          <div class="modal-icon">
+            <q-icon name="admin_panel_settings" size="2.5rem" color="primary" />
+          </div>
+          <h3 class="modal-title">{{ $t('auth.passwordResetTitle') }}</h3>
+          <p class="modal-subtitle">{{ $t('auth.passwordResetSubtitle') }}</p>
+        </div>
+
+        <q-card-section class="modal-content">
+          <div class="info-message">
+            <q-icon name="security" class="info-icon" />
+            <p class="info-text">
+              {{ $t('auth.passwordResetMessage') }}
+            </p>
+          </div>
+
+          <div class="contact-section">
+            <h4 class="contact-section-title">{{ $t('auth.adminContactInfo') }}</h4>
+            <div class="contact-info">
+              <div class="contact-item">
+                <q-icon name="phone" class="contact-icon" />
+                <div class="contact-details">
+                  <span class="contact-name">{{ $t('auth.adminHardi') }}</span>
+                  <span class="contact-phone" dir="ltr">+964 770 194 1549</span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <q-icon name="phone" class="contact-icon" />
+                <div class="contact-details">
+                  <span class="contact-name">{{ $t('auth.adminKamyar') }}</span>
+                  <span class="contact-phone" dir="ltr">+964 770 369 2917</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions class="modal-actions">
+          <QBtn is-flat :btn-label="$t('common.close')" class="close-btn" @click="showForgotPasswordModal = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -150,6 +176,7 @@ const formData = ref<{ username: string; password: string; remember: 1 | 0 }>({
 })
 
 const showPassword = ref(false)
+const showForgotPasswordModal = ref(false)
 
 // Initialize reCAPTCHA when component mounts
 onMounted(async () => {
@@ -217,8 +244,7 @@ const handleLogin = async () => {
 }
 
 const handleForgotPassword = () => {
-  // For now, just show an alert - you can implement forgot password logic later
-  alert('Forgot password functionality will be implemented soon.')
+  showForgotPasswordModal.value = true
 }
 
 const handleContactAdmin = () => {
@@ -254,15 +280,19 @@ const handleContactAdmin = () => {
 .login-content {
   display: flex;
   width: 100%;
-  max-width: 1100px; /* Reduced from 1400px for better laptop display */
-  min-height: 560px; /* Reduced from 680px to prevent scrolling */
+  max-width: 1100px;
+  /* Reduced from 1400px for better laptop display */
+  min-height: 560px;
+  /* Reduced from 680px to prevent scrolling */
   background: white;
-  border-radius: 20px; /* Slightly reduced for better proportions */
+  border-radius: 20px;
+  /* Slightly reduced for better proportions */
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   position: relative;
   z-index: 2;
-  margin: 1rem; /* Keep margin for spacing */
+  margin: 1rem;
+  /* Keep margin for spacing */
 }
 
 .login-left {
@@ -290,12 +320,10 @@ const handleContactAdmin = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(42, 123, 155, 0.85) 0%,
-    rgba(42, 155, 143, 0.75) 50%,
-    rgba(30, 107, 130, 0.85) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(42, 123, 155, 0.85) 0%,
+      rgba(42, 155, 143, 0.75) 50%,
+      rgba(30, 107, 130, 0.85) 100%);
   z-index: 2;
 }
 
@@ -304,8 +332,10 @@ const handleContactAdmin = () => {
   z-index: 3;
   text-align: center;
   color: white;
-  max-width: 450px; /* Reduced from 550px for better proportions */
-  padding: 2rem; /* Reduced from 2.5rem */
+  max-width: 450px;
+  /* Reduced from 550px for better proportions */
+  padding: 2rem;
+  /* Reduced from 2.5rem */
   width: 100%;
 }
 
@@ -316,7 +346,8 @@ const handleContactAdmin = () => {
 }
 
 .logo-circle {
-  width: 70px; /* Reduced from 80px */
+  width: 70px;
+  /* Reduced from 80px */
   height: 70px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
@@ -329,7 +360,8 @@ const handleContactAdmin = () => {
 }
 
 .brand-title {
-  font-size: 2.2rem; /* Reduced from 2.5rem */
+  font-size: 2.2rem;
+  /* Reduced from 2.5rem */
   font-weight: 800;
   margin: 0;
   line-height: 1.1;
@@ -337,7 +369,8 @@ const handleContactAdmin = () => {
 }
 
 .brand-title-accent {
-  font-size: 2.2rem; /* Reduced from 2.5rem */
+  font-size: 2.2rem;
+  /* Reduced from 2.5rem */
   font-weight: 800;
   margin: 0 0 0.5rem 0;
   line-height: 1.1;
@@ -349,9 +382,11 @@ const handleContactAdmin = () => {
 }
 
 .brand-subtitle {
-  font-size: 1.3rem; /* Reduced from 1.5rem */
+  font-size: 1.3rem;
+  /* Reduced from 1.5rem */
   font-weight: 300;
-  margin: 0 0 2.5rem 0; /* Reduced bottom margin from 3rem */
+  margin: 0 0 2.5rem 0;
+  /* Reduced bottom margin from 3rem */
   opacity: 0.9;
   letter-spacing: 0.5px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -360,8 +395,10 @@ const handleContactAdmin = () => {
 .testimonial-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 16px; /* Reduced from 20px */
-  padding: 1.5rem; /* Reduced from 2rem */
+  border-radius: 16px;
+  /* Reduced from 20px */
+  padding: 1.5rem;
+  /* Reduced from 2rem */
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -448,15 +485,18 @@ const handleContactAdmin = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 2.5rem; /* Reduced from 3rem */
-  max-width: 420px; /* Reduced from 500px */
+  padding: 2.5rem;
+  /* Reduced from 3rem */
+  max-width: 420px;
+  /* Reduced from 500px */
   margin: 0 auto;
   width: 100%;
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 2rem; /* Reduced from 2.5rem */
+  margin-bottom: 2rem;
+  /* Reduced from 2.5rem */
 }
 
 .logo {
@@ -585,7 +625,8 @@ const handleContactAdmin = () => {
   }
 
   .login-left {
-    display: none; /* Hide the left side completely on tablets and below */
+    display: none;
+    /* Hide the left side completely on tablets and below */
   }
 
   .login-right {
@@ -595,26 +636,30 @@ const handleContactAdmin = () => {
 
   .login-form-container {
     padding: 2rem;
-    max-width: none; /* Remove max-width constraint */
+    max-width: none;
+    /* Remove max-width constraint */
   }
 }
 
 @media (max-width: 640px) {
   .login-container {
     padding: 0.5rem;
-    align-items: stretch; /* Allow full height on mobile */
+    align-items: stretch;
+    /* Allow full height on mobile */
   }
 
   .login-content {
     margin: 0.5rem;
     border-radius: 16px;
-    min-height: auto; /* Allow content to determine height */
+    min-height: auto;
+    /* Allow content to determine height */
     display: flex;
     flex-direction: column;
   }
 
   .login-left {
-    display: none; /* Ensure left side is hidden on mobile */
+    display: none;
+    /* Ensure left side is hidden on mobile */
   }
 
   .login-right {
@@ -630,7 +675,8 @@ const handleContactAdmin = () => {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: calc(100vh - 4rem); /* Full height minus container padding */
+    min-height: calc(100vh - 4rem);
+    /* Full height minus container padding */
   }
 
   .form-title {
@@ -643,7 +689,8 @@ const handleContactAdmin = () => {
   }
 
   .form-header {
-    margin-bottom: 1.5rem; /* Reduce header margin on mobile */
+    margin-bottom: 1.5rem;
+    /* Reduce header margin on mobile */
     text-align: center;
   }
 
@@ -653,55 +700,68 @@ const handleContactAdmin = () => {
 
   /* Improve input field appearance on mobile */
   .form-group :deep(.q-field__control) {
-    min-height: 48px; /* Better touch target */
+    min-height: 48px;
+    /* Better touch target */
   }
 
   .form-group :deep(.q-field__native) {
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
+    /* Prevent zoom on iOS */
   }
 }
 
 /* Laptop specific optimizations */
 @media (min-width: 1025px) and (max-width: 1366px) {
   .login-content {
-    max-width: 1000px; /* Reduced from 1200px for better laptop fit */
-    min-height: 520px; /* Reduced from 600px to prevent scrolling */
+    max-width: 1000px;
+    /* Reduced from 1200px for better laptop fit */
+    min-height: 520px;
+    /* Reduced from 600px to prevent scrolling */
   }
 
   .brand-content {
-    padding: 1.8rem; /* Reduced from 2rem */
-    max-width: 400px; /* Reduced from 500px */
+    padding: 1.8rem;
+    /* Reduced from 2rem */
+    max-width: 400px;
+    /* Reduced from 500px */
   }
 
   .brand-title,
   .brand-title-accent {
-    font-size: 2rem; /* Reduced from 2.2rem */
+    font-size: 2rem;
+    /* Reduced from 2.2rem */
   }
 
   .brand-subtitle {
-    font-size: 1.2rem; /* Reduced from 1.4rem */
+    font-size: 1.2rem;
+    /* Reduced from 1.4rem */
     margin-bottom: 2rem;
   }
 
   .logo-circle {
-    width: 65px; /* Reduced from 75px */
+    width: 65px;
+    /* Reduced from 75px */
     height: 65px;
   }
 
   .testimonial-card {
-    padding: 1.5rem; /* Reduced from 1.8rem */
+    padding: 1.5rem;
+    /* Reduced from 1.8rem */
   }
 
   .login-form-container {
-    padding: 2rem; /* Reduced from 2.5rem */
-    max-width: 380px; /* Reduced from 450px */
+    padding: 2rem;
+    /* Reduced from 2.5rem */
+    max-width: 380px;
+    /* Reduced from 450px */
   }
 }
 
 /* Larger laptop/desktop optimizations */
 @media (min-width: 1367px) {
   .login-content {
-    max-width: 1100px; /* Controlled size for larger screens */
+    max-width: 1100px;
+    /* Controlled size for larger screens */
     min-height: 560px;
   }
 
@@ -734,6 +794,7 @@ const handleContactAdmin = () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -745,6 +806,7 @@ const handleContactAdmin = () => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -778,12 +840,413 @@ const handleContactAdmin = () => {
   outline-offset: 2px;
 }
 
+/* Forgot Password Modal Styles */
+.forgot-password-modal {
+  min-width: 400px;
+  max-width: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(42, 123, 155, 0.1);
+}
+
+/* Mobile dialog positioning */
+:deep(.mobile-modal-dialog .q-dialog__inner) {
+  padding: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .forgot-password-modal {
+    border-radius: 20px 20px 0 0 !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    max-height: 85vh !important;
+    position: fixed;
+    bottom: 0;
+  }
+
+  :deep(.mobile-modal-dialog .q-dialog__inner) {
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  :deep(.mobile-modal-dialog) {
+    align-items: flex-end !important;
+  }
+}
+
+.modal-header {
+  text-align: center;
+  padding: 2rem 2rem 1rem;
+  background: linear-gradient(135deg, #2A7B9B 0%, #2A9B8F 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.modal-icon {
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.modal-icon .q-icon {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+  z-index: 2;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.9;
+  position: relative;
+  z-index: 2;
+}
+
+.modal-content {
+  padding: 2rem;
+}
+
+.info-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #bae6fd;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #2A7B9B 0%, #2A9B8F 100%);
+}
+
+.info-icon {
+  color: #2A7B9B;
+  font-size: 1.5rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.info-text {
+  margin: 0;
+  line-height: 1.6;
+  color: #1e40af;
+  font-size: 0.95rem;
+}
+
+.contact-section {
+  margin-top: 1.5rem;
+}
+
+.contact-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contact-section-title::before {
+  content: '';
+  width: 3px;
+  height: 16px;
+  background: linear-gradient(135deg, #2A7B9B 0%, #2A9B8F 100%);
+  border-radius: 2px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.contact-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(42, 123, 155, 0.1);
+  border-color: #2A7B9B;
+}
+
+.contact-icon {
+  color: #2A7B9B;
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 0.5rem;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.contact-name {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.contact-phone {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 0.9rem;
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: embed;
+}
+
+/* RTL support for contact details */
+[dir="rtl"] .contact-details {
+  align-items: flex-end;
+}
+
+[dir="rtl"] .contact-phone {
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+.contact-item span {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  padding: 1rem 2rem 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.close-btn {
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+@keyframes shimmer {
+
+  0%,
+  100% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-50%);
+  }
+}
+
+/* Mobile responsive for modal */
+@media (max-width: 640px) {
+  .forgot-password-modal {
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    max-height: 90vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+
+  .modal-header {
+    padding: 1.5rem 1rem 1rem;
+    flex-shrink: 0;
+  }
+
+  .modal-content {
+    padding: 1rem 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    /* Allow flex child to shrink */
+  }
+
+  .modal-actions {
+    padding: 1rem 1.5rem 2rem;
+    /* Extra bottom padding for safe area */
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    position: sticky;
+    bottom: 0;
+    justify-content: center;
+  }
+
+  .modal-actions .close-btn {
+    width: 100%;
+    min-height: 52px;
+    /* Larger touch target */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+  }
+
+  .contact-info {
+    gap: 0.75rem;
+  }
+
+  .contact-item {
+    padding: 0.75rem;
+  }
+
+  .contact-details {
+    gap: 0.2rem;
+  }
+
+  .contact-name {
+    font-size: 0.9rem;
+  }
+
+  .contact-phone {
+    font-size: 0.85rem;
+  }
+
+  .info-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-section {
+    margin-top: 1rem;
+  }
+
+  .contact-section-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .modal-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .forgot-password-modal {
+    max-height: 95vh !important;
+  }
+
+  .modal-header {
+    padding: 1.25rem 1rem 0.75rem;
+  }
+
+  .modal-content {
+    padding: 0.75rem 1rem;
+  }
+
+  .modal-actions {
+    padding: 1rem 1rem 2.5rem;
+    /* Even more bottom padding for very small screens */
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .modal-actions .close-btn {
+    min-height: 54px;
+    /* Even larger touch target */
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .modal-icon .q-icon {
+    padding: 0.75rem;
+  }
+
+  .contact-item {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .contact-name {
+    font-size: 0.88rem;
+  }
+
+  .contact-phone {
+    font-size: 0.82rem;
+  }
+
+  .contact-icon {
+    font-size: 1.1rem;
+    padding: 0.4rem;
+  }
+}
+
 /* Mobile-first responsive improvements */
 @media (max-width: 480px) {
   .login-container {
     padding: 0;
     min-height: 100vh;
-    min-height: 100dvh; /* Dynamic viewport height for better mobile support */
+    min-height: 100dvh;
+    /* Dynamic viewport height for better mobile support */
   }
 
   .login-content {
@@ -807,13 +1270,16 @@ const handleContactAdmin = () => {
 
   /* Adjust form spacing for very small screens */
   .form-header {
-    margin-bottom: 1.5rem; /* Reduced from 2rem */
+    margin-bottom: 1.5rem;
+    /* Reduced from 2rem */
   }
 
   /* Make buttons more touch-friendly */
   .login-btn {
-    font-size: 1rem; /* Reduced from 1.1rem */
-    border-radius: 10px; /* Reduced from 12px */
+    font-size: 1rem;
+    /* Reduced from 1.1rem */
+    border-radius: 10px;
+    /* Reduced from 12px */
   }
 }
 </style>

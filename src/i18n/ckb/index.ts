@@ -91,8 +91,8 @@ export default {
     language: 'زمان'
   },
   auth: {
-      noAccount: "هەژمارت نییە؟",
-  contactAdmin: "پەیوەندیبکە بە بەشی بەڕێوەبردن",
+    noAccount: "هەژمارت نییە؟",
+    contactAdmin: "پەیوەندیبکە بە بەشی بەڕێوەبردن",
     welcomeBack: 'بەخێر بێیتەوە',
     email: 'ئیمەیل',
     emailOrUsername: 'ئیمەیل یان ناوی بەکارهێنەر',
@@ -104,7 +104,13 @@ export default {
     forgotPassword: 'وشەی نهێنیت لەبیر چووە؟',
     rememberMe: 'بیرم بهێنەوە',
     logout: 'دەرچوون',
-    logoutDescription: 'دەرچوون لە هەژمارەکەت'
+    logoutDescription: 'دەرچوون لە هەژمارەکەت',
+    passwordResetTitle: 'داواکردنی گۆڕینی وشەی نهێنی',
+    passwordResetSubtitle: 'یارمەتیت پێویستە بۆ وشەی نهێنیەکەت؟',
+    passwordResetMessage: 'بۆ هۆکارەکانی ئاسایش، تەنها بەڕێوەبەران دەتوانن وشەی نهێنی بەکارهێنەران بگۆڕن. تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکە بە بەکارهێنانی زانیاریەکانی خوارەوە بۆ داواکردنی گۆڕینی وشەی نهێنی.',
+    adminContactInfo: 'زانیاری پەیوەندیکردن بە بەڕێوەبەر',
+    adminHardi: 'هەردی',
+    adminKamyar: 'کامیار',
   },
   admin: {
     dashboardTitle: 'داشبۆردی بەڕێوەبەر',
