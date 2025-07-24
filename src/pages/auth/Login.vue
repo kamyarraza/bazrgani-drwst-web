@@ -151,6 +151,53 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <!-- Contact Admin Modal -->
+    <q-dialog v-model="showContactAdminModal" persistent transition-show="slide-up" transition-hide="slide-down"
+      position="bottom" class="mobile-modal-dialog">
+      <q-card class="contact-admin-modal">
+        <div class="modal-header">
+          <div class="modal-icon">
+            <q-icon name="support_agent" size="2.5rem" color="primary" />
+          </div>
+          <h3 class="modal-title">{{ $t('auth.contactAdminTitle') }}</h3>
+          <p class="modal-subtitle">{{ $t('auth.contactAdminSubtitle') }}</p>
+        </div>
+
+        <q-card-section class="modal-content">
+          <div class="info-message">
+            <q-icon name="person_add" class="info-icon" />
+            <p class="info-text">
+              {{ $t('auth.contactAdminMessage') }}
+            </p>
+          </div>
+
+          <div class="contact-section">
+            <h4 class="contact-section-title">{{ $t('auth.adminContactInfo') }}</h4>
+            <div class="contact-info">
+              <div class="contact-item">
+                <q-icon name="phone" class="contact-icon" />
+                <div class="contact-details">
+                  <span class="contact-name">{{ $t('auth.adminHardi') }}</span>
+                  <span class="contact-phone" dir="ltr">+964 770 194 1549</span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <q-icon name="phone" class="contact-icon" />
+                <div class="contact-details">
+                  <span class="contact-name">{{ $t('auth.adminKamyar') }}</span>
+                  <span class="contact-phone" dir="ltr">+964 770 369 2917</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions class="modal-actions">
+          <QBtn is-flat :btn-label="$t('common.close')" class="close-btn" @click="showContactAdminModal = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -177,6 +224,7 @@ const formData = ref<{ username: string; password: string; remember: 1 | 0 }>({
 
 const showPassword = ref(false)
 const showForgotPasswordModal = ref(false)
+const showContactAdminModal = ref(false)
 
 // Initialize reCAPTCHA when component mounts
 onMounted(async () => {
@@ -248,8 +296,7 @@ const handleForgotPassword = () => {
 }
 
 const handleContactAdmin = () => {
-  // For now, just show an alert - you can implement contact admin logic later
-  alert('Please contact the administrator to create an account.')
+  showContactAdminModal.value = true
 }
 </script>
 
@@ -1051,6 +1098,17 @@ const handleContactAdmin = () => {
   align-items: flex-end;
 }
 
+/* Contact Admin Modal Styles */
+.contact-admin-modal {
+  min-width: 400px;
+  max-width: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(42, 123, 155, 0.1);
+}
+
 [dir="rtl"] .contact-phone {
   text-align: left !important;
   direction: ltr !important;
@@ -1237,6 +1295,23 @@ const handleContactAdmin = () => {
   .contact-icon {
     font-size: 1.1rem;
     padding: 0.4rem;
+  }
+
+  .contact-admin-modal {
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    max-height: 90vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+}
+
+/* Extra small screens for contact admin modal */
+@media (max-width: 480px) {
+  .contact-admin-modal {
+    max-height: 95vh !important;
   }
 }
 
