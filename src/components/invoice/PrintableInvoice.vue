@@ -197,7 +197,7 @@
               </div>
               <div class="footer-item">
                 <span class="footer-icon">✉</span>
-                <span>{{ t('invoice.header.companyEmail') }}</span>
+                <span>true.trading23@gmail.com</span>
               </div>
             </div>
           </div>

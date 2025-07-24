@@ -15,7 +15,7 @@
           <div class="flex-item">
             <CustomerSelector ref="customerSelectorRef" :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'" v-model="selectedCustomerId" @select="handleSelectCustomer" />
           </div>
-          <div class="flex-item">
+          <div class="flex-item" :style="isEmployee ? 'display:none' : ''">
             <BranchSelector v-model="selectedBranchId" @select="handleSelectBranch" />
           </div>
           <div class="flex-item">
@@ -197,6 +197,7 @@ import WarehouseSelector from './WarehouseSelector.vue';
 import { useItemTransactionStore } from 'src/stores/itemTransactionStore';
 import { useCustomerStore } from 'src/stores/customerStore';
 import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
+import { useAuthStore } from 'src/stores/authStore';
 import type { Ref } from 'vue';
 import { formatCurrency } from 'src/composables/useFormat';
 import { useI18n } from 'vue-i18n';
@@ -250,6 +251,8 @@ const selectedCustomer: Ref<Customer | null> = ref(null);
 const customerDebt = ref(0);
 
 const exchangeRateStore = useExchangeRateStore();
+const authStore = useAuthStore();
+const isEmployee = computed(() => authStore.currentUser?.type === 'employee');
 
 onMounted(async () => {
   if (!exchangeRateStore.activeRate) {
@@ -372,13 +375,21 @@ async function handleSubmit() {
       payment_type: selectedPaymentType.value,
       note: note.value,
       usd_iqd_rate: usdIqdRate.value,
-      details: selectedItems.value.map(sel => ({
-        item_id: sel.item.id,
-        quantity: sel.quantity,
-        unit_price: sel.unit_cost,
-        solo_unit_price: sel.solo_unit_cost,
-        bulk_unit_price: sel.bulk_unit_cost
-      }))
+      details: selectedItems.value.map(sel => {
+        const base = {
+          item_id: sel.item.id,
+          quantity: sel.quantity,
+          unit_price: sel.unit_cost
+        };
+        if (props.transactionType === 'purchase') {
+          return {
+            ...base,
+            solo_unit_price: sel.solo_unit_cost,
+            bulk_unit_price: sel.bulk_unit_cost
+          };
+        }
+        return base;
+      })
     };
     if (props.transactionType === 'sell') {
       transaction.discounted_rate = discountedRate.value;
@@ -405,6 +416,7 @@ const isFirstSectionComplete = computed(() => {
   return !!selectedCustomerId.value && !!selectedBranchId.value && !!selectedWarehouseId.value && !!selectedPaymentType.value;
 });
 const hasSelectedItems = computed(() => selectedItems.value.length > 0);
+
 </script>
 
 <style scoped>

@@ -87,6 +87,11 @@ const isSelecting = ref(false);
 
 const showResultsList = computed(() => isFocused.value && customerOptions.value.length > 0);
 
+defineExpose({
+  getOptions: () => customerOptions.value,
+  selectCustomer
+});
+
 let searchTimeout: any = null;
 watch(searchQuery, (val) => {
   if (isSelecting.value) {
@@ -109,6 +114,16 @@ async function fetchCustomers(query = '', type = props.customerType as 'customer
   try {
     const customers = await customerStore.searchCustomers(query, type);
     customerOptions.value = customers.map((c: any) => ({ id: c.id, name: c.fname && c.sname ? `${c.fname} ${c.sname}` : c.name, location: c.location }));
+    // Auto-select first customer if none is selected
+    if (customerOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+      const first = customerOptions.value[0];
+      if (first) {
+        emit('update:modelValue', first.id);
+        emit('select', first);
+        selectedCustomerId.value = first.id;
+        searchQuery.value = first.name;
+      }
+    }
   } catch (err: any) {
     errorMsg.value = 'Failed to fetch customers.';
     customerOptions.value = [];

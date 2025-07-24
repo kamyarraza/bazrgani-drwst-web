@@ -163,9 +163,9 @@ import { useCustomerStore } from 'src/stores/customerStore';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
-import CustomerSelector from 'src/components/transaction_new/shared/CustomerSelector.vue';
-import WarehouseSelector from 'src/components/transaction_new/shared/WarehouseSelector.vue';
-import BranchSelector from 'src/components/transaction_new/shared/BranchSelector.vue';
+import CustomerSelector from 'src/components/transaction_alpha/CustomerSelector.vue';
+import WarehouseSelector from 'src/components/transaction_alpha/WarehouseSelector.vue';
+import BranchSelector from 'src/components/transaction_alpha/BranchSelector.vue';
 
 // Props & Emits
 interface Props {

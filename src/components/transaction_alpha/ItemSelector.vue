@@ -249,8 +249,8 @@ defineExpose({
             </div>
             <div class="col q-gutter-md flex justify-end items-center">
               <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitCost')" type="number" dense outlined min="0" style="max-width:110px;" />
-              <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')" type="number" dense outlined min="0" style="max-width:110px;" />
-              <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')" type="number" dense outlined min="0" style="max-width:110px;" />
+              <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')" type="number" dense outlined min="0" style="max-width:110px;" :disable="props.transactionType === 'sell'" />
+              <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')" type="number" dense outlined min="0" style="max-width:110px;" :disable="props.transactionType === 'sell'" />
               <q-btn icon="delete" color="negative" flat round dense @click="removeItem(idx)" class="q-ml-md" />
             </div>
           </div>

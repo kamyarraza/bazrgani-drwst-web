@@ -88,6 +88,11 @@ const isFocused = ref(false);
 
 const showResultsList = computed(() => isFocused.value && warehouseOptions.value.length > 0);
 
+defineExpose({
+  getOptions: () => warehouseOptions.value,
+  selectWarehouse
+});
+
 watch(() => props.modelValue, (val) => {
   selectedWarehouseId.value = val;
 });
@@ -106,6 +111,15 @@ watch(() => props.branchId, async (branchId) => {
       code: w.code,
       location: { name: (w as any).location?.name || '' }
     }));
+    // Auto-select first warehouse if none is selected
+    if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+      const first = warehouseOptions.value[0];
+      if (first) {
+        emit('update:modelValue', first.id);
+        selectedWarehouseId.value = first.id;
+        searchQuery.value = first.name;
+      }
+    }
     loading.value = false;
   } else {
     warehouseOptions.value = [];
@@ -144,6 +158,15 @@ onMounted(async () => {
       code: w.code,
       location: { name: (w as any).location?.name || '' }
     }));
+    // Auto-select first warehouse if none is selected
+    if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+      const first = warehouseOptions.value[0];
+      if (first) {
+        emit('update:modelValue', first.id);
+        selectedWarehouseId.value = first.id;
+        searchQuery.value = first.name;
+      }
+    }
     loading.value = false;
   }
 });
@@ -175,4 +198,4 @@ function onBlur() {
 .warehouse-item.selected {
   background: #e0f7fa;
 }
-</style> 
+</style>

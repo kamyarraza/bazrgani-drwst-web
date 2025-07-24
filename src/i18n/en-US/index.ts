@@ -923,8 +923,8 @@ export default {
     }
   },
   transaction: {
-    aySupplier: "Pay Supplier",
-receiveFromCustomer: "Receive from Customer",
+    paySupplier: 'Pay Supplier',
+    receiveFromCustomer: 'Receive from Customer',
     header: 'Transaction Dashboard',
     subtitle: 'Manage purchase and sales transactions',
     viewInvoice:"View Invoice",
