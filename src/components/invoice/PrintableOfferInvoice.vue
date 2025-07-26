@@ -224,7 +224,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import brandLogo from 'src/assets/images/brand.jpg';
+const brandLogo = '/brand.jpg';
 import type { OfferResponse } from 'src/types/offer';
 
 // Props

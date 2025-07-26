@@ -8,7 +8,7 @@
       <!-- Left side - Brand/Image -->
       <div class="login-left">
         <div class="image-overlay"></div>
-        <img src="../../assets/images/view-room-furniture-monochrome-palette.jpg" alt="Brand"
+        <img src="/login-background.jpg" alt="Brand"
           class="full-background-image" />
 
         <div class="brand-content">

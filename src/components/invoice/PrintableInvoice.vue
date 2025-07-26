@@ -271,7 +271,7 @@ import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
 import type { List } from 'src/types/item_transaction';
-import brandLogo from 'src/assets/images/brand.jpg';
+const brandLogo = '/brand.jpg';
 
 // Composables
 const { t } = useI18n();

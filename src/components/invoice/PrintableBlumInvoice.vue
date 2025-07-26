@@ -253,7 +253,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
-import brandLogo from 'src/assets/images/brand.jpg';
+const brandLogo = '/brand.jpg';
 import type { ListTransactionType } from 'src/types/blumTypes';
 
 // Composables
