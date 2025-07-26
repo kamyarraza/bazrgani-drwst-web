@@ -164,6 +164,8 @@ export default {
     adminKamyar: 'Kamyar',
   },
   admin: {
+    dashboardTitle: 'Admin Dashboard',
+    managingAdmins: 'Managing system administrators',
     addNew: 'Add new admin',
     update: 'Update Admin',
     settings: 'Settings',
@@ -1944,6 +1946,8 @@ export default {
       billingTo: 'Billing To',
       name: 'Name',
       phone: 'Phone',
+      fphone: 'First Phone',
+      sphone: 'Second Phone',
       type: 'Type',
       reference: 'Reference',
     },
@@ -2054,6 +2058,12 @@ export default {
     submitTransaction: 'Submit Transaction',
     pleaseFillAllRequired: 'Please fill all required fields and select at least one item.',
     transactionSubmitted: 'Transaction submitted successfully!',
-    transactionFailed: 'Failed to submit transaction.'
+    transactionFailed: 'Failed to submit transaction.',
+    // New keys for professional design
+    basicInfo: 'Basic Information',
+    review: 'Review & Submit',
+    purchaseSubtitle: 'Record a purchase from a supplier',
+    sellSubtitle: 'Complete a sale to a customer',
+    financialSummary: 'Financial Summary'
   }
 };

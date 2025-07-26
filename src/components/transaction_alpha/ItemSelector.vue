@@ -192,37 +192,68 @@ defineExpose({
             no-caps
           />
         </div>
-        <q-list bordered separator class="item-list" style="max-height: 320px; overflow-y: auto; width: 100%;">
-          <q-item v-for="item in items" :key="item.id">
-            <q-item-section>
-              <q-item-label>{{ item.name }}</q-item-label>
-              <div class="q-gutter-xs q-mt-xs">
-                <q-chip dense color="primary" text-color="white" v-if="props.transactionType=='sell'">{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</q-chip>
-                <q-chip v-if="item.package_units" dense color="secondary" text-color="white">{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</q-chip>
-                <q-chip v-if="item.packet_units" dense color="accent" text-color="white">{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</q-chip>
-                <q-chip v-if="item.pieces" dense color="teal" text-color="white">{{ t('transactionAlpha.pieces') }}: {{ item.pieces }}</q-chip>
+        <div class="items-container">
+          <div v-if="loading" class="loading-state">
+            <q-spinner color="primary" size="2em" />
+            <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
+          </div>
+
+          <div v-else-if="items.length === 0" class="empty-state">
+            <q-icon name="inventory_2" size="3em" color="grey-4" />
+            <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
+            <p class="empty-subtext">{{ t('transactionAlpha.tryDifferentSearch') }}</p>
+          </div>
+
+          <div v-else class="items-grid">
+            <div
+              v-for="item in items"
+              :key="item.id"
+              class="item-card"
+              :class="{ 'item-selected': selectedItemIds.has(item.id) }"
+            >
+              <div class="item-header">
+                <div class="item-name">{{ item.name }}</div>
+                <q-btn
+                  :icon="selectedItemIds.has(item.id) ? 'check_circle' : 'add_circle'"
+                  :color="selectedItemIds.has(item.id) ? 'positive' : 'primary'"
+                  flat
+                  round
+                  dense
+                  size="sm"
+                  @click="() => { if (!selectedItemIds.has(item.id)) selectItem(item); }"
+                  :disable="selectedItemIds.has(item.id)"
+                  class="add-button"
+                />
               </div>
-              <q-item-label caption>
-                <span v-if="item.sku">SKU: {{ item.sku }}</span>
-                <span v-if="item.category"> | {{ item.category.name }}</span>
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn
-                :icon="selectedItemIds.has(item.id) ? 'check' : 'add'"
-                :color="selectedItemIds.has(item.id) ? 'positive' : 'primary'"
-                flat
-                round
-                dense
-                @click="() => { if (!selectedItemIds.has(item.id)) selectItem(item); }"
-                :disable="selectedItemIds.has(item.id)"
-              />
-            </q-item-section>
-          </q-item>
-          <q-item v-if="!loading && items.length === 0">
-            <q-item-section>{{ t('transactionAlpha.noItemsFound') }}</q-item-section>
-          </q-item>
-        </q-list>
+
+              <div class="item-details">
+                <div class="item-meta">
+                  <span v-if="item.sku" class="item-sku">SKU: {{ item.sku }}</span>
+                  <span v-if="item.category" class="item-category">{{ item.category.name }}</span>
+                </div>
+
+                <div class="item-quantities">
+                  <div v-if="props.transactionType=='sell'" class="quantity-badge available">
+                    <q-icon name="inventory" size="14px" />
+                    <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
+                  </div>
+                  <div v-if="item.package_units" class="quantity-badge packages">
+                    <q-icon name="inventory_2" size="14px" />
+                    <span>{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</span>
+                  </div>
+                  <div v-if="item.packet_units" class="quantity-badge packets">
+                    <q-icon name="category" size="14px" />
+                    <span>{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</span>
+                  </div>
+                  <div v-if="item.pieces" class="quantity-badge pieces">
+                    <q-icon name="style" size="14px" />
+                    <span>{{ t('transactionAlpha.pieces') }}: {{ item.pieces }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-if="selectedItems.length > 0" class="selected-items-scroll">
         <div class="q-mb-sm"><b>{{ t('transactionAlpha.selectedItems') }}</b></div>
@@ -293,6 +324,173 @@ defineExpose({
 .search-btn {
   min-width: 90px;
 }
+/* Professional Item Cards Design */
+.items-container {
+  max-height: 320px;
+  overflow-y: auto;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.loading-text {
+  margin: 16px 0 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.empty-text {
+  margin: 16px 0 8px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.empty-subtext {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 4px;
+}
+
+.item-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.item-card:hover {
+  border-color: #1976d2;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+  transform: translateY(-1px);
+}
+
+.item-card.item-selected {
+  border-color: #4caf50;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.4;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.add-button {
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.add-button:hover {
+  transform: scale(1.1);
+}
+
+.item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.item-sku {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.item-category {
+  background: #e0f2fe;
+  color: #1976d2;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.item-quantities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quantity-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.quantity-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.quantity-badge.packages {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.quantity-badge.packets {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.quantity-badge.pieces {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
 .item-list {
   margin-top: 8px;
 }
@@ -351,10 +549,37 @@ defineExpose({
     margin-top: 24px;
     min-width: 0;
   }
+
+  .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+  }
+
+  .item-card {
+    padding: 12px;
+  }
 }
 
 /* Additional responsive improvements for selected item card */
 @media (max-width: 768px) {
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .item-card {
+    padding: 12px;
+  }
+
+  .item-quantities {
+    gap: 4px;
+  }
+
+  .quantity-badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
   .selected-item-card-modern {
     padding: 8px 4px 6px 4px;
     border-radius: 8px;

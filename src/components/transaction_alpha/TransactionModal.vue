@@ -1,189 +1,305 @@
 <template>
   <q-dialog v-model="show" persistent maximized transition-show="slide-up" transition-hide="slide-down">
-    <q-card class="q-pa-none full-width full-height">
-      <div class="transaction-modal-header bg-primary text-white flex items-center justify-between shadow-1">
-        <div class="row items-center no-wrap">
-          <q-icon :name="transactionTypeIcon" size="32px" class="q-mr-md" />
-          <span class="text-h5 text-weight-bold">{{ t('transactionAlpha.transactionTitle', { type: transactionTypeLabel }) }}</span>
-        </div>
-        <q-btn flat round dense icon="close" @click="close" class="close-btn" />
-      </div>
-      <div class="q-pa-lg">
-        <q-separator color="primary" class="q-mb-md" />
-        <div class="section-title q-mb-md">{{ t('transactionAlpha.customerAndTransactionDetails') }}</div>
-        <div class="flex-row items-center">
-          <div class="flex-item">
-            <CustomerSelector ref="customerSelectorRef" :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'" v-model="selectedCustomerId" @select="handleSelectCustomer" />
-          </div>
-          <div class="flex-item" :style="isEmployee ? 'display:none' : ''">
-            <BranchSelector v-model="selectedBranchId" @select="handleSelectBranch" />
-          </div>
-          <div class="flex-item">
-            <WarehouseSelector ref="warehouseSelectorRef" v-model="selectedWarehouseId" :branchId="selectedBranchId" :disabled="!selectedBranchId" />
-          </div>
-          <div class="flex-item items-center q-mt-none q-mb-none">
-            <PaymentTypeSelector v-model="selectedPaymentType" />
-          </div>
-          <div v-if="transactionType === 'sell'" class="flex-item items-center status-align">
-            <div class="text-caption q-mb-xs">{{ t('transactionAlpha.transactionStatus') }}</div>
-            <q-option-group
-              v-model="transactionStatus"
-              :options="statusOptions"
-              type="radio"
-              color="primary"
-              inline
+    <div class="modal-backdrop">
+      <q-card class="professional-modal">
+        <!-- Enhanced Header with Glassmorphism -->
+        <div class="modal-header">
+          <div class="header-content">
+            <div class="header-left">
+              <div class="transaction-icon-wrapper">
+                <q-icon :name="transactionTypeIcon" size="28px" class="transaction-icon" />
+              </div>
+              <div class="header-text">
+                <h1 class="modal-title">{{ t('transactionAlpha.transactionTitle', { type: transactionTypeLabel }) }}</h1>
+              </div>
+            </div>
+            <q-btn
+              flat
+              round
               dense
-              class="q-mt-none q-mb-none"
+              icon="close"
+              @click="close"
+              class="close-button"
+              size="lg"
             />
           </div>
         </div>
-        <transition name="fade">
-          <div v-if="isFirstSectionComplete">
-            <q-separator color="primary" class="q-my-lg" />
-            <div class="section-title q-mb-md">{{ t('transactionAlpha.itemSelection') }}</div>
-            <ItemSelector ref="itemSelectorRef" v-model:selectedItems="selectedItems" :transactionType="transactionType" :warehouseId="selectedWarehouseId" />
+
+        <!-- Progress Indicator -->
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              :style="{ width: `${getProgressPercentage()}%` }"
+            ></div>
           </div>
-        </transition>
-        <transition name="fade">
-          <div v-if="isFirstSectionComplete && hasSelectedItems">
-            <q-separator color="primary" class="q-my-lg" />
-            <div class="section-title q-mb-md">{{ t('transactionAlpha.debtPaymentSection') }}</div>
-            <q-markup-table flat bordered class="q-mb-md" style="min-width: 350px;">
-              <tbody>
-                <tr>
-                  <td class="text-left">
-                    <q-icon name="paid" color="primary" class="q-mr-sm" />
-                    {{ t('transactionAlpha.usdIqd') }}
-                  </td>
-                  <td class="text-right text-weight-bold">
-                    {{ usdIqdRate }} <span class="text-grey-7 q-ml-xs">IQD</span>
-                  </td>
-                </tr>
-                <template v-if="transactionType === 'purchase'">
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="store" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.supplier') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ selectedSupplier ? selectedSupplier.fname + ' ' + selectedSupplier.sname : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="account_balance_wallet" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.weOweSupplier') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(supplierDebt) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="shopping_cart" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.totalPriceOfSelectedItems') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(totalSelectedItemsPrice) }}
-                    </td>
-                  </tr>
-                  <tr v-if="selectedPaymentType === 'borrow'">
-                    <td class="text-left">
-                      <q-icon name="trending_up" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.newTotalOwed') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(newTotalOwed) }}
-                    </td>
-                  </tr>
-                </template>
-                <template v-if="transactionType === 'sell'">
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="person" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.customer') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ selectedCustomer ? selectedCustomer.fname + ' ' + selectedCustomer.sname : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="account_balance_wallet" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.customerOwesUs') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(customerDebt) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="shopping_cart" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.totalPriceBeforeDiscount') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(totalSelectedItemsPrice) }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="percent" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.discountPercent') }}
-                    </td>
-                    <td class="text-right">
-                      <q-input v-model.number="discountedRate" type="number" min="0" max="100" dense outlined style="max-width: 90px; display: inline-block;" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="text-left">
-                      <q-icon name="attach_money" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.totalPriceAfterDiscount') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(totalAfterDiscount) }}
-                    </td>
-                  </tr>
-                  <tr v-if="selectedPaymentType === 'borrow'">
-                    <td class="text-left">
-                      <q-icon name="trending_up" color="primary" class="q-mr-sm" />
-                      {{ t('transactionAlpha.newTotalOwed') }}
-                    </td>
-                    <td class="text-right text-weight-bold">
-                      {{ formatCurrency(newCustomerTotalOwed) }}
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </q-markup-table>
-            <q-separator color="primary" class="q-my-lg" />
-            <div class="section-title q-mb-md q-mt-xl">{{ t('transactionAlpha.note') }}</div>
-            <q-input
-              v-model="note"
-              type="textarea"
-              :label="t('transactionAlpha.addNoteOptional')"
-              outlined
-              autogrow
-              class="note-textarea"
-              style="width: 100%;"
-            />
-            <div class="row justify-end q-mt-md">
-              <q-btn
-                color="primary"
-                class="submit-btn"
-                :label="t('transactionAlpha.submitTransaction')"
-                :loading="submitting"
-                :disable="!canSubmit"
-                unelevated
-                rounded
-                size="md"
-                @click="handleSubmit"
-              />
+          <div class="progress-steps">
+            <div class="step" :class="{ active: true, completed: isFirstSectionComplete }">
+              <div class="step-number">1</div>
+              <span class="step-label">{{ t('transactionAlpha.basicInfo') }}</span>
+            </div>
+            <div class="step" :class="{ active: isFirstSectionComplete, completed: hasSelectedItems }">
+              <div class="step-number">2</div>
+              <span class="step-label">{{ t('transactionAlpha.itemSelection') }}</span>
+            </div>
+            <div class="step" :class="{ active: hasSelectedItems }">
+              <div class="step-number">3</div>
+              <span class="step-label">{{ t('transactionAlpha.review') }}</span>
             </div>
           </div>
-        </transition>
-      </div>
-    </q-card>
+        </div>
+
+        <!-- Main Content -->
+        <div class="modal-content">
+          <!-- Step 1: Basic Information -->
+          <div class="content-section" :class="{ 'section-active': true }">
+            <div class="section-header">
+              <div class="section-icon">
+                <q-icon name="person" size="20px" />
+              </div>
+              <h2 class="section-title">{{ t('transactionAlpha.customerAndTransactionDetails') }}</h2>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-item">
+                <CustomerSelector
+                  ref="customerSelectorRef"
+                  :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'"
+                  v-model="selectedCustomerId"
+                  @select="handleSelectCustomer"
+                />
+              </div>
+              <div class="form-item" :style="isEmployee ? 'display:none' : ''">
+                <BranchSelector v-model="selectedBranchId" @select="handleSelectBranch" />
+              </div>
+              <div class="form-item">
+                <WarehouseSelector
+                  ref="warehouseSelectorRef"
+                  v-model="selectedWarehouseId"
+                  :branchId="selectedBranchId"
+                  :disabled="!selectedBranchId"
+                />
+              </div>
+              <div class="form-item">
+                <PaymentTypeSelector v-model="selectedPaymentType" />
+              </div>
+              <div v-if="transactionType === 'sell'" class="form-item status-item">
+                <label class="form-label">{{ t('transactionAlpha.transactionStatus') }}</label>
+                <q-option-group
+                  v-model="transactionStatus"
+                  :options="statusOptions"
+                  type="radio"
+                  color="primary"
+                  inline
+                  dense
+                  class="status-options"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Item Selection -->
+          <transition name="slide-fade">
+            <div v-if="isFirstSectionComplete" class="content-section" :class="{ 'section-active': isFirstSectionComplete }">
+              <div class="section-header">
+                <div class="section-icon">
+                  <q-icon name="inventory_2" size="20px" />
+                </div>
+                <h2 class="section-title">{{ t('transactionAlpha.itemSelection') }}</h2>
+              </div>
+              <ItemSelector
+                ref="itemSelectorRef"
+                v-model:selectedItems="selectedItems"
+                :transactionType="transactionType"
+                :warehouseId="selectedWarehouseId"
+              />
+            </div>
+          </transition>
+
+          <!-- Step 3: Review & Submit -->
+          <transition name="slide-fade">
+            <div v-if="isFirstSectionComplete && hasSelectedItems" class="content-section" :class="{ 'section-active': hasSelectedItems }">
+              <div class="section-header">
+                <div class="section-icon">
+                  <q-icon name="receipt_long" size="20px" />
+                </div>
+                <h2 class="section-title">{{ t('transactionAlpha.debtPaymentSection') }}</h2>
+              </div>
+
+              <!-- Financial Summary Card -->
+              <div class="summary-card">
+                <div class="summary-header">
+                  <q-icon name="account_balance_wallet" size="24px" color="primary" />
+                  <h3 class="summary-title">{{ t('transactionAlpha.financialSummary') }}</h3>
+                </div>
+
+                <div class="summary-content">
+                  <div class="summary-row">
+                    <div class="summary-label">
+                      <q-icon name="paid" color="primary" size="16px" />
+                      {{ t('transactionAlpha.usdIqd') }}
+                    </div>
+                    <div class="summary-value">
+                      {{ usdIqdRate }} <span class="currency">IQD</span>
+                    </div>
+                  </div>
+
+                  <template v-if="transactionType === 'purchase'">
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="store" color="primary" size="16px" />
+                        {{ t('transactionAlpha.supplier') }}
+                      </div>
+                      <div class="summary-value">
+                        {{ selectedSupplier ? selectedSupplier.fname + ' ' + selectedSupplier.sname : '-' }}
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="account_balance_wallet" color="primary" size="16px" />
+                        {{ t('transactionAlpha.weOweSupplier') }}
+                      </div>
+                      <div class="summary-value debt">
+                        {{ formatCurrency(supplierDebt) }}
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="shopping_cart" color="primary" size="16px" />
+                        {{ t('transactionAlpha.totalPriceOfSelectedItems') }}
+                      </div>
+                      <div class="summary-value total">
+                        {{ formatCurrency(totalSelectedItemsPrice) }}
+                      </div>
+                    </div>
+                    <div v-if="selectedPaymentType === 'borrow'" class="summary-row highlight">
+                      <div class="summary-label">
+                        <q-icon name="trending_up" color="warning" size="16px" />
+                        {{ t('transactionAlpha.newTotalOwed') }}
+                      </div>
+                      <div class="summary-value warning">
+                        {{ formatCurrency(newTotalOwed) }}
+                      </div>
+                    </div>
+                  </template>
+
+                  <template v-if="transactionType === 'sell'">
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="person" color="primary" size="16px" />
+                        {{ t('transactionAlpha.customer') }}
+                      </div>
+                      <div class="summary-value">
+                        {{ selectedCustomer ? selectedCustomer.fname + ' ' + selectedCustomer.sname : '-' }}
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="account_balance_wallet" color="primary" size="16px" />
+                        {{ t('transactionAlpha.customerOwesUs') }}
+                      </div>
+                      <div class="summary-value debt">
+                        {{ formatCurrency(customerDebt) }}
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="shopping_cart" color="primary" size="16px" />
+                        {{ t('transactionAlpha.totalPriceBeforeDiscount') }}
+                      </div>
+                      <div class="summary-value">
+                        {{ formatCurrency(totalSelectedItemsPrice) }}
+                      </div>
+                    </div>
+                    <div class="summary-row discount-row">
+                      <div class="summary-label">
+                        <q-icon name="percent" color="primary" size="16px" />
+                        {{ t('transactionAlpha.discountPercent') }}
+                      </div>
+                      <div class="summary-input">
+                        <q-input
+                          v-model.number="discountedRate"
+                          type="number"
+                          min="0"
+                          max="100"
+                          dense
+                          outlined
+                          class="discount-input"
+                        />
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="attach_money" color="primary" size="16px" />
+                        {{ t('transactionAlpha.totalPriceAfterDiscount') }}
+                      </div>
+                      <div class="summary-value total">
+                        {{ formatCurrency(totalAfterDiscount) }}
+                      </div>
+                    </div>
+                    <div v-if="selectedPaymentType === 'borrow'" class="summary-row highlight">
+                      <div class="summary-label">
+                        <q-icon name="trending_up" color="warning" size="16px" />
+                        {{ t('transactionAlpha.newTotalOwed') }}
+                      </div>
+                      <div class="summary-value warning">
+                        {{ formatCurrency(newCustomerTotalOwed) }}
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Note Section -->
+              <div class="note-section">
+                <div class="section-header">
+                  <div class="section-icon">
+                    <q-icon name="note" size="20px" />
+                  </div>
+                  <h3 class="section-title">{{ t('transactionAlpha.note') }}</h3>
+                </div>
+                <q-input
+                  v-model="note"
+                  type="textarea"
+                  :label="t('transactionAlpha.addNoteOptional')"
+                  outlined
+                  autogrow
+                  class="note-textarea"
+                />
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="action-buttons">
+                <q-btn
+                  flat
+                  :label="t('common.cancel')"
+                  @click="close"
+                  class="cancel-btn"
+                />
+                <q-btn
+                  color="primary"
+                  :label="t('transactionAlpha.submitTransaction')"
+                  :loading="submitting"
+                  :disable="!canSubmit"
+                  unelevated
+                  class="submit-btn"
+                  @click="handleSubmit"
+                />
+              </div>
+            </div>
+          </transition>
+        </div>
+      </q-card>
+    </div>
   </q-dialog>
+
+  <!-- Invoice Modal -->
+  <PrintableInvoice
+    v-model="showInvoiceModal"
+    :transaction="createdTransaction"
+    @transaction-updated="handleTransactionUpdated"
+    @close="closeInvoiceModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -202,6 +318,8 @@ import type { Ref } from 'vue';
 import { formatCurrency } from 'src/composables/useFormat';
 import { useI18n } from 'vue-i18n';
 import type { Customer } from 'src/types/customer';
+import PrintableInvoice from 'src/components/invoice/PrintableInvoice.vue';
+import type { List } from 'src/types/item_transaction';
 const { t } = useI18n();
 
 interface SelectedItem {
@@ -284,6 +402,10 @@ const $q = useQuasar();
 const itemTransactionStore = useItemTransactionStore();
 const submitting = ref(false);
 
+// Invoice modal state
+const showInvoiceModal = ref(false);
+const createdTransaction = ref<List | null>(null);
+
 const canSubmit = computed(() => {
   return selectedCustomerId.value && selectedBranchId.value && selectedPaymentType.value && selectedItems.value.length > 0;
 });
@@ -347,6 +469,11 @@ function clearModalData() {
   customerDebt.value = 0;
   discountedRate.value = 0;
   transactionStatus.value = 'completed';
+
+  // Don't reset invoice modal state here - let it be handled by closeInvoiceModal
+  // showInvoiceModal.value = false;
+  // createdTransaction.value = null;
+
   // Reset child selectors if possible
   void nextTick(() => {
     if (itemSelectorRef.value && typeof itemSelectorRef.value.clearAll === 'function') {
@@ -395,11 +522,56 @@ async function handleSubmit() {
       transaction.discounted_rate = discountedRate.value;
       transaction.status = transactionStatus.value;
     }
-    await itemTransactionStore.createTransaction(transaction, props.transactionType === 'sell' ? 'sale' : 'purchase');
+    const response = await itemTransactionStore.createTransaction(transaction, props.transactionType === 'sell' ? 'sale' : 'purchase');
+
+    // Transform the API response to match the List interface for invoice
+    if (response && response.data) {
+      const apiData = response.data as any; // Use any to handle the actual API response structure
+
+      // Get warehouse information from the store since it's not in the API response
+      const selectedWarehouse = itemTransactionStore.warehouses.find(w => w.id === selectedWarehouseId.value);
+
+      const transformedTransaction: List = {
+        id: apiData.id,
+        type: apiData.type,
+        customer: {
+          id: apiData.customer?.id || 0,
+          name: apiData.customer?.name || '',
+          type: apiData.customer?.type || '',
+          phone: apiData.customer?.fphone || apiData.customer?.phone || ''
+        },
+        warehouse: {
+          id: selectedWarehouse?.id || selectedWarehouseId.value || 0,
+          name: selectedWarehouse?.name || '',
+          code: selectedWarehouse?.code || '',
+          capacity: selectedWarehouse?.capacity || 0
+        },
+        payment_type: apiData.payment_type,
+        items: apiData.items?.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          solo_unit_price: item.solo_unit_price || item.unit_price,
+          bulk_unit_price: item.bulk_unit_price || item.unit_price
+        })) || [],
+        total_price: apiData.total_price,
+        paid_price: apiData.paid_price,
+        unpaid_price: apiData.unpaid_price || 0,
+        usd_iqd_rate: apiData.usd_iqd_rate || 0,
+        note: apiData.note || '',
+        status: apiData.status || 'completed',
+        created_at: apiData.created_at
+      };
+
+            createdTransaction.value = transformedTransaction;
+      showInvoiceModal.value = true;
+    }
+
     $q.notify({ type: 'positive', message: 'Transaction submitted successfully!' });
-    void clearModalData();
+    // Don't clear modal data immediately - let the invoice show first
+    // void clearModalData();
     show.value = false;
-    // Optionally close modal or reset form here
   } catch (_err) {
     $q.notify({ type: 'negative', message: 'Failed to submit transaction.' });
   } finally {
@@ -412,134 +584,524 @@ function close() {
   show.value = false;
 }
 
+function handleTransactionUpdated(transaction: List) {
+  // Handle any updates to the transaction if needed
+  console.log('Transaction updated:', transaction);
+}
+
+function closeInvoiceModal() {
+  showInvoiceModal.value = false;
+  createdTransaction.value = null;
+
+  // Clear the main modal data after invoice is closed
+  void clearModalData();
+}
+
 const isFirstSectionComplete = computed(() => {
   return !!selectedCustomerId.value && !!selectedBranchId.value && !!selectedWarehouseId.value && !!selectedPaymentType.value;
 });
 const hasSelectedItems = computed(() => selectedItems.value.length > 0);
 
+// New methods for professional design
+function getTransactionSubtitle() {
+  if (props.transactionType === 'purchase') {
+    return t('transactionAlpha.purchaseSubtitle', 'Record a purchase from a supplier');
+  } else {
+    return t('transactionAlpha.sellSubtitle', 'Complete a sale to a customer');
+  }
+}
+
+function getProgressPercentage() {
+  if (hasSelectedItems.value) return 100;
+  if (isFirstSectionComplete.value) return 66;
+  return 33;
+}
+
 </script>
 
 <style scoped>
-.full-width { width: 100vw; }
-.full-height { height: 100vh; }
+/* Professional Modal Design - Inspired by modern SaaS applications */
 
-.transaction-modal-header {
-  height: 72px;
-  padding: 0 32px;
+/* Backdrop with glassmorphism effect */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.1) 0%, rgba(156, 39, 176, 0.1) 100%);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(0,0,0,0.07);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-.text-h5 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-.close-btn {
-  margin-left: 16px;
-  color: white;
-  background: rgba(255,255,255,0.08);
-  transition: background 0.2s;
-}
-.close-btn:hover {
-  background: rgba(255,255,255,0.18);
-}
-.flex-row {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-.flex-item {
-  flex: 1 1 0;
-  min-width: 0;
-}
-.section-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1976d2;
-  letter-spacing: 0.5px;
-}
-.note-textarea {
-  min-height: 80px;
-  margin-bottom: 32px;
-}
-.submit-btn {
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  min-width: 140px;
-  max-width: 220px;
-  margin-top: 12px;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.4s;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-.fade-enter-to, .fade-leave-from {
-  opacity: 1;
-}
-.status-align {
-  margin-top: 14px;
+  justify-content: center;
+  z-index: 2000;
 }
 
-/* Responsive styles for mobile and tablet */
+/* Main modal container */
+.professional-modal {
+  width: 95vw;
+  max-width: 1200px;
+  height: 95vh;
+  max-height: 900px;
+  border-radius: 20px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Enhanced Header - Compact for laptops */
+.modal-header {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  padding: 16px 24px;
+  position: relative;
+  overflow: hidden;
+  min-height: 60px;
+}
+
+.modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.transaction-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.transaction-icon {
+  color: white;
+}
+
+.header-text {
+  color: white;
+}
+
+.modal-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.close-button {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.05);
+}
+
+/* Progress Indicator - Compact */
+.progress-container {
+  padding: 12px 24px;
+  background: rgba(248, 250, 252, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.progress-bar {
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+.step.completed .step-number {
+  background: #4caf50;
+  color: white;
+}
+
+.step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.step-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Main Content - More space for content */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background: white;
+}
+
+.content-section {
+  margin-bottom: 24px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.content-section.section-active {
+  opacity: 1;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.section-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1976d2;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.25px;
+}
+
+/* Form Grid - Optimized for laptops */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-item {
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.status-item {
+  grid-column: 1 / -1;
+}
+
+.status-options {
+  margin-top: 8px;
+}
+
+/* Summary Card - Compact */
+.summary-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.summary-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row.highlight {
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 0 -16px;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.summary-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.summary-value.debt {
+  color: #d32f2f;
+}
+
+.summary-value.total {
+  color: #1976d2;
+  font-size: 1rem;
+}
+
+.summary-value.warning {
+  color: #f57c00;
+}
+
+.currency {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+.summary-input {
+  flex-shrink: 0;
+}
+
+.discount-input {
+  width: 100px;
+}
+
+.discount-row {
+  align-items: flex-start;
+}
+
+/* Note Section */
+.note-section {
+  margin-bottom: 32px;
+}
+
+.note-textarea {
+  margin-top: 16px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cancel-btn {
+  color: #6b7280 !important;
+  font-weight: 500;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+}
+
+.submit-btn:disabled {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Animations */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Responsive Design */
 @media (max-width: 1024px) {
-  .q-pa-lg {
-    padding: 16px !important;
+  .professional-modal {
+    width: 98vw;
+    height: 95vh;
   }
-  .transaction-modal-header {
-    padding: 0 12px;
-    height: 56px;
+
+  .modal-content {
+    padding: 24px;
   }
-  .section-title {
-    font-size: 1.05rem;
+
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }
+
 @media (max-width: 768px) {
-  .flex-row {
-    flex-direction: column;
-    gap: 0;
+  .modal-header {
+    padding: 20px 24px;
   }
-  .flex-item {
-    width: 100%;
-    min-width: 0;
-    margin-bottom: 12px;
+
+  .modal-title {
+    font-size: 1.5rem;
   }
-  .status-align {
-    margin-top: 0;
+
+  .modal-subtitle {
+    font-size: 0.875rem;
   }
-  .transaction-modal-header {
+
+  .transaction-icon-wrapper {
+    width: 48px;
     height: 48px;
-    padding: 0 6px;
   }
-  .q-pa-lg {
-    padding: 8px !important;
+
+  .progress-container {
+    padding: 16px 24px;
   }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .summary-card {
+    padding: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column-reverse;
+  }
+
   .submit-btn {
-    min-width: 100%;
-    max-width: 100%;
-    margin-top: 16px;
-  }
-  .note-textarea {
-    min-height: 60px;
-    margin-bottom: 16px;
+    width: 100%;
   }
 }
+
 @media (max-width: 480px) {
-  .full-width { width: 100vw; }
-  .full-height { height: 100vh; }
-  .transaction-modal-header {
-    height: 40px;
-    padding: 0 2px;
+  .professional-modal {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
   }
-  .section-title {
-    font-size: 0.98rem;
+
+  .modal-header {
+    padding: 16px 20px;
   }
-  .q-pa-lg {
-    padding: 4px !important;
+
+  .modal-content {
+    padding: 16px;
+  }
+
+  .summary-card {
+    padding: 16px;
+  }
+
+  .form-grid {
+    gap: 16px;
   }
 }
 </style>

@@ -117,47 +117,7 @@
         </div>
       </div>
 
-      <!-- Branch Statistics Summary -->
-      <div v-if="branches.length > 0" class="branch-stats q-mt-lg">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-icon">
-              <q-icon name="business" color="primary" size="1.5rem" />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ branches.length }}</div>
-              <div class="stat-label">Total Branches</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">
-              <q-icon name="warehouse" color="secondary" size="1.5rem" />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ totalWarehouses }}</div>
-              <div class="stat-label">Warehouses</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">
-              <q-icon name="people" color="accent" size="1.5rem" />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ totalUsers }}</div>
-              <div class="stat-label">Total Users</div>
-            </div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon">
-              <q-icon name="analytics" color="positive" size="1.5rem" />
-            </div>
-            <div class="stat-content">
-              <div class="stat-value">{{ formatCapacity(averageCapacity) }}</div>
-              <div class="stat-label">Avg Capacity</div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </q-card-section>
   </q-card>
 </template>
@@ -197,18 +157,7 @@ const maxCapacity = computed(() => {
   return Math.max(...props.branches.map(branch => branch.capacity));
 });
 
-const totalWarehouses = computed(() => {
-  return props.branches.reduce((sum, branch) => sum + branch.warehouses, 0);
-});
 
-const totalUsers = computed(() => {
-  return props.branches.reduce((sum, branch) => sum + branch.users, 0);
-});
-
-const averageCapacity = computed(() => {
-  if (props.branches.length === 0) return 0;
-  return props.branches.reduce((sum, branch) => sum + branch.capacity, 0) / props.branches.length;
-});
 
 // Methods
 function _getRankingColor(index: number): string {
@@ -431,57 +380,7 @@ function showAnalytics() {
     }
   }
 
-  .branch-stats {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
-    padding: 1rem;
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 1rem;
-
-      .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.5rem;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-
-        .stat-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 40px;
-          height: 40px;
-          background: rgba(52, 152, 219, 0.1);
-          border-radius: 8px;
-        }
-
-        .stat-content {
-          flex: 1;
-          min-width: 0;
-
-          .stat-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #2c3e50;
-            line-height: 1;
-          }
-
-          .stat-label {
-            font-size: 0.7rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            font-weight: 500;
-            margin-top: 2px;
-          }
-        }
-      }
-    }
-  }
 }
 
 // Responsive adjustments
@@ -553,37 +452,7 @@ function showAnalytics() {
       }
     }
 
-    .branch-stats {
-      margin-top: 1rem;
 
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
-
-        .stat-item {
-          padding: 0.5rem;
-
-          .stat-icon {
-            width: 32px;
-            height: 32px;
-
-            .q-icon {
-              font-size: 1.2rem;
-            }
-          }
-
-          .stat-content {
-            .stat-value {
-              font-size: 1rem;
-            }
-
-            .stat-label {
-              font-size: 0.6rem;
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -619,20 +488,7 @@ function showAnalytics() {
       }
     }
 
-    .branch-stats {
-      .stats-grid {
-        grid-template-columns: 1fr;
 
-        .stat-item {
-          justify-content: center;
-          text-align: center;
-
-          .stat-content {
-            text-align: center;
-          }
-        }
-      }
-    }
   }
 }
 </style>

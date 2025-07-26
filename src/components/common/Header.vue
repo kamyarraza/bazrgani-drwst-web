@@ -2,8 +2,8 @@
   <div class="page-header" :class="{ 'no-wave': !showWaves }">
     <div class="header-content">
       <div class="header-left">
-        <h1 class="header-title">{{ t(title) }} <span v-if="titleSecondary" class="">{{ t(titleSecondary) }}</span></h1>
-        <p v-if="subtitle" class="header-subtitle">{{ t(subtitle) }}</p>
+        <h1 class="header-title">{{ title }} <span v-if="titleSecondary" class="">{{ titleSecondary }}</span></h1>
+        <p v-if="subtitle" class="header-subtitle">{{ subtitle }}</p>
       </div>
       <div class="header-illustration" v-if="icon">
         <div v-if="showWaves" class="animated-waves"></div>
@@ -23,9 +23,6 @@
 
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
 defineProps({
   // Main title text
   title: {

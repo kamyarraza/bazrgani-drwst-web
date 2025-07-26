@@ -221,7 +221,6 @@ onMounted(async () => {
       badge.classList.remove('show-badge')
       badge.style.visibility = 'hidden'
       badge.style.opacity = '0'
-      console.log('🔒 reCAPTCHA badge hidden on custom layout')
     }
   }
 
@@ -238,45 +237,32 @@ onMounted(async () => {
 
   // Check if userProfile data exists and is not being fetched, otherwise skip
   if (!userProfile.value && !profileStore.loading) {
-    console.log('🔄 CustomLayout: Fetching user profile (not loaded yet)');
     promises.push(
       profileStore.fetchUserProfile().catch(error => {
-        console.log('Failed to fetch user profile:', error);
       })
     );
-  } else {
-    console.log('✅ CustomLayout: User profile already loaded, skipping fetch');
   }
 
   // Check if notifications exist and are not being fetched, otherwise skip
   if (notificationStore.notifications.length === 0 && !notificationStore.loading) {
-    console.log('🔄 CustomLayout: Fetching notifications (not loaded yet)');
     promises.push(
       notificationStore.getNotifications().catch(error => {
-        console.log('Failed to fetch notifications:', error);
       })
     );
-  } else {
-    console.log('✅ CustomLayout: Notifications already loaded, skipping fetch');
   }
 
   // Execute remaining API calls in parallel to reduce loading time
   if (promises.length > 0) {
-    console.log(`🚀 CustomLayout: Making ${promises.length} API call(s)`);
     await Promise.allSettled(promises);
-  } else {
-    console.log('✅ CustomLayout: No API calls needed, all data already loaded');
   }
 
   // Start auto-refresh for notifications with 50-second interval
-  console.log('🔔 Starting notification auto-refresh (every 50 seconds)');
   notificationStore.startAutoRefresh();
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkScreenSize);
   // Stop notification auto-refresh
-  console.log('🛑 Stopping notification auto-refresh');
   notificationStore.stopAutoRefresh();
 });
 
@@ -320,11 +306,8 @@ function onFabAction(action: { icon: string; name: string; color?: string; textC
 // Handle exchange form submission
 function handleExchangeSubmit() {
   // This function will be called when the exchange form is submitted
-  console.log('Exchange rate submitted successfully');
 }
 watch(() => authStore.isLoggedOut, async (val) => {
-  console.log('isLoggedOut', val)
-
   await router.push({ name: 'login' })
 })
 
@@ -454,6 +437,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 
 .custom-header {
   z-index: 101; /* Make sure header is above sidebar */
+  overflow: hidden;
+  width: 100%;
 }
 
 .toolbar-container {
@@ -462,16 +447,28 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
+  width: 100%;
 }
 
 .header-left,
 .header-right {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+}
+
+.header-left {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .header-right {
   gap: 8px;
+  flex-shrink: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .menu-toggle-btn {
@@ -486,6 +483,9 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 
 .brand-section {
   margin-left: 8px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .brand-title {
@@ -493,6 +493,9 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   font-weight: 600;
   color: white;
   letter-spacing: -0.025em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .language-btn,
@@ -595,6 +598,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 
 .user-profile-section {
   margin-left: 8px;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .user-profile-btn {
@@ -602,6 +607,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   padding: 4px 8px;
   transition: all 0.2s ease;
   min-height: 44px;
+  max-width: 200px;
+  overflow: hidden;
 }
 
 .user-profile-btn:hover {
@@ -623,6 +630,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .user-avatar {
@@ -639,6 +648,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .user-name {
@@ -649,7 +660,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  max-width: 100px;
 }
 
 .user-role {
@@ -659,7 +670,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  max-width: 100px;
 }
 
 .user-menu {
@@ -708,22 +719,27 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   .toolbar-container {
     padding: 0 4px;
     min-height: 48px;
+    overflow: hidden;
   }
   .brand-title {
     font-size: 1rem;
-    max-width: 90vw;
+    max-width: 60vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .brand-section {
     margin-left: 4px;
+    max-width: 60vw;
   }
   .header-left {
     gap: 2px;
+    max-width: 60vw;
   }
   .header-right {
     gap: 2px;
+    max-width: 40vw;
+    overflow: hidden;
   }
   .language-btn,
   .notification-btn,
@@ -733,15 +749,18 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     min-height: 32px;
     padding: 0;
     font-size: 16px;
+    flex-shrink: 0;
   }
   .user-profile-content {
     gap: 2px;
+    max-width: 120px;
   }
   .user-avatar {
     width: 28px !important;
     height: 28px !important;
     min-width: 28px !important;
     min-height: 28px !important;
+    flex-shrink: 0;
   }
   .user-info {
     display: none;
@@ -763,6 +782,23 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 }
 
 @media (max-width: 480px) {
+  .toolbar-container {
+    padding: 0 2px;
+  }
+  .brand-title {
+    font-size: 0.9rem;
+    max-width: 50vw;
+  }
+  .brand-section {
+    max-width: 50vw;
+  }
+  .header-left {
+    max-width: 50vw;
+  }
+  .header-right {
+    max-width: 50vw;
+    gap: 1px;
+  }
   .user-menu {
     min-width: 240px;
     max-width: 90vw;

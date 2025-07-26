@@ -58,10 +58,15 @@
                 <span class="label">{{ t('invoice.details.name') }}:</span>
                 <span class="value">{{ transaction?.customer?.name || 'N/A' }}</span>
               </div>
-              <div class="detail-row">
+              <div class="detail-row" v-if="(transaction?.customer as any)?.phone">
                 <span class="label">{{ t('invoice.details.phone') }}:</span>
-                <span class="value">{{ (transaction?.customer as any)?.fphone || 'N/A' }}</span>
+                <span class="value">{{ (transaction?.customer as any)?.phone }}</span>
               </div>
+              <div class="detail-row" v-if="(transaction?.customer as any)?.fphone">
+                <span class="label">{{ t('invoice.details.fphone') }}:</span>
+                <span class="value">{{ (transaction?.customer as any)?.fphone }}</span>
+              </div>
+
               <div class="detail-row">
                 <span class="label">{{ t('invoice.details.type') }}:</span>
                 <span class="value">{{ transaction?.customer?.type || 'N/A' }}</span>
