@@ -27,9 +27,14 @@
           <div class="section-header" @click="toggleSection(index)">
             <div class="section-title">{{ section.title }}</div>
             <q-icon
-              :name="isRTL ? (sectionStates[index] ? 'chevron_left' : 'chevron_right') : (sectionStates[index] ? 'expand_more' : 'chevron_right')"
-              size="xs"
+              :name="isRTL ? (sectionStates[index] ? 'expand_less' : 'expand_more') : (sectionStates[index] ? 'expand_less' : 'expand_more')"
+              size="sm"
               class="section-icon"
+              :class="{ 'section-icon-expanded': sectionStates[index] }"
+              :style="{
+                transform: sectionStates[index] ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1)'
+              }"
             />
           </div>
 
