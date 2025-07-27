@@ -6,17 +6,13 @@
           <div class="header-info">
             <h6 class="text-weight-bold q-my-none">
               <q-icon name="info" size="sm" class="q-mr-sm" />
-              Activity Details
+              {{ t('logs.activityDetails', 'Activity Details') }}
             </h6>
             <p class="text-caption text-grey-6 q-mb-none">
-              Detailed information about this activity
+              {{ t('logs.detailedInformation', 'Detailed information about this activity') }}
             </p>
           </div>
-          <q-chip
-            :color="getActionColor(logEntry.title)"
-            text-color="white"
-            icon="event"
-          >
+          <q-chip :color="getActionColor(logEntry.title)" text-color="white" icon="event">
             {{ logEntry.title }}
           </q-chip>
         </div>
@@ -30,7 +26,7 @@
           <div class="detail-section">
             <div class="section-title">
               <q-icon name="person" size="sm" class="q-mr-sm" />
-              User Information
+              {{ t('logs.userInformation', 'User Information') }}
             </div>
             <q-list class="detail-list">
               <q-item>
@@ -55,24 +51,24 @@
           <div class="detail-section">
             <div class="section-title">
               <q-icon name="receipt_long" size="sm" class="q-mr-sm" />
-              Action Information
+              {{ t('logs.actionInformation', 'Action Information') }}
             </div>
             <q-list class="detail-list">
               <q-item>
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">Entity Type</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ t('logs.entityType', 'Entity Type') }}</q-item-label>
                   <q-item-label caption>{{ logEntry.entity }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">Entity ID</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ t('logs.entityId', 'Entity ID') }}</q-item-label>
                   <q-item-label caption>{{ logEntry.entity_id }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">Timestamp</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ t('logs.timestamp', 'Timestamp') }}</q-item-label>
                   <q-item-label caption>{{ formatFullDate(logEntry.created_at) }}</q-item-label>
                 </q-item-section>
               </q-item>
@@ -83,12 +79,12 @@
           <div class="detail-section">
             <div class="section-title">
               <q-icon name="devices" size="sm" class="q-mr-sm" />
-              System Information
+              {{ t('logs.systemInformation', 'System Information') }}
             </div>
             <q-list class="detail-list">
               <q-item>
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">IP Address</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ t('logs.ipAddress', 'IP Address') }}</q-item-label>
                   <q-item-label caption>
                     <q-icon name="public" size="xs" class="q-mr-xs" />
                     {{ logEntry.ip_address }}
@@ -97,7 +93,7 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">Platform</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ t('logs.platform', 'Platform') }}</q-item-label>
                   <q-item-label caption>
                     <q-icon :name="getPlatformIcon(logEntry.platform)" size="xs" class="q-mr-xs" />
                     {{ logEntry.platform }}
@@ -106,7 +102,7 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">Browser</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ t('logs.browser', 'Browser') }}</q-item-label>
                   <q-item-label caption>
                     <q-icon name="web" size="xs" class="q-mr-xs" />
                     {{ logEntry.browser }}
@@ -121,7 +117,7 @@
         <div class="data-changes-section q-mt-lg">
           <div class="section-title">
             <q-icon name="compare_arrows" size="sm" class="q-mr-sm" />
-            Data Changes
+            {{ t('logs.dataChanges', 'Data Changes') }}
           </div>
 
           <div class="changes-container">
@@ -129,7 +125,7 @@
             <div class="data-column" v-if="logEntry.old_data">
               <div class="data-header old-data-header">
                 <q-icon name="history" size="sm" class="q-mr-sm" />
-                Previous Data
+                {{ t('logs.previousData', 'Previous Data') }}
               </div>
               <q-card class="data-card old-data-card">
                 <q-card-section>
@@ -147,7 +143,7 @@
             <div class="data-column">
               <div class="data-header new-data-header">
                 <q-icon name="fiber_new" size="sm" class="q-mr-sm" />
-                {{ logEntry.old_data ? 'New Data' : 'Created Data' }}
+                {{ logEntry.old_data ? t('logs.newData', 'New Data') : t('logs.createdData', 'Created Data') }}
               </div>
               <q-card class="data-card new-data-card">
                 <q-card-section>
@@ -166,6 +162,9 @@
 import { defineProps } from 'vue'
 import type { AuditLogEntry } from 'src/types/log'
 import { date } from 'quasar'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Props
 const _props = defineProps<{

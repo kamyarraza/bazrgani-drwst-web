@@ -1,42 +1,28 @@
 <template>
-    <q-page class="q-pa-md">
-        <!-- Activity Logs Header Card -->
-        <Header
-            title="Activity Logs"
-            subtitle="Track system activities and audit trails"
-            icon="history"
-            icon-size="3rem"
-            icon-color="white"
-            :show-waves="true"
-            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-        />
-        <!-- Sticky Notes Overlay (absolute, not in normal flow) -->
-        <div class="sticky-notes-overlay">
-            <div v-for="(note, idx) in notes" :key="note.id" style="margin-bottom: 12px;">
-                <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }" @close="removeNote(note.id)" />
-            </div>
-        </div>
-        <!-- Filters Section -->
-        <Filter v-model:filters="filters" :filter-options="filterOptions"
-            :search-label="t('logs.searchLabel', 'Search by user, action, or entity')"
-            :reset-label="t('logs.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
+  <q-page class="q-pa-md">
+    <!-- Activity Logs Header Card -->
+    <Header :title="t('logs.title', 'Activity Logs')"
+      :subtitle="t('logs.subtitle', 'Track system activities and audit trails')" icon="history" icon-size="3rem"
+      icon-color="white" :show-waves="true"
+      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
+    <!-- Sticky Notes Overlay (absolute, not in normal flow) -->
+    <div class="sticky-notes-overlay">
+      <div v-for="(note, idx) in notes" :key="note.id" style="margin-bottom: 12px;">
+        <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }"
+          @close="removeNote(note.id)" />
+      </div>
+    </div>
+    <!-- Filters Section -->
+    <Filter v-model:filters="filters" :filter-options="filterOptions"
+      :search-label="t('logs.searchLabel', 'Search by user, action, or entity')"
+      :reset-label="t('logs.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
 
-        <!-- Activity Logs Table -->
-        <QtableB
-        show-bottom
-          :top-right="false"
-            :hasExpandableRows="false"
+    <!-- Activity Logs Table -->
+    <QtableB show-bottom :top-right="false" :hasExpandableRows="false" :columns="columns" :rows="filteredData"
+      :loading="logStore.loading" :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange">
 
-            :columns="columns"
-            :rows="filteredData"
-            :loading="logStore.loading"
-            :menuItems="menuItems"
-            :pagination="pagination"
-            @page-change="handlePageChange"
-        >
-
-        </QtableB>
-    </q-page>
+    </QtableB>
+  </q-page>
 </template>
 
 <script setup lang="ts">
@@ -193,13 +179,13 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .q-card {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 
-    &:hover {
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .bg-primary {
@@ -207,89 +193,92 @@ onMounted(async () => {
 }
 
 .text-h4 {
-    font-size: 2.2rem;
-    font-weight: 700;
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
 .text-caption {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 :deep(.q-table) {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
 :deep(.q-table th) {
-    font-weight: 600;
-    background-color: rgba(0, 0, 0, 0.03);
+  font-weight: 600;
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 :deep(.q-table tbody tr:hover) {
-    background-color: rgba(25, 118, 210, 0.05);
+  background-color: rgba(25, 118, 210, 0.05);
 }
 
 // Animation for statistics
 @keyframes countUp {
-    from {
-        transform: translateY(10px);
-        opacity: 0;
-    }
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
 
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.text-h2, .text-h5.text-weight-bold.countup {
-    font-size: 2rem !important;
-    font-weight: 700;
-    animation: countUp 0.5s ease-out forwards;
-    margin-bottom: 0;
+.text-h2,
+.text-h5.text-weight-bold.countup {
+  font-size: 2rem !important;
+  font-weight: 700;
+  animation: countUp 0.5s ease-out forwards;
+  margin-bottom: 0;
 }
 
 .q-card-section {
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
 }
 
 // Sticky notes overlay style
 .sticky-notes-overlay {
-    position: fixed;
-    top: 100px; // adjust as needed to be below header
-    right: 32px;
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    pointer-events: none;
+  position: fixed;
+  top: 100px; // adjust as needed to be below header
+  right: 32px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
 }
-.sticky-notes-overlay > div {
-    pointer-events: auto;
+
+.sticky-notes-overlay>div {
+  pointer-events: auto;
 }
 
 // Pagination styles
 .q-pagination {
-    margin-top: 16px;
-    .q-btn {
-        min-width: 36px;
-        min-height: 36px;
-        font-weight: 500;
-        border-radius: 6px;
-        margin: 0 3px;
-        color: var(--q-primary);
+  margin-top: 16px;
 
-        &.q-btn--active {
-            background: var(--q-primary) !important;
-            color: white !important;
-            transform: scale(1.05);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
+  .q-btn {
+    min-width: 36px;
+    min-height: 36px;
+    font-weight: 500;
+    border-radius: 6px;
+    margin: 0 3px;
+    color: var(--q-primary);
 
-        &:hover:not(.q-btn--active) {
-            background: rgba(var(--q-primary-rgb), 0.1) !important;
-        }
+    &.q-btn--active {
+      background: var(--q-primary) !important;
+      color: white !important;
+      transform: scale(1.05);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
+
+    &:hover:not(.q-btn--active) {
+      background: rgba(var(--q-primary-rgb), 0.1) !important;
+    }
+  }
 }
 
 // Log specific styles

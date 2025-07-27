@@ -1181,6 +1181,40 @@ receiveFromCustomer: "استلام من العميل",
       iqd: 'الدينار العراقي',
     },
   },
+  logs: {
+    title: 'سجلات النشاط',
+    subtitle: 'تتبع أنشطة النظام ومسارات التدقيق',
+    searchLabel: 'البحث بالمستخدم أو الإجراء أو الكيان',
+    resetFilters: 'إعادة تعيين',
+    entity: 'نوع الكيان',
+    platform: 'المنصة',
+    viewDetails: 'عرض التفاصيل',
+
+    // مفاتيح إضافية لمكون LogDetails
+    activityDetails: 'تفاصيل النشاط',
+    detailedInformation: 'معلومات مفصلة حول هذا النشاط',
+    userInformation: 'معلومات المستخدم',
+    actionInformation: 'معلومات الإجراء',
+    systemInformation: 'معلومات النظام',
+    entityType: 'نوع الكيان',
+    entityId: 'معرف الكيان',
+    timestamp: 'الطابع الزمني',
+    ipAddress: 'عنوان IP',
+    browser: 'المتصفح',
+    dataChanges: 'تغييرات البيانات',
+    previousData: 'البيانات السابقة',
+    newData: 'البيانات الجديدة',
+    createdData: 'البيانات المُنشأة',
+
+    columns: {
+      user: 'المستخدم',
+      action: 'الإجراء',
+      platform: 'المنصة',
+      ipAddress: 'عنوان IP',
+      timestamp: 'الطابع الزمني',
+      actions: 'الإجراءات'
+    }
+  },
   blumTransaction: {
     // عناوين الصفحات والعناوين الفرعية
     title: 'معاملة بلوم',
@@ -1403,5 +1437,100 @@ receiveFromCustomer: "استلام من العميل",
     pleaseFillAllRequired: 'يرجى ملء جميع الحقول المطلوبة واختيار عنصر واحد على الأقل.',
     transactionSubmitted: 'تم إرسال المعاملة بنجاح!',
     transactionFailed: 'فشل في إرسال المعاملة.'
+  },
+  dashboard: {
+    title: 'لوحة التحكم',
+    subtitle: 'نظرة عامة على الأعمال والمقاييس الرئيسية',
+    refresh: 'تحديث لوحة التحكم',
+    refreshSuccess: 'تم تحديث لوحة التحكم بنجاح',
+    refreshError: 'فشل في تحديث لوحة التحكم',
+    overview: 'نظرة عامة',
+    recentActivities: 'الأنشطة الحديثة',
+    recentActivitiesSubtitle: 'أحدث أنشطة وأحداث النظام',
+    viewAll: 'عرض الكل',
+    refreshActivities: 'تحديث الأنشطة',
+    noActivities: 'لا توجد أنشطة حديثة',
+    loadingActivities: 'جاري تحميل الأنشطة...',
+    branchPerformance: 'أداء الفروع',
+    branchPerformanceSubtitle: 'نظرة عامة على أفضل الفروع أداءً',
+    viewAnalytics: 'عرض التحليلات',
+    loadingBranches: 'جاري تحميل بيانات الفروع...',
+    noBranches: 'لا توجد بيانات متاحة للفروع',
+    exchangeRate: 'سعر صرف الدينار العراقي إلى الدولار الأمريكي',
+    exchangeRateSubtitle: 'سعر صرف الدينار العراقي إلى الدولار الأمريكي عبر الزمن',
+    refreshData: 'تحديث البيانات',
+
+    // Exchange Rate Component
+    exchangeRateComponent: {
+      currentExchangeRate: 'سعر الصرف الحالي',
+      usdToIqd: 'الدولار الأمريكي إلى الدينار العراقي',
+      previousRate: 'السعر السابق',
+      currentRate: 'السعر الحالي',
+      today: 'اليوم',
+      noChange: 'لا تغيير',
+      fromYesterday: 'من أمس',
+      increase: 'زيادة',
+      decrease: 'انخفاض',
+      eurToUsd: 'سعر اليورو إلى الدولار',
+      noExchangeRateData: 'لا توجد بيانات لسعر الصرف',
+      loadingExchangeRateData: 'جاري تحميل بيانات سعر الصرف...'
+    },
+
+    // Users Breakdown
+    usersBreakdown: 'تصنيف المستخدمين',
+    userTypes: {
+      accountants: 'المحاسبون',
+      admins: 'المديرون',
+      customers: 'العملاء',
+      employees: 'الموظفون'
+    },
+
+    // Prices Overview Section
+    pricesOverview: {
+      title: 'النظرة المالية العامة',
+      subtitle: 'راقب أداء عملك والصحة المالية',
+      refresh: 'تحديث البيانات المالية',
+
+      // Business Performance
+      businessPerformance: {
+        title: 'الأداء التجاري',
+        totalPurchased: 'إجمالي المشتريات',
+        totalPurchasedSubtitle: 'جميع معاملات الشراء',
+        totalSold: 'إجمالي المبيعات',
+        totalSoldSubtitle: 'جميع معاملات البيع',
+        netProfit: 'صافي الربح',
+        netProfitSubtitle: 'الربح بعد خصم التكاليف',
+        grossProfit: 'إجمالي الربح',
+        grossProfitSubtitle: 'الربح قبل خصم التكاليف',
+        profitMargin: 'هامش الربح',
+        profitMarginSubtitle: 'نسبة الربح من المبيعات'
+      },
+
+      // Customer Performance
+      customerPerformance: {
+        title: 'أداء العملاء',
+        totalCustomers: 'إجمالي العملاء',
+        totalCustomersSubtitle: 'عدد العملاء المسجلين',
+        activeCustomers: 'العملاء النشطون',
+        activeCustomersSubtitle: 'العملاء الذين لديهم معاملات حديثة',
+        newCustomers: 'عملاء جدد',
+        newCustomersSubtitle: 'العملاء المسجلون هذا الشهر',
+        topCustomers: 'أفضل العملاء',
+        topCustomersSubtitle: 'العملاء الأعلى في قيمة المشتريات'
+      },
+
+      // Inventory Performance
+      inventoryPerformance: {
+        title: 'أداء المخزون',
+        totalItems: 'إجمالي العناصر',
+        totalItemsSubtitle: 'عدد العناصر في المخزون',
+        lowStockItems: 'عناصر منخفضة المخزون',
+        lowStockItemsSubtitle: 'عناصر تحتاج إلى إعادة تموين',
+        outOfStockItems: 'عناصر نفدت من المخزون',
+        outOfStockItemsSubtitle: 'عناصر غير متوفرة حالياً',
+        topSellingItems: 'أكثر العناصر مبيعاً',
+        topSellingItemsSubtitle: 'العناصر الأعلى في المبيعات'
+      }
+    }
   }
 };
