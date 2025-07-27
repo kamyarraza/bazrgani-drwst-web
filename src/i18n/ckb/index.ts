@@ -102,7 +102,7 @@ export default {
     passwordRequired: 'وشەی نهێنی داواکراوە',
     login: 'چوونەژوورەوە',
     forgotPassword: 'وشەی نهێنیت لەبیر چووە؟',
-    rememberMe: 'بیرم بهێنەوە',
+    rememberMe: 'منت لەبیربێت',
     logout: 'دەرچوون',
     logoutDescription: 'دەرچوون لە هەژمارەکەت',
     passwordResetTitle: 'داواکردنی گۆڕینی وشەی نهێنی',
