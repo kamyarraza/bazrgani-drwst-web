@@ -16,6 +16,7 @@ declare module 'vue' {
 const api = axios.create({
     //  baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
      baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
+    //  baseURL: 'http://localhost:4000/api',
 
   withCredentials: true,
   headers: {
@@ -103,7 +104,7 @@ api.interceptors.response.use(
               }
               return Promise.reject(new Error('Session expired. Please login again.'));
             }
-          } catch (refreshError) {
+          } catch {
             await authStore.logout();
             isRefreshing = false;
             if (typeof window !== 'undefined' && window.location.pathname !== '/auth/login') {
@@ -129,7 +130,7 @@ api.interceptors.response.use(
           return Promise.reject(new Error('Session expired. Please login again.'));
         }
         // If already refreshing, queue the request
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
           refreshSubscribers.push(() => {
             // After refresh, retry original request
             resolve(api(error.config));

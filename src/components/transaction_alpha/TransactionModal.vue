@@ -10,28 +10,18 @@
                 <q-icon :name="transactionTypeIcon" size="28px" class="transaction-icon" />
               </div>
               <div class="header-text">
-                <h1 class="modal-title">{{ t('transactionAlpha.transactionTitle', { type: transactionTypeLabel }) }}</h1>
+                <h1 class="modal-title">{{ t('transactionAlpha.transactionTitle', { type: transactionTypeLabel }) }}
+                </h1>
               </div>
             </div>
-            <q-btn
-              flat
-              round
-              dense
-              icon="close"
-              @click="close"
-              class="close-button"
-              size="lg"
-            />
+            <q-btn flat round dense icon="close" @click="close" class="close-button" size="lg" />
           </div>
         </div>
 
         <!-- Progress Indicator -->
         <div class="progress-container">
           <div class="progress-bar">
-            <div
-              class="progress-fill"
-              :style="{ width: `${getProgressPercentage()}%` }"
-            ></div>
+            <div class="progress-fill" :style="{ width: `${getProgressPercentage()}%` }"></div>
           </div>
           <div class="progress-steps">
             <div class="step" :class="{ active: true, completed: isFirstSectionComplete }">
@@ -62,63 +52,47 @@
 
             <div class="form-grid">
               <div class="form-item">
-                <CustomerSelector
-                  ref="customerSelectorRef"
-                  :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'"
-                  v-model="selectedCustomerId"
-                  @select="handleSelectCustomer"
-                />
+                <CustomerSelector ref="customerSelectorRef"
+                  :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'" v-model="selectedCustomerId"
+                  @select="handleSelectCustomer" />
               </div>
               <div class="form-item" :style="isEmployee ? 'display:none' : ''">
                 <BranchSelector v-model="selectedBranchId" @select="handleSelectBranch" />
               </div>
               <div class="form-item">
-                <WarehouseSelector
-                  ref="warehouseSelectorRef"
-                  v-model="selectedWarehouseId"
-                  :branchId="selectedBranchId"
-                  :disabled="!selectedBranchId"
-                />
+                <WarehouseSelector ref="warehouseSelectorRef" v-model="selectedWarehouseId" :branchId="selectedBranchId"
+                  :disabled="!selectedBranchId" />
               </div>
               <div class="form-item">
                 <PaymentTypeSelector v-model="selectedPaymentType" />
               </div>
               <div v-if="transactionType === 'sell'" class="form-item status-item">
                 <label class="form-label">{{ t('transactionAlpha.transactionStatus') }}</label>
-                <q-option-group
-                  v-model="transactionStatus"
-                  :options="statusOptions"
-                  type="radio"
-                  color="primary"
-                  inline
-                  dense
-                  class="status-options"
-                />
+                <q-option-group v-model="transactionStatus" :options="statusOptions" type="radio" color="primary" inline
+                  dense class="status-options" />
               </div>
             </div>
           </div>
 
           <!-- Step 2: Item Selection -->
           <transition name="slide-fade">
-            <div v-if="isFirstSectionComplete" class="content-section" :class="{ 'section-active': isFirstSectionComplete }">
+            <div v-if="isFirstSectionComplete" class="content-section"
+              :class="{ 'section-active': isFirstSectionComplete }">
               <div class="section-header">
                 <div class="section-icon">
                   <q-icon name="inventory_2" size="20px" />
                 </div>
                 <h2 class="section-title">{{ t('transactionAlpha.itemSelection') }}</h2>
               </div>
-              <ItemSelector
-                ref="itemSelectorRef"
-                v-model:selectedItems="selectedItems"
-                :transactionType="transactionType"
-                :warehouseId="selectedWarehouseId"
-              />
+              <ItemSelector ref="itemSelectorRef" v-model:selectedItems="selectedItems"
+                :transactionType="transactionType" :warehouseId="selectedWarehouseId" />
             </div>
           </transition>
 
           <!-- Step 3: Review & Submit -->
           <transition name="slide-fade">
-            <div v-if="isFirstSectionComplete && hasSelectedItems" class="content-section" :class="{ 'section-active': hasSelectedItems }">
+            <div v-if="isFirstSectionComplete && hasSelectedItems" class="content-section"
+              :class="{ 'section-active': hasSelectedItems }">
               <div class="section-header">
                 <div class="section-icon">
                   <q-icon name="receipt_long" size="20px" />
@@ -217,15 +191,8 @@
                         {{ t('transactionAlpha.discountPercent') }}
                       </div>
                       <div class="summary-input">
-                        <q-input
-                          v-model.number="discountedRate"
-                          type="number"
-                          min="0"
-                          max="100"
-                          dense
-                          outlined
-                          class="discount-input"
-                        />
+                        <q-input v-model.number="discountedRate" type="number" min="0" max="100" dense outlined
+                          class="discount-input" />
                       </div>
                     </div>
                     <div class="summary-row">
@@ -258,33 +225,15 @@
                   </div>
                   <h3 class="section-title">{{ t('transactionAlpha.note') }}</h3>
                 </div>
-                <q-input
-                  v-model="note"
-                  type="textarea"
-                  :label="t('transactionAlpha.addNoteOptional')"
-                  outlined
-                  autogrow
-                  class="note-textarea"
-                />
+                <q-input v-model="note" type="textarea" :label="t('transactionAlpha.addNoteOptional')" outlined autogrow
+                  class="note-textarea" />
               </div>
 
               <!-- Action Buttons -->
               <div class="action-buttons">
-                <q-btn
-                  flat
-                  :label="t('common.cancel')"
-                  @click="close"
-                  class="cancel-btn"
-                />
-                <q-btn
-                  color="primary"
-                  :label="t('transactionAlpha.submitTransaction')"
-                  :loading="submitting"
-                  :disable="!canSubmit"
-                  unelevated
-                  class="submit-btn"
-                  @click="handleSubmit"
-                />
+                <q-btn flat :label="t('common.cancel')" @click="close" class="cancel-btn" />
+                <q-btn color="primary" :label="t('transactionAlpha.submitTransaction')" :loading="submitting"
+                  :disable="!canSubmit" unelevated class="submit-btn" @click="handleSubmit" />
               </div>
             </div>
           </transition>
@@ -294,12 +243,8 @@
   </q-dialog>
 
   <!-- Invoice Modal -->
-  <PrintableInvoice
-    v-model="showInvoiceModal"
-    :transaction="createdTransaction"
-    @transaction-updated="handleTransactionUpdated"
-    @close="closeInvoiceModal"
-  />
+  <PrintableInvoice v-model="showInvoiceModal" :transaction="createdTransaction"
+    @transaction-updated="handleTransactionUpdated" @close="closeInvoiceModal" />
 </template>
 
 <script setup lang="ts">
@@ -349,7 +294,7 @@ const transactionTypeIcon = computed(() =>
   props.transactionType === 'sell' ? 'sell' : 'shopping_cart'
 );
 
-const selectedCustomerId = ref<number|null>(null);
+const selectedCustomerId = ref<number | null>(null);
 const selectedBranchId = ref(null);
 const selectedPaymentType = ref('cash');
 const selectedItems: Ref<SelectedItem[]> = ref([]);
@@ -564,7 +509,7 @@ async function handleSubmit() {
         created_at: apiData.created_at
       };
 
-            createdTransaction.value = transformedTransaction;
+      createdTransaction.value = transformedTransaction;
       showInvoiceModal.value = true;
     }
 
@@ -572,7 +517,7 @@ async function handleSubmit() {
     // Don't clear modal data immediately - let the invoice show first
     // void clearModalData();
     show.value = false;
-  } catch (_err) {
+  } catch {
     $q.notify({ type: 'negative', message: 'Failed to submit transaction.' });
   } finally {
     submitting.value = false;
@@ -602,8 +547,8 @@ const isFirstSectionComplete = computed(() => {
 });
 const hasSelectedItems = computed(() => selectedItems.value.length > 0);
 
-// New methods for professional design
-function getTransactionSubtitle() {
+// New methods for professional design (currently unused but may be needed for future features)
+function _getTransactionSubtitle() {
   if (props.transactionType === 'purchase') {
     return t('transactionAlpha.purchaseSubtitle', 'Record a purchase from a supplier');
   } else {

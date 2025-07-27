@@ -1,19 +1,10 @@
 <template>
   <div class="customer-selector q-pa-md">
-    <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectCustomer') }} <span class="text-negative">*</span></div>
-    <q-input
-      v-model="searchQuery"
-      outlined
-      clearable
-      dense
-      :loading="customerStore.loading"
-      @focus="onFocus"
-      @blur="onBlur"
-      hide-bottom-space
-      class="search-input"
-      ref="inputRef"
-      :hint="t('transactionAlpha.typeToSearchCustomers')"
-    >
+    <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectCustomer') }} <span class="text-negative">*</span>
+    </div>
+    <q-input v-model="searchQuery" outlined clearable dense :loading="customerStore.loading" @focus="onFocus"
+      @blur="onBlur" hide-bottom-space class="search-input" ref="inputRef"
+      :hint="t('transactionAlpha.typeToSearchCustomers')">
       <template v-slot:prepend>
         <q-icon name="person" />
       </template>
@@ -23,15 +14,8 @@
     <div v-if="showResultsList" class="customer-results q-mt-sm">
       <q-card flat bordered class="results-card">
         <q-list separator class="results-list">
-          <q-item
-            v-for="customer in customerOptions"
-            :key="customer.id"
-            clickable
-            v-ripple
-            @click="selectCustomer(customer)"
-            class="customer-item"
-            :class="{ 'selected': modelValue === customer.id }"
-          >
+          <q-item v-for="customer in customerOptions" :key="customer.id" clickable v-ripple
+            @click="selectCustomer(customer)" class="customer-item" :class="{ 'selected': modelValue === customer.id }">
             <q-item-section avatar>
               <q-avatar color="primary" text-color="white" size="md">
                 {{ customer.name.charAt(0).toUpperCase() }}
@@ -124,7 +108,7 @@ async function fetchCustomers(query = '', type = props.customerType as 'customer
         searchQuery.value = first.name;
       }
     }
-  } catch (err: any) {
+  } catch {
     errorMsg.value = 'Failed to fetch customers.';
     customerOptions.value = [];
   }
@@ -159,10 +143,12 @@ watch(() => props.modelValue, (val) => {
   max-width: 340px;
   padding-top: 0;
 }
+
 .search-input {
   width: 100%;
   margin-top: 0;
 }
+
 .customer-item.selected {
   background: #e0f7fa;
 }

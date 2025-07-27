@@ -5,15 +5,8 @@
       <q-toolbar class="toolbar-container">
         <!-- Left Section -->
         <div class="header-left flex items-center">
-          <q-btn
-            flat
-            dense
-            round
-            icon="menu"
-            :aria-label="t('layout.toggleSidebar')"
-            class="menu-toggle-btn q-mr-md"
-            @click="toggleSidebar"
-          />
+          <q-btn flat dense round icon="menu" :aria-label="t('layout.toggleSidebar')" class="menu-toggle-btn q-mr-md"
+            @click="toggleSidebar" />
 
           <div class="brand-section">
             <q-toolbar-title class="brand-title">
@@ -25,15 +18,7 @@
         <!-- Right Section -->
         <div class="header-right flex items-center q-gutter-sm">
           <!-- Language Selector -->
-          <q-btn-dropdown
-            flat
-            dense
-
-            icon="language"
-            :aria-label="t('layout.languageSelector')"
-
-            dropdown-icon=""
-          >
+          <q-btn-dropdown flat dense icon="language" :aria-label="t('layout.languageSelector')" dropdown-icon="">
             <q-list class="language-menu">
               <q-item clickable v-close-popup @click="setLocale('ckb')" class="language-item">
                 <q-item-section avatar>
@@ -66,16 +51,11 @@
               </q-item>
             </q-list>
           </q-btn-dropdown>
-          <Qbtn flat @click="notificationStore.toggleNotificationPopup" btn-color="primary" btn-label=""  >
+          <Qbtn flat @click="notificationStore.toggleNotificationPopup" btn-color="primary" btn-label="">
             <template #default>
               <q-icon name="notifications_none" color="white" />
-              <q-badge
-                v-if="notificationStore.unreadCount > 0"
-                color="red"
-                floating
-                transparent
-                class="notification-badge"
-              >
+              <q-badge v-if="notificationStore.unreadCount > 0" color="red" floating transparent
+                class="notification-badge">
                 {{ notificationStore.unreadCount }}
               </q-badge>
             </template>
@@ -83,12 +63,7 @@
           <NotificationPopup v-if="notificationStore.isOpenNotfication" />
           <!-- User Profile Dropdown -->
           <div class="user-profile-section">
-            <q-btn-dropdown
-              flat
-              no-caps
-              class="user-profile-btn"
-              dropdown-icon="keyboard_arrow_down"
-            >
+            <q-btn-dropdown flat no-caps class="user-profile-btn" dropdown-icon="keyboard_arrow_down">
               <template #label>
                 <div class="user-profile-content flex items-center">
                   <q-avatar size="36px" class="user-avatar">
@@ -157,19 +132,12 @@
     <q-page-container :class="{ 'content-shifted': sidebarOpen && !isMobile }" class="page-container-transition">
       <ErrorBoundary>
         <router-view v-slot="{ Component, route }">
-          <transition
-            name="page-fade"
-            mode="out-in"
-            appear
-          >
+          <transition name="page-fade" mode="out-in" appear>
             <component :is="Component" :key="route.path" />
           </transition>
         </router-view>
       </ErrorBoundary>
-      <FabAction
-        :actions="fabActions"
-        @action="onFabAction"
-      />
+      <FabAction :actions="fabActions" @action="onFabAction" />
       <Note v-if="showNote" @close="showNote = false" :note-type="noteType" />
       <ExchangeForm v-model="showExchangeForm" @submit="handleExchangeSubmit" />
       <div class="q-mb-4rem"></div>
@@ -238,7 +206,7 @@ onMounted(async () => {
   // Check if userProfile data exists and is not being fetched, otherwise skip
   if (!userProfile.value && !profileStore.loading) {
     promises.push(
-      profileStore.fetchUserProfile().catch(error => {
+      profileStore.fetchUserProfile().catch(_error => {
       })
     );
   }
@@ -246,7 +214,7 @@ onMounted(async () => {
   // Check if notifications exist and are not being fetched, otherwise skip
   if (notificationStore.notifications.length === 0 && !notificationStore.loading) {
     promises.push(
-      notificationStore.getNotifications().catch(error => {
+      notificationStore.getNotifications().catch(_error => {
       })
     );
   }
@@ -307,7 +275,7 @@ function onFabAction(action: { icon: string; name: string; color?: string; textC
 function handleExchangeSubmit() {
   // This function will be called when the exchange form is submitted
 }
-watch(() => authStore.isLoggedOut, async (val) => {
+watch(() => authStore.isLoggedOut, async (_val) => {
   await router.push({ name: 'login' })
 })
 
@@ -334,7 +302,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 }
 
 .content-shifted {
-  margin-left: 280px; /* Match the sidebar width */
+  margin-left: 280px;
+  /* Match the sidebar width */
 }
 
 /* Mobile responsive - no margin shift on small screens */
@@ -347,7 +316,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 /* Page Container */
 .page-container-transition {
   position: relative;
-  min-height: calc(100vh - 64px); /* Subtract header height */
+  min-height: calc(100vh - 64px);
+  /* Subtract header height */
   overflow: hidden;
 }
 
@@ -383,6 +353,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
+
   .page-fade-enter-active,
   .page-fade-leave-active {
     transition-duration: 0.1s;
@@ -397,6 +368,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 
 /* Mobile optimizations for transitions */
 @media (max-width: 768px) {
+
   .page-fade-enter-active,
   .page-fade-leave-active {
     transition-duration: 0.25s;
@@ -436,7 +408,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 }
 
 .custom-header {
-  z-index: 101; /* Make sure header is above sidebar */
+  z-index: 101;
+  /* Make sure header is above sidebar */
   overflow: hidden;
   width: 100%;
 }
@@ -551,10 +524,14 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 }
 
 @keyframes pulse-notification {
-  0%, 50%, 100% {
+
+  0%,
+  50%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
   }
+
   25% {
     transform: scale(1.05);
     box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
@@ -566,10 +543,12 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     transform: scale(0) rotate(45deg);
     opacity: 0;
   }
+
   50% {
     transform: scale(1.2) rotate(22.5deg);
     opacity: 1;
   }
+
   100% {
     transform: scale(1) rotate(0deg);
     opacity: 1;
@@ -721,6 +700,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     min-height: 48px;
     overflow: hidden;
   }
+
   .brand-title {
     font-size: 1rem;
     max-width: 60vw;
@@ -728,19 +708,23 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
   .brand-section {
     margin-left: 4px;
     max-width: 60vw;
   }
+
   .header-left {
     gap: 2px;
     max-width: 60vw;
   }
+
   .header-right {
     gap: 2px;
     max-width: 40vw;
     overflow: hidden;
   }
+
   .language-btn,
   .notification-btn,
   .user-profile-btn {
@@ -751,10 +735,12 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     font-size: 16px;
     flex-shrink: 0;
   }
+
   .user-profile-content {
     gap: 2px;
     max-width: 120px;
   }
+
   .user-avatar {
     width: 28px !important;
     height: 28px !important;
@@ -762,13 +748,16 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     min-height: 28px !important;
     flex-shrink: 0;
   }
+
   .user-info {
     display: none;
   }
+
   .q-btn__content {
     min-width: 0;
     padding: 0 2px;
   }
+
   .notification-badge {
     font-size: 10px;
     min-width: 14px;
@@ -776,6 +765,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
     top: 2px;
     right: 2px;
   }
+
   .flag-avatar {
     font-size: 14px;
   }
@@ -785,24 +775,28 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   .toolbar-container {
     padding: 0 2px;
   }
+
   .brand-title {
     font-size: 0.9rem;
     max-width: 50vw;
   }
+
   .brand-section {
     max-width: 50vw;
   }
+
   .header-left {
     max-width: 50vw;
   }
+
   .header-right {
     max-width: 50vw;
     gap: 1px;
   }
+
   .user-menu {
     min-width: 240px;
     max-width: 90vw;
   }
 }
 </style>
-

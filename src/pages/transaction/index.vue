@@ -1,39 +1,23 @@
 <template>
     <q-page class="q-pa-md">
         <!-- Transaction Dashboard Header Card -->
-        <Header
-            :title="t('transaction.header')"
-            :subtitle="t('transaction.subtitle')"
-            icon="receipt_long"
-            icon-size="3rem"
-            icon-color="white"
-            :show-waves="true"
-            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-        />
+        <Header :title="t('transaction.header')" :subtitle="t('transaction.subtitle')" icon="receipt_long"
+            icon-size="3rem" icon-color="white" :show-waves="true"
+            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
 
         <!-- Transaction Type Toggle -->
         <q-card flat bordered class="q-mb-md">
             <q-card-section class="q-pa-lg">
                 <div class="row items-center justify-between">
                     <div class="row items-center">
-                        <q-btn-toggle
-                            v-model="transactionType"
-                            toggle-color="primary"
-                            :options="[
-                                { label: t('itemTransaction.purchase'), value: 'purchase' },
-                                { label: t('itemTransaction.sell'), value: 'sell' }
-                            ]"
-                            @update:model-value="handleTypeChange"
-                            class="q-mr-md"
-                        />
+                        <q-btn-toggle v-model="transactionType" toggle-color="primary" :options="[
+                            { label: t('itemTransaction.purchase'), value: 'purchase' },
+                            { label: t('itemTransaction.sell'), value: 'sell' }
+                        ]" @update:model-value="handleTypeChange" class="q-mr-md" />
                     </div>
                     <q-btn
                         :label="t('itemTransaction.addNew', { type: transactionType === 'purchase' ? t('itemTransaction.purchase') : t('itemTransaction.sell') })"
-                        icon="add"
-                        color="primary"
-                        @click="showAddModal = true"
-                        no-caps
-                    />
+                        icon="add" color="primary" @click="showAddModal = true" no-caps />
                 </div>
             </q-card-section>
         </q-card>
@@ -41,119 +25,79 @@
         <!-- Sticky Notes Overlay (absolute, not in normal flow) -->
         <div class="sticky-notes-overlay">
             <div v-for="(note, idx) in notes" :key="note.id" style="margin-bottom: 12px;">
-                <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }" @close="removeNote(note.id)" />
+                <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }"
+                    @close="removeNote(note.id)" />
             </div>
         </div>
 
         <!-- Search Section -->
         <div class="row q-col-gutter-md q-mb-md">
             <div class="col-md-8 col-sm-8 col-xs-12">
-                <q-input
-                    v-model="filters.search"
-                    outlined
-                    dense
-                    clearable
-                    :label="t('transaction.searchLabel', 'Search by customer name or note')"
-                    class="full-width"
-                    @update:model-value="handleSearchChange"
-                >
+                <q-input v-model="filters.search" outlined dense clearable
+                    :label="t('transaction.searchLabel', 'Search by customer name or note')" class="full-width"
+                    @update:model-value="handleSearchChange">
                     <template v-slot:prepend>
                         <q-icon name="search" />
                     </template>
                 </q-input>
             </div>
             <div class="col-md-4 col-sm-4 col-xs-12">
-                <q-btn
-                    color="primary"
-                    class="full-width elegant-reset-btn"
-                    icon="refresh"
-                    outline
-                    :label="t('transaction.resetFilters', 'Reset')"
-                    @click="resetFilters"
-                />
+                <q-btn color="primary" class="full-width elegant-reset-btn" icon="refresh" outline
+                    :label="t('transaction.resetFilters', 'Reset')" @click="resetFilters" />
             </div>
         </div>
 
         <!-- Transaction Table with Enhanced UI -->
-        <QtableB
-        :top-right="false"
-            :user-type="user?.type!"
-            :allowed-types="['employee']"
-            show-bottom
-            :hasExpandableRows="true"
-            @menu-action="handleAction"
-            :columns="columns"
-            :rows="filteredData"
-            :loading="transactionStore.loading"
-            :menuItems="menuItems"
-            :pagination="pagination"
-            @page-change="handlePageChange"
-         >
-         <template #expanded-row="{ row }">
-  <div class="q-pa-md full-width">
-    <div class="row">
-      <div class="col-12">
-        <div class="text-h6 text-primary q-mb-md text-left">
-          {{ t('blumTransaction.transactionItems') }}
-        </div>
-        <div v-if="row.items?.length">
-          <q-list separator>
-            <q-item
-              v-for="item in row.items"
-              :key="item.id"
-              class="q-mb-sm rounded-borders no-hover"
-              style="background: #f8f9fa;"
-            >
-              <q-item-section>
-                <div class="text-body1 text-weight-bold">
-                  {{ item.name }}
+        <QtableB :top-right="false" :user-type="user?.type!" :allowed-types="['employee']" show-bottom
+            :hasExpandableRows="true" @menu-action="handleAction" :columns="columns" :rows="filteredData"
+            :loading="transactionStore.loading" :menuItems="menuItems" :pagination="pagination"
+            @page-change="handlePageChange">
+            <template #expanded-row="{ row }">
+                <div class="q-pa-md full-width">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="text-h6 text-primary q-mb-md text-left">
+                                {{ t('blumTransaction.transactionItems') }}
+                            </div>
+                            <div v-if="row.items?.length">
+                                <q-list separator>
+                                    <q-item v-for="item in row.items" :key="item.id"
+                                        class="q-mb-sm rounded-borders no-hover" style="background: #f8f9fa;">
+                                        <q-item-section>
+                                            <div class="text-body1 text-weight-bold">
+                                                {{ item.name }}
+                                            </div>
+                                            <div class="text-caption text-grey-6">
+                                                ID: {{ item.id }}
+                                            </div>
+                                        </q-item-section>
+                                        <q-item-section side>
+                                            <div class="q-gutter-sm">
+                                                <q-badge color="blue-4" text-color="white" class="q-pa-sm" rounded>
+                                                    {{ t('blumTransaction.quantity') }}: {{ item.quantity }}
+                                                </q-badge>
+                                                <q-badge color="green-4" text-color="white" class="q-pa-sm" rounded>
+                                                    {{ t('blumTransaction.unitPrice') }}: ${{ item.unit_price.toFixed(2)
+                                                    }}
+                                                </q-badge>
+                                            </div>
+                                        </q-item-section>
+                                    </q-item>
+                                </q-list>
+                            </div>
+                            <div v-else class="text-grey text-center q-mt-md">
+                                <q-icon name="info" size="md" class="q-mr-xs" />
+                                {{ t('noItems') || 'No items available for this row.' }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-caption text-grey-6">
-                  ID: {{ item.id }}
-                </div>
-              </q-item-section>
-              <q-item-section side>
-                <div class="q-gutter-sm">
-                  <q-badge
-                    color="blue-4"
-                    text-color="white"
-                    class="q-pa-sm"
-                    rounded
-                  >
-                    {{ t('blumTransaction.quantity') }}: {{ item.quantity }}
-                  </q-badge>
-                  <q-badge
-                    color="green-4"
-                    text-color="white"
-                    class="q-pa-sm"
-                    rounded
-                  >
-                    {{ t('blumTransaction.unitPrice') }}: ${{ item.unit_price.toFixed(2) }}
-                  </q-badge>
-                </div>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </div>
-        <div v-else class="text-grey text-center q-mt-md">
-          <q-icon name="info" size="md" class="q-mr-xs" />
-          {{ t('noItems') || 'No items available for this row.' }}
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+            </template>
             <!-- Custom slot for refund status column -->
             <template #body-cell-refund_status="props">
                 <q-td :props="props">
-                    <q-chip
-                        v-if="props.row.refunded"
-                        color="orange"
-                        text-color="white"
-                        icon="undo"
-                        size="sm"
-                        class="refund-chip"
-                    >
+                    <q-chip v-if="props.row.refunded" color="orange" text-color="white" icon="undo" size="sm"
+                        class="refund-chip">
                         {{ t('transaction.refunded') }}
                     </q-chip>
                     <span v-else class="text-grey-6">
@@ -164,43 +108,25 @@
         </QtableB>
 
         <!-- Add Item Transaction Modal - New Redesigned Modal -->
-        <TransactionModal
-            v-model="showAddModal"
-            :transactionType="transactionType"
-        />
+        <TransactionModal v-model="showAddModal" :transactionType="transactionType" />
 
         <!-- Payment Modals -->
-        <PaySupplier
-            v-model="showPaySupplierModal"
-            :transaction-data="selectedTransactionData"
-            @success="handlePaymentSuccess"
-        />
+        <PaySupplier v-model="showPaySupplierModal" :transaction-data="selectedTransactionData"
+            @success="handlePaymentSuccess" />
 
-        <ReceiveFromCustomer
-            v-model="showReceiveCustomerModal"
-            :transaction-data="selectedTransactionData"
-            @success="handlePaymentSuccess"
-        />
+        <ReceiveFromCustomer v-model="showReceiveCustomerModal" :transaction-data="selectedTransactionData"
+            @success="handlePaymentSuccess" />
 
         <!-- Transaction Invoice Modal -->
-        <PrintableInvoice
-            v-model="showInvoiceModal"
-            :transaction="selectedTransaction"
-            @transaction-updated="handleTransactionUpdated"
-        />
+        <PrintableInvoice v-model="showInvoiceModal" :transaction="selectedTransaction"
+            @transaction-updated="handleTransactionUpdated" />
 
         <!-- Refund Transaction Modal -->
-        <RefundTransaction
-            v-model="showRefundModal"
-            :transaction-data="selectedRefundTransaction"
-            @success="handleRefundSuccess"
-        />
+        <RefundTransaction v-model="showRefundModal" :transaction-data="selectedRefundTransaction"
+            @success="handleRefundSuccess" />
 
         <!-- Refund Details Modal -->
-        <RefundDetailsModal
-            v-model="showRefundDetailsModal"
-            :refund-data="selectedRefundDetails"
-        />
+        <RefundDetailsModal v-model="showRefundDetailsModal" :refund-data="selectedRefundDetails" />
     </q-page>
 </template>
 
@@ -223,7 +149,7 @@ import TransactionModal from 'src/components/transaction_alpha/TransactionModal.
 import { useAuthStore } from 'src/stores/authStore'
 import { useQuasar } from 'quasar'
 
-const {user} = useAuthStore()
+const { user } = useAuthStore()
 const $q = useQuasar()
 // declarations
 const transactionStore = useItemTransactionStore()
@@ -246,11 +172,11 @@ const showRefundDetailsModal = ref(false)
 
 // Selected transaction data for modals
 const selectedTransactionData = ref<{
-  customer: { id: number; name: string };
-  amount: number;
-  total_price?: number;
-  paid_price?: number;
-  unpaid_price?: number;
+    customer: { id: number; name: string };
+    amount: number;
+    total_price?: number;
+    paid_price?: number;
+    unpaid_price?: number;
 } | null>(null)
 
 // Selected transaction for invoice
@@ -261,16 +187,16 @@ const selectedRefundTransaction = ref<List | null>(null)
 
 // Selected refund details for viewing
 const selectedRefundDetails = ref<{
-  id: number;
-  items: Array<{
     id: number;
-    name: string;
-    quantity: number;
-    reason: string;
-  }>;
-  refund_price: number;
-  usd_iqd_rate: number;
-  created_at: string;
+    items: Array<{
+        id: number;
+        name: string;
+        quantity: number;
+        reason: string;
+    }>;
+    refund_price: number;
+    usd_iqd_rate: number;
+    created_at: string;
 } | null>(null)
 
 // Filter states
@@ -398,7 +324,7 @@ const columns = computed(() => {
             name: 'total_price',
             label: t('transaction.columns.totalPrice'),
             align: "center" as const,
-      field: (row: any) => `$ ${row.total_price}`,
+            field: (row: any) => `$ ${row.total_price}`,
             sortable: true
         }
     ];
@@ -416,7 +342,7 @@ const columns = computed(() => {
 
     // Add remaining columns
     baseColumns.push(
-      {
+        {
             name: 'created_at',
             label: t('transaction.columns.createdAt'),
             align: "left" as const,
@@ -477,7 +403,7 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
                     paid_price: transaction.paid_price,
                     unpaid_price: amountToPay
                 }
-            } catch (_err) {
+            } catch {
                 selectedTransactionData.value = null;
             }
         } else {
@@ -509,7 +435,7 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
                     paid_price: transaction.paid_price,
                     unpaid_price: amountToReceive
                 }
-            } catch (_err) {
+            } catch {
                 selectedTransactionData.value = null;
             }
         } else {
@@ -558,8 +484,8 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
 const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
 
 function removeNote(id: number) {
-  const idx = notes.findIndex(n => n.id === id)
-  if (idx !== -1) notes.splice(idx, 1)
+    const idx = notes.findIndex(n => n.id === id)
+    if (idx !== -1) notes.splice(idx, 1)
 }
 
 // Handle payment success - refresh data
@@ -642,15 +568,15 @@ watch(showRefundModal, (isOpen) => {
 
 // Handle page change for pagination
 async function handlePageChange(page: number) {
-  currentPage.value = page;
-  // Use current transaction type for pagination
-  await transactionStore.fetchTransactionList(transactionType.value, page);
+    currentPage.value = page;
+    // Use current transaction type for pagination
+    await transactionStore.fetchTransactionList(transactionType.value, page);
 
-  // Scroll to top when changing pages for better UX
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+    // Scroll to top when changing pages for better UX
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 // Handle transaction type change
@@ -724,7 +650,7 @@ onMounted(async () => {
 onUnmounted(() => {
     // Clean up event listeners
     document.removeEventListener('keydown', handlePrintShortcut, true);
-    window.removeEventListener('beforeprint', () => {});
+    window.removeEventListener('beforeprint', () => { });
 });
 </script>
 
@@ -740,7 +666,7 @@ onUnmounted(() => {
 }
 
 .bg-primary {
-  background: linear-gradient(135deg, var(--q-primary) 0%, rgba(25, 92, 170, 1) 100%) !important;
+    background: linear-gradient(135deg, var(--q-primary) 0%, rgba(25, 92, 170, 1) 100%) !important;
 }
 
 .text-h4 {
@@ -778,7 +704,8 @@ onUnmounted(() => {
     }
 }
 
-.text-h2, .text-h5.text-weight-bold.countup {
+.text-h2,
+.text-h5.text-weight-bold.countup {
     font-size: 2rem !important;
     font-weight: 700;
     animation: countUp 0.5s ease-out forwards;
@@ -801,13 +728,15 @@ onUnmounted(() => {
     align-items: flex-end;
     pointer-events: none;
 }
-.sticky-notes-overlay > div {
+
+.sticky-notes-overlay>div {
     pointer-events: auto;
 }
 
 // Pagination styles
 .q-pagination {
     margin-top: 16px;
+
     .q-btn {
         min-width: 36px;
         min-height: 36px;
