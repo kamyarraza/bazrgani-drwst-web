@@ -34,6 +34,13 @@
                   <span class="tab-label">{{ t('branch.warehouseItems', 'Warehouse Items') }}</span>
                 </div>
               </q-tab>
+
+              <q-tab name="cashbox" class="enhanced-tab">
+                <div class="tab-content">
+                  <q-icon name="account_balance_wallet" size="20px" />
+                  <span class="tab-label">{{ t('branch.cashbox', 'Cashbox') }}</span>
+                </div>
+              </q-tab>
             </q-tabs>
           </div>
 
@@ -43,7 +50,7 @@
             <!-- Branches Tab -->
             <q-tab-panel name="branches" class="enhanced-tab-panel">
               <Main @edit-branch="openUpdateModal" @toggle-active="toggleBranchActive" @view-warehouses="viewWarehouses"
-                @add-branch="showAddModal = true" />
+                @view-cashbox="viewCashbox" @add-branch="showAddModal = true" />
             </q-tab-panel>
 
             <!-- Warehouse Tab -->
@@ -55,6 +62,11 @@
             <!-- Warehouse Items Tab -->
             <q-tab-panel name="warehouseItems" class="enhanced-tab-panel">
               <WarehouseItemsTab :warehouse="selectedWarehouse" @go-back="activeTab = 'warehouse'" />
+            </q-tab-panel>
+
+            <!-- Cashbox Tab -->
+            <q-tab-panel name="cashbox" class="enhanced-tab-panel">
+              <CashboxComponent :branch="selectedBranch" @go-back="activeTab = 'branches'" />
             </q-tab-panel>
           </q-tab-panels>
         </q-card-section>
@@ -77,6 +89,7 @@ import { useI18n } from 'vue-i18n';
 import Main from 'src/components/branch/Main.vue';
 import WarehouseComponent from 'src/components/branch/warehouse.vue';
 import WarehouseItemsTab from 'src/components/branch/WarehouseItemsTab.vue';
+import CashboxComponent from 'src/components/cashbox/Main.vue';
 import Add from 'src/components/branch/Add.vue';
 import Update from 'src/components/branch/Update.vue';
 import { useBranchStore } from 'src/stores/branchStore';
@@ -114,6 +127,12 @@ function viewWarehouses(branch: Branch) {
   selectedBranch.value = branch;
   activeTab.value = 'warehouse';
   // Removed manual fetch - handled by activeTab watcher and warehouse component watcher
+}
+
+// View cashbox - Switch to cashbox tab and load cashbox for selected branch
+function viewCashbox(branch: Branch) {
+  selectedBranch.value = branch;
+  activeTab.value = 'cashbox';
 }
 
 // Handle viewing warehouse items - takes user to the warehouse items tab

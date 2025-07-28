@@ -16,6 +16,8 @@ export default {
     item: 'کاڵا', // Singular form for employees
     branches: 'لقەکان',
     branch: 'لق', // Singular form for employees
+    cashbox: 'سندووق',
+    viewCashbox: 'بینینی سندووق',
     categories: 'پۆلەکان',
     category: 'پۆل', // Singular form for employees
     offers: 'ئۆفەرەکان',
@@ -500,6 +502,8 @@ export default {
     allBranches: 'هەموو لقەکان',
     warehouse: 'کۆگا',
     warehouseItems: 'کەلوپەلەکانی کۆگا',
+    cashbox: 'سندووق',
+    viewCashbox: 'بینینی سندووق',
     name: 'ناو',
     code: 'کۆدی لق',
     location: 'شوێن',
@@ -2273,5 +2277,45 @@ receiveFromCustomer: "وەرگرتن لە کڕیار",
     pleaseFillAllRequired: 'تکایە هەموو خانە پێویستەکان پڕبکە و بەلایەنی یەک کاڵا هەڵبژێرە.',
     transactionSubmitted: 'مامەڵە بەسەرکەوتوویی نێردرا!',
     transactionFailed: 'نەتوانرا مامەڵە بنێردرێت.'
+  },
+
+  // بەڕێوەبردنی سندووق
+  cashbox: {
+    branchCashbox: 'سندووقی لق',
+    branchName: 'لق',
+    status: 'دۆخ',
+    opened: 'کراوە',
+    closed: 'داخراوە',
+    iqdBalance: 'مانەوەی دینار',
+    usdBalance: 'مانەوەی دۆلار',
+    openCashbox: 'کردنەوەی سندووق',
+    closeCashbox: 'داخستنی سندووق',
+    refresh: 'نوێکردنەوە',
+    selectBranch: 'سەرەتا لقێک هەڵبژێرە',
+    selectBranchDesc: 'تکایە لقێک هەڵبژێرە بۆ بینینی سندووقەکەی',
+    errorLoading: 'هەڵەیەک ڕوویدا لە بارکردنی سندووق',
+    tryAgain: 'دووبارە هەوڵبدە',
+    loadingCashbox: 'بارکردنی سندووق...',
+    pleaseWait: 'تکایە چاوەڕێبکە تا نوێترین داتاکان بهێنین',
+    openTooltip: 'سندووق بکەرەوە بۆ دەستپێکردنی مامەڵەکان',
+    closeTooltip: 'سندووق دابخە و کۆتایی بە جلسەکە بهێنە',
+    transactions: 'مامەڵەکان',
+    deposit: 'پارەدان',
+    withdraw: 'پارەکێشان',
+    depositTooltip: 'پارە زیاد بکە بۆ سندووق',
+    withdrawTooltip: 'پارە لا بکە لە سندووق',
+    amount: 'بڕ',
+    iqdAmount: 'بڕی دینار',
+    usdAmount: 'بڕی دۆلار',
+    note: 'تێبینی (ئەختیاری)',
+    depositSuccess: 'پارە بەسەرکەوتوویی دەرخرا',
+    withdrawSuccess: 'پارە بەسەرکەوتوویی کێشرایەوە',
+    insufficientFunds: 'پارە تەواو نییە',
+    transactionFailed: 'مامەڵە سەرکەوتوو نەبوو',
+    password: 'وشەی نهێنی',
+    enterPasswordToOpen: 'وشەی نهێنی بنووسە بۆ کردنەوەی سندووق',
+    enterPasswordToClose: 'وشەی نهێنی بنووسە بۆ داخستنی سندووق',
+    securityNote: 'وشەی نهێنی پێویستە بۆ مەبەستی ئاسایش',
+    invalidPassword: 'وشەی نهێنی هەڵەیە. تکایە دووبارە هەوڵبدە.'
   }
 }

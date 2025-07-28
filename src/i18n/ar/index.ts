@@ -15,6 +15,8 @@ export default {
     item: 'منتج', // Singular form for employees
     branches: 'الفروع',
     branch: 'فرع', // Singular form for employees
+    cashbox: 'الصندوق',
+    viewCashbox: 'عرض الصندوق',
     categories: 'التصنيفات',
     category: 'تصنيف', // Singular form for employees
     offers: 'العروض',
@@ -925,6 +927,8 @@ receiveFromCustomer: "استلام من العميل",
     allBranches: 'جميع الفروع',
     warehouse: 'المستودع',
     warehouseItems: 'عناصر المستودع',
+    cashbox: 'الصندوق',
+    viewCashbox: 'عرض الصندوق',
     name: 'الاسم',
     code: 'رمز الفرع',
     location: 'الموقع',
@@ -1548,5 +1552,45 @@ receiveFromCustomer: "استلام من العميل",
         topSellingItemsSubtitle: 'العناصر الأعلى في المبيعات'
       }
     }
+  },
+
+  // إدارة الصندوق
+  cashbox: {
+    branchCashbox: 'صندوق الفرع',
+    branchName: 'الفرع',
+    status: 'الحالة',
+    opened: 'مفتوح',
+    closed: 'مغلق',
+    iqdBalance: 'رصيد الدينار العراقي',
+    usdBalance: 'رصيد الدولار الأمريكي',
+    openCashbox: 'فتح الصندوق',
+    closeCashbox: 'إغلاق الصندوق',
+    refresh: 'تحديث',
+    selectBranch: 'اختر فرعاً أولاً',
+    selectBranchDesc: 'يرجى اختيار فرع لعرض صندوقه',
+    errorLoading: 'خطأ في تحميل الصندوق',
+    tryAgain: 'حاول مرة أخرى',
+    loadingCashbox: 'جاري تحميل الصندوق...',
+    pleaseWait: 'يرجى الانتظار بينما نجلب أحدث البيانات',
+    openTooltip: 'افتح الصندوق لبدء المعاملات',
+    closeTooltip: 'أغلق الصندوق وأنهِ الجلسة',
+    transactions: 'المعاملات',
+    deposit: 'إيداع',
+    withdraw: 'سحب',
+    depositTooltip: 'إضافة أموال إلى الصندوق',
+    withdrawTooltip: 'إزالة أموال من الصندوق',
+    amount: 'المبلغ',
+    iqdAmount: 'مبلغ الدينار العراقي',
+    usdAmount: 'مبلغ الدولار الأمريكي',
+    note: 'ملاحظة (اختيارية)',
+    depositSuccess: 'تم إيداع المال بنجاح',
+    withdrawSuccess: 'تم سحب المال بنجاح',
+    insufficientFunds: 'رصيد غير كافٍ',
+    transactionFailed: 'فشلت المعاملة',
+    password: 'كلمة المرور',
+    enterPasswordToOpen: 'أدخل كلمة المرور لفتح الصندوق',
+    enterPasswordToClose: 'أدخل كلمة المرور لإغلاق الصندوق',
+    securityNote: 'كلمة المرور مطلوبة لأغراض الأمان',
+    invalidPassword: 'كلمة مرور غير صحيحة. يرجى المحاولة مرة أخرى.'
   }
 };

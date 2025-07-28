@@ -29,7 +29,7 @@ import Filter from 'src/components/common/Filter.vue';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
 
-const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch']);
+const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch', 'view-cashbox']);
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
@@ -72,6 +72,11 @@ const menuItems = computed(() => {
       label: t('warehouse.viewWarehouses', 'View Warehouses'),
       icon: 'inventory',
       value: 'viewWarehouses',
+    },
+    {
+      label: t('branch.viewCashbox', 'View Cashbox'),
+      icon: 'account_balance_wallet',
+      value: 'viewCashbox',
     },
   ];
 
@@ -192,6 +197,8 @@ function handleAction(payload: { item: { value: string }, rowId: number }) {
     emit('toggle-active', branch.id);
   } else if (payload.item.value === 'viewWarehouses') {
     emit('view-warehouses', branch);
+  } else if (payload.item.value === 'viewCashbox') {
+    emit('view-cashbox', branch);
   }
 }
 </script>

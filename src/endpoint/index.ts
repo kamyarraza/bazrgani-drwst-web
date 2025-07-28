@@ -185,6 +185,14 @@ export const endPoints = {
     sell: '/blum/transactions/blum-items/sell',
     getBlumTransactions:(type:'purchase' | 'sell')=>`/blum/transactions/blum-items/${type}/index`,
     getBlumTransaction:(transaction:string)=>`/blum/transactions/blum-items/${transaction}`,
+  },
+
+  cashbox: {
+    details: (branchId: string | number) => `/cashbox/${branchId}`,
+    open: (branchId: string | number) => `/cashbox/${branchId}/open`,
+    close: (branchId: string | number) => `/cashbox/${branchId}/close`,
+    deposit: (branchId: string | number) => `/cashbox/${branchId}/deposit`,
+    withdraw: (branchId: string | number) => `/cashbox/${branchId}/withdraw`,
   }
 };
 
