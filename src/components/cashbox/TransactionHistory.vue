@@ -10,7 +10,12 @@
         <div class="transactions-content">
             <template v-if="transactions && transactions.length > 0">
                 <div class="transactions-list">
-                    <div v-for="transaction in reversedTransactions" :key="transaction.id" class="transaction-item">
+                    <div v-for="transaction in reversedTransactions" :key="transaction.id"
+                         class="transaction-item"
+                         :class="{
+                             'deposit-transaction': transaction.tag === 'deposit',
+                             'withdraw-transaction': transaction.tag === 'withdraw'
+                         }">
                         <div class="transaction-icon-wrapper">
                             <q-icon :name="transaction.tag === 'deposit' ? 'add_circle' : 'remove_circle'"
                                 :class="transaction.tag === 'deposit' ? 'deposit-icon' : 'withdraw-icon'" size="2rem" />
@@ -171,32 +176,111 @@ function hasAmounts(transaction: CashboxTransaction) {
 }
 
 .transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+
     .transaction-item {
         display: flex;
         align-items: center;
         gap: 16px;
-        padding: 16px 24px;
-        border-bottom: 1px solid #f1f5f9;
-        transition: all 0.2s ease;
+        padding: 20px 24px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
 
-        &:hover {
-            background: rgba(0, 0, 0, 0.02);
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: transparent;
+            transition: background 0.3s ease;
         }
 
-        &:last-child {
-            border-bottom: none;
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+
+            &::before {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+        }
+
+        // Color-coded left border for transaction types
+        &.deposit-transaction::before {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        &.withdraw-transaction::before {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
     }
 
     .transaction-icon-wrapper {
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            padding: 2px;
+            background: linear-gradient(135deg, transparent 0%, transparent 100%);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            transition: all 0.3s ease;
+        }
 
         .deposit-icon {
             color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-radius: 50%;
+            padding: 14px;
+            transition: all 0.3s ease;
         }
 
         .withdraw-icon {
             color: #ef4444;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+            border-radius: 50%;
+            padding: 14px;
+            transition: all 0.3s ease;
+        }
+
+        // Enhanced hover effects
+        .transaction-item:hover & {
+            transform: scale(1.05);
+
+            .deposit-icon {
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            }
+
+            .withdraw-icon {
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+            }
+
+            &::before {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            }
         }
     }
 
@@ -313,22 +397,37 @@ function hasAmounts(transaction: CashboxTransaction) {
         max-height: 300px;
     }
 
-    .transaction-item {
-        padding: 12px 16px !important;
-        gap: 12px !important;
+    .transactions-list {
+        gap: 8px;
+        padding: 8px;
 
-        .transaction-meta {
-            flex-direction: column;
-            gap: 4px !important;
-        }
+        .transaction-item {
+            padding: 16px 12px !important;
+            gap: 12px !important;
 
-        .transaction-badge {
-            .badge-container {
-                .total-summary {
-                    .total-item {
-                        .total-amount {
-                            font-size: 0.7rem !important;
-                            padding: 1px 6px !important;
+            .transaction-icon-wrapper {
+                width: 48px !important;
+                height: 48px !important;
+
+                .deposit-icon,
+                .withdraw-icon {
+                    padding: 10px !important;
+                }
+            }
+
+            .transaction-meta {
+                flex-direction: column;
+                gap: 4px !important;
+            }
+
+            .transaction-badge {
+                .badge-container {
+                    .total-summary {
+                        .total-item {
+                            .total-amount {
+                                font-size: 0.7rem !important;
+                                padding: 1px 6px !important;
+                            }
                         }
                     }
                 }

@@ -156,44 +156,87 @@ function formatTime(dateString: string) {
 }
 
 .sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+
   .session-item {
     display: flex;
-    gap: 16px;
-    padding: 20px 24px;
-    border-bottom: 1px solid #f1f5f9;
-    transition: all 0.2s ease;
+    gap: 20px;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 
-    &:hover {
-      background: rgba(0, 0, 0, 0.02);
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: #e2e8f0;
+      transition: all 0.3s ease;
     }
 
-    &:last-child {
-      border-bottom: none;
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+      border-color: #cbd5e1;
+
+      &::before {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
     }
 
     &.current-session {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.03) 100%);
-      border-left: 4px solid #10b981;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(5, 150, 105, 0.01) 100%);
+      border-color: rgba(16, 185, 129, 0.2);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+
+      &::before {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        width: 8px;
+      }
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(16, 185, 129, 0.15);
+      }
+
+      .session-status-indicator .status-dot.active {
+        animation: pulse-glow 2s infinite;
+      }
     }
   }
 
   .session-status-indicator {
     flex-shrink: 0;
-    padding-top: 4px;
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .status-dot {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
+      transition: all 0.3s ease;
 
       &.active {
-        background: #10b981;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         animation: pulse-dot 2s infinite;
       }
 
       &.closed {
-        background: #9ca3af;
+        background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+        box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.1);
       }
     }
   }
@@ -250,18 +293,58 @@ function formatTime(dateString: string) {
         .balance-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          gap: 20px;
 
           .balance-item {
-            padding: 12px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 3px;
+              background: transparent;
+              transition: background 0.3s ease;
+            }
+
+            &:hover {
+              transform: translateY(-1px);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
 
             &.opening {
-              background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+              background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+              border-color: rgba(16, 185, 129, 0.1);
+
+              &::before {
+                background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+              }
+
+              &:hover {
+                border-color: rgba(16, 185, 129, 0.2);
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+              }
             }
 
             &.closing {
-              background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+              background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+              border-color: rgba(245, 158, 11, 0.1);
+
+              &::before {
+                background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+              }
+
+              &:hover {
+                border-color: rgba(245, 158, 11, 0.2);
+                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+              }
             }
 
             .balance-label {
@@ -319,14 +402,24 @@ function formatTime(dateString: string) {
 }
 
 @keyframes pulse-dot {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
   }
-
   50% {
     opacity: 0.5;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1);
   }
 }
 
@@ -336,28 +429,43 @@ function formatTime(dateString: string) {
     max-height: 400px;
   }
 
-  .session-item {
-    padding: 16px 16px !important;
-    gap: 12px !important;
+  .sessions-list {
+    gap: 12px;
+    padding: 8px;
 
-    .session-info {
-      .balance-row {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
+    .session-item {
+      padding: 16px 12px !important;
+      gap: 12px !important;
+
+      .session-status-indicator {
+        .status-dot {
+          width: 12px !important;
+          height: 12px !important;
+        }
       }
 
-      .session-user-info {
+      .session-info {
+        .balance-row {
+          grid-template-columns: 1fr !important;
+          gap: 12px !important;
 
-        .opened-info,
-        .closed-info {
-          flex-wrap: wrap;
-          gap: 4px !important;
+          .balance-item {
+            padding: 12px !important;
+          }
+        }
 
-          .time {
-            margin-left: 0 !important;
-            width: 100%;
-            text-align: left;
-            margin-top: 4px;
+        .session-user-info {
+          .opened-info,
+          .closed-info {
+            flex-wrap: wrap;
+            gap: 4px !important;
+
+            .time {
+              margin-left: 0 !important;
+              width: 100%;
+              text-align: left;
+              margin-top: 4px;
+            }
           }
         }
       }
