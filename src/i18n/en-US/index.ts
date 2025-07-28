@@ -12,28 +12,42 @@ export default {
     blumTransactions: 'Blum Transactions',
     admin: 'Admin',
     items: 'Items',
+    item: 'Item', // Singular form for employees
     branches: 'Branches',
+    branch: 'Branch', // Singular form for employees
     categories: 'Categories',
+    category: 'Category', // Singular form for employees
     uploadImage: 'Upload Image',
     selectImage: 'Select Image',
     currentImage: 'Current Image',
     uploadNewImage: 'Upload New Image',
     offers: 'Offers',
+    offer: 'Offer', // Singular form for employees
     transferRequests: 'Transfer Requests',
+    transferRequest: 'Transfer Request', // Singular form for employees
     warehouseTransfers: 'Warehouse Transfers',
+    warehouseTransfer: 'Warehouse Transfer', // Singular form for employees
     transactions: 'Transactions',
+    transaction: 'Transaction', // Singular form for employees
     itemTransaction: 'Item Transaction', // Fixed singular translation
     system: 'System',
     activityLog: 'Activity Log', // Added translation
     people: 'People',
     accountant: 'Accountant',
     employees: 'Employees',
+    employee: 'Employee', // Singular form for employees
     customers: 'Customers',
+    customer: 'Customer', // Singular form for employees
     locations: 'Locations',
+    location: 'Location', // Singular form for employees
     reports: 'Reports',
+    report: 'Report', // Singular form for employees
     warehouses: 'Warehouses',
+    warehouse: 'Warehouse', // Singular form for employees
     purchases: 'Purchases',
-    sells: 'Sales'
+    purchase: 'Purchase', // Singular form for employees
+    sells: 'Sales',
+    sell: 'Sale' // Singular form for employees
   },
   layout: {
     title: 'Bazrgani drwst',
@@ -518,6 +532,8 @@ export default {
   branch: {
     title: 'Branch Management',
     subtitle: 'Manage your branches and warehouses',
+    myBranch: 'My Branch',
+    myBranchSubtitle: 'Manage your branch operations',
     addNew: 'Add New Branch',
     update: 'Update Branch',
     details: 'Branch Details',

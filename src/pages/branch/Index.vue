@@ -2,53 +2,33 @@
   <q-page padding>
     <div class="q-pa-md">
       <!-- Branch Dashboard Header Card -->
-      <Header
-        :title="t('branch.title')"
-        :subtitle="t('branch.subtitle')"
-        icon="store"
-        icon-size="3rem"
-        icon-color="white"
-        :show-waves="true"
-        background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-      />
+      <Header :title="isEmployee ? t('branch.myBranch', 'My Branch') : t('branch.title', 'Branches')"
+        :subtitle="isEmployee ? t('branch.myBranchSubtitle', 'Manage your branch operations') : t('branch.subtitle', 'Manage all branch operations')"
+        icon="store" icon-size="3rem" icon-color="white" :show-waves="true"
+        background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
       <!-- Main Content Card -->
       <q-card class="main-content-card q-mt-md">
         <q-card-section class="q-pa-none">
           <!-- Enhanced Tab Navigation -->
           <div class="tabs-container">
-            <q-tabs
-              v-model="activeTab"
-              class="enhanced-tabs"
-              active-color="primary"
-              indicator-color="primary"
-              align="justify"
-              narrow-indicator
-              no-caps
-            >
-              <q-tab
-                name="branches"
-                class="enhanced-tab"
-              >
+            <q-tabs v-model="activeTab" class="enhanced-tabs" active-color="primary" indicator-color="primary"
+              align="justify" narrow-indicator no-caps>
+              <q-tab name="branches" class="enhanced-tab">
                 <div class="tab-content">
                   <q-icon name="store" size="20px" />
-                  <span class="tab-label">{{ t('branch.allBranches', 'All Branches') }}</span>
+                  <span class="tab-label">{{ isEmployee ? t('branch.myBranch', 'My Branch') : t('branch.allBranches',
+                    'All Branches') }}</span>
                 </div>
               </q-tab>
 
-              <q-tab
-                name="warehouse"
-                class="enhanced-tab"
-              >
+              <q-tab name="warehouse" class="enhanced-tab">
                 <div class="tab-content">
                   <q-icon name="inventory" size="20px" />
                   <span class="tab-label">{{ t('branch.warehouse', 'Warehouse') }}</span>
                 </div>
               </q-tab>
 
-              <q-tab
-                name="warehouseItems"
-                class="enhanced-tab"
-              >
+              <q-tab name="warehouseItems" class="enhanced-tab">
                 <div class="tab-content">
                   <q-icon name="inventory_2" size="20px" />
                   <span class="tab-label">{{ t('branch.warehouseItems', 'Warehouse Items') }}</span>
@@ -62,30 +42,19 @@
           <q-tab-panels v-model="activeTab" animated swipeable class="enhanced-tab-panels">
             <!-- Branches Tab -->
             <q-tab-panel name="branches" class="enhanced-tab-panel">
-              <Main
-                @edit-branch="openUpdateModal"
-                @toggle-active="toggleBranchActive"
-                @view-warehouses="viewWarehouses"
-                @add-branch="showAddModal = true"
-              />
+              <Main @edit-branch="openUpdateModal" @toggle-active="toggleBranchActive" @view-warehouses="viewWarehouses"
+                @add-branch="showAddModal = true" />
             </q-tab-panel>
 
             <!-- Warehouse Tab -->
             <q-tab-panel name="warehouse" class="enhanced-tab-panel">
-              <WarehouseComponent
-                :branch="selectedBranch"
-                :selected-warehouse="selectedWarehouse"
-                @view-items="handleViewItems"
-                @go-back="activeTab = 'branches'"
-              />
+              <WarehouseComponent :branch="selectedBranch" :selected-warehouse="selectedWarehouse"
+                @view-items="handleViewItems" @go-back="activeTab = 'branches'" />
             </q-tab-panel>
 
             <!-- Warehouse Items Tab -->
             <q-tab-panel name="warehouseItems" class="enhanced-tab-panel">
-              <WarehouseItemsTab
-                :warehouse="selectedWarehouse"
-                @go-back="activeTab = 'warehouse'"
-              />
+              <WarehouseItemsTab :warehouse="selectedWarehouse" @go-back="activeTab = 'warehouse'" />
             </q-tab-panel>
           </q-tab-panels>
         </q-card-section>
@@ -93,25 +62,17 @@
     </div>
 
     <!-- Add Modal -->
-    <Add
-      v-model="showAddModal"
-      @submit="handleAddSubmit"
-    />
+    <Add v-model="showAddModal" @submit="handleAddSubmit" />
 
     <!-- Update Modal -->
-    <Update
-      v-if="selectedBranch"
-      v-model="showUpdateModal"
-      :branch-id="selectedBranch.id"
-      :initial-data="selectedBranch"
-      @update="handleUpdateSubmit"
-    />
+    <Update v-if="selectedBranch" v-model="showUpdateModal" :branch-id="selectedBranch.id"
+      :initial-data="selectedBranch" @update="handleUpdateSubmit" />
   </q-page>
 </template>
 
 <script setup lang="ts">
 import Header from 'src/components/common/Header.vue'
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Main from 'src/components/branch/Main.vue';
 import WarehouseComponent from 'src/components/branch/warehouse.vue';
@@ -119,17 +80,22 @@ import WarehouseItemsTab from 'src/components/branch/WarehouseItemsTab.vue';
 import Add from 'src/components/branch/Add.vue';
 import Update from 'src/components/branch/Update.vue';
 import { useBranchStore } from 'src/stores/branchStore';
+import { useMeStore } from 'src/stores/meStore';
 import type { Branch } from 'src/types/branch';
 import type { Warehouse } from 'src/types/warehouse';
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
+const meStore = useMeStore();
 // Removed warehouseStore since it's no longer used in this component
 const showAddModal = ref(false);
 const showUpdateModal = ref(false);
 const selectedBranch = ref<Branch | null>(null);
 const activeTab = ref('branches');
 const selectedWarehouse = ref<Warehouse | null>(null);
+
+// Check if user is employee
+const isEmployee = computed(() => meStore.me?.type === 'employee');
 
 // Fetch branches on component mount
 onMounted(async () => {
@@ -195,7 +161,8 @@ function handleUpdateSubmit() {
   align-items: flex-end;
   pointer-events: none;
 }
-.sticky-notes-overlay > div {
+
+.sticky-notes-overlay>div {
   pointer-events: auto;
 }
 
@@ -313,6 +280,7 @@ function handleUpdateSubmit() {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

@@ -1,57 +1,35 @@
 <template>
   <!-- Overlay backdrop for mobile -->
-  <div
-    v-if="isOpen && isMobile"
-    class="sidebar-overlay"
-    @click="closeSidebar"
-  ></div>
+  <div v-if="isOpen && isMobile" class="sidebar-overlay" @click="closeSidebar"></div>
 
-  <div
-    class="custom-sidebar"
-    :class="{
-      'sidebar-closed': !isOpen,
-      'sidebar-mobile': isMobile
-    }"
-  >
+  <div class="custom-sidebar" :class="{
+    'sidebar-closed': !isOpen,
+    'sidebar-mobile': isMobile
+  }">
     <div class="sidebar-inner">
       <!-- Brand/App Logo -->
 
 
       <!-- Navigation Links -->
       <div class="sidebar-menu">
-        <div
-          v-for="(section, index) in navigationSections"
-          :key="index"
-          class="menu-section"
-        >
+        <div v-for="(section, index) in navigationSections" :key="index" class="menu-section">
           <div class="section-header" @click="toggleSection(index)">
             <div class="section-title">{{ section.title }}</div>
             <q-icon
               :name="isRTL ? (sectionStates[index] ? 'expand_less' : 'expand_more') : (sectionStates[index] ? 'expand_less' : 'expand_more')"
-              size="sm"
-              class="section-icon"
-              :class="{ 'section-icon-expanded': sectionStates[index] }"
-              :style="{
+              size="sm" class="section-icon" :class="{ 'section-icon-expanded': sectionStates[index] }" :style="{
                 transform: sectionStates[index] ? 'rotate(180deg)' : 'rotate(0deg)',
                 transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1)'
-              }"
-            />
+              }" />
           </div>
 
           <div class="nav-links" v-show="sectionStates[index]">
-            <router-link
-              v-for="link in section.links"
-              :key="link.path"
-              :to="link.path"
-              class="nav-link"
-              active-class="nav-link-active"
-              :exact="link.path === '/'"
-              @click="handleNavLinkClick"
-            >
+            <router-link v-for="link in section.links" :key="link.path" :to="link.path" class="nav-link"
+              active-class="nav-link-active" :exact="link.path === '/'" @click="handleNavLinkClick">
               <div class="link-icon">
                 <q-icon :name="link.icon" size="sm" />
               </div>
-              <div class="link-text">{{ link.label }}</div>
+              <div class="link-text">{{ singularizeMenuLabel(link.label) }}</div>
             </router-link>
           </div>
         </div>
@@ -70,10 +48,40 @@ import { defineProps, defineEmits, computed, onMounted, onUnmounted, ref } from 
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { usePermissions } from 'src/composables/usePermissions';
+import { useMeStore } from 'src/stores/meStore';
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const permissions = usePermissions();
+const meStore = useMeStore();
+
+// Helper function to singularize menu labels for employees
+const singularizeMenuLabel = (label: string): string => {
+  if (meStore.me?.type !== 'employee') {
+    return label; // Return original label for non-employees
+  }
+
+  // Map of plural to singular translation keys
+  const singularMap: Record<string, string> = {
+    [t('sidebar.items')]: t('sidebar.item'),
+    [t('sidebar.branches')]: t('sidebar.branch'),
+    [t('sidebar.categories')]: t('sidebar.category'),
+    [t('sidebar.offers')]: t('sidebar.offer'),
+    [t('sidebar.transferRequests')]: t('sidebar.transferRequest'),
+    [t('sidebar.warehouseTransfers')]: t('sidebar.warehouseTransfer'),
+    [t('sidebar.transactions')]: t('sidebar.transaction'),
+    [t('sidebar.employees')]: t('sidebar.employee'),
+    [t('sidebar.customers')]: t('sidebar.customer'),
+    [t('sidebar.locations')]: t('sidebar.location'),
+    [t('sidebar.reports')]: t('sidebar.report'),
+    [t('sidebar.warehouses')]: t('sidebar.warehouse'),
+    [t('sidebar.purchases')]: t('sidebar.purchase'),
+    [t('sidebar.sells')]: t('sidebar.sell')
+  };
+
+  // Return singular form if available, otherwise return original
+  return singularMap[label] || label;
+};
 
 // Add RTL detection
 const isRTL = computed(() => {
@@ -256,7 +264,8 @@ const navigationSections = computed(() => {
 
 .custom-sidebar {
   position: fixed;
-  top: 50px; /* Adjust based on your header height */
+  top: 50px;
+  /* Adjust based on your header height */
   left: 0;
   height: calc(100vh - 50px);
   width: 280px;

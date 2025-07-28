@@ -4,31 +4,14 @@
       <Filter @filter="handleFilter" class="branch-filter" />
     </div>
 
-    <Qtable
-    show-bottom
-    :top-right="isAdmin"
-      :menu-items="menuItems"
-      :columns="columns"
-      :rows="branches"
-      :loading="branchStore.loading"
-      row-key="id"
-      class="branch-table"
-      @menu-action="handleAction"
-      :top-right-title="t('branch.addNew', 'Add Branch')"
-      :top-right-icon="'add_business'"
-      @top-right-action="$emit('add-branch')"
-      :pagination="pagination"
-      @page-change="handlePageChange"
-      flat
-      bordered
-    >
+    <Qtable show-bottom :top-right="isAdmin" :menu-items="menuItems" :columns="columns" :rows="branches"
+      :loading="branchStore.loading" row-key="id" class="branch-table" @menu-action="handleAction"
+      :top-right-title="t('branch.addNew', 'Add Branch')" :top-right-icon="'add_business'"
+      @top-right-action="$emit('add-branch')" :pagination="pagination" @page-change="handlePageChange" flat bordered
+      :user-type="userType" :allowed-types="['admin']">
       <template #body-cell-is_active="props">
         <q-td :props="props">
-          <q-chip
-            :color="props.value ? 'positive' : 'negative'"
-            text-color="white"
-            size="sm"
-          >
+          <q-chip :color="props.value ? 'positive' : 'negative'" text-color="white" size="sm">
             <q-icon :name="props.value ? 'check_circle' : 'cancel'" left />
             {{ props.value ? t('branch.active', 'Active') : t('branch.inactive', 'Inactive') }}
           </q-chip>
@@ -58,6 +41,9 @@ const perPage = ref(10);
 // Check if user is admin to show top-right button
 const isAdmin = computed(() => meStore.me?.type === 'admin');
 
+// Get user type for Qtable permissions
+const userType = computed(() => meStore.me?.type || '');
+
 // Add pagination computed property
 const pagination = computed(() => branchStore.pagination);
 
@@ -79,20 +65,30 @@ async function fetchBranches() {
   await branchStore.fetchBranches(currentPage.value);
 }
 
-// Menu items for branch actions
-const menuItems = [
-  { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
-  {
-    label: t('branch.toggleActive', 'Activate/Deactivate'),
-    icon: 'swap_horiz',
-    value: 'toggleActive',
-  },
-  {
-    label: t('warehouse.viewWarehouses', 'View Warehouses'),
-    icon: 'inventory',
-    value: 'viewWarehouses',
-  },
-];
+// Menu items for branch actions - different for admin vs employee
+const menuItems = computed(() => {
+  const baseItems = [
+    {
+      label: t('warehouse.viewWarehouses', 'View Warehouses'),
+      icon: 'inventory',
+      value: 'viewWarehouses',
+    },
+  ];
+
+  // Only admins can edit and toggle active status
+  if (isAdmin.value) {
+    baseItems.unshift(
+      { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
+      {
+        label: t('branch.toggleActive', 'Activate/Deactivate'),
+        icon: 'swap_horiz',
+        value: 'toggleActive',
+      }
+    );
+  }
+
+  return baseItems;
+});
 
 // Get branches from the store with filter applied
 const branches = computed(() => branchStore.branches);
@@ -104,7 +100,7 @@ const columns = [
     name: 'name',
     required: true,
     label: t('branch.name', 'Branch Name'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: 'name',
     sortable: true,
   },
@@ -112,7 +108,7 @@ const columns = [
     name: 'code',
     required: true,
     label: t('branch.code', 'Branch Code'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: 'code',
     sortable: true,
   },
@@ -120,7 +116,7 @@ const columns = [
     name: 'location',
     required: true,
     label: t('branch.location', 'Location'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: (row: any) => row.location?.name || 'N/A',
     sortable: true,
   },
@@ -139,13 +135,13 @@ const columns = [
     align: 'center' as const,
     field: 'is_active',
     sortable: true,
-  format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
+    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
   },
   {
     name: 'actions',
     required: true,
     label: t('common.actions', 'Actions'),
-    align: 'center'as const,
+    align: 'center' as const,
     field: 'actions',
     sortable: false,
   },

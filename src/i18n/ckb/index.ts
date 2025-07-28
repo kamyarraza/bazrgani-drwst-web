@@ -13,24 +13,38 @@ export default {
     blumTransactions: 'مامەڵەکان',
     admin: 'بەڕێوەبەر',
     items: 'کاڵاکان',
+    item: 'کاڵا', // Singular form for employees
     branches: 'لقەکان',
+    branch: 'لق', // Singular form for employees
     categories: 'پۆلەکان',
+    category: 'پۆل', // Singular form for employees
     offers: 'ئۆفەرەکان',
+    offer: 'ئۆفەر', // Singular form for employees
     transferRequests: 'داواکاری گواستنەوە',
+    transferRequest: 'داواکاری گواستنەوە', // Singular form for employees
     warehouseTransfers: 'گواستنەوەی کۆگا',
+    warehouseTransfer: 'گواستنەوەی کۆگا', // Singular form for employees
     transactions: 'مامەڵەکان',
+    transaction: 'مامەڵە', // Singular form for employees
     itemTransaction: 'مامەڵەی کاڵا',
     system: 'سیستەم',
     activityLog: 'تۆماری چالاکیەکان',
     people: 'خەڵک',
     accountant: 'ژمێریار',
     employees: 'فەرمانبەران',
+    employee: 'فەرمانبەر', // Singular form for employees
     customers: 'کڕیاران',
+    customer: 'کڕیار', // Singular form for employees
     locations: 'شوێنەکان',
+    location: 'شوێن', // Singular form for employees
     reports: 'ڕاپۆرتەکان',
+    report: 'ڕاپۆرت', // Singular form for employees
     warehouses: 'کۆگاکان',
+    warehouse: 'کۆگا', // Singular form for employees
     purchases: 'کڕینەکان',
-    sells: 'فرۆشتنەکان'
+    purchase: 'کڕین', // Singular form for employees
+    sells: 'فرۆشتنەکان',
+    sell: 'فرۆشتن' // Singular form for employees
   },
 
 
@@ -477,6 +491,8 @@ export default {
   branch: {
     title: 'بەڕێوەبردنی لقەکان',
     subtitle: 'بەڕێوەبردنی لق و کۆگاکان',
+    myBranch: 'لقەکەم',
+    myBranchSubtitle: 'بەڕێوەبردنی کارەکانی لقەکەت',
     addNew: 'زیادکردنی لقی نوێ',
     update: 'نوێکردنەوەی لق',
     details: 'وردەکاری لق',

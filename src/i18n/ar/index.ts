@@ -12,24 +12,38 @@ export default {
     blumTransactions: 'معاملات بلوم',
     admin: 'المدير',
     items: 'المنتجات',
+    item: 'منتج', // Singular form for employees
     branches: 'الفروع',
+    branch: 'فرع', // Singular form for employees
     categories: 'التصنيفات',
+    category: 'تصنيف', // Singular form for employees
     offers: 'العروض',
+    offer: 'عرض', // Singular form for employees
     transferRequests: 'طلبات النقل',
+    transferRequest: 'طلب نقل', // Singular form for employees
     warehouseTransfers: 'تحويلات المستودع',
+    warehouseTransfer: 'تحويل مستودع', // Singular form for employees
     transactions: 'المعاملات',
+    transaction: 'معاملة', // Singular form for employees
     itemTransaction: 'معاملة منتج',
     system: 'النظام',
     activityLog: 'سجل النشاط',
     people: 'الأشخاص',
     accountant: 'المحاسب',
     employees: 'الموظفين',
+    employee: 'موظف', // Singular form for employees
     customers: 'العملاء',
+    customer: 'عميل', // Singular form for employees
     locations: 'المواقع',
+    location: 'موقع', // Singular form for employees
     reports: 'التقارير',
+    report: 'تقرير', // Singular form for employees
     warehouses: 'المستودعات',
+    warehouse: 'مستودع', // Singular form for employees
     purchases: 'المشتريات',
-    sells: 'المبيعات'
+    purchase: 'مشترى', // Singular form for employees
+    sells: 'المبيعات',
+    sell: 'مبيعة' // Singular form for employees
   },
   blum: {
         "stitle": "مجموعات بلوم",
@@ -902,6 +916,8 @@ receiveFromCustomer: "استلام من العميل",
   branch: {
     title: 'إدارة الفروع',
     subtitle: 'إدارة الفروع والمستودعات',
+    myBranch: 'فرعي',
+    myBranchSubtitle: 'إدارة عمليات فرعك',
     addNew: 'إضافة فرع جديد',
     update: 'تحديث الفرع',
     details: 'تفاصيل الفرع',

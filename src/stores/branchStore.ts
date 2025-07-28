@@ -4,6 +4,27 @@ import { api } from 'boot/axios';
 import type { Branch, BranchUpdatePayload, Pagination, ApiResponse } from 'src/types/branch';
 import { endPoints } from 'src/endpoint';
 import { showNotify } from 'src/composables/Notify';
+import { useMeStore } from './meStore';
+
+// Helper function to singularize branch names for employees
+function singularizeBranchName(name: string): string {
+  // Handle common English plurals
+  const pluralRules = [
+    { pattern: /ies$/i, replacement: 'y' },      // branches -> branch, companies -> company
+    { pattern: /ches$/i, replacement: 'ch' },    // branches -> branch
+    { pattern: /shes$/i, replacement: 'sh' },    // branches -> branch
+    { pattern: /ses$/i, replacement: 's' },      // bases -> base
+    { pattern: /s$/i, replacement: '' }          // stores -> store, offices -> office
+  ];
+
+  for (const rule of pluralRules) {
+    if (rule.pattern.test(name)) {
+      return name.replace(rule.pattern, rule.replacement);
+    }
+  }
+
+  return name; // Return original if no plural pattern matches
+}
 
 export const useBranchStore = defineStore('branch', () => {
   const branches = ref<Branch[]>([]);
@@ -12,14 +33,33 @@ export const useBranchStore = defineStore('branch', () => {
   const error = ref<string | null>(null);
   const pagination = ref<Pagination | null>(null);
 
+  // Helper to check if current user is employee
+  const isEmployee = () => {
+    const meStore = useMeStore();
+    return meStore.me?.type === 'employee';
+  };
+
   async function fetchBranches(page: number = 1) {
     loading.value = true;
     error.value = null;
 
     try {
+      // For employees, the endpoint will return only their branch data
+      // For admins, the endpoint will return all branches
       const { data } = await api.get<ApiResponse<Branch[]>>(`${endPoints.branch.list}?page=${page}&paginate=true&relations=warehouses,location`);
-      branches.value = data.data;
 
+      // Process branch data based on user type
+      let processedBranches = data.data;
+
+      if (isEmployee() && processedBranches.length > 0) {
+        // For employees, make branch names singular
+        processedBranches = processedBranches.map(branch => ({
+          ...branch,
+          name: singularizeBranchName(branch.name)
+        }));
+      }
+
+      branches.value = processedBranches;
       pagination.value = data.pagination || null;
 
     } catch (err: unknown) {
@@ -193,6 +233,7 @@ export const useBranchStore = defineStore('branch', () => {
     loading,
     error,
     pagination,
+    isEmployee,
     fetchBranches,
     createBranch,
     getBranchDetails,
