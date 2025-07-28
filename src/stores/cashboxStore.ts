@@ -15,7 +15,7 @@ export const useCashboxStore = defineStore('cashbox', () => {
     error.value = null;
 
     try {
-      const { data } = await api.get<CashboxResponse>(`${endPoints.cashbox.details(branchId)}`);
+      const { data } = await api.get<CashboxResponse>(`${endPoints.cashbox.details(branchId)}?relations=sessions,transactions`);
       cashbox.value = data.data;
       return true;
     } catch (err: unknown) {
@@ -115,10 +115,8 @@ export const useCashboxStore = defineStore('cashbox', () => {
         duration: 3000,
       });
 
-      // Update cashbox data directly from response
-      if (data?.data) {
-        cashbox.value = data.data;
-      }
+      // Refresh the cashbox data to get updated transactions
+      await fetchCashbox(branchId);
       return true;
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to deposit money';
@@ -149,10 +147,8 @@ export const useCashboxStore = defineStore('cashbox', () => {
         duration: 3000,
       });
 
-      // Update cashbox data directly from response
-      if (data?.data) {
-        cashbox.value = data.data;
-      }
+      // Refresh the cashbox data to get updated transactions
+      await fetchCashbox(branchId);
       return true;
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to withdraw money';

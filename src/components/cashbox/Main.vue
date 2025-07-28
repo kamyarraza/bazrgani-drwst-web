@@ -86,66 +86,113 @@
 
     <!-- Action Buttons Section -->
     <div v-if="branch && cashboxStore.cashbox" class="action-section">
-      <!-- Main Actions (Open/Close) -->
-      <div class="main-actions">
-        <q-btn v-if="!cashboxStore.cashbox.is_opened" color="positive" @click="showOpenDialog = true"
-          :loading="cashboxStore.loading" class="main-action-btn open-btn cute-btn" size="lg" rounded
-          :disable="cashboxStore.loading">
-          <div class="btn-content">
-            <q-icon name="lock_open" class="btn-icon unlock-icon" :class="{ 'animating': cashboxStore.loading }" />
-            <span class="btn-text">{{ t('cashbox.openCashbox', 'Open Cashbox') }}</span>
-            <div class="sparkles">
-              <div class="sparkle sparkle-1"></div>
-              <div class="sparkle sparkle-2"></div>
-              <div class="sparkle sparkle-3"></div>
+      <!-- Tabs for different sections -->
+      <div class="cashbox-tabs">
+        <q-tabs v-model="activeTab" class="cashbox-tabs-header" active-color="primary" indicator-color="primary"
+          align="justify" narrow-indicator no-caps>
+          <q-tab name="actions" class="tab-item">
+            <div class="tab-content">
+              <q-icon name="settings" size="20px" />
+              <span class="tab-label">{{ t('common.actions', 'Actions') }}</span>
             </div>
-          </div>
-          <q-tooltip class="cute-tooltip">
-            {{ t('cashbox.openTooltip', 'Open cashbox to start transactions') }}
-          </q-tooltip>
-        </q-btn>
+          </q-tab>
 
-        <q-btn v-if="cashboxStore.cashbox.is_opened" color="negative" @click="showCloseDialog = true"
-          :loading="cashboxStore.loading" class="main-action-btn close-btn cute-btn" size="lg" rounded
-          :disable="cashboxStore.loading">
-          <div class="btn-content">
-            <q-icon name="lock" class="btn-icon lock-icon" :class="{ 'animating': cashboxStore.loading }" />
-            <span class="btn-text">{{ t('cashbox.closeCashbox', 'Close Cashbox') }}</span>
-            <div class="lock-glow"></div>
-          </div>
-          <q-tooltip class="cute-tooltip">
-            {{ t('cashbox.closeTooltip', 'Close cashbox and end session') }}
-          </q-tooltip>
-        </q-btn>
-      </div>
+          <q-tab name="transactions" class="tab-item">
+            <div class="tab-content">
+              <q-icon name="receipt_long" size="20px" />
+              <span class="tab-label">{{ t('cashbox.transactionHistory', 'Transaction History') }}</span>
+            </div>
+          </q-tab>
 
-      <!-- Transaction Actions (only when cashbox is open) -->
-      <div v-if="cashboxStore.cashbox.is_opened" class="transaction-actions">
-        <div class="actions-header">
-          <h6>{{ t('cashbox.transactions', 'Transactions') }}</h6>
-          <q-icon name="payments" class="transactions-icon" />
-        </div>
+          <q-tab name="sessions" class="tab-item">
+            <div class="tab-content">
+              <q-icon name="history" size="20px" />
+              <span class="tab-label">{{ t('cashbox.sessionHistory', 'Session History') }}</span>
+            </div>
+          </q-tab>
+        </q-tabs>
 
-        <div class="transaction-buttons">
-          <q-btn color="green-6" icon="add_circle" :label="t('cashbox.deposit', 'Deposit')"
-            @click="showDepositDialog = true" class="transaction-btn deposit-btn" rounded outline>
-            <q-tooltip>{{ t('cashbox.depositTooltip', 'Add money to cashbox') }}</q-tooltip>
-          </q-btn>
+        <q-separator class="tab-separator" />
 
-          <q-btn color="red-6" icon="remove_circle" :label="t('cashbox.withdraw', 'Withdraw')"
-            @click="showWithdrawDialog = true" class="transaction-btn withdraw-btn" rounded outline>
-            <q-tooltip>{{ t('cashbox.withdrawTooltip', 'Remove money from cashbox') }}</q-tooltip>
-          </q-btn>
-        </div>
-      </div>
+        <q-tab-panels v-model="activeTab" animated swipeable class="cashbox-tab-panels">
+          <!-- Actions Tab -->
+          <q-tab-panel name="actions" class="actions-panel">
+            <!-- Main Actions (Open/Close) -->
+            <div class="main-actions">
+              <q-btn v-if="!cashboxStore.cashbox.is_opened" color="positive" @click="showOpenDialog = true"
+                :loading="cashboxStore.loading" class="main-action-btn open-btn cute-btn" size="lg" rounded
+                :disable="cashboxStore.loading">
+                <div class="btn-content">
+                  <q-icon name="lock_open" class="btn-icon unlock-icon"
+                    :class="{ 'animating': cashboxStore.loading }" />
+                  <span class="btn-text">{{ t('cashbox.openCashbox', 'Open Cashbox') }}</span>
+                  <div class="sparkles">
+                    <div class="sparkle sparkle-1"></div>
+                    <div class="sparkle sparkle-2"></div>
+                    <div class="sparkle sparkle-3"></div>
+                  </div>
+                </div>
+                <q-tooltip class="cute-tooltip">
+                  {{ t('cashbox.openTooltip', 'Open cashbox to start transactions') }}
+                </q-tooltip>
+              </q-btn>
 
-      <!-- Utility Actions -->
-      <div class="utility-actions">
-        <q-btn color="primary" icon="refresh" :label="t('cashbox.refresh', 'Refresh')" @click="refreshCashbox"
-          :loading="cashboxStore.loading" flat class="utility-btn" rounded />
+              <q-btn v-if="cashboxStore.cashbox.is_opened" color="negative" @click="showCloseDialog = true"
+                :loading="cashboxStore.loading" class="main-action-btn close-btn cute-btn" size="lg" rounded
+                :disable="cashboxStore.loading">
+                <div class="btn-content">
+                  <q-icon name="lock" class="btn-icon lock-icon" :class="{ 'animating': cashboxStore.loading }" />
+                  <span class="btn-text">{{ t('cashbox.closeCashbox', 'Close Cashbox') }}</span>
+                  <div class="lock-glow"></div>
+                </div>
+                <q-tooltip class="cute-tooltip">
+                  {{ t('cashbox.closeTooltip', 'Close cashbox and end session') }}
+                </q-tooltip>
+              </q-btn>
+            </div>
 
-        <q-btn color="grey-7" :icon="goBackIcon" :label="t('common.back', 'Go Back')" @click="$emit('go-back')" flat
-          class="utility-btn" rounded />
+            <!-- Transaction Actions (only when cashbox is open) -->
+            <div v-if="cashboxStore.cashbox.is_opened" class="transaction-actions">
+              <div class="actions-header">
+                <h6>{{ t('cashbox.transactions', 'Transactions') }}</h6>
+                <q-icon name="payments" class="transactions-icon" />
+              </div>
+
+              <div class="transaction-buttons">
+                <q-btn color="green-6" icon="add_circle" :label="t('cashbox.deposit', 'Deposit')"
+                  @click="showDepositDialog = true" class="transaction-btn deposit-btn" rounded outline>
+                  <q-tooltip>{{ t('cashbox.depositTooltip', 'Add money to cashbox') }}</q-tooltip>
+                </q-btn>
+
+                <q-btn color="red-6" icon="remove_circle" :label="t('cashbox.withdraw', 'Withdraw')"
+                  @click="showWithdrawDialog = true" class="transaction-btn withdraw-btn" rounded outline>
+                  <q-tooltip>{{ t('cashbox.withdrawTooltip', 'Remove money from cashbox') }}</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+
+            <!-- Utility Actions -->
+            <div class="utility-actions">
+              <q-btn color="primary" icon="refresh" :label="t('cashbox.refresh', 'Refresh')" @click="refreshCashbox"
+                :loading="cashboxStore.loading" flat class="utility-btn" rounded />
+
+              <q-btn color="grey-7" :icon="goBackIcon" :label="t('common.back', 'Go Back')" @click="$emit('go-back')"
+                flat class="utility-btn" rounded />
+            </div>
+          </q-tab-panel>
+
+          <!-- Transactions Tab -->
+          <q-tab-panel name="transactions" class="transactions-panel">
+            <TransactionHistory :transactions="cashboxStore.cashbox.transactions" :loading="cashboxStore.loading"
+              @refresh="refreshCashbox" />
+          </q-tab-panel>
+
+          <!-- Sessions Tab -->
+          <q-tab-panel name="sessions" class="sessions-panel">
+            <SessionHistory :sessions="cashboxStore.cashbox.sessions" :loading="cashboxStore.loading"
+              @refresh="refreshCashbox" />
+          </q-tab-panel>
+        </q-tab-panels>
       </div>
     </div>
 
@@ -346,6 +393,8 @@ import { computed, watch, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCashboxStore } from 'src/stores/cashboxStore';
 import { formatCurrency } from 'src/composables/useFormat';
+import TransactionHistory from './TransactionHistory.vue';
+import SessionHistory from './SessionHistory.vue';
 import type { Branch } from 'src/types/branch';
 
 const props = defineProps<{
@@ -356,6 +405,9 @@ const _emit = defineEmits(['go-back']);
 
 const { t, locale } = useI18n();
 const cashboxStore = useCashboxStore();
+
+// Active tab for the tab panels
+const activeTab = ref('actions');
 
 // Dialog states
 const showDepositDialog = ref(false);
@@ -749,11 +801,63 @@ onMounted(async () => {
   }
 }
 
-// Action Section
+// Action Section with Tabs
 .action-section {
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  .cashbox-tabs {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+    .cashbox-tabs-header {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+      .tab-item {
+        padding: 16px 24px;
+        transition: all 0.3s ease;
+
+        .tab-content {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .tab-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+          }
+        }
+
+        &.q-tab--active {
+          background: rgba(102, 126, 234, 0.1);
+          color: #667eea;
+        }
+      }
+    }
+
+    .tab-separator {
+      border-color: #e2e8f0;
+    }
+
+    .cashbox-tab-panels {
+      min-height: 400px;
+
+      .actions-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding: 24px;
+      }
+
+      .transactions-panel,
+      .sessions-panel {
+        padding: 16px;
+      }
+    }
+  }
 }
 
 .main-actions {
