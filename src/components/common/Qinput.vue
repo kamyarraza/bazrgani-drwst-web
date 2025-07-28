@@ -11,8 +11,9 @@
             <slot name="after" />
         </template>
         <template v-slot:append>
-            <q-icon v-if="type === 'password'" :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer white-icon"
-                @click="isPwd = !isPwd" />
+            <q-icon v-if="type === 'password'" :name="isPwd ? 'visibility_off' : 'visibility'" 
+              :class="isPwd ? 'cursor-pointer text-grey-5' : 'cursor-pointer text-indigo'" 
+              @click="isPwd = !isPwd" />
         </template>
     </q-input>
 </template>
