@@ -144,6 +144,68 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     }
   };
 
+  // New method for the new purchase/sell endpoints
+  const createNewTransaction = async (transactionData: any, endpoint: string) => {
+    try {
+      loading.value = true;
+
+      // Create FormData for the new endpoints
+      const formData = new FormData();
+
+      // Add basic fields
+      formData.append('branch_id', transactionData.branch_id.toString());
+      formData.append('customer_id', transactionData.customer_id.toString());
+      formData.append('warehouse_id', transactionData.warehouse_id.toString());
+      formData.append('payment_type', transactionData.payment_type);
+      formData.append('usd_iqd_rate', transactionData.usd_iqd_rate.toString());
+      formData.append('note', transactionData.note || '');
+      formData.append('created_at', transactionData.created_at);
+      formData.append('iqd_price', transactionData.iqd_price.toString());
+      formData.append('usd_price', transactionData.usd_price.toString());
+      formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
+      formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
+
+      // Add details array
+      transactionData.details.forEach((detail: any, index: number) => {
+        formData.append(`details[${index}][item_id]`, detail.item_id.toString());
+        formData.append(`details[${index}][quantity]`, detail.quantity.toString());
+        formData.append(`details[${index}][unit_price]`, detail.unit_price.toString());
+        formData.append(`details[${index}][solo_unit_price]`, detail.solo_unit_price.toString());
+        formData.append(`details[${index}][bulk_unit_price]`, detail.bulk_unit_price.toString());
+      });
+
+      // Add sell-specific fields
+      if (transactionData.discounted_rate !== undefined && transactionData.discounted_rate !== null) {
+        formData.append('discounted_rate', transactionData.discounted_rate.toString());
+      }
+      if (transactionData.status) {
+        formData.append('status', transactionData.status);
+      }
+
+      const response = await api.post<ApiResponse<any>>(
+        endpoint,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      if (response.data.status === 'success') {
+        // Refresh the transaction list if needed
+        // await fetchTransactionList(transactionData.type || 'purchase');
+        return response.data;
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Error creating new transaction:', error);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const addSelectedItem = (item: Product) => {
     const existingIndex = selectedItems.value.findIndex(si => si.item_id === item.id);
     if (existingIndex >= 0) {
@@ -341,6 +403,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     fetchTransactionList,
     fetchSingleTransaction,
     createTransaction,
+    createNewTransaction,
     addSelectedItem,
     removeSelectedItem,
     updateSelectedItemQuantity,

@@ -11,219 +11,316 @@
           <img :src="brandLogo" alt="Brand Watermark" />
         </div>
 
-        <!-- Main Content -->
-        <div class="invoice-content">
-          <!-- Header -->
+        <!-- Static Header -->
+        <div class="static-header">
+          <!-- Enhanced Professional Header -->
           <div class="header">
-          <div class="brand-section">
-            <img :src="brandLogo" alt="Brand Logo" class="brand-logo" />
-            <div class="company-name">{{ t('invoice.header.companyName') }}</div>
-          </div>
-          <div class="invoice-section">
-            <div class="invoice-title">{{ t('invoice.types.invoice') }}</div>
-          </div>
-        </div>
-
-        <!-- Client and Invoice Details -->
-        <div class="details-section">
-          <div class="invoice-details">
-            <div class="section-header">{{ t('invoice.details.title') }}</div>
-            <div class="details-container">
-              <div class="detail-row">
-                <span class="label">{{ t('invoice.header.invoiceNumber') }}</span>
-                <span class="value">{{ invoiceNumber }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">{{ t('invoice.details.date') }}:</span>
-                <span class="value">{{ formatDate(transaction?.created_at) }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">{{ t('invoice.details.status') }}:</span>
-                <span class="value">{{ formatStatus(transaction?.status) }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">{{ t('invoice.currency.title') }}:</span>
-                <span class="value">{{ (transaction as any)?.currency || 'USD' }}</span>
-              </div>
-              <div class="detail-row" v-if="(transaction as any)?.usd_iqd_rate">
-                <span class="label">{{ t('invoice.details.exchangeRate') }}:</span>
-                <span class="value">{{ (transaction as any)?.usd_iqd_rate }}</span>
+            <div class="brand-section">
+              <img :src="brandLogo" alt="Brand Logo" class="brand-logo" />
+              <div class="company-info">
+                <div class="company-name">{{ t('invoice.header.companyName') }}</div>
+                <div class="company-tagline">{{ t('invoice.header.companyTagline') }}</div>
+                <div class="company-contact" dir="ltr">
+                  <span class="contact-item" style="white-space: nowrap;">📞 {{ t('invoice.header.companyPhone')
+                  }}</span>
+                  <span class="contact-item" style="white-space: nowrap;">✉ true.trading23@gmail.com</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="client-info">
-            <div class="section-header">{{ t('invoice.details.billingTo') }}</div>
-            <div class="details-container">
-              <div class="detail-row">
-                <span class="label">{{ t('invoice.details.name') }}:</span>
-                <span class="value">{{ transaction?.customer?.name || 'N/A' }}</span>
-              </div>
-              <div class="detail-row" v-if="(transaction?.customer as any)?.phone">
-                <span class="label">{{ t('invoice.details.phone') }}:</span>
-                <span class="value">{{ (transaction?.customer as any)?.phone }}</span>
-              </div>
-              <div class="detail-row" v-if="(transaction?.customer as any)?.fphone">
-                <span class="label">{{ t('invoice.details.fphone') }}:</span>
-                <span class="value">{{ (transaction?.customer as any)?.fphone }}</span>
-              </div>
-
-              <div class="detail-row">
-                <span class="label">{{ t('invoice.details.type') }}:</span>
-                <span class="value">{{ transaction?.customer?.type || 'N/A' }}</span>
+            <div class="invoice-section">
+              <div class="invoice-title">{{ t('invoice.types.invoice') }}</div>
+              <div class="invoice-meta">
+                <div class="invoice-number">{{ invoiceNumber }}</div>
+                <div class="invoice-date" dir="ltr">📅 {{ formatDate(transaction?.created_at) }}</div>
+                <!-- <div class="currency-badge" :class="(transaction as any)?.currency?.toLowerCase() || 'usd'">
+                  {{ (transaction as any)?.currency || 'USD' }}
+                </div> -->
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Project/Transaction Type -->
-        <div class="project-name">
-          <strong>{{ t('invoice.details.transactionType') }}:</strong> {{ transaction?.type === 'purchase' ? t('invoice.types.purchase') : t('invoice.types.sale') }}
-        </div>
-
-        <!-- Items Table -->
-        <table class="items-table">
-          <thead class="table-header">
-            <tr>
-              <th>{{ t('invoice.items.serialNumber') }}</th>
-              <th>{{ t('invoice.items.description') }}</th>
-              <th>{{ t('invoice.items.quantity') }}</th>
-              <th>{{ t('invoice.items.unitPrice') }}</th>
-              <th>{{ t('invoice.items.total') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in transactionItems" :key="item.id">
-              <td>{{ index + 1 }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.quantity }}</td>
-              <td>{{ formatCurrencyDisplay(item.unit_price) }}</td>
-              <td>{{ formatCurrencyDisplay(item.quantity * item.unit_price) }}</td>
-            </tr>
-            <!-- Only show actual data rows, no empty filler rows -->
-          </tbody>
-        </table>
-
-        <!-- Spacer to push totals section down -->
-        <div class="content-spacer"></div>
-
-        <!-- Payment and Totals Section - kept inside content for proper padding -->
-        <div class="bottom-section">
-          <div class="left-section">
-            <div class="totals-section">
-              <div v-if="(transaction as any)?.old_borrowed_price !== undefined">
-                <div class="total-line">
-                {{ t('invoice.oldBorrowedPrice') }}: <span class="amount">{{ formatCurrencyDisplay((transaction as any).old_borrowed_price) }}</span>
-                </div>
+        <!-- Dynamic Content Area -->
+        <div class="dynamic-content">
+          <!-- Enhanced Client and Invoice Details -->
+          <div class="details-section">
+            <div class="invoice-details-card">
+              <div class="card-header">
+                <q-icon name="receipt_long" size="18px" color="primary" />
+                <span class="card-title">{{ t('invoice.details.title') }}</span>
               </div>
-              <div v-if="(transaction as any)?.new_borrowed_price !== undefined">
-                <div class="total-line">
-                    {{ t('invoice.newBorrowedPrice') }}: <span class="amount">{{ formatCurrencyDisplay((transaction as any).new_borrowed_price) }}</span>
+              <div class="details-container">
+                <div class="detail-row">
+                  <span class="label">{{ t('invoice.header.invoiceNumber') }}</span>
+                  <span class="value highlight">{{ invoiceNumber }}</span>
                 </div>
-              </div>
-              <div v-if="transaction?.type === 'sell' && (transaction as any)?.discounted_rate > 0">
-                <div class="total-line">
-                   {{ t('invoice.discount') }}: <span class="amount">{{ (transaction as any).discounted_rate }}%</span>
+                <div class="detail-row">
+                  <span class="label">{{ t('invoice.details.date') }}:</span>
+                  <span class="value">{{ formatDate(transaction?.created_at) }}</span>
                 </div>
-              </div>
-              <div class="total-line total-bold">  {{ t('invoice.totalMoney') }}: <span class="amount">{{ formatCurrencyDisplay(finalTotal) }}</span></div>
-              <div class="total-line">{{ t('invoice.paidAmount') }}: <span class="amount">{{ formatCurrencyDisplay(transaction?.paid_price || 0) }}</span></div>
-              <div class="total-line">{{ t('invoice.unpaidAmount') }}: <span class="amount">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0) }}</span></div>
-              <div class="total-line balance-line" :class="{ 'balance-due': balanceAmount > 0 }">
-                {{ t('invoice.amountLeftToPay') }}: <span class="amount">{{ formatCurrencyDisplay(balanceAmount) }}</span>
-              </div>
-            </div>
-          </div>
 
-          <div class="right-section">
-            <div class="payment-section">
-              <div class="payment-title">{{ t('invoice.payment.title') }}</div>
-              <div class="payment-details">
-                <div class="payment-row">
-                  <span class="label">{{ t('invoice.payment.method') }}:</span>
-                  <span class="value">{{ formatPaymentType(transaction?.payment_type) }}</span>
-                </div>
-                <div class="payment-row">
+                <!-- @Deprecated -->
+                <!-- <div class="detail-row">
                   <span class="label">{{ t('invoice.details.status') }}:</span>
-                  <span class="value">{{ getPaymentStatus() }}</span>
+                  <span class="value" :class="getStatusClass()">{{ formatStatus(transaction?.status) }}</span>
                 </div>
-                <div class="payment-row">
-                  <span class="label">{{ t('invoice.details.warehouse') }}:</span>
-                  <span class="value">{{ transaction?.warehouse?.name || 'N/A' }}</span>
+                <div class="detail-row">
+                  <span class="label">{{ t('invoice.currency.title') }}:</span>
+                  <span class="value currency-display">{{ (transaction as any)?.currency || 'USD' }}</span>
+                </div> -->
+
+                <!-- <div class="detail-row" v-if="(transaction as any)?.usd_iqd_rate">
+                  <span class="label">{{ t('invoice.details.exchangeRate') }}: &nbsp;</span>
+                  <span class="value exchange-rate" dir="ltr">1 USD = {{ Number((transaction as
+                    any).usd_iqd_rate).toLocaleString('en-IQ')
+                  }} IQD</span>
+                </div> -->
+              </div>
+            </div>
+
+            <div class="client-info-card">
+              <div class="card-header">
+                <q-icon name="person" size="18px" color="primary" />
+                <span class="card-title">{{ t('invoice.details.billingTo') }}</span>
+              </div>
+              <div class="details-container">
+                <div class="client-name">{{ transaction?.customer?.name || 'N/A' }}</div>
+                <div class="detail-row" v-if="(transaction?.customer as any)?.phone">
+                  <q-icon name="phone" size="14px" />
+                  <span class="contact-info">{{ (transaction?.customer as any)?.phone }}</span>
                 </div>
-                <div class="payment-row">
-                  <span class="label">{{ t('invoice.details.reference') }}:</span>
-                  <span class="value">{{ transaction?.id }}</span>
+                <div class="detail-row" v-if="(transaction?.customer as any)?.fphone">
+                  <q-icon name="phone_android" size="14px" />
+                  <span class="contact-info">{{ (transaction?.customer as any)?.fphone }}</span>
+                </div>
+                <div class="detail-row" v-if="transaction?.warehouse?.name">
+                  <q-icon name="warehouse" size="14px" />
+                  <span class="contact-info">{{ t('invoice.details.warehouse') }}: {{ transaction?.warehouse?.name
+                    }}</span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Note Section (hidden in print) -->
-        <div class="note-section no-print" v-if="(transaction as any)?.note">
-          <div class="note-title">{{ t('invoice.notes.title') }}:</div>
-          <div class="note-content">{{ (transaction as any).note }}</div>
-        </div>
+          <!-- Project/Transaction Type -->
+          <div class="project-name">
+            <strong>{{ t('invoice.details.transactionType') }}:</strong> {{ transaction?.type === 'purchase' ?
+              t('invoice.types.purchase') : t('invoice.types.sale') }}
+          </div>
 
-        </div>
+          <!-- Enhanced Items Table -->
+          <div class="items-section">
+            <div class="section-header">
+              <q-icon name="inventory_2" size="20px" />
+              <span>{{ t('invoice.items.title') }}</span>
+            </div>
+            <table class="items-table">
+              <thead class="table-header">
+                <tr>
+                  <th class="serial-col">{{ t('invoice.items.serialNumber') }}</th>
+                  <th class="description-col">{{ t('invoice.items.description') }}</th>
+                  <th class="quantity-col">{{ t('invoice.items.quantity') }}</th>
+                  <th class="price-col">{{ t('invoice.items.unitPrice') }}</th>
+                  <th class="total-col">{{ t('invoice.items.total') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in transactionItems" :key="item.id" class="item-row">
+                  <td class="serial-cell">{{ index + 1 }}</td>
+                  <td class="description-cell">
+                    <div class="item-name">{{ item.name }}</div>
+                    <div v-if="(item as any).sku" class="item-sku">SKU: {{ (item as any).sku }}</div>
+                  </td>
+                  <td class="quantity-cell">{{ item.quantity }}</td>
+                  <td class="price-cell">{{ formatCurrencyDisplay(item.unit_price) }}</td>
+                  <td class="total-cell">{{ formatCurrencyDisplay(item.quantity * item.unit_price) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <!-- Signature Section - moved above footer -->
-        <div class="signature-section-bottom">
-          <div class="thank-you">{{ t('invoice.footer.thankYou') }}</div>
-          <div class="signature-area">
-            <div class="signature-line">{{ t('invoice.footer.signature') }}</div>
-            <div class="account-manager">{{ t('invoice.footer.accountManager') }}</div>
+          <!-- Spacer to push totals section down -->
+          <div class="content-spacer"></div>
+
+          <!-- Enhanced Payment and Totals Section -->
+          <div class="bottom-section">
+            <div class="left-section">
+              <div class="totals-card">
+                <div class="card-header">
+                  <q-icon name="calculate" size="18px" color="primary" />
+                  <span class="card-title">{{ t('invoice.totals.title') }}</span>
+                </div>
+                <div class="totals-content">
+                  <div v-if="(transaction as any)?.old_borrowed_price !== undefined" class="total-line">
+                    <span class="total-label">{{ t('invoice.oldBorrowedPrice') }}</span>
+                    <span class="total-amount">{{ formatCurrencyDisplay((transaction as any).old_borrowed_price)
+                      }}</span>
+                  </div>
+                  <div v-if="(transaction as any)?.new_borrowed_price !== undefined" class="total-line">
+                    <span class="total-label">{{ t('invoice.newBorrowedPrice') }}</span>
+                    <span class="total-amount">{{ formatCurrencyDisplay((transaction as any).new_borrowed_price)
+                      }}</span>
+                  </div>
+                  <div v-if="transaction?.type === 'sell' && (transaction as any)?.discounted_rate > 0"
+                    class="total-line discount-line">
+                    <span class="total-label">{{ t('invoice.discount') }}</span>
+                    <span class="total-amount discount">{{ (transaction as any).discounted_rate }}%</span>
+                  </div>
+                  <div class="total-line subtotal-line">
+                    <span class="total-label">{{ t('invoice.subtotal') }}</span>
+                    <span class="total-amount">{{ formatCurrencyDisplay(subtotal) }}</span>
+                  </div>
+                  <div class="total-line grand-total-line">
+                    <span class="total-label">{{ t('invoice.totalMoney') }}</span>
+                    <span class="total-amount grand-total">{{ formatCurrencyDisplay(finalTotal) }}</span>
+                  </div>
+                  <div class="total-line balance-line" :class="{ 'balance-due': balanceAmount > 0 }">
+                    <span class="total-label">{{ t('invoice.amountLeftToPay') }}</span>
+                    <span class="total-amount balance">{{ formatCurrencyDisplay(balanceAmount) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="right-section">
+              <div class="payment-card">
+                <div class="card-header">
+                  <q-icon name="payment" size="18px" color="primary" />
+                  <span class="card-title">{{ t('invoice.payment.title') }}</span>
+                </div>
+                <div class="payment-content">
+                  <div class="payment-row">
+                    <q-icon name="credit_card" size="16px" />
+                    <span class="payment-label">{{ t('invoice.payment.method') }}</span>
+                    <span class="payment-value method">{{ formatPaymentType(transaction?.payment_type) }}</span>
+                  </div>
+                  <!-- @Deprecated -->
+                  <!-- <div class="payment-row">
+                    <q-icon name="assignment" size="16px" />
+                    <span class="payment-label">{{ t('invoice.details.status') }}</span>
+                    <span class="payment-value" :class="getPaymentStatusClass()">{{ getPaymentStatus() }}</span>
+                  </div> -->
+                  <div class="payment-row">
+                    <q-icon name="warehouse" size="16px" />
+                    <span class="payment-label">{{ t('invoice.details.warehouse') }}</span>
+                    <span class="payment-value">{{ transaction?.warehouse?.name || 'N/A' }}</span>
+                  </div>
+                  <div class="payment-row">
+                    <q-icon name="payments" size="16px" />
+                    <span class="payment-label">{{ t('invoice.paidAmount') }}</span>
+                    <span class="payment-value paid">{{ formatCurrencyDisplay(transaction?.paid_price || 0) }}</span>
+                  </div>
+                  <div class="payment-row">
+                    <q-icon name="pending" size="16px" />
+                    <span class="payment-label">{{ t('invoice.unpaidAmount') }}</span>
+                    <span class="payment-value unpaid">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0)
+                      }}</span>
+                  </div>
+                  <!-- <div class="payment-row">
+                    <q-icon name="tag" size="16px" />
+                    <span class="payment-label">{{ t('invoice.details.reference') }}</span>
+                    <span class="payment-value reference">{{ transaction?.id }}</span>
+                  </div> -->
+
+                  <!-- Enhanced Payment Fields -->
+                  <div v-if="(transaction as any)?.iqd_price || (transaction as any)?.usd_price"
+                    class="payment-separator">
+                    <div class="separator-text">{{ t('invoice.payment.amounts') }}</div>
+                  </div>
+                  <div v-if="(transaction as any)?.iqd_price" class="payment-row payment-amount">
+                    <q-icon name="currency_exchange" size="16px" />
+                    <span class="payment-label">{{ t('transactionAlpha.iqdPrice') }}</span>
+                    <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).iqd_price)
+                      }}</span>
+                  </div>
+                  <div v-if="(transaction as any)?.usd_price" class="payment-row payment-amount">
+                    <q-icon name="attach_money" size="16px" />
+                    <span class="payment-label">{{ t('transactionAlpha.usdPrice') }}</span>
+                    <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).usd_price)
+                      }}</span>
+                  </div>
+
+                  <div v-if="(transaction as any)?.iqd_return_amount || (transaction as any)?.usd_return_amount"
+                    class="payment-separator">
+                    <div class="separator-text">{{ t('invoice.payment.returns') }}</div>
+                  </div>
+                  <div v-if="(transaction as any)?.iqd_return_amount" class="payment-row payment-return">
+                    <q-icon name="keyboard_return" size="16px" />
+                    <span class="payment-label">{{ t('transactionAlpha.iqdReturnAmount') }}</span>
+                    <span class="payment-value return">{{ formatCurrencyDisplay((transaction as any).iqd_return_amount)
+                      }}</span>
+                  </div>
+                  <div v-if="(transaction as any)?.usd_return_amount" class="payment-row payment-return">
+                    <q-icon name="keyboard_return" size="16px" />
+                    <span class="payment-label">{{ t('transactionAlpha.usdReturnAmount') }}</span>
+                    <span class="payment-value return">{{ formatCurrencyDisplay((transaction as any).usd_return_amount)
+                      }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Note Section (hidden in print) -->
+          <div class="note-section no-print" v-if="(transaction as any)?.note">
+            <div class="note-title">{{ t('invoice.notes.title') }}:</div>
+            <div class="note-content">{{ (transaction as any).note }}</div>
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="footer">
-          <div class="footer-main">
-            <div class="footer-left">
-              <div class="footer-item">
-                <span class="footer-icon">🌐</span>
-                <span>www.bazrganidrwst.com</span>
-              </div>
-              <div class="footer-item">
-                <span class="footer-icon">📍</span>
-                <span>{{ t('invoice.header.companyAddress') }}</span>
-              </div>
-            </div>
-
-            <div class="footer-center">
-              <div class="footer-brand-name">{{ t('invoice.header.companyName') }}</div>
-              <div class="footer-tagline">{{ t('invoice.header.companyTagline') }}</div>
-            </div>
-
-            <div class="footer-right">
-              <div class="footer-item">
-                <span class="footer-icon">☎</span>
-                <span>{{ t('invoice.header.companyPhone') }}</span>
-              </div>
-              <div class="footer-item">
-                <span class="footer-icon">✉</span>
-                <span>true.trading23@gmail.com</span>
-              </div>
+        <!-- Static Footer -->
+        <div class="static-footer">
+          <!-- Signature Section - moved above footer -->
+          <div class="signature-section-bottom">
+            <div class="thank-you">{{ t('invoice.footer.thankYou') }}</div>
+            <div class="signature-area">
+              <div class="signature-line">{{ t('invoice.footer.signature') }}</div>
+              <div class="account-manager">{{ t('invoice.footer.accountManager') }}</div>
             </div>
           </div>
 
-          <div class="footer-bottom">
-            {{ t('invoice.footer.copyright') }}
+          <!-- Footer -->
+          <div class="footer">
+            <div class="footer-main">
+              <div class="footer-left">
+                <div class="footer-item">
+                  <span class="footer-icon">🌐</span>
+                  <span>www.bazrganidrwst.com</span>
+                </div>
+                <div class="footer-item">
+                  <span class="footer-icon">📍</span>
+                  <span>{{ t('invoice.header.companyAddress') }}</span>
+                </div>
+              </div>
+
+              <div class="footer-center">
+                <div class="footer-brand-name">{{ t('invoice.header.companyName') }}</div>
+                <div class="footer-tagline">{{ t('invoice.header.companyTagline') }}</div>
+              </div>
+
+              <div class="footer-right">
+                <div class="footer-item">
+                  <span class="footer-icon">☎</span>
+                  <span>{{ t('invoice.header.companyPhone') }}</span>
+                </div>
+                <div class="footer-item">
+                  <span class="footer-icon">✉</span>
+                  <span>true.trading23@gmail.com</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer-bottom">
+              {{ t('invoice.footer.copyright') }}
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Action Buttons (hidden in print) -->
       <q-card-actions class="modal-actions no-print" align="right">
-        <q-btn-dropdown
-          color="secondary"
-          icon="currency_exchange"
-          :label="t('invoice.actions.switchCurrency')"
-          no-caps
-          unelevated
-          :loading="fetchingCurrency"
-          :disable="fetchingCurrency"
-        >
+        <q-btn-dropdown color="secondary" icon="currency_exchange" :label="t('invoice.actions.switchCurrency')" no-caps
+          unelevated :loading="fetchingCurrency" :disable="fetchingCurrency">
           <q-list>
             <q-item clickable v-close-popup @click="fetchInvoiceByCurrency('USD')">
               <q-item-section avatar>
@@ -245,21 +342,9 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-        <q-btn
-          @click="printInvoice"
-          :label="t('invoice.actions.printInvoice')"
-          icon="print"
-          color="primary"
-          unelevated
-          no-caps
-        />
-        <q-btn
-          @click="closeModal"
-          :label="t('invoice.actions.close')"
-          color="grey-6"
-          flat
-          no-caps
-        />
+        <q-btn @click="printInvoice" :label="t('invoice.actions.printInvoice')" icon="print" color="primary" unelevated
+          no-caps />
+        <q-btn @click="closeModal" :label="t('invoice.actions.close')" color="grey-6" flat no-caps />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -271,7 +356,7 @@ import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
 import type { List } from 'src/types/item_transaction';
-const brandLogo = '/brand.jpg';
+const brandLogo = 'brand.jpg';
 
 // Composables
 const { t } = useI18n();
@@ -342,22 +427,6 @@ const formatPaymentType = (paymentType?: string) => {
   return paymentType.charAt(0).toUpperCase() + paymentType.slice(1);
 };
 
-const formatStatus = (status?: string) => {
-  if (!status) return 'Unknown';
-  return status.charAt(0).toUpperCase() + status.slice(1);
-};
-
-const getPaymentStatus = () => {
-  if (!props.transaction) return 'Unknown';
-
-  const total = finalTotal.value;
-  const paid = props.transaction.paid_price || 0;
-
-  if (paid >= total) return 'Fully Paid';
-  if (paid > 0) return 'Partially Paid';
-  return 'Unpaid';
-};
-
 const fetchInvoiceByCurrency = async (currency: 'USD' | 'IQD') => {
   if (!props.transaction?.id) {
     Notify.create({
@@ -374,6 +443,8 @@ const fetchInvoiceByCurrency = async (currency: 'USD' | 'IQD') => {
     const response = await api.get(`/transactions/${props.transaction.id}?relations=customer,warehouse,items&currency=${currency}`);
 
     if (response.data && response.data.data) {
+      console.log(response.data.data);
+
       // Emit the updated transaction data to the parent component
       emit('transaction-updated', response.data.data);
 
@@ -404,13 +475,19 @@ const closeModal = () => {
 };
 
 // Format currency display based on transaction currency
-const formatCurrencyDisplay = (amount: number) => {
+const formatCurrencyDisplay = (amount: any) => {
+  // Ensure amount is a valid number
+  const numericAmount = Number(amount);
+  if (isNaN(numericAmount)) {
+    return '0.00';
+  }
+
   const currency = (props.transaction as any)?.currency || 'USD';
 
   if (currency === 'IQD') {
-    return `${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} IQD`;
+    return `${numericAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} IQD`;
   } else {
-    return `$${amount.toFixed(2)}`;
+    return `$${numericAmount.toFixed(2)}`;
   }
 };
 </script>
@@ -418,6 +495,15 @@ const formatCurrencyDisplay = (amount: number) => {
 <style lang="scss" scoped>
 // Print-only styles
 @media print {
+
+  /* Define printer-safe margins - accounting for physical printer margins */
+  /* Increased margins to ensure compatibility with most printers */
+  @page {
+    size: A4;
+    margin: 0.85in 0.6in !important;
+    /* Top/bottom: 0.85in, Left/right: 0.6in (more conservative) */
+  }
+
   .no-print {
     display: none !important;
   }
@@ -431,6 +517,7 @@ const formatCurrencyDisplay = (amount: number) => {
     border-radius: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: hidden !important;
   }
 
   .invoice-container {
@@ -440,29 +527,133 @@ const formatCurrencyDisplay = (amount: number) => {
     background: white !important;
     max-width: none !important;
     min-height: 100vh !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
+    /* Slightly smaller for better fit */
     display: flex !important;
     flex-direction: column !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    position: relative !important;
   }
 
-  // Ensure proper page breaks
-  .invoice-container {
-    page-break-inside: avoid;
+  /* Static Header Positioning - adjusted for increased printer margins */
+  .static-header {
+    position: fixed !important;
+    top: 0.35in !important;
+    /* Account for increased printer top margin */
+    left: 0.35in !important;
+    /* Account for increased printer left margin */
+    right: 0.35in !important;
+    /* Account for increased printer right margin */
+    z-index: 1000 !important;
+    background: white !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    padding: 0 !important;
   }
 
+  /* Static Footer Positioning - adjusted for increased printer margins */
+  .static-footer {
+    position: fixed !important;
+    bottom: 0.35in !important;
+    /* Account for increased printer bottom margin */
+    left: 0.35in !important;
+    /* Account for increased printer left margin */
+    right: 0.35in !important;
+    /* Account for increased printer right margin */
+    z-index: 1000 !important;
+    background: white !important;
+    border-top: 1px solid #e0e0e0 !important;
+    padding: 0 !important;
+  }
+
+  /* Dynamic Content with adjusted margins for increased printer-safe area */
+  .dynamic-content {
+    margin-top: 2.25in !important;
+    /* Increased space for header within printer margins */
+    margin-bottom: 1.75in !important;
+    /* Increased space for footer within printer margins */
+    padding: 0.3in !important;
+    /* Internal padding within printer-safe area */
+    flex: 1 !important;
+  }
+
+  /* Hide all scrollbars completely in print */
+  * {
+    overflow: visible !important;
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Page break controls for multi-page content */
   .items-table {
-    page-break-inside: auto;
+    page-break-inside: auto !important;
   }
 
   .items-table tr {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
+  }
+
+  .details-section,
+  .bottom-section {
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure content flows properly across pages */
+  .dynamic-content>* {
+    page-break-inside: avoid !important;
+  }
+
+  .items-table tbody tr {
+    page-break-inside: avoid !important;
+  }
+
+  /* Optimize print layout */
+  .header {
+    margin: 0 !important;
+    padding: 15px !important;
+  }
+
+  .footer {
+    margin: 0 !important;
+    padding: 15px !important;
+  }
+
+  .signature-section-bottom {
+    padding: 15px !important;
   }
 }
 
-// Screen-only styles
+// Screen-only styles for new layout structure
 @media screen {
   .print-only {
     display: none !important;
+  }
+
+  .static-header {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+  }
+
+  .dynamic-content {
+    flex: 1;
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+    overflow-y: auto;
+  }
+
+  .static-footer {
+    position: relative;
+    width: 100%;
+    z-index: 2;
+    margin-top: auto;
   }
 }
 
@@ -478,16 +669,19 @@ const formatCurrencyDisplay = (amount: number) => {
   max-width: none;
   height: 100vh;
   overflow-y: auto;
-  padding: 0; /* Remove any padding */
-  margin: 0; /* Remove any margin */
+  padding: 0;
+  /* Remove any padding */
+  margin: 0;
+  /* Remove any margin */
 }
 
 .invoice-container {
   max-width: 800px;
   margin: 20px auto 0 auto;
   background-color: white;
-  padding: 0; /* Remove all padding */
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  padding: 0;
+  /* Remove all padding */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   position: relative;
   font-family: Arial, sans-serif;
   min-height: calc(100vh - 40px);
@@ -502,12 +696,15 @@ const formatCurrencyDisplay = (amount: number) => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 999; /* Highest z-index to appear over everything */
-  opacity: 0.08; /* Slightly increased opacity to show colors better */
+  z-index: 999;
+  /* Highest z-index to appear over everything */
+  opacity: 0.08;
+  /* Slightly increased opacity to show colors better */
   pointer-events: none;
 
   img {
-    width: 350px; /* Slightly smaller for better proportions */
+    width: 350px;
+    /* Slightly smaller for better proportions */
     height: 350px;
     object-fit: contain;
     /* Removed grayscale filter to show brand colors */
@@ -515,16 +712,9 @@ const formatCurrencyDisplay = (amount: number) => {
 }
 
 // All content should be above watermark
-.invoice-content {
-  flex: 1;
-  padding: 40px; /* Add padding back to content only */
-}
-
-.header,
-.details-section,
-.project-name,
-.items-table,
-.bottom-section {
+.static-header,
+.dynamic-content,
+.static-footer {
   position: relative;
   z-index: 2;
 }
@@ -534,45 +724,123 @@ const formatCurrencyDisplay = (amount: number) => {
   z-index: 2;
 }
 
+// Enhanced Professional Header Styles
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 10px;
+  align-items: flex-start;
+  margin-bottom: 35px;
+  padding: 25px;
+  background: linear-gradient(135deg, #2A7B9B 0%, #1e5f7a 100%);
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 8px 25px rgba(42, 123, 155, 0.2);
 }
 
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
   flex: 1;
 }
 
+.company-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .company-name {
-  color: #2A7B9B;
-  font-size: 20px;
-  font-weight: bold;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.company-tagline {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.company-contact {
+  display: flex;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.contact-item {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .invoice-section {
   flex: 1;
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
 }
 
 .invoice-title {
-  color: #2A7B9B;
-  font-size: 32px;
-  font-weight: bold;
-  letter-spacing: 1px;
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.invoice-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.invoice-number {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.invoice-date {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+}
+
+.currency-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+
+  &.usd {
+    background: #22c55e;
+    color: white;
+  }
+
+  &.iqd {
+    background: #f59e0b;
+    color: white;
+  }
 }
 
 .brand-logo {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #2A7B9B;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .details-section {
@@ -852,11 +1120,13 @@ const formatCurrencyDisplay = (amount: number) => {
 }
 
 .footer {
-  margin: 0; /* Remove all margins to take full width */
+  margin: 0;
+  /* Remove all margins to take full width */
   background-color: #2A7B9B;
   color: white;
   padding: 20px 40px;
-  width: 100%; /* Ensure full width */
+  width: 100%;
+  /* Ensure full width */
   position: relative;
   z-index: 2;
 }
@@ -868,7 +1138,8 @@ const formatCurrencyDisplay = (amount: number) => {
   margin-bottom: 15px;
 }
 
-.footer-left, .footer-right {
+.footer-left,
+.footer-right {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -902,7 +1173,7 @@ const formatCurrencyDisplay = (amount: number) => {
 
 .footer-tagline {
   font-size: 12px;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .footer-right {
@@ -912,52 +1183,72 @@ const formatCurrencyDisplay = (amount: number) => {
 .footer-bottom {
   text-align: center;
   padding-top: 15px;
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 12px;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .modal-actions {
   padding: 16px 24px;
   background: white;
-  border-top: 1px solid rgba(0,0,0,0.1);
-  margin: 0; /* Remove any margin */
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0;
+  /* Remove any margin */
 }
 
 // Print-specific adjustments
+/* Additional print styles for watermark and fine-tuning */
 @media print {
-  @page {
-    size: A4;
-    margin: 0.5in;
-  }
-
   .watermark {
-    opacity: 0.08 !important; /* Consistent with screen view */
+    opacity: 0.08 !important;
+    /* Consistent with screen view */
   }
 
   .watermark img {
-    width: 250px !important; /* Smaller for print */
+    width: 250px !important;
+    /* Smaller for print */
     height: 250px !important;
     /* No grayscale filter to maintain brand colors */
   }
 
-  .invoice-content {
-    padding: 15px !important;
-    flex: 1 !important;
+  /* Override any conflicting dynamic content margins - use the printer-safe values */
+  .dynamic-content {
+    margin-top: 2.25in !important;
+    /* Printer-safe space for header (increased slightly) */
+    margin-bottom: 1.75in !important;
+    /* Printer-safe space for footer (increased slightly) */
+    padding: 0.3in !important;
+    /* Internal padding within safe area */
   }
 
-  .footer {
+  /* Static header and footer print refinements */
+  .static-header .header {
     margin: 0 !important;
-    padding: 12px 15px !important;
-    width: 100% !important;
-    margin-top: auto !important;
+    padding: 15px 20px !important;
+    /* Consistent padding */
   }
 
+  .static-footer .footer {
+    margin: 0 !important;
+    padding: 15px 20px !important;
+    /* Consistent padding */
+    width: 100% !important;
+  }
+
+  .static-footer .signature-section-bottom {
+    padding: 10px 20px !important;
+    /* Consistent padding */
+  }
+
+  /* Table cell optimization for print */
   .items-table th,
   .items-table td {
     padding: 6px 4px !important;
+    font-size: 11px !important;
+    /* Ensure text fits well */
   }
 
+  /* Details section print styling */
   .details-section {
     background: #f8f9fa !important;
     border: 1px solid #e9ecef !important;
@@ -979,7 +1270,7 @@ const formatCurrencyDisplay = (amount: number) => {
 
   // Content spacer for print
   .content-spacer {
-    height: 60px !important; // Slightly smaller for print
+    height: 40px !important; // Smaller for print with static layout
   }
 
   // Ensure text is crisp in print
@@ -1000,15 +1291,7 @@ const formatCurrencyDisplay = (amount: number) => {
     margin-bottom: 20px !important;
   }
 
-  .items-table th,
-  .items-table td {
-    padding: 6px 4px !important;
-  }
-
-  .header {
-    margin-bottom: 20px !important;
-  }
-
+  // Additional print spacing adjustments
   .details-section {
     margin-bottom: 15px !important;
   }
@@ -1021,10 +1304,7 @@ const formatCurrencyDisplay = (amount: number) => {
     margin-bottom: 15px !important;
   }
 
-  .signature-section-bottom {
-    padding: 20px 15px !important;
-  }
-
+  // Typography adjustments for print
   .brand-name {
     font-size: 36px !important;
   }
@@ -1041,12 +1321,15 @@ const formatCurrencyDisplay = (amount: number) => {
 // Responsive design for mobile and tablet
 @media screen and (max-width: 768px) {
   .invoice-container {
-    margin: 10px auto 0 auto; /* Keep auto margins for centering */
-    padding: 0; /* Remove padding */
+    margin: 10px auto 0 auto;
+    /* Keep auto margins for centering */
+    padding: 0;
+    /* Remove padding */
   }
 
-  .invoice-content {
-    padding: 20px; /* Add padding to content only */
+  .dynamic-content {
+    padding: 20px;
+    /* Add padding to content only */
   }
 
   .header {
@@ -1121,11 +1404,13 @@ const formatCurrencyDisplay = (amount: number) => {
 
 @media screen and (max-width: 480px) {
   .invoice-container {
-    padding: 0; /* Remove padding */
+    padding: 0;
+    /* Remove padding */
   }
 
-  .invoice-content {
-    padding: 15px; /* Add padding to content only */
+  .dynamic-content {
+    padding: 15px;
+    /* Add padding to content only */
   }
 
   .brand-name {

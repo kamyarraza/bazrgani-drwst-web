@@ -1990,6 +1990,7 @@ export default {
       totalIQD: 'Total (IQD)',
     },
     totals: {
+      title: 'Financial Summary',
       subtotal: 'Subtotal',
       subtotalIQD: 'Subtotal (IQD)',
       totalAmount: 'Total Amount',
@@ -2001,6 +2002,7 @@ export default {
       tax: 'Tax',
       discount: 'Discount',
     },
+    subtotal: 'Subtotal',
     notes: {
       title: 'Notes',
     },
@@ -2056,6 +2058,7 @@ export default {
     borrow: 'Borrow',
     transactionTitle: 'Transaction – {type}',
     customerAndTransactionDetails: 'Customer & Transaction Details',
+    supplierAndTransactionDetails: 'Supplier & Transaction Details',
     transactionStatus: 'Transaction Status',
     complete: 'Complete',
     reserved: 'Reserved',
@@ -2082,7 +2085,22 @@ export default {
     review: 'Review & Submit',
     purchaseSubtitle: 'Record a purchase from a supplier',
     sellSubtitle: 'Complete a sale to a customer',
-    financialSummary: 'Financial Summary'
+    financialSummary: 'Financial Summary',
+    // Payment and return amount translations
+    paymentToSupplier: 'Payment to Supplier',
+    paymentFromCustomer: 'Payment from Customer',
+    iqdAmountWePay: 'IQD Amount We Pay',
+    iqdAmountCustomerPays: 'IQD Amount Customer Pays',
+    usdAmountWePay: 'USD Amount We Pay',
+    usdAmountCustomerPays: 'USD Amount Customer Pays',
+    iqdReturnFromSupplier: 'IQD Return from Supplier',
+    iqdReturnToCustomer: 'IQD Return to Customer',
+    usdReturnFromSupplier: 'USD Return from Supplier',
+    usdReturnToCustomer: 'USD Return to Customer',
+    enterIqdAmount: 'Enter IQD amount',
+    enterUsdAmount: 'Enter USD amount',
+    enterIqdReturnAmount: 'Enter IQD return amount',
+    enterUsdReturnAmount: 'Enter USD return amount'
   },
 
   // Cashbox Management

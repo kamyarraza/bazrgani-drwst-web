@@ -2,40 +2,28 @@
   <q-dialog v-model="show" persistent maximized transition-show="slide-up" transition-hide="slide-down">
     <div class="modal-backdrop">
       <q-card class="professional-modal">
-        <!-- Enhanced Header with Glassmorphism -->
-        <div class="modal-header">
+        <!-- Compact Header -->
+        <div class="modal-header cute-header">
           <div class="header-content">
             <div class="header-left">
-              <div class="transaction-icon-wrapper">
-                <q-icon :name="transactionTypeIcon" size="28px" class="transaction-icon" />
+              <div class="transaction-icon-wrapper cute-icon">
+                <q-icon :name="transactionTypeIcon" size="24px" class="transaction-icon bouncy" />
               </div>
               <div class="header-text">
-                <h1 class="modal-title">{{ t('transactionAlpha.transactionTitle', { type: transactionTypeLabel }) }}
+                <h1 class="modal-title cute-title">
+                  {{ transactionType === 'purchase' ? '🛒' : '💰' }}
+                  {{ t('transactionAlpha.transactionTitle', { type: transactionTypeLabel }) }}
                 </h1>
               </div>
             </div>
-            <q-btn flat round dense icon="close" @click="close" class="close-button" size="lg" />
+            <q-btn flat round dense icon="close" @click="close" class="close-button cute-close" size="md" />
           </div>
         </div>
 
-        <!-- Progress Indicator -->
-        <div class="progress-container">
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: `${getProgressPercentage()}%` }"></div>
-          </div>
-          <div class="progress-steps">
-            <div class="step" :class="{ active: true, completed: isFirstSectionComplete }">
-              <div class="step-number">1</div>
-              <span class="step-label">{{ t('transactionAlpha.basicInfo') }}</span>
-            </div>
-            <div class="step" :class="{ active: isFirstSectionComplete, completed: hasSelectedItems }">
-              <div class="step-number">2</div>
-              <span class="step-label">{{ t('transactionAlpha.itemSelection') }}</span>
-            </div>
-            <div class="step" :class="{ active: hasSelectedItems }">
-              <div class="step-number">3</div>
-              <span class="step-label">{{ t('transactionAlpha.review') }}</span>
-            </div>
+        <!-- Compact Progress Indicator -->
+        <div class="progress-container cute-progress">
+          <div class="progress-bar cute-progress-bar">
+            <div class="progress-fill rainbow-progress" :style="{ width: `${getProgressPercentage()}%` }"></div>
           </div>
         </div>
 
@@ -43,11 +31,14 @@
         <div class="modal-content">
           <!-- Step 1: Basic Information -->
           <div class="content-section" :class="{ 'section-active': true }">
-            <div class="section-header">
-              <div class="section-icon">
+            <div class="section-header cute-section-header">
+              <div class="section-icon cute-section-icon">
                 <q-icon name="person" size="20px" />
               </div>
-              <h2 class="section-title">{{ t('transactionAlpha.customerAndTransactionDetails') }}</h2>
+              <h2 class="section-title cute-section-title">
+                👤 {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'supplierAndTransactionDetails' :
+                  'customerAndTransactionDetails'}`) }}
+              </h2>
             </div>
 
             <div class="form-grid">
@@ -78,11 +69,13 @@
           <transition name="slide-fade">
             <div v-if="isFirstSectionComplete" class="content-section"
               :class="{ 'section-active': isFirstSectionComplete }">
-              <div class="section-header">
-                <div class="section-icon">
+              <div class="section-header cute-section-header">
+                <div class="section-icon cute-section-icon">
                   <q-icon name="inventory_2" size="20px" />
                 </div>
-                <h2 class="section-title">{{ t('transactionAlpha.itemSelection') }}</h2>
+                <h2 class="section-title cute-section-title">
+                  🛍️ {{ t('transactionAlpha.itemSelection') }}
+                </h2>
               </div>
               <ItemSelector ref="itemSelectorRef" v-model:selectedItems="selectedItems"
                 :transactionType="transactionType" :warehouseId="selectedWarehouseId" />
@@ -93,18 +86,20 @@
           <transition name="slide-fade">
             <div v-if="isFirstSectionComplete && hasSelectedItems" class="content-section"
               :class="{ 'section-active': hasSelectedItems }">
-              <div class="section-header">
-                <div class="section-icon">
+              <div class="section-header cute-section-header">
+                <div class="section-icon cute-section-icon">
                   <q-icon name="receipt_long" size="20px" />
                 </div>
-                <h2 class="section-title">{{ t('transactionAlpha.debtPaymentSection') }}</h2>
+                <h2 class="section-title cute-section-title">
+                  💰 {{ t('transactionAlpha.debtPaymentSection') }}
+                </h2>
               </div>
 
-              <!-- Financial Summary Card -->
-              <div class="summary-card">
-                <div class="summary-header">
+              <!-- Cute Financial Summary Card -->
+              <div class="summary-card cute-summary-card">
+                <div class="summary-header cute-summary-header">
                   <q-icon name="account_balance_wallet" size="24px" color="primary" />
-                  <h3 class="summary-title">{{ t('transactionAlpha.financialSummary') }}</h3>
+                  <h3 class="summary-title">💳 {{ t('transactionAlpha.financialSummary') }}</h3>
                 </div>
 
                 <div class="summary-content">
@@ -217,6 +212,61 @@
                 </div>
               </div>
 
+              <!-- Payment and Return Amount Section -->
+              <div class="payment-section">
+                <div class="section-header cute-section-header">
+                  <div class="section-icon cute-section-icon">
+                    <q-icon name="payments" size="20px" />
+                  </div>
+                  <h2 class="section-title cute-section-title">
+                    💰 {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'paymentToSupplier' :
+                      'paymentFromCustomer'}`) }}
+                  </h2>
+                </div>
+
+                <div class="payment-grid">
+                  <div class="payment-item">
+                    <label class="form-label">
+                      <q-icon name="currency_exchange" color="primary" size="16px" />
+                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdAmountWePay' :
+                        'iqdAmountCustomerPays'}`) }}
+                    </label>
+                    <q-input v-model.number="iqdPrice" type="number" min="0" dense outlined suffix="IQD"
+                      class="payment-input" :placeholder="t('transactionAlpha.enterIqdAmount')" />
+                  </div>
+
+                  <div class="payment-item">
+                    <label class="form-label">
+                      <q-icon name="attach_money" color="primary" size="16px" />
+                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdAmountWePay' :
+                        'usdAmountCustomerPays'}`) }}
+                    </label>
+                    <q-input v-model.number="usdPrice" type="number" min="0" step="0.01" dense outlined suffix="USD"
+                      class="payment-input" :placeholder="t('transactionAlpha.enterUsdAmount')" />
+                  </div>
+
+                  <div class="payment-item">
+                    <label class="form-label">
+                      <q-icon name="keyboard_return" color="warning" size="16px" />
+                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdReturnFromSupplier' :
+                        'iqdReturnToCustomer'}`) }}
+                    </label>
+                    <q-input v-model.number="iqdReturnAmount" type="number" min="0" dense outlined suffix="IQD"
+                      class="payment-input" :placeholder="t('transactionAlpha.enterIqdReturnAmount')" />
+                  </div>
+
+                  <div class="payment-item">
+                    <label class="form-label">
+                      <q-icon name="keyboard_return" color="warning" size="16px" />
+                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdReturnFromSupplier' :
+                        'usdReturnToCustomer'}`) }}
+                    </label>
+                    <q-input v-model.number="usdReturnAmount" type="number" min="0" step="0.01" dense outlined
+                      suffix="USD" class="payment-input" :placeholder="t('transactionAlpha.enterUsdReturnAmount')" />
+                  </div>
+                </div>
+              </div>
+
               <!-- Note Section -->
               <div class="note-section">
                 <div class="section-header">
@@ -229,11 +279,11 @@
                   class="note-textarea" />
               </div>
 
-              <!-- Action Buttons -->
-              <div class="action-buttons">
-                <q-btn flat :label="t('common.cancel')" @click="close" class="cancel-btn" />
-                <q-btn color="primary" :label="t('transactionAlpha.submitTransaction')" :loading="submitting"
-                  :disable="!canSubmit" unelevated class="submit-btn" @click="handleSubmit" />
+              <!-- Cute Action Buttons -->
+              <div class="action-buttons cute-buttons">
+                <q-btn flat :label="'❌ ' + t('common.cancel')" @click="close" class="cancel-btn cute-cancel" />
+                <q-btn color="primary" :label="'🚀 ' + t('transactionAlpha.submitTransaction')" :loading="submitting"
+                  :disable="!canSubmit" unelevated class="submit-btn cute-submit" @click="handleSubmit" />
               </div>
             </div>
           </transition>
@@ -302,6 +352,13 @@ const note = ref("");
 const selectedWarehouseId = ref(null);
 const discountedRate = ref(0);
 const transactionStatus = ref<'completed' | 'reserved'>('completed');
+
+// Payment and return amount fields
+const iqdPrice = ref(0);
+const usdPrice = ref(0);
+const iqdReturnAmount = ref(0);
+const usdReturnAmount = ref(0);
+
 const statusOptions = [
   { label: t('transaction.status.complete'), value: 'completed' },
   { label: t('transaction.status.reserved'), value: 'reserved' }
@@ -415,6 +472,12 @@ function clearModalData() {
   discountedRate.value = 0;
   transactionStatus.value = 'completed';
 
+  // Reset payment and return amounts
+  iqdPrice.value = 0;
+  usdPrice.value = 0;
+  iqdReturnAmount.value = 0;
+  usdReturnAmount.value = 0;
+
   // Don't reset invoice modal state here - let it be handled by closeInvoiceModal
   // showInvoiceModal.value = false;
   // createdTransaction.value = null;
@@ -435,90 +498,122 @@ function clearModalData() {
 
 async function handleSubmit() {
   if (!canSubmit.value) {
-    $q.notify({ type: 'negative', message: 'Please fill all required fields and select at least one item.' });
+    $q.notify({
+      type: 'negative',
+      message: '🚫 Please complete all required fields',
+      caption: 'Fill customer info, branch, warehouse, and select items',
+      timeout: 3000,
+      position: 'top',
+      avatar: '📝',
+      actions: [
+        { icon: 'close', color: 'white', round: true, size: 'sm' }
+      ]
+    });
     return;
   }
   submitting.value = true;
   try {
-    const transaction: any = {
-      customer_id: selectedCustomerId.value as number, // ensure number
+    // Prepare data for the new endpoints
+    const transactionData: any = {
       branch_id: Number(selectedBranchId.value),
+      customer_id: selectedCustomerId.value as number,
       warehouse_id: Number(selectedWarehouseId.value),
       payment_type: selectedPaymentType.value,
-      note: note.value,
       usd_iqd_rate: usdIqdRate.value,
-      details: selectedItems.value.map(sel => {
-        const base = {
-          item_id: sel.item.id,
-          quantity: sel.quantity,
-          unit_price: sel.unit_cost
-        };
-        if (props.transactionType === 'purchase') {
-          return {
-            ...base,
-            solo_unit_price: sel.solo_unit_cost,
-            bulk_unit_price: sel.bulk_unit_cost
-          };
-        }
-        return base;
-      })
+      note: note.value || '',
+      created_at: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
+      details: selectedItems.value.map(sel => ({
+        item_id: sel.item.id,
+        quantity: sel.quantity,
+        unit_price: sel.unit_cost,
+        solo_unit_price: sel.solo_unit_cost,
+        bulk_unit_price: sel.bulk_unit_cost
+      })),
+      iqd_price: iqdPrice.value || 0,
+      usd_price: usdPrice.value || 0,
+      iqd_return_amount: iqdReturnAmount.value || 0,
+      usd_return_amount: usdReturnAmount.value || 0
     };
+
+    // Add sell-specific fields
     if (props.transactionType === 'sell') {
-      transaction.discounted_rate = discountedRate.value;
-      transaction.status = transactionStatus.value;
+      transactionData.discounted_rate = discountedRate.value;
+      transactionData.status = transactionStatus.value;
     }
-    const response = await itemTransactionStore.createTransaction(transaction, props.transactionType === 'sell' ? 'sale' : 'purchase');
+
+    // Use the new endpoints
+    const endpoint = props.transactionType === 'purchase'
+      ? '/transactions/create/new/purchase'
+      : '/transactions/create/new/sell';
+
+    const response = await itemTransactionStore.createNewTransaction(transactionData, endpoint);
 
     // Transform the API response to match the List interface for invoice
-    if (response && response.data) {
-      const apiData = response.data as any; // Use any to handle the actual API response structure
-
-      // Get warehouse information from the store since it's not in the API response
-      const selectedWarehouse = itemTransactionStore.warehouses.find(w => w.id === selectedWarehouseId.value);
+    if (response && response.status === 'success' && response.data) {
+      const apiData = response.data;
 
       const transformedTransaction: List = {
         id: apiData.id,
-        type: apiData.type,
+        type: props.transactionType,
         customer: {
-          id: apiData.customer?.id || 0,
-          name: apiData.customer?.name || '',
-          type: apiData.customer?.type || '',
-          phone: apiData.customer?.fphone || apiData.customer?.phone || ''
+          id: apiData.customer?.id || selectedCustomer.value?.id || 0,
+          name: apiData.customer?.name || (selectedCustomer.value ? `${selectedCustomer.value.fname} ${selectedCustomer.value.sname}` : ''),
+          type: apiData.customer?.type || selectedCustomer.value?.type || '',
+          phone: apiData.customer?.phone || selectedCustomer.value?.fphone || ''
         },
         warehouse: {
-          id: selectedWarehouse?.id || selectedWarehouseId.value || 0,
-          name: selectedWarehouse?.name || '',
-          code: selectedWarehouse?.code || '',
-          capacity: selectedWarehouse?.capacity || 0
+          id: apiData.warehouse?.id || Number(selectedWarehouseId.value) || 0,
+          name: apiData.warehouse?.name || '',
+          code: apiData.warehouse?.code || '',
+          capacity: apiData.warehouse?.capacity || 0
         },
-        payment_type: apiData.payment_type,
-        items: apiData.items?.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          solo_unit_price: item.solo_unit_price || item.unit_price,
-          bulk_unit_price: item.bulk_unit_price || item.unit_price
-        })) || [],
-        total_price: apiData.total_price,
-        paid_price: apiData.paid_price,
-        unpaid_price: apiData.unpaid_price || 0,
-        usd_iqd_rate: apiData.usd_iqd_rate || 0,
-        note: apiData.note || '',
-        status: apiData.status || 'completed',
-        created_at: apiData.created_at
+        payment_type: apiData.payment_type || selectedPaymentType.value,
+        items: selectedItems.value.map((sel) => ({
+          id: sel.item.id,
+          name: sel.item.name,
+          quantity: sel.quantity,
+          unit_price: sel.unit_cost,
+          solo_unit_price: sel.solo_unit_cost,
+          bulk_unit_price: sel.bulk_unit_cost
+        })),
+        total_price: apiData.total_price || totalAfterDiscount.value,
+        paid_price: apiData.paid_price || (selectedPaymentType.value === 'cash' ? (apiData.total_price || totalAfterDiscount.value) : 0),
+        unpaid_price: apiData.unpaid_price || (selectedPaymentType.value === 'borrow' ? (apiData.total_price || totalAfterDiscount.value) : 0),
+        usd_iqd_rate: apiData.usd_iqd_rate || usdIqdRate.value,
+        note: apiData.note || note.value,
+        status: apiData.status || transactionStatus.value,
+        created_at: apiData.created_at || new Date().toISOString()
       };
 
       createdTransaction.value = transformedTransaction;
       showInvoiceModal.value = true;
     }
 
-    $q.notify({ type: 'positive', message: 'Transaction submitted successfully!' });
-    // Don't clear modal data immediately - let the invoice show first
-    // void clearModalData();
+    $q.notify({
+      type: 'positive',
+      message: `🎉 ${props.transactionType === 'purchase' ? 'Purchase' : 'Sale'} completed successfully!`,
+      caption: `Transaction total: ${formatCurrency(totalAfterDiscount.value)}`,
+      timeout: 4000,
+      position: 'top',
+      avatar: props.transactionType === 'purchase' ? '🛒' : '💰',
+      actions: [
+        { icon: 'close', color: 'white', round: true, size: 'sm' }
+      ]
+    });
     show.value = false;
-  } catch {
-    $q.notify({ type: 'negative', message: 'Failed to submit transaction.' });
+  } catch (error) {
+    console.error('Transaction submission error:', error);
+    $q.notify({
+      type: 'negative',
+      message: '😔 Transaction failed to process',
+      caption: 'Please check your data and try again',
+      timeout: 4000,
+      position: 'top',
+      avatar: '⚠️',
+      actions: [
+        { icon: 'close', color: 'white', round: true, size: 'sm' }
+      ]
+    });
   } finally {
     submitting.value = false;
   }
@@ -565,463 +660,473 @@ function getProgressPercentage() {
 </script>
 
 <style scoped>
-/* Professional Modal Design - Inspired by modern SaaS applications */
+/* Cute and User-Friendly Modal Design */
 
-/* Backdrop with glassmorphism effect */
+/* Backdrop with cute gradient */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(25, 118, 210, 0.1) 0%, rgba(156, 39, 176, 0.1) 100%);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg,
+      rgba(255, 182, 193, 0.15) 0%,
+      rgba(173, 216, 230, 0.15) 25%,
+      rgba(221, 160, 221, 0.15) 50%,
+      rgba(255, 218, 185, 0.15) 75%,
+      rgba(144, 238, 144, 0.15) 100%);
+  backdrop-filter: blur(15px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
 }
 
-/* Main modal container */
+/* Main modal container with cute design */
 .professional-modal {
   width: 95vw;
   max-width: 1200px;
   height: 95vh;
   max-height: 900px;
-  border-radius: 20px;
+  border-radius: 25px;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.1),
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+    0 25px 70px rgba(0, 0, 0, 0.12),
+    0 10px 40px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(25px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Enhanced Header - Compact for laptops */
-.modal-header {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  padding: 16px 24px;
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Cute Header Design - Compact */
+.cute-header {
+  background: linear-gradient(135deg,
+      #ff6b9d 0%,
+      #c44569 25%,
+      #f8b500 50%,
+      #3742fa 75%,
+      #2ed573 100%);
+  padding: 12px 20px;
   position: relative;
   overflow: hidden;
-  min-height: 60px;
+  min-height: 50px;
 }
 
-.modal-header::before {
+.cute-header::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.3)"/><circle cx="5" cy="5" r="0.5" fill="rgba(255,255,255,0.2)"/><circle cx="15" cy="15" r="0.5" fill="rgba(255,255,255,0.2)"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>');
+  opacity: 0.4;
 }
 
-.header-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.cute-icon {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  animation: gentleBounce 2s ease-in-out infinite;
+  width: 36px !important;
+  height: 36px !important;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+@keyframes gentleBounce {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
-.transaction-icon-wrapper {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.bouncy {
+  animation: iconBounce 1.5s ease-in-out infinite;
 }
 
-.transaction-icon {
-  color: white;
+@keyframes iconBounce {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
 
-.header-text {
-  color: white;
-}
-
-.modal-title {
-  font-size: 1.4rem;
-  font-weight: 700;
+.cute-title {
+  font-size: 1.2rem !important;
+  font-weight: 600;
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.close-button {
-  color: white !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.2s ease;
+.cute-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 4px 0 0 0;
+  font-weight: 400;
 }
 
-.close-button:hover {
+.cute-close {
   background: rgba(255, 255, 255, 0.2) !important;
-  transform: scale(1.05);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 
-/* Progress Indicator - Compact */
-.progress-container {
-  padding: 12px 24px;
-  background: rgba(248, 250, 252, 0.8);
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  }
+}
+
+.cute-close:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Compact Progress Indicator */
+.cute-progress {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.progress-bar {
-  height: 3px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
+.cute-progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.progress-fill {
+.rainbow-progress {
   height: 100%;
-  background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
-  border-radius: 2px;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg,
+      #ff6b9d 0%,
+      #c44569 20%,
+      #f8b500 40%,
+      #3742fa 60%,
+      #2ed573 80%,
+      #ff6b9d 100%);
+  border-radius: 8px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: shimmer 2s linear infinite;
 }
 
-.progress-steps {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: 200px 0;
+  }
 }
 
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0.5;
-  transition: all 0.3s ease;
+/* Cute Section Headers */
+.cute-section-header {
+  background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+  padding: 12px 16px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
-.step.active {
-  opacity: 1;
+.cute-section-icon {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%) !important;
+  box-shadow: 0 3px 8px rgba(116, 185, 255, 0.3);
 }
 
-.step.completed .step-number {
-  background: #4caf50;
-  color: white;
-}
-
-.step-number {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.cute-section-title {
+  font-size: 1.2rem !important;
   font-weight: 600;
-  font-size: 0.75rem;
+  color: #2d3436;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Cute Summary Card */
+.cute-summary-card {
+  background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.cute-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hearts" width="30" height="30" patternUnits="userSpaceOnUse"><text x="15" y="20" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.1)">💖</text></pattern></defs><rect width="100" height="100" fill="url(%23hearts)"/></svg>');
+  opacity: 0.2;
+}
+
+.cute-summary-header {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Cute Buttons */
+.cute-buttons {
+  padding-top: 28px;
+  border-top: 2px solid rgba(0, 0, 0, 0.04);
+}
+
+.cute-cancel {
+  color: #636e72 !important;
+  font-weight: 500;
+  border-radius: 25px;
+  padding: 12px 24px;
   transition: all 0.3s ease;
 }
 
-.step-label {
-  font-size: 0.7rem;
-  font-weight: 500;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.7);
+.cute-cancel:hover {
+  background: rgba(255, 107, 107, 0.1) !important;
+  color: #ff6b6b !important;
+  transform: translateY(-2px);
 }
 
-/* Main Content - More space for content */
+.cute-submit {
+  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 14px 36px;
+  border-radius: 25px;
+  box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cute-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.cute-submit:hover::before {
+  left: 100%;
+}
+
+.cute-submit:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+}
+
+.cute-submit:disabled {
+  background: linear-gradient(135deg, #ddd 0%, #bbb 100%) !important;
+  color: #999 !important;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enhanced existing styles with cute touches */
 .modal-content {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
-  background: white;
+  padding: 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
 }
 
 .content-section {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   opacity: 0.7;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
+  transform: translateY(10px);
 }
 
 .content-section.section-active {
   opacity: 1;
+  transform: translateY(0);
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.section-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1976d2;
-}
-
-.section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1a202c;
-  margin: 0;
-  letter-spacing: -0.25px;
-}
-
-/* Form Grid - Optimized for laptops */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
 .form-item {
   position: relative;
+  transition: all 0.3s ease;
 }
 
-.form-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #4a5568;
-  margin-bottom: 8px;
-}
-
-.status-item {
-  grid-column: 1 / -1;
-}
-
-.status-options {
-  margin-top: 8px;
-}
-
-/* Summary Card - Compact */
-.summary-card {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-}
-
-.summary-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.summary-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1a202c;
-  margin: 0;
-}
-
-.summary-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.form-item:hover {
+  transform: translateY(-2px);
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.summary-row:last-child {
-  border-bottom: none;
-}
-
-.summary-row.highlight {
-  background: rgba(255, 193, 7, 0.1);
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin: 0 -16px;
-  border: 1px solid rgba(255, 193, 7, 0.2);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
 }
 
 .summary-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
-  color: #4a5568;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
 }
 
 .summary-value {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #1a202c;
-}
-
-.summary-value.debt {
-  color: #d32f2f;
-}
-
-.summary-value.total {
-  color: #1976d2;
-  font-size: 1rem;
-}
-
-.summary-value.warning {
-  color: #f57c00;
-}
-
-.currency {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-left: 4px;
-}
-
-.summary-input {
-  flex-shrink: 0;
-}
-
-.discount-input {
-  width: 100px;
-}
-
-.discount-row {
-  align-items: flex-start;
+  color: rgba(255, 255, 255, 1);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Note Section */
 .note-section {
   margin-bottom: 32px;
+  background: linear-gradient(135deg, #e8f4fd 0%, #c3e8f8 100%);
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid rgba(116, 185, 255, 0.2);
+}
+
+/* Payment Section */
+.payment-section {
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 107, 107, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.1);
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.payment-item {
+  position: relative;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.payment-input {
+  width: 100%;
 }
 
 .note-textarea {
   margin-top: 16px;
 }
 
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.cancel-btn {
-  color: #6b7280 !important;
-  font-weight: 500;
-}
-
-.submit-btn {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
-  color: white !important;
-  font-weight: 600;
-  padding: 12px 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
-  transition: all 0.2s ease;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
-}
-
-.submit-btn:disabled {
-  background: #e5e7eb !important;
-  color: #9ca3af !important;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Animations */
+/* Cute animations for various elements */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide-fade-enter-from {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(30px) scale(0.95);
 }
 
 .slide-fade-leave-to {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-30px) scale(0.95);
 }
 
-/* Responsive Design */
+/* Responsive enhancements */
 @media (max-width: 1024px) {
   .professional-modal {
     width: 98vw;
     height: 95vh;
+    border-radius: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .cute-header {
+    padding: 16px 20px;
+  }
+
+  .cute-title {
+    font-size: 1.1rem !important;
   }
 
   .modal-content {
     padding: 24px;
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .modal-header {
-    padding: 20px 24px;
-  }
-
-  .modal-title {
-    font-size: 1.5rem;
-  }
-
-  .modal-subtitle {
-    font-size: 0.875rem;
-  }
-
-  .transaction-icon-wrapper {
-    width: 48px;
-    height: 48px;
-  }
-
-  .progress-container {
-    padding: 16px 24px;
-  }
-
-  .modal-content {
-    padding: 20px;
-  }
-
-  .summary-card {
-    padding: 20px;
-  }
-
-  .action-buttons {
+  .cute-buttons {
     flex-direction: column-reverse;
+    gap: 12px;
   }
 
-  .submit-btn {
+  .cute-submit {
     width: 100%;
   }
 }
@@ -1033,20 +1138,16 @@ function getProgressPercentage() {
     border-radius: 0;
   }
 
-  .modal-header {
-    padding: 16px 20px;
+  .cute-header {
+    padding: 14px 16px;
   }
 
   .modal-content {
-    padding: 16px;
+    padding: 20px;
   }
 
-  .summary-card {
-    padding: 16px;
-  }
-
-  .form-grid {
-    gap: 16px;
+  .cute-summary-card {
+    padding: 20px;
   }
 }
 </style>
