@@ -92,20 +92,36 @@ const columns = computed(() => [
     label: t('logs.columns.platform', 'Platform'),
     align: 'left' as const,
     field: 'platform',
+    format: (val: unknown, _row: Record<string, unknown>) => {
+      if (!val || typeof val !== 'string') return '-';
+      const lower = val.toLowerCase();
+      if (lower.includes('android')) return '🤖 Android';
+      if (lower.includes('windows')) return '🪟 Windows';
+      if (lower.includes('ios') || lower.includes('iphone') || lower.includes('ipad')) return '🍏 iOS';
+      return val;
+    },
     sortable: true
   },
-  {
-    name: 'ip_address',
-    label: t('logs.columns.ipAddress', 'IP Address'),
-    align: 'left' as const,
-    field: 'ip_address',
-    sortable: false
-  },
+  // {
+  //   name: 'ip_address',
+  //   label: t('logs.columns.ipAddress', 'IP Address'),
+  //   align: 'left' as const,
+  //   field: 'ip_address',
+  //   sortable: false
+  // },
   {
     name: 'created_at',
     label: t('logs.columns.timestamp', 'Timestamp'),
     align: 'left' as const,
     field: 'created_at',
+    format: (val: unknown, _row: Record<string, unknown>) => {
+      if (!val || typeof val !== 'string') return '-';
+      // Expecting val in ISO or 'YYYY-MM-DD HH:mm:ss' format
+      const d = new Date(val.replace(' ', 'T'));
+      if (isNaN(d.getTime())) return val;
+      const pad = (n: number) => n < 10 ? '0' + n : n;
+      return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
+    },
     sortable: true
   },
 

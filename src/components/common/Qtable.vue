@@ -47,44 +47,43 @@
         <q-card
           class="grid-card cursor-pointer transition-all"
           @click="handleGridCardClick(props.row)"
-          :class="{ 'selected-card': selectedGridItems.includes(getRowKey(props.row)) }"
+          :class="{ 'selected-card': selectedGridItems.includes(getRowKey(props.row)), 'mobile-grid-card': $q.screen.lt.sm }"
         >
-          <q-card-section class="q-pa-md">
+          <q-card-section :class="$q.screen.lt.sm ? 'q-pa-sm' : 'q-pa-md'">
             <!-- Card Header with Image or Icon -->
-            <div class="grid-card-header q-mb-md">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center flex-grow">
+            <div class="grid-card-header q-mb-md" :class="$q.screen.lt.sm ? 'mobile-grid-card-header' : ''">
+              <div class="flex items-center justify-between" :class="$q.screen.lt.sm ? 'mobile-header-row' : ''">
+                <div class="flex items-center flex-grow" :class="$q.screen.lt.sm ? 'mobile-header-main' : ''">
                   <q-avatar
                     v-if="hasImageColumn()"
-                    size="48px"
+                    size="$q.screen.lt.sm ? '36px' : '48px'"
                     class="q-mr-sm grid-avatar"
                   >
                     <img v-if="getImageColumn(props.row)" :src="getImageColumn(props.row)!" :alt="getPrimaryText(props.row)" />
-                    <q-icon v-else name="image" size="28px" color="grey-5" />
+                    <q-icon v-else name="image" :size="$q.screen.lt.sm ? '20px' : '28px'" color="grey-5" />
                   </q-avatar>
                   <q-icon
                     v-else
                     :name="getCardIcon(props.row)"
-                    size="48px"
+                    :size="$q.screen.lt.sm ? '36px' : '48px'"
                     color="primary"
                     class="q-mr-sm grid-avatar"
                   />
                   <div class="grid-card-title flex-grow">
-                    <div class="text-h6 text-primary ellipsis grid-title">{{ getPrimaryText(props.row) }}</div>
-                    <div class="text-caption text-grey-6 grid-description">{{ getSecondaryText(props.row) }}</div>
+                    <div class="text-h6 text-primary ellipsis grid-title" :class="$q.screen.lt.sm ? 'mobile-title' : ''">{{ getPrimaryText(props.row) }}</div>
+                    <div class="text-caption text-grey-6 grid-description" :class="$q.screen.lt.sm ? 'mobile-description' : ''">{{ getSecondaryText(props.row) }}</div>
                   </div>
                   <q-badge color="primary" class="q-ml-sm grid-badge" v-if="pagination">
                     {{ (pagination && pagination.per_page ? (pagination.current_page - 1) * pagination.per_page : 0) + props.rowIndex + 1 }}
                   </q-badge>
                 </div>
-
                 <!-- Enhanced Actions Menu -->
-                <div class="grid-actions-container">
+                <div class="grid-actions-container" :class="$q.screen.lt.sm ? 'mobile-actions' : ''">
                   <q-btn
                     flat
                     round
                     icon="more_vert"
-                    size="md"
+                    :size="$q.screen.lt.sm ? 'lg' : 'md'"
                     class="grid-actions-btn"
                     @click.stop="handleGridAction(props.row)"
                   >
@@ -103,18 +102,17 @@
                 </div>
               </div>
             </div>
-
             <!-- Card Body with Key Information -->
-            <div class="grid-card-body">
+            <div class="grid-card-body" :class="$q.screen.lt.sm ? 'mobile-grid-card-body' : ''">
               <div class="row q-col-gutter-sm">
                 <div
-                  v-for="col in getDisplayColumns(props.row)"
+                  v-for="col in $q.screen.lt.sm ? getDisplayColumns(props.row, 2) : getDisplayColumns(props.row)"
                   :key="col.name"
                   class="col-6"
                 >
-                  <div class="grid-field">
-                    <div class="grid-field-label text-caption text-grey-6">{{ col.label }}</div>
-                    <div class="grid-field-value text-body2 text-weight-medium">
+                  <div class="grid-field" :class="$q.screen.lt.sm ? 'mobile-grid-field' : ''">
+                    <div class="grid-field-label text-caption text-grey-6" :class="$q.screen.lt.sm ? 'mobile-grid-field-label' : ''">{{ col.label }}</div>
+                    <div class="grid-field-value text-body2 text-weight-medium" :class="$q.screen.lt.sm ? 'mobile-grid-field-value' : ''">
                       <template v-if="col.name === 'status' || col.name === 'is_active'">
                         <q-badge
                           :color="getStatusColor(col.value)"
@@ -134,7 +132,6 @@
                 </div>
               </div>
             </div>
-
             <!-- Expandable Content for Grid -->
             <div v-if="hasExpandableRows && expanded[getRowKey(props.row)]" class="grid-expanded-content q-mt-md q-pt-md">
               <q-separator class="q-mb-md" />
@@ -146,12 +143,11 @@
               </slot>
             </div>
           </q-card-section>
-
           <!-- Expand Button for Grid -->
           <q-card-actions v-if="hasExpandableRows" align="center" class="q-pt-none grid-expand-section">
             <q-btn
               flat
-              size="md"
+              :size="$q.screen.lt.sm ? 'md' : 'md'"
               color="primary"
               :icon="expanded[getRowKey(props.row)] ? 'expand_less' : 'expand_more'"
               :label="expanded[getRowKey(props.row)] ? 'Show Less' : 'Show More'"
@@ -481,8 +477,8 @@ function getCardIcon(row: Record<string, unknown>): string {
   return 'folder';
 }
 
-function getDisplayColumns(row: Record<string, unknown>) {
-  // Get the most important columns for grid display (max 4-6 fields)
+function getDisplayColumns(row: Record<string, unknown>, maxFields = 6) {
+  // Get the most important columns for grid display (max N fields)
   return props.columns
     .filter(col =>
       col.name !== 'actions' &&
@@ -492,7 +488,7 @@ function getDisplayColumns(row: Record<string, unknown>) {
       col.name !== 'name' &&
       col.name !== 'title'
     )
-    .slice(0, 6)
+    .slice(0, maxFields)
     .map(col => ({
       name: col.name,
       label: col.label,
@@ -915,27 +911,58 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
   .grid-card {
     margin-bottom: 10px;
     border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    padding: 0;
   }
-
-  .grid-title {
-    font-size: 0.95rem;
+  .mobile-grid-card-header {
+    padding-bottom: 6px !important;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    flex-direction: column !important;
+    align-items: flex-start !important;
   }
-
-  .grid-field {
-    margin-bottom: 8px;
-    padding: 6px;
+  .mobile-header-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px;
   }
-
-  .grid-field-value {
-    font-size: 0.82rem;
+  .mobile-header-main {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
   }
-
+  .mobile-title {
+    font-size: 1rem !important;
+    font-weight: 600;
+  }
+  .mobile-description {
+    font-size: 0.85rem !important;
+    color: #64748b !important;
+  }
+  .mobile-actions {
+    margin-left: 0 !important;
+    margin-top: 4px;
+    align-self: flex-end;
+  }
+  .mobile-grid-card-body {
+    padding: 0 !important;
+  }
+  .mobile-grid-field {
+    padding: 6px !important;
+    margin-bottom: 8px !important;
+    border-radius: 6px !important;
+  }
+  .mobile-grid-field-label {
+    font-size: 0.7rem !important;
+    margin-bottom: 2px !important;
+  }
+  .mobile-grid-field-value {
+    font-size: 0.85rem !important;
+  }
   .grid-actions-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 1.2rem !important;
   }
-
   .grid-expand-btn {
     font-size: 0.8rem;
     padding: 6px 12px;
