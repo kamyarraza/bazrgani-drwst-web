@@ -264,11 +264,23 @@ defineExpose({
                       <q-icon name="inventory" size="14px" />
                       <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
                     </div>
-                    <div v-if="item.package_units" class="quantity-badge packages">
+                    <!-- For purchase: show package_units and packet_units instead of calculated packages/packets -->
+                    <div v-if="item.package_units && props.transactionType === 'purchase'"
+                      class="quantity-badge packages">
+                      <q-icon name="inventory_2" size="14px" />
+                      <span>{{ t('transactionAlpha.pkg') }}: {{ item.package_units }}</span>
+                    </div>
+                    <div v-if="item.packet_units && props.transactionType === 'purchase'"
+                      class="quantity-badge packets">
+                      <q-icon name="category" size="14px" />
+                      <span>{{ t('transactionAlpha.pkt') }}: {{ item.packet_units }}</span>
+                    </div>
+                    <!-- For sell: show calculated packages and packets -->
+                    <div v-if="item.package_units && props.transactionType === 'sell'" class="quantity-badge packages">
                       <q-icon name="inventory_2" size="14px" />
                       <span>{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</span>
                     </div>
-                    <div v-if="item.packet_units" class="quantity-badge packets">
+                    <div v-if="item.packet_units && props.transactionType === 'sell'" class="quantity-badge packets">
                       <q-icon name="category" size="14px" />
                       <span>{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</span>
                     </div>
@@ -293,7 +305,7 @@ defineExpose({
           <h3 class="section-title">🛒 {{ t('transactionAlpha.selectedItems') }}</h3>
           <div class="section-badge selected-badge">{{ selectedItems.length }} {{ t('transactionAlpha.selected',
             'selected')
-            }}</div>
+          }}</div>
         </div>
 
         <div class="selected-items-scroll">
@@ -377,14 +389,7 @@ defineExpose({
           </div>
           <div class="clear-all-container">
             <div class="cute-clear-container">
-              <q-btn
-                @click="clearAll"
-                size="md"
-                class="cute-clear-btn danger"
-                color="negative"
-                no-caps
-                rounded
-              >
+              <q-btn @click="clearAll" size="md" class="cute-clear-btn danger" color="negative" no-caps rounded>
                 <div class="btn-content">
                   <span class="btn-text">{{ t('transactionAlpha.clearAll') }} &nbsp; ⚠️</span>
                 </div>
