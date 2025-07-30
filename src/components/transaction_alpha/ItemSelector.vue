@@ -167,30 +167,14 @@ defineExpose({
     <div class="item-selector-content">
       <div class="item-list-fullwidth">
         <div class="search-row q-mb-md">
-          <q-input
-            v-model="searchQuery"
-            :label="t('transactionAlpha.searchItems')"
-            outlined
-            dense
-            clearable
-            :loading="loading"
-            class="search-input"
-            @keyup.enter="onSearch"
-          >
+          <q-input v-model="searchQuery" :label="t('transactionAlpha.searchItems')" outlined dense clearable
+            :loading="loading" class="search-input" @keyup.enter="onSearch">
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
           </q-input>
-          <q-btn
-            :label="t('transactionAlpha.search')"
-            color="primary"
-            class="search-btn"
-            :loading="loading"
-            @click="onSearch"
-            flat
-            dense
-            no-caps
-          />
+          <q-btn :label="t('transactionAlpha.search')" color="primary" class="search-btn" :loading="loading"
+            @click="onSearch" flat dense no-caps />
         </div>
         <div class="items-container">
           <div v-if="loading" class="loading-state">
@@ -205,25 +189,14 @@ defineExpose({
           </div>
 
           <div v-else class="items-grid">
-            <div
-              v-for="item in items"
-              :key="item.id"
-              class="item-card"
-              :class="{ 'item-selected': selectedItemIds.has(item.id) }"
-            >
+            <div v-for="item in items" :key="item.id" class="item-card"
+              :class="{ 'item-selected': selectedItemIds.has(item.id) }">
               <div class="item-header">
                 <div class="item-name">{{ item.name }}</div>
-                <q-btn
-                  :icon="selectedItemIds.has(item.id) ? 'check_circle' : 'add_circle'"
-                  :color="selectedItemIds.has(item.id) ? 'positive' : 'primary'"
-                  flat
-                  round
-                  dense
-                  size="sm"
+                <q-btn :icon="selectedItemIds.has(item.id) ? 'check_circle' : 'add_circle'"
+                  :color="selectedItemIds.has(item.id) ? 'positive' : 'primary'" flat round dense size="sm"
                   @click="() => { if (!selectedItemIds.has(item.id)) selectItem(item); }"
-                  :disable="selectedItemIds.has(item.id)"
-                  class="add-button"
-                />
+                  :disable="selectedItemIds.has(item.id)" class="add-button" />
               </div>
 
               <div class="item-details">
@@ -233,7 +206,7 @@ defineExpose({
                 </div>
 
                 <div class="item-quantities">
-                  <div v-if="props.transactionType=='sell'" class="quantity-badge available">
+                  <div v-if="props.transactionType == 'sell'" class="quantity-badge available">
                     <q-icon name="inventory" size="14px" />
                     <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
                   </div>
@@ -267,21 +240,67 @@ defineExpose({
               </div>
             </div>
             <div class="col-auto">
-              <q-input v-if="selected.item.package_units > 0" v-model.number="selected.packages" :label="t('transactionAlpha.packages')" type="number" dense outlined min="0" style="max-width:90px;" @update:model-value="val => onPackagesChange(selected, val)" />
-              <div v-if="selected.item.package_units > 0" class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.packageHint', { n: selected.item.package_units }) }}</div>
+              <q-input v-if="selected.item.package_units > 0" v-model.number="selected.packages"
+                :label="t('transactionAlpha.packages')" type="number" dense outlined min="0" style="max-width:90px;"
+                @update:model-value="val => onPackagesChange(selected, val)" />
+              <div v-if="selected.item.package_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
+                t('transactionAlpha.packageHint', { n: selected.item.package_units }) }}</div>
             </div>
             <div class="col-auto">
-              <q-input v-if="selected.item.packet_units > 0" v-model.number="selected.packets" :label="t('transactionAlpha.packets')" type="number" dense outlined min="0" style="max-width:90px;" @update:model-value="val => onPacketsChange(selected, val)" />
-              <div v-if="selected.item.packet_units > 0" class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.packetHint', { n: selected.item.packet_units }) }}</div>
+              <q-input v-if="selected.item.packet_units > 0" v-model.number="selected.packets"
+                :label="t('transactionAlpha.packets')" type="number" dense outlined min="0" style="max-width:90px;"
+                @update:model-value="val => onPacketsChange(selected, val)" />
+              <div v-if="selected.item.packet_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
+                t('transactionAlpha.packetHint', { n: selected.item.packet_units }) }}</div>
             </div>
             <div class="col-auto">
-              <q-input v-model.number="selected.quantity" :label="t('transactionAlpha.quantity')" type="number" dense outlined min="0" style="max-width:90px;" @update:model-value="val => onQuantityChange(selected, val)" />
-              <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', { n: selected.quantity }) }}</div>
+              <q-input v-model.number="selected.quantity" :label="t('transactionAlpha.quantity')" type="number" dense
+                outlined min="0" style="max-width:90px;" @update:model-value="val => onQuantityChange(selected, val)" />
+              <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', {
+                n: selected.quantity
+              }) }}
+              </div>
             </div>
             <div class="col q-gutter-md flex justify-end items-center">
-              <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitCost')" type="number" dense outlined min="0" style="max-width:110px;" />
-              <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')" type="number" dense outlined min="0" style="max-width:110px;" :disable="props.transactionType === 'sell'" />
-              <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')" type="number" dense outlined min="0" style="max-width:110px;" :disable="props.transactionType === 'sell'" />
+              <!-- For Purchase Transactions: Show all 3 price fields -->
+              <template v-if="props.transactionType === 'purchase'">
+                <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitCost')" type="number" dense
+                  outlined min="0" style="max-width:110px;" />
+                <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')"
+                  type="number" dense outlined min="0" style="max-width:110px;" />
+                <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')"
+                  type="number" dense outlined min="0" style="max-width:110px;" />
+              </template>
+
+              <!-- For Sell Transactions: Show only unit price with cute design -->
+              <template v-else>
+                <div class="cute-price-container">
+                  <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitPrice')" type="number"
+                    dense outlined min="0" step="0.01" class="cute-price-input">
+                    <template v-slot:prepend>
+                      <q-icon name="attach_money" color="positive" />
+                    </template>
+                  </q-input>
+                  <!-- Helper price information -->
+                  <div class="price-helpers">
+                    <div v-if="selected.solo_unit_cost && selected.solo_unit_cost > 0" class="price-helper solo">
+                      <q-icon name="person" size="12px" />
+                      <span>${{ Number(selected.solo_unit_cost).toFixed(2) }}</span>
+                      <q-tooltip>
+                      {{ t('transactionAlpha.soloUnitPrice') }}
+                      </q-tooltip>
+                    </div>
+                    <div v-if="selected.bulk_unit_cost && selected.bulk_unit_cost > 0" class="price-helper bulk">
+                      <q-icon name="inventory_2" size="12px" />
+                      <span>${{ Number(selected.bulk_unit_cost).toFixed(2) }}</span>
+                      <q-tooltip>
+                      {{ t('transactionAlpha.bulkUnitPrice') }}
+                      </q-tooltip>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
               <q-btn icon="delete" color="negative" flat round dense @click="removeItem(idx)" class="q-ml-md" />
             </div>
           </div>
@@ -299,34 +318,41 @@ defineExpose({
   width: 100%;
   margin: 0 auto;
 }
+
 .item-selector-divider {
   border: none;
   border-top: 2px solid #1976d2;
   margin: 24px 0 32px 0;
   width: 100%;
 }
+
 .item-selector-content {
   width: 100%;
   display: block;
 }
+
 .item-selector-left {
   flex: 1 1 350px;
   max-width: 350px;
 }
+
 .search-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .search-input {
   flex: 1 1 auto;
 }
+
 .search-btn {
   min-width: 90px;
 }
+
 /* Professional Item Cards Design */
 .items-container {
-  max-height: 320px;
+  max-height: 250px;
   overflow-y: auto;
   width: 100%;
   margin-top: 8px;
@@ -494,6 +520,7 @@ defineExpose({
 .item-list {
   margin-top: 8px;
 }
+
 /* .item-selector-selected {
   flex: 2 1 0;
   min-width: 0;
@@ -502,47 +529,54 @@ defineExpose({
   width: 100%;
   margin-bottom: 24px;
 }
+
 .selected-items-scroll {
   max-height: 350px;
   overflow-y: auto;
   width: 100%;
   margin: 0;
 }
+
 .selected-item-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px 24px 16px 24px;
   background: #fff;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   width: 100%;
   margin: 0 0 16px 0;
   box-sizing: border-box;
 }
+
 .selected-item-card-modern {
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 10px 14px 8px 14px;
   background: #f9fafb;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   width: 100%;
   margin: 0 0 10px 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
+
 .price-col {
   border-left: 1px solid #e0e0e0;
   padding-left: 18px !important;
   min-width: 180px;
 }
+
 .item-info-col {
   min-width: 160px;
   max-width: 220px;
 }
+
 @media (max-width: 900px) {
   .selected-item-card-modern .row.no-wrap {
     flex-direction: column !important;
   }
+
   .price-col {
     border-left: none;
     padding-left: 0 !important;
@@ -584,42 +618,193 @@ defineExpose({
     padding: 8px 4px 6px 4px;
     border-radius: 8px;
   }
+
   .selected-item-card-modern .row.items-center.q-col-gutter-md.flex-nowrap {
     flex-direction: column !important;
     gap: 0 !important;
     align-items: stretch !important;
   }
-  .item-info-col, .col-auto, .col {
+
+  .item-info-col,
+  .col-auto,
+  .col {
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
     margin-bottom: 8px !important;
   }
+
   .col.q-gutter-md.flex.justify-end.items-center {
     flex-wrap: wrap;
     justify-content: flex-start !important;
     gap: 8px !important;
     margin-bottom: 8px !important;
   }
-  .q-input, .q-btn {
+
+  .q-input,
+  .q-btn {
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
   }
+
   .q-btn.q-ml-md {
     margin-left: 0 !important;
     margin-top: 8px !important;
   }
 }
+
 @media (max-width: 480px) {
   .selected-item-card-modern {
     padding: 4px 2px 4px 2px;
     border-radius: 6px;
   }
+
   .item-info-col {
     font-size: 0.98rem;
     min-width: 0;
     max-width: 100%;
+  }
+}
+
+/* Cute price design for sell transactions */
+.cute-price-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+  border-radius: 12px;
+  padding: 8px 12px 12px 12px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+  transition: all 0.3s ease;
+  max-width: 250px;
+  margin-bottom: 35px;
+  /* Reduced space for side-by-side helpers */
+}
+
+.cute-price-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.cute-price-input {
+  background: transparent;
+  border: none;
+  max-width: 210px;
+}
+
+.cute-price-input .q-field__control {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(224, 224, 224, 0.5);
+  transition: all 0.2s ease;
+}
+
+.cute-price-input .q-field__control:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #9e9e9e;
+}
+
+.cute-price-input .q-field--focused .q-field__control {
+  border-color: #1976d2;
+  background: white;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.cute-price-input .q-field__label {
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.cute-price-input .q-field__native {
+  color: #1b5e20;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Cute price helpers */
+.price-helpers {
+  position: absolute;
+  top: 100%;
+  left: 8px;
+  right: 8px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  z-index: 10;
+}
+
+.price-helper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 0;
+}
+
+.price-helper:hover {
+  background: white;
+  border-color: rgba(76, 175, 80, 0.4);
+  transform: translateX(2px);
+}
+
+.price-helper.solo {
+  color: #6366f1;
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.price-helper.solo:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.price-helper.bulk {
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.price-helper.bulk:hover {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.price-helper span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+
+  /* Mobile responsive adjustments for cute price container */
+  .cute-price-container {
+    margin-bottom: 25px !important;
+    /* Less space on mobile */
+  }
+
+  .price-helpers {
+    position: static !important;
+    margin-top: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .price-helper {
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+    flex: none !important;
   }
 }
 </style>
