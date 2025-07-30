@@ -1972,6 +1972,9 @@ export default {
     payment: {
       title: 'Payment Information',
       method: 'Payment Method',
+      status: 'Payment Status',
+      amounts: 'Payment Amounts',
+      returns: 'Return Amounts',
       cash: 'Cash',
       credit: 'Credit',
       cashPayment: 'Cash Payment',

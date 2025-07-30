@@ -21,8 +21,15 @@
                 <div class="company-name">{{ t('invoice.header.companyName') }}</div>
                 <div class="company-tagline">{{ t('invoice.header.companyTagline') }}</div>
                 <div class="company-contact" dir="ltr">
-                  <span class="contact-item" style="white-space: nowrap;">📞 {{ t('invoice.header.companyPhone')
-                  }}</span>
+                  <span class="contact-item" style="white-space: nowrap;">
+                    📞
+                    <template v-if="profileStore.userProfile && profileStore.userProfile.phone">
+                      {{ profileStore.userProfile.phone }}
+                    </template>
+                    <template v-else>
+                      {{ t('invoice.header.companyPhone') }}
+                    </template>
+                  </span>
                   <span class="contact-item" style="white-space: nowrap;">✉ true.trading23@gmail.com</span>
                 </div>
               </div>
@@ -189,72 +196,85 @@
                   <span class="card-title">{{ t('invoice.payment.title') }}</span>
                 </div>
                 <div class="payment-content">
-                  <div class="payment-row">
-                    <q-icon name="credit_card" size="16px" />
-                    <span class="payment-label">{{ t('invoice.payment.method') }}</span>
-                    <span class="payment-value method">{{ formatPaymentType(transaction?.payment_type) }}</span>
-                  </div>
-                  <!-- @Deprecated -->
-                  <!-- <div class="payment-row">
-                    <q-icon name="assignment" size="16px" />
-                    <span class="payment-label">{{ t('invoice.details.status') }}</span>
-                    <span class="payment-value" :class="getPaymentStatusClass()">{{ getPaymentStatus() }}</span>
-                  </div> -->
-                  <div class="payment-row">
-                    <q-icon name="warehouse" size="16px" />
-                    <span class="payment-label">{{ t('invoice.details.warehouse') }}</span>
-                    <span class="payment-value">{{ transaction?.warehouse?.name || 'N/A' }}</span>
-                  </div>
-                  <div class="payment-row">
-                    <q-icon name="payments" size="16px" />
-                    <span class="payment-label">{{ t('invoice.paidAmount') }}</span>
-                    <span class="payment-value paid">{{ formatCurrencyDisplay(transaction?.paid_price || 0) }}</span>
-                  </div>
-                  <div class="payment-row">
-                    <q-icon name="pending" size="16px" />
-                    <span class="payment-label">{{ t('invoice.unpaidAmount') }}</span>
-                    <span class="payment-value unpaid">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0)
-                      }}</span>
-                  </div>
-                  <!-- <div class="payment-row">
-                    <q-icon name="tag" size="16px" />
-                    <span class="payment-label">{{ t('invoice.details.reference') }}</span>
-                    <span class="payment-value reference">{{ transaction?.id }}</span>
-                  </div> -->
-
-                  <!-- Enhanced Payment Fields -->
-                  <div v-if="(transaction as any)?.iqd_price || (transaction as any)?.usd_price"
-                    class="payment-separator">
-                    <div class="separator-text">{{ t('invoice.payment.amounts') }}</div>
-                  </div>
-                  <div v-if="(transaction as any)?.iqd_price" class="payment-row payment-amount">
-                    <q-icon name="currency_exchange" size="16px" />
-                    <span class="payment-label">{{ t('transactionAlpha.iqdPrice') }}</span>
-                    <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).iqd_price)
-                      }}</span>
-                  </div>
-                  <div v-if="(transaction as any)?.usd_price" class="payment-row payment-amount">
-                    <q-icon name="attach_money" size="16px" />
-                    <span class="payment-label">{{ t('transactionAlpha.usdPrice') }}</span>
-                    <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).usd_price)
-                      }}</span>
+                  <!-- Basic Payment Information -->
+                  <div class="payment-group">
+                    <div class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="credit_card" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('invoice.payment.method') }}</span>
+                      <span class="payment-value method">{{ formatPaymentType(transaction?.payment_type) }}</span>
+                    </div>
+                    <div class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="warehouse" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('invoice.details.warehouse') }}</span>
+                      <span class="payment-value">{{ transaction?.warehouse?.name || 'N/A' }}</span>
+                    </div>
                   </div>
 
+                  <!-- Payment Status Information -->
+                  <div class="payment-group">
+                    <div class="group-title">{{ t('invoice.payment.status') }}</div>
+                    <div class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="payments" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('invoice.paidAmount') }}</span>
+                      <span class="payment-value paid">{{ formatCurrencyDisplay(transaction?.paid_price || 0) }}</span>
+                    </div>
+                    <div class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="pending" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('invoice.unpaidAmount') }}</span>
+                      <span class="payment-value unpaid">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0)
+                      }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Payment Amounts (if available) -->
+                  <div v-if="(transaction as any)?.iqd_price || (transaction as any)?.usd_price" class="payment-group">
+                    <div class="group-title">{{ t('invoice.payment.amounts') }}</div>
+                    <div v-if="(transaction as any)?.iqd_price" class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="currency_exchange" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('transactionAlpha.iqdPrice') }}</span>
+                      <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).iqd_price)
+                      }}</span>
+                    </div>
+                    <div v-if="(transaction as any)?.usd_price" class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="attach_money" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('transactionAlpha.usdPrice') }}</span>
+                      <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).usd_price)
+                      }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Return Amounts (if available) -->
                   <div v-if="(transaction as any)?.iqd_return_amount || (transaction as any)?.usd_return_amount"
-                    class="payment-separator">
-                    <div class="separator-text">{{ t('invoice.payment.returns') }}</div>
-                  </div>
-                  <div v-if="(transaction as any)?.iqd_return_amount" class="payment-row payment-return">
-                    <q-icon name="keyboard_return" size="16px" />
-                    <span class="payment-label">{{ t('transactionAlpha.iqdReturnAmount') }}</span>
-                    <span class="payment-value return">{{ formatCurrencyDisplay((transaction as any).iqd_return_amount)
-                      }}</span>
-                  </div>
-                  <div v-if="(transaction as any)?.usd_return_amount" class="payment-row payment-return">
-                    <q-icon name="keyboard_return" size="16px" />
-                    <span class="payment-label">{{ t('transactionAlpha.usdReturnAmount') }}</span>
-                    <span class="payment-value return">{{ formatCurrencyDisplay((transaction as any).usd_return_amount)
-                      }}</span>
+                    class="payment-group">
+                    <div class="group-title">{{ t('invoice.payment.returns') }}</div>
+                    <div v-if="(transaction as any)?.iqd_return_amount" class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="keyboard_return" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('transactionAlpha.iqdReturnAmount') }}</span>
+                      <span class="payment-value return">{{ formatCurrencyDisplay((transaction as
+                        any).iqd_return_amount) }}</span>
+                    </div>
+                    <div v-if="(transaction as any)?.usd_return_amount" class="payment-row">
+                      <div class="payment-icon">
+                        <q-icon name="keyboard_return" size="16px" />
+                      </div>
+                      <span class="payment-label">{{ t('transactionAlpha.usdReturnAmount') }}</span>
+                      <span class="payment-value return">{{ formatCurrencyDisplay((transaction as
+                        any).usd_return_amount) }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -299,9 +319,14 @@
               </div>
 
               <div class="footer-right">
-                <div class="footer-item">
+                <div class="footer-item" dir="ltr">
                   <span class="footer-icon">☎</span>
-                  <span>{{ t('invoice.header.companyPhone') }}</span>
+                  <template v-if="profileStore.userProfile && profileStore.userProfile.phone">
+                    <span>{{ profileStore.userProfile.phone }}</span>
+                  </template>
+                  <template v-else>
+                    <span>{{ t('invoice.header.companyPhone') }}</span>
+                  </template>
                 </div>
                 <div class="footer-item">
                   <span class="footer-icon">✉</span>
@@ -356,6 +381,8 @@ import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
 import { Notify } from 'quasar';
 import type { List } from 'src/types/item_transaction';
+import { useProfileStore } from 'src/stores/profileStore';
+
 const brandLogo = 'brand.jpg';
 
 // Composables
@@ -386,6 +413,9 @@ const invoiceRef = ref<HTMLElement>();
 // Loading state for currency fetch
 const fetchingCurrency = ref(false);
 
+// Profile store
+const profileStore = useProfileStore();
+
 // Computed properties
 const transactionItems = computed(() => props.transaction?.items || []);
 
@@ -414,12 +444,16 @@ const balanceAmount = computed(() => {
 
 // Methods
 const formatDate = (dateString?: string, addDays = 0) => {
-  if (!dateString) return new Date().toLocaleDateString();
+  if (!dateString) return new Date().toISOString().slice(0, 10);
   const date = new Date(dateString);
   if (addDays > 0) {
     date.setDate(date.getDate() + addDays);
   }
-  return date.toLocaleDateString();
+  // Format as YYYY-mm-dd
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 const formatPaymentType = (paymentType?: string) => {
@@ -1050,21 +1084,201 @@ const formatCurrencyDisplay = (amount: any) => {
   line-height: 1.5;
 }
 
-.payment-row {
+// Enhanced Payment and Totals Card Styles
+.totals-card,
+.payment-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #2A7B9B 0%, #1e5f7a 100%);
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.totals-content,
+.payment-content {
+  padding: 16px;
+}
+
+// Totals Section Styles
+.total-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
 }
 
-.payment-row .label {
+.total-label {
   font-weight: 500;
-  color: #333;
+  color: #495057;
+  font-size: 14px;
 }
 
-.payment-row .value {
+.total-amount {
   font-weight: 600;
   color: #2A7B9B;
+  font-size: 14px;
+
+  &.discount {
+    color: #e53e3e;
+  }
+
+  &.grand-total {
+    color: #2A7B9B;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &.balance {
+    color: #2A7B9B;
+    font-weight: 700;
+  }
+}
+
+.subtotal-line {
+  border-top: 1px solid #dee2e6;
+  padding-top: 12px !important;
+  margin-top: 8px;
+}
+
+.grand-total-line {
+  background: rgba(42, 123, 155, 0.05);
+  border: 1px solid rgba(42, 123, 155, 0.2);
+  border-radius: 6px;
+  padding: 12px !important;
+  margin: 8px 0;
+}
+
+.balance-line {
+  background: rgba(42, 123, 155, 0.05);
+  border: 1px solid rgba(42, 123, 155, 0.2);
+  border-radius: 6px;
+  padding: 12px !important;
+
+  &.balance-due {
+    background: rgba(229, 62, 62, 0.05);
+    border-color: rgba(229, 62, 62, 0.2);
+
+    .total-amount {
+      color: #e53e3e;
+    }
+  }
+}
+
+.discount-line {
+  background: rgba(229, 62, 62, 0.05);
+  border: 1px solid rgba(229, 62, 62, 0.2);
+  border-radius: 6px;
+  padding: 12px !important;
+  margin: 8px 0;
+}
+
+// Payment Section Styles
+.payment-group {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.group-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2A7B9B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #2A7B9B;
+}
+
+.payment-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+.payment-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(42, 123, 155, 0.1);
+  border-radius: 6px;
+  margin-right: 12px;
+  flex-shrink: 0;
+
+  .q-icon {
+    color: #2A7B9B;
+  }
+}
+
+.payment-label {
+  font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.payment-value {
+  font-weight: 600;
+  color: #2A7B9B;
+  font-size: 14px;
+  text-align: right;
+  min-width: 80px;
+
+  &.method {
+    text-transform: capitalize;
+  }
+
+  &.paid {
+    color: #28a745;
+  }
+
+  &.unpaid {
+    color: #e53e3e;
+  }
+
+  &.amount {
+    color: #2A7B9B;
+    font-weight: 600;
+  }
+
+  &.return {
+    color: #6f42c1;
+  }
 }
 
 .note-section {

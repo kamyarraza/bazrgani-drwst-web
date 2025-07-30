@@ -260,10 +260,11 @@ defineExpose({
                   </div>
 
                   <div class="item-quantities">
-                    <div v-if="props.transactionType == 'sell'" class="quantity-badge available">
+                    <!-- @Deprecated -->
+                    <!-- <div v-if="props.transactionType == 'sell'" class="quantity-badge available">
                       <q-icon name="inventory" size="14px" />
                       <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
-                    </div>
+                    </div> -->
                     <!-- For purchase: show package_units and packet_units instead of calculated packages/packets -->
                     <div v-if="item.package_units && props.transactionType === 'purchase'"
                       class="quantity-badge packages">
