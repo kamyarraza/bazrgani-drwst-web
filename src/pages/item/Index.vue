@@ -1,15 +1,9 @@
 <template>
     <q-page class="q-pa-md">
         <!-- Item Dashboard Header Card -->
-        <Header
-            :title="t('item.dashboardTitle')"
-            :subtitle="t('item.managingItems')"
-            icon="inventory_2"
-            icon-size="3rem"
-            icon-color="white"
-            :show-waves="true"
-            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-        >
+        <Header :title="t('item.dashboardTitle')" :subtitle="t('item.managingItems')" icon="inventory_2"
+            icon-size="3rem" icon-color="white" :show-waves="true"
+            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)">
 
         </Header>
 
@@ -29,24 +23,17 @@
                         ({{ items.length }} {{ t('item.itemsFound', 'items found') }})
                     </span>
                     <q-space />
-                    <q-btn
-                        flat
-                        round
-                        icon="close"
-                        size="sm"
-                        @click="clearSearch"
-                        :title="t('item.clearSearch', 'Clear search')"
-                    />
+                    <q-btn flat round icon="close" size="sm" @click="clearSearch"
+                        :title="t('item.clearSearch', 'Clear search')" />
                 </div>
             </q-card>
         </div>
 
         <!-- Item Table with Enhanced UI -->
-        <QtableB
-        :show-bottom="!isSearching"
-        :hasExpandableRows="false" @menu-action="handleAction" :columns="columns" :rows="filteredItems"
-            @top-right-action="() => showModal = !showModal" :top-right-title="t('item.addNew', 'Add New Item')"
-            :menuItems="menuItems" :loading="itemStore.loading" :pagination="pagination" @page-change="handlePageChange">
+        <QtableB :show-bottom="!isSearching" :hasExpandableRows="false" @menu-action="handleAction" :columns="columns"
+            :rows="filteredItems" @top-right-action="() => showModal = !showModal"
+            :top-right-title="t('item.addNew', 'Add New Item')" :menuItems="menuItems" :loading="itemStore.loading"
+            :pagination="pagination" @page-change="handlePageChange">
 
         </QtableB>
 
@@ -192,7 +179,7 @@ async function handleSearch() {
     } else {
         // If search is empty, fetch normal paginated items
         currentPage.value = 1
-        await itemStore.fetchItems(1)
+        await itemStore.fetchItemsPaginated(1)
     }
 }
 
@@ -210,7 +197,7 @@ function resetFilters() {
 
     // Reset to first page and fetch normal items (not search)
     currentPage.value = 1;
-    void itemStore.fetchItems(1)
+    void itemStore.fetchItemsPaginated(1)
 }
 
 function clearSearch() {
@@ -224,7 +211,7 @@ function clearSearch() {
 
     // Reset to first page and fetch normal items
     currentPage.value = 1;
-    void itemStore.fetchItems(1)
+    void itemStore.fetchItemsPaginated(1)
 }
 
 const columns = [{
@@ -249,12 +236,12 @@ const columns = [{
     sortable: true
 },
 {
-  name: 'category',
-  label: t('item.category', 'Category'),
-  align: 'center' as const,
-  field: (row: Record<string, unknown>) =>
-    (row.category as { name?: string })?.name || '',
-  sortable: true
+    name: 'category',
+    label: t('item.category', 'Category'),
+    align: 'center' as const,
+    field: (row: Record<string, unknown>) =>
+        (row.category as { name?: string })?.name || '',
+    sortable: true
 },
 
 {
@@ -317,7 +304,7 @@ const handleAction = (payload: { item: MenuItem; rowId: number }) => {
 
 // Fetch data when component is mounted
 onMounted(async () => {
-    await itemStore.fetchItems()
+    await itemStore.fetchItemsPaginated()
 
     // Set current page from pagination if available
     if (itemStore.pagination) {
@@ -344,7 +331,7 @@ async function handlePageChange(page: number) {
     }
 
     currentPage.value = page;
-    await itemStore.fetchItems(page);
+    await itemStore.fetchItemsPaginated(page);
 
     // Scroll to top when changing pages for better UX
     window.scrollTo({

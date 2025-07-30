@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed, defineExpose } from 'vue';
 import { useItemStore } from 'src/stores/itemStore';
+import { useItemCategoryStore } from 'src/stores/itemCategoryStore';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
@@ -21,13 +22,29 @@ const props = defineProps({
 const emit = defineEmits(['update:selectedItems']);
 
 const itemStore = useItemStore();
+const categoryStore = useItemCategoryStore();
 const { items, loading } = storeToRefs(itemStore);
+const { itemCategories } = storeToRefs(categoryStore);
 
 const searchQuery = ref('');
+const selectedCategoryId = ref<number | null>(null);
 let searchTimeout: any = null;
 
 const selectedItems = ref<SelectedItem[]>([]);
 const selectedItemIds = computed(() => new Set(selectedItems.value.map(sel => sel.item.id)));
+
+// Items are now filtered server-side, so we just return the items from the store
+const filteredItems = computed(() => {
+  return items.value;
+});
+
+// Category options for the select dropdown
+const categoryOptions = computed(() => {
+  return itemCategories.value.map(category => ({
+    label: category.name,
+    value: category.id
+  }));
+});
 
 const lastChangedField = ref('');
 
@@ -40,15 +57,27 @@ watch(selectedItems, (val) => {
 }, { deep: true });
 
 onMounted(async () => {
+  // Load categories for filtering
+  await categoryStore.fetchItemCategories();
+
   if (props.transactionType === 'purchase') {
-    await itemStore.fetchItems();
+    await itemStore.fetchItems(selectedCategoryId.value);
   }
   // For sell, do not fetch items until warehouse is selected
 });
 
 watch(() => props.warehouseId, (warehouseId) => {
   if (props.transactionType === 'sell' && warehouseId) {
-    void itemStore.fetchItemsByWarehouse(warehouseId);
+    void itemStore.fetchItemsByWarehouse(warehouseId, selectedCategoryId.value);
+  }
+});
+
+// Watch for category changes to refetch items
+watch(selectedCategoryId, (categoryId) => {
+  if (props.transactionType === 'purchase') {
+    void itemStore.fetchItems(categoryId);
+  } else if (props.transactionType === 'sell' && props.warehouseId) {
+    void itemStore.fetchItemsByWarehouse(props.warehouseId, categoryId);
   }
 });
 
@@ -56,10 +85,10 @@ function onSearch() {
   if (searchTimeout) clearTimeout(searchTimeout);
   if (props.transactionType === 'sell') {
     if (!props.warehouseId) return; // Don't search if no warehouse selected
-    void itemStore['searchItemsByWarehouse']((searchQuery.value || '').trim(), props.warehouseId);
+    void itemStore['searchItemsByWarehouse']((searchQuery.value || '').trim(), props.warehouseId, selectedCategoryId.value);
     return;
   }
-  void itemStore.searchItems((searchQuery.value || '').trim());
+  void itemStore.searchItems((searchQuery.value || '').trim(), selectedCategoryId.value);
 }
 
 watch(searchQuery, (val) => {
@@ -68,18 +97,18 @@ watch(searchQuery, (val) => {
     // If cleared, fetch all items
     searchTimeout = setTimeout(() => {
       if (props.transactionType === 'sell' && props.warehouseId) {
-        void itemStore.fetchItemsByWarehouse(props.warehouseId);
+        void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
       } else {
-        void itemStore.fetchItems();
+        void itemStore.fetchItems(selectedCategoryId.value);
       }
     }, 1000);
     return;
   }
   searchTimeout = setTimeout(() => {
     if (props.transactionType === 'sell' && props.warehouseId) {
-      void itemStore['searchItemsByWarehouse'](val.trim(), props.warehouseId);
+      void itemStore['searchItemsByWarehouse'](val.trim(), props.warehouseId, selectedCategoryId.value);
     } else {
-      void itemStore.searchItems(val.trim());
+      void itemStore.searchItems(val.trim(), selectedCategoryId.value);
     }
   }, 1000);
 });
@@ -151,7 +180,7 @@ function clearAll() {
 
 function fetchItemsForWarehouse() {
   if (props.transactionType === 'sell' && props.warehouseId) {
-    void itemStore.fetchItemsByWarehouse(props.warehouseId);
+    void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
   }
 }
 
@@ -167,14 +196,29 @@ defineExpose({
     <div class="item-selector-content">
       <div class="item-list-fullwidth">
         <div class="search-row q-mb-md">
-          <q-input v-model="searchQuery" :label="t('transactionAlpha.searchItems')" outlined dense clearable
-            :loading="loading" class="search-input" @keyup.enter="onSearch">
-            <template v-slot:prepend>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-          <q-btn :label="t('transactionAlpha.search')" color="primary" class="search-btn" :loading="loading"
-            @click="onSearch" flat dense no-caps />
+          <div class="row q-col-gutter-md">
+            <div class="col-md-6 col-xs-12">
+              <q-input v-model="searchQuery" :label="t('transactionAlpha.searchItems')" outlined dense clearable
+                :loading="loading" class="search-input" @keyup.enter="onSearch">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <q-select v-model="selectedCategoryId" :options="categoryOptions"
+                :label="t('transactionAlpha.filterByCategory', 'Filter by Category')" outlined dense clearable
+                option-value="value" option-label="label" emit-value map-options class="category-filter">
+                <template v-slot:prepend>
+                  <q-icon name="category" />
+                </template>
+              </q-select>
+            </div>
+            <div class="col-md-2 col-xs-12">
+              <q-btn :label="t('transactionAlpha.search')" color="primary" class="search-btn full-width"
+                :loading="loading" @click="onSearch" flat dense no-caps />
+            </div>
+          </div>
         </div>
         <div class="items-container">
           <div v-if="loading" class="loading-state">
@@ -182,14 +226,14 @@ defineExpose({
             <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
           </div>
 
-          <div v-else-if="items.length === 0" class="empty-state">
+          <div v-else-if="filteredItems.length === 0" class="empty-state">
             <q-icon name="inventory_2" size="3em" color="grey-4" />
             <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
-            <p class="empty-subtext">{{ t('transactionAlpha.tryDifferentSearch') }}</p>
+            <p class="empty-subtext">{{ selectedCategoryId ? t('transactionAlpha.noCategoryItems', 'No items found in selected category') : t('transactionAlpha.tryDifferentSearch') }}</p>
           </div>
 
           <div v-else class="items-grid">
-            <div v-for="item in items" :key="item.id" class="item-card"
+            <div v-for="item in filteredItems" :key="item.id" class="item-card"
               :class="{ 'item-selected': selectedItemIds.has(item.id) }">
               <div class="item-header">
                 <div class="item-name">{{ item.name }}</div>
@@ -287,14 +331,14 @@ defineExpose({
                       <q-icon name="person" size="12px" />
                       <span>${{ Number(selected.solo_unit_cost).toFixed(2) }}</span>
                       <q-tooltip>
-                      {{ t('transactionAlpha.soloUnitPrice') }}
+                        {{ t('transactionAlpha.soloUnitPrice') }}
                       </q-tooltip>
                     </div>
                     <div v-if="selected.bulk_unit_cost && selected.bulk_unit_cost > 0" class="price-helper bulk">
                       <q-icon name="inventory_2" size="12px" />
                       <span>${{ Number(selected.bulk_unit_cost).toFixed(2) }}</span>
                       <q-tooltip>
-                      {{ t('transactionAlpha.bulkUnitPrice') }}
+                        {{ t('transactionAlpha.bulkUnitPrice') }}
                       </q-tooltip>
                     </div>
                   </div>
@@ -344,6 +388,14 @@ defineExpose({
 
 .search-input {
   flex: 1 1 auto;
+}
+
+.category-filter {
+  min-width: 200px;
+}
+
+.category-filter .q-field__prepend {
+  color: #1976d2;
 }
 
 .search-btn {

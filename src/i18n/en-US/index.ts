@@ -2103,7 +2103,12 @@ export default {
     enterIqdAmount: 'Enter IQD amount',
     enterUsdAmount: 'Enter USD amount',
     enterIqdReturnAmount: 'Enter IQD return amount',
-    enterUsdReturnAmount: 'Enter USD return amount'
+    enterUsdReturnAmount: 'Enter USD return amount',
+    // Category filtering
+    filterByCategory: 'Filter by Category',
+    noCategoryItems: 'No items found in selected category',
+    tryDifferentSearch: 'Try a different search term',
+    searchingItems: 'Searching items...'
   },
 
   // Cashbox Management

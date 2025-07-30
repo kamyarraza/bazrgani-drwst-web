@@ -307,7 +307,7 @@ export default {
     browseAllItems: 'گەڕان لە هەموو کاڵاکان'
   },
   warehouse: {
-    viewWarehouses:"کۆگانی لق",
+    viewWarehouses:"کۆگاکانی لق",
     title: 'بەڕێوەبردنی کۆگا',
     description: 'بەڕێوەبردنی کەلوپەل و بارگەی کۆگا',
     dashboardTitle: 'داشبۆڕد ',
@@ -2303,7 +2303,12 @@ receiveFromCustomer: "وەرگرتن لە کڕیار",
     enterIqdAmount: 'بڕی دینار بنووسە',
     enterUsdAmount: 'بڕی دۆلار بنووسە',
     enterIqdReturnAmount: 'بڕی گەڕاندنەوەی دینار بنووسە',
-    enterUsdReturnAmount: 'بڕی گەڕاندنەوەی دۆلار بنووسە'
+    enterUsdReturnAmount: 'بڕی گەڕاندنەوەی دۆلار بنووسە',
+    // پالاوتنی جۆری کاڵا
+    filterByCategory: 'پالاوتن بە پێی جۆری کاڵا',
+    noCategoryItems: 'هیچ کاڵایەک لە جۆری هەڵبژێردراو نەدۆزرایەوە',
+    tryDifferentSearch: 'وشەیەکی تری گەڕان تاقی بکەرەوە',
+    searchingItems: 'گەڕان بۆ کاڵاکان...'
   },
 
   // بەڕێوەبردنی صندوق

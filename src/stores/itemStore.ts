@@ -13,15 +13,19 @@ export const useItemStore = defineStore('item', () => {
   const error = ref<string | null>(null);
   const pagination = ref<Pagination | null>(null);
 
-  async function fetchItems(page: number = 1) {
+  async function fetchItems(categoryId?: number | null) {
     loading.value = true;
     error.value = null;
-    const url = `${endPoints.item.list}?page=${page}&relations=category&paginate=true`;
+    let url = `${endPoints.item.list}?relations=category`;
+
+    if (categoryId) {
+      url += `&category_id=${categoryId}`;
+    }
 
     try {
       const { data } = await api.get<ApiResponse<Product[]>>(url);
       items.value = data.data;
-      pagination.value = data.pagination || null;
+      pagination.value = null; // Clear pagination since we're not using it
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch items';
       error.value = errorMessage;
@@ -36,14 +40,18 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function searchItems(searchQuery: string) {
+  async function searchItems(searchQuery: string, categoryId?: number | null) {
     loading.value = true;
     error.value = null;
 
     try {
-      const { data } = await api.get<ApiResponse<Product[]>>(
-        `${endPoints.item.list}?query=${encodeURIComponent(searchQuery)}&relations=category`
-      );
+      let url = `${endPoints.item.list}?query=${encodeURIComponent(searchQuery)}&relations=category`;
+
+      if (categoryId) {
+        url += `&category_id=${categoryId}`;
+      }
+
+      const { data } = await api.get<ApiResponse<Product[]>>(url);
       items.value = data.data;
       // Clear pagination when searching since we're not using paginated search
       pagination.value = null;
@@ -205,12 +213,18 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function fetchItemsByWarehouse(warehouseId: number | string) {
+  async function fetchItemsByWarehouse(warehouseId: number | string, categoryId?: number | null) {
     loading.value = true;
     error.value = null;
     try {
       // Fetch warehouse details, items are in data.items
-      const { data } = await api.get<ApiResponse<any>>(endPoints.warehouse.details(warehouseId) + '?relations=items');
+      let url = endPoints.warehouse.details(warehouseId) + '?relations=items';
+
+      if (categoryId) {
+        url += `&category_id=${categoryId}`;
+      }
+
+      const { data } = await api.get<ApiResponse<any>>(url);
       items.value = data.data.items || [];
       pagination.value = null;
     } catch (err: unknown) {
@@ -227,16 +241,48 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function searchItemsByWarehouse(searchQuery: string, warehouseId: number | string) {
+  async function searchItemsByWarehouse(searchQuery: string, warehouseId: number | string, categoryId?: number | null) {
     loading.value = true;
     error.value = null;
     try {
-      const url = endPoints.warehouse.details(warehouseId) + `?relations=items&query=${encodeURIComponent(searchQuery)}`;
+      let url = endPoints.warehouse.details(warehouseId) + `?relations=items&query=${encodeURIComponent(searchQuery)}`;
+
+      if (categoryId) {
+        url += `&category_id=${categoryId}`;
+      }
+
       const { data } = await api.get<ApiResponse<any>>(url);
       items.value = data.data.items || [];
       pagination.value = null;
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to search warehouse items';
+      error.value = errorMessage;
+      showNotify({
+        type: 'negative',
+        message: error.value,
+        position: 'top',
+        duration: 3000,
+      });
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchItemsPaginated(page: number = 1, categoryId?: number | null) {
+    loading.value = true;
+    error.value = null;
+    let url = `${endPoints.item.list}?page=${page}&relations=category&paginate=true`;
+
+    if (categoryId) {
+      url += `&category_id=${categoryId}`;
+    }
+
+    try {
+      const { data } = await api.get<ApiResponse<Product[]>>(url);
+      items.value = data.data;
+      pagination.value = data.pagination || null;
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch items';
       error.value = errorMessage;
       showNotify({
         type: 'negative',
@@ -256,6 +302,7 @@ export const useItemStore = defineStore('item', () => {
     error,
     pagination,
     fetchItems,
+    fetchItemsPaginated,
     searchItems,
     createItem,
     getItemDetails,
