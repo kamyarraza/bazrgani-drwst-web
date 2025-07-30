@@ -220,51 +220,62 @@ defineExpose({
             </div>
           </div>
         </div>
-        <div class="items-container">
-          <div v-if="loading" class="loading-state">
-            <q-spinner color="primary" size="2em" />
-            <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
+        <!-- 🛍️ Available Items Section -->
+        <div class="section-card items-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <q-icon name="inventory_2" size="20px" />
+            </div>
+            <h3 class="section-title">🛍️ {{ t('transactionAlpha.availableItems', 'Available Items') }}</h3>
+            <div class="section-badge">{{ filteredItems.length }} {{ t('transactionAlpha.items', 'items') }}</div>
           </div>
 
-          <div v-else-if="filteredItems.length === 0" class="empty-state">
-            <q-icon name="inventory_2" size="3em" color="grey-4" />
-            <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
-            <p class="empty-subtext">{{ selectedCategoryId ? t('transactionAlpha.noCategoryItems', 'No items found in selected category') : t('transactionAlpha.tryDifferentSearch') }}</p>
-          </div>
+          <div class="items-container">
+            <div v-if="loading" class="loading-state">
+              <q-spinner color="primary" size="2em" />
+              <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
+            </div>
 
-          <div v-else class="items-grid">
-            <div v-for="item in filteredItems" :key="item.id" class="item-card"
-              :class="{ 'item-selected': selectedItemIds.has(item.id) }">
-              <div class="item-header">
-                <div class="item-name">{{ item.name }}</div>
-                <q-btn :icon="selectedItemIds.has(item.id) ? 'check_circle' : 'add_circle'"
-                  :color="selectedItemIds.has(item.id) ? 'positive' : 'primary'" flat round dense size="sm"
-                  @click="() => { if (!selectedItemIds.has(item.id)) selectItem(item); }"
-                  :disable="selectedItemIds.has(item.id)" class="add-button" />
-              </div>
+            <div v-else-if="filteredItems.length === 0" class="empty-state">
+              <q-icon name="inventory_2" size="3em" color="grey-4" />
+              <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
+              <p class="empty-subtext">{{ selectedCategoryId ? t('transactionAlpha.noCategoryItems', 'No items found in selected category') : t('transactionAlpha.tryDifferentSearch') }}</p>
+            </div>
 
-              <div class="item-details">
-                <div class="item-meta">
-                  <span v-if="item.sku" class="item-sku">SKU: {{ item.sku }}</span>
-                  <span v-if="item.category" class="item-category">{{ item.category.name }}</span>
+            <div v-else class="items-grid">
+              <div v-for="item in filteredItems" :key="item.id" class="item-card"
+                :class="{ 'item-selected': selectedItemIds.has(item.id) }">
+                <div class="item-header">
+                  <div class="item-name">{{ item.name }}</div>
+                  <q-btn :icon="selectedItemIds.has(item.id) ? 'check_circle' : 'add_circle'"
+                    :color="selectedItemIds.has(item.id) ? 'positive' : 'primary'" flat round dense size="sm"
+                    @click="() => { if (!selectedItemIds.has(item.id)) selectItem(item); }"
+                    :disable="selectedItemIds.has(item.id)" class="add-button" />
                 </div>
 
-                <div class="item-quantities">
-                  <div v-if="props.transactionType == 'sell'" class="quantity-badge available">
-                    <q-icon name="inventory" size="14px" />
-                    <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
+                <div class="item-details">
+                  <div class="item-meta">
+                    <span v-if="item.sku" class="item-sku">SKU: {{ item.sku }}</span>
+                    <span v-if="item.category" class="item-category">{{ item.category.name }}</span>
                   </div>
-                  <div v-if="item.package_units" class="quantity-badge packages">
-                    <q-icon name="inventory_2" size="14px" />
-                    <span>{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</span>
-                  </div>
-                  <div v-if="item.packet_units" class="quantity-badge packets">
-                    <q-icon name="category" size="14px" />
-                    <span>{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</span>
-                  </div>
-                  <div v-if="item.pieces" class="quantity-badge pieces">
-                    <q-icon name="style" size="14px" />
-                    <span>{{ t('transactionAlpha.pieces') }}: {{ item.pieces }}</span>
+
+                  <div class="item-quantities">
+                    <div v-if="props.transactionType == 'sell'" class="quantity-badge available">
+                      <q-icon name="inventory" size="14px" />
+                      <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
+                    </div>
+                    <div v-if="item.package_units" class="quantity-badge packages">
+                      <q-icon name="inventory_2" size="14px" />
+                      <span>{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</span>
+                    </div>
+                    <div v-if="item.packet_units" class="quantity-badge packets">
+                      <q-icon name="category" size="14px" />
+                      <span>{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</span>
+                    </div>
+                    <div v-if="item.pieces" class="quantity-badge pieces">
+                      <q-icon name="style" size="14px" />
+                      <span>{{ t('transactionAlpha.pieces') }}: {{ item.pieces }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -272,85 +283,114 @@ defineExpose({
           </div>
         </div>
       </div>
-      <div v-if="selectedItems.length > 0" class="selected-items-scroll">
-        <div class="q-mb-sm"><b>{{ t('transactionAlpha.selectedItems') }}</b></div>
-        <div v-for="(selected, idx) in selectedItems" :key="selected.item.id" class="selected-item-card-modern q-mb-md">
-          <div class="row items-center q-col-gutter-md flex-nowrap">
-            <div class="col-auto item-info-col">
-              <div class="text-weight-bold text-lg">{{ selected.item.name }}</div>
-              <div class="text-caption text-grey-7">
-                <span v-if="selected.item.sku">SKU: {{ selected.item.sku }}</span>
-                <span v-if="selected.item.category"> | {{ selected.item.category.name }}</span>
-              </div>
-            </div>
-            <div class="col-auto">
-              <q-input v-if="selected.item.package_units > 0" v-model.number="selected.packages"
-                :label="t('transactionAlpha.packages')" type="number" dense outlined min="0" style="max-width:90px;"
-                @update:model-value="val => onPackagesChange(selected, val)" />
-              <div v-if="selected.item.package_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
-                t('transactionAlpha.packageHint', { n: selected.item.package_units }) }}</div>
-            </div>
-            <div class="col-auto">
-              <q-input v-if="selected.item.packet_units > 0" v-model.number="selected.packets"
-                :label="t('transactionAlpha.packets')" type="number" dense outlined min="0" style="max-width:90px;"
-                @update:model-value="val => onPacketsChange(selected, val)" />
-              <div v-if="selected.item.packet_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
-                t('transactionAlpha.packetHint', { n: selected.item.packet_units }) }}</div>
-            </div>
-            <div class="col-auto">
-              <q-input v-model.number="selected.quantity" :label="t('transactionAlpha.quantity')" type="number" dense
-                outlined min="0" style="max-width:90px;" @update:model-value="val => onQuantityChange(selected, val)" />
-              <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', {
-                n: selected.quantity
-              }) }}
-              </div>
-            </div>
-            <div class="col q-gutter-md flex justify-end items-center">
-              <!-- For Purchase Transactions: Show all 3 price fields -->
-              <template v-if="props.transactionType === 'purchase'">
-                <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitCost')" type="number" dense
-                  outlined min="0" style="max-width:110px;" />
-                <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')"
-                  type="number" dense outlined min="0" style="max-width:110px;" />
-                <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')"
-                  type="number" dense outlined min="0" style="max-width:110px;" />
-              </template>
 
-              <!-- For Sell Transactions: Show only unit price with cute design -->
-              <template v-else>
-                <div class="cute-price-container">
-                  <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitPrice')" type="number"
-                    dense outlined min="0" step="0.01" class="cute-price-input">
-                    <template v-slot:prepend>
-                      <q-icon name="attach_money" color="positive" />
-                    </template>
-                  </q-input>
-                  <!-- Helper price information -->
-                  <div class="price-helpers">
-                    <div v-if="selected.solo_unit_cost && selected.solo_unit_cost > 0" class="price-helper solo">
-                      <q-icon name="person" size="12px" />
-                      <span>${{ Number(selected.solo_unit_cost).toFixed(2) }}</span>
-                      <q-tooltip>
-                        {{ t('transactionAlpha.soloUnitPrice') }}
-                      </q-tooltip>
-                    </div>
-                    <div v-if="selected.bulk_unit_cost && selected.bulk_unit_cost > 0" class="price-helper bulk">
-                      <q-icon name="inventory_2" size="12px" />
-                      <span>${{ Number(selected.bulk_unit_cost).toFixed(2) }}</span>
-                      <q-tooltip>
-                        {{ t('transactionAlpha.bulkUnitPrice') }}
-                      </q-tooltip>
+      <!-- 🛒 Selected Items Section -->
+      <div v-if="selectedItems.length > 0" class="section-card selected-section">
+        <div class="section-header">
+          <div class="section-icon selected-icon">
+            <q-icon name="shopping_cart" size="20px" />
+          </div>
+          <h3 class="section-title">🛒 {{ t('transactionAlpha.selectedItems') }}</h3>
+          <div class="section-badge selected-badge">{{ selectedItems.length }} {{ t('transactionAlpha.selected',
+            'selected')
+            }}</div>
+        </div>
+
+        <div class="selected-items-scroll">
+          <div class="q-mb-sm"><b>{{ t('transactionAlpha.selectedItems') }}</b></div>
+          <div v-for="(selected, idx) in selectedItems" :key="selected.item.id"
+            class="selected-item-card-modern q-mb-md">
+            <div class="row items-center q-col-gutter-md flex-nowrap">
+              <div class="col-auto item-info-col">
+                <div class="text-weight-bold text-lg">{{ selected.item.name }}</div>
+                <div class="text-caption text-grey-7">
+                  <span v-if="selected.item.sku">SKU: {{ selected.item.sku }}</span>
+                  <span v-if="selected.item.category"> | {{ selected.item.category.name }}</span>
+                </div>
+              </div>
+              <div class="col-auto">
+                <q-input v-if="selected.item.package_units > 0" v-model.number="selected.packages"
+                  :label="t('transactionAlpha.packages')" type="number" dense outlined min="0" style="max-width:90px;"
+                  @update:model-value="val => onPackagesChange(selected, val)" />
+                <div v-if="selected.item.package_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
+                  t('transactionAlpha.packageHint', { n: selected.item.package_units }) }}</div>
+              </div>
+              <div class="col-auto">
+                <q-input v-if="selected.item.packet_units > 0" v-model.number="selected.packets"
+                  :label="t('transactionAlpha.packets')" type="number" dense outlined min="0" style="max-width:90px;"
+                  @update:model-value="val => onPacketsChange(selected, val)" />
+                <div v-if="selected.item.packet_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
+                  t('transactionAlpha.packetHint', { n: selected.item.packet_units }) }}</div>
+              </div>
+              <div class="col-auto">
+                <q-input v-model.number="selected.quantity" :label="t('transactionAlpha.quantity')" type="number" dense
+                  outlined min="0" style="max-width:90px;"
+                  @update:model-value="val => onQuantityChange(selected, val)" />
+                <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', {
+                  n: selected.quantity
+                }) }}
+                </div>
+              </div>
+              <div class="col q-gutter-md flex justify-end items-center">
+                <!-- For Purchase Transactions: Show all 3 price fields -->
+                <template v-if="props.transactionType === 'purchase'">
+                  <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitCost')" type="number"
+                    dense outlined min="0" style="max-width:110px;" />
+                  <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')"
+                    type="number" dense outlined min="0" style="max-width:110px;" />
+                  <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')"
+                    type="number" dense outlined min="0" style="max-width:110px;" />
+                </template>
+
+                <!-- For Sell Transactions: Show only unit price with cute design -->
+                <template v-else>
+                  <div class="cute-price-container">
+                    <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitPrice')" type="number"
+                      dense outlined min="0" step="0.01" class="cute-price-input">
+                      <template v-slot:prepend>
+                        <q-icon name="attach_money" color="positive" />
+                      </template>
+                    </q-input>
+                    <!-- Helper price information -->
+                    <div class="price-helpers">
+                      <div v-if="selected.solo_unit_cost && selected.solo_unit_cost > 0" class="price-helper solo">
+                        <q-icon name="person" size="12px" />
+                        <span>${{ Number(selected.solo_unit_cost).toFixed(2) }}</span>
+                        <q-tooltip>
+                          {{ t('transactionAlpha.soloUnitPrice') }}
+                        </q-tooltip>
+                      </div>
+                      <div v-if="selected.bulk_unit_cost && selected.bulk_unit_cost > 0" class="price-helper bulk">
+                        <q-icon name="inventory_2" size="12px" />
+                        <span>${{ Number(selected.bulk_unit_cost).toFixed(2) }}</span>
+                        <q-tooltip>
+                          {{ t('transactionAlpha.bulkUnitPrice') }}
+                        </q-tooltip>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </template>
+                </template>
 
-              <q-btn icon="delete" color="negative" flat round dense @click="removeItem(idx)" class="q-ml-md" />
+                <q-btn icon="delete" color="negative" flat round dense @click="removeItem(idx)" class="q-ml-md" />
+              </div>
             </div>
           </div>
-        </div>
-        <div class="q-mt-sm">
-          <q-btn :label="t('transactionAlpha.clearAll')" color="negative" flat @click="clearAll" size="sm" />
+          <div class="clear-all-container">
+            <div class="cute-clear-container">
+              <q-btn
+                @click="clearAll"
+                size="md"
+                class="cute-clear-btn danger"
+                color="negative"
+                no-caps
+                rounded
+              >
+                <div class="btn-content">
+                  <span class="btn-text">{{ t('transactionAlpha.clearAll') }} &nbsp; ⚠️</span>
+                </div>
+              </q-btn>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -404,10 +444,14 @@ defineExpose({
 
 /* Professional Item Cards Design */
 .items-container {
-  max-height: 250px;
+  max-height: 280px;
   overflow-y: auto;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 0;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
 }
 
 .loading-state {
@@ -587,6 +631,10 @@ defineExpose({
   overflow-y: auto;
   width: 100%;
   margin: 0;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
 }
 
 .selected-item-card {
@@ -858,5 +906,152 @@ defineExpose({
     padding: 2px 6px !important;
     flex: none !important;
   }
+}
+
+/* 🎨 Cute Section Cards Design */
+.section-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid transparent;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.section-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.section-card.items-section {
+  border-color: rgba(103, 126, 234, 0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+}
+
+.section-card.items-section::before {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.section-card.selected-section {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+}
+
+.section-card.selected-section::before {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.section-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.section-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.section-icon.selected-icon {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.section-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.selected-section .section-title {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.section-badge.selected-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.clear-all-container {
+  text-align: center;
+  padding: 16px;
+  border-top: 2px solid rgba(0, 0, 0, 0.05);
+  margin-top: 16px;
+}
+
+.clear-all-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 8px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.clear-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 </style>

@@ -2108,7 +2108,11 @@ export default {
     filterByCategory: 'Filter by Category',
     noCategoryItems: 'No items found in selected category',
     tryDifferentSearch: 'Try a different search term',
-    searchingItems: 'Searching items...'
+    searchingItems: 'Searching items...',
+    // Section titles
+    availableItems: 'Available Items',
+    items: 'items',
+    selected: 'selected'
   },
 
   // Cashbox Management

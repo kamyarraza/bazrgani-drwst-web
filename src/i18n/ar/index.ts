@@ -1483,7 +1483,16 @@ receiveFromCustomer: "استلام من العميل",
     enterIqdAmount: 'أدخل مبلغ الدينار',
     enterUsdAmount: 'أدخل مبلغ الدولار',
     enterIqdReturnAmount: 'أدخل مبلغ إرجاع الدينار',
-    enterUsdReturnAmount: 'أدخل مبلغ إرجاع الدولار'
+    enterUsdReturnAmount: 'أدخل مبلغ إرجاع الدولار',
+    // فلترة الفئات
+    filterByCategory: 'تصفية حسب الفئة',
+    noCategoryItems: 'لم يتم العثور على عناصر في الفئة المختارة',
+    tryDifferentSearch: 'جرب مصطلح بحث مختلف',
+    searchingItems: 'البحث عن العناصر...',
+    // عناوين الأقسام
+    availableItems: 'العناصر المتاحة',
+    items: 'عناصر',
+    selected: 'مختار'
   },
   dashboard: {
     title: 'لوحة التحكم',

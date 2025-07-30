@@ -2244,9 +2244,9 @@ receiveFromCustomer: "وەرگرتن لە کڕیار",
     totalItems: 'کۆی گشتی: {n}',
     unitCost: 'تێچووی یەکە',
     unitPrice: 'نرخی یەکە',
-    soloUnitCost: 'تێچووی یەکە - تاک',
+    soloUnitCost: 'نرخی تاک',
     soloUnitPrice: 'نرخی یەکە - تاک',
-    bulkUnitCost: 'تێچووی یەکە - کۆ',
+    bulkUnitCost: 'نرخی کۆ',
     bulkUnitPrice: 'نرخی یەکە - کۆ',
     clearAll: 'سڕینەوەی هەموو',
     selectBranch: 'هەڵبژاردنی لق',
@@ -2308,7 +2308,11 @@ receiveFromCustomer: "وەرگرتن لە کڕیار",
     filterByCategory: 'پالاوتن بە پێی جۆری کاڵا',
     noCategoryItems: 'هیچ کاڵایەک لە جۆری هەڵبژێردراو نەدۆزرایەوە',
     tryDifferentSearch: 'وشەیەکی تری گەڕان تاقی بکەرەوە',
-    searchingItems: 'گەڕان بۆ کاڵاکان...'
+    searchingItems: 'گەڕان بۆ کاڵاکان...',
+    // ناونیشانی بەشەکان
+    availableItems: 'کاڵا بەردەستەکان',
+    items: 'کاڵا',
+    selected: 'هەڵبژێردراو'
   },
 
   // بەڕێوەبردنی صندوق
