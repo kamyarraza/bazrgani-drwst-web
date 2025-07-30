@@ -2,8 +2,7 @@
   <q-page padding>
     <div class="q-pa-md">
       <!-- Branch Dashboard Header Card -->
-      <Header :title="isEmployee ? t('branch.myBranch', 'My Branch') : t('branch.title', 'Branches')"
-        :subtitle="isEmployee ? t('branch.myBranchSubtitle', 'Manage your branch operations') : t('branch.subtitle', 'Manage all branch operations')"
+      <Header :title="t('branch.title', 'Branches')" :subtitle="t('branch.subtitle', 'Manage all branch operations')"
         icon="store" icon-size="3rem" icon-color="white" :show-waves="true"
         background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
       <!-- Main Content Card -->
@@ -16,8 +15,7 @@
               <q-tab name="branches" class="enhanced-tab">
                 <div class="tab-content">
                   <q-icon name="store" size="20px" />
-                  <span class="tab-label">{{ isEmployee ? t('branch.myBranch', 'My Branch') : t('branch.allBranches',
-                    'All Branches') }}</span>
+                  <span class="tab-label">{{ t('branch.allBranches', 'All Branches') }}</span>
                 </div>
               </q-tab>
 
@@ -84,7 +82,7 @@
 
 <script setup lang="ts">
 import Header from 'src/components/common/Header.vue'
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Main from 'src/components/branch/Main.vue';
 import WarehouseComponent from 'src/components/branch/warehouse.vue';
@@ -93,22 +91,17 @@ import CashboxComponent from 'src/components/cashbox/Main.vue';
 import Add from 'src/components/branch/Add.vue';
 import Update from 'src/components/branch/Update.vue';
 import { useBranchStore } from 'src/stores/branchStore';
-import { useMeStore } from 'src/stores/meStore';
 import type { Branch } from 'src/types/branch';
 import type { Warehouse } from 'src/types/warehouse';
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
-const meStore = useMeStore();
 // Removed warehouseStore since it's no longer used in this component
 const showAddModal = ref(false);
 const showUpdateModal = ref(false);
 const selectedBranch = ref<Branch | null>(null);
 const activeTab = ref('branches');
 const selectedWarehouse = ref<Warehouse | null>(null);
-
-// Check if user is employee
-const isEmployee = computed(() => meStore.me?.type === 'employee');
 
 // Fetch branches on component mount
 onMounted(async () => {

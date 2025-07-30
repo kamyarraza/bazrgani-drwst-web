@@ -14,13 +14,7 @@
               <div class="text-subtitle2 text-grey-6">
                 <span>{{ t('warehouse.branchName', 'Branch') }}:</span>
                 <strong>{{ branch.name }}</strong>
-                <q-chip
-                  color="primary"
-                  text-color="white"
-                  size="sm"
-                  class="q-ml-sm"
-                  icon="store"
-                >
+                <q-chip color="primary" text-color="white" size="sm" class="q-ml-sm" icon="store">
                   {{ branch.code || 'N/A' }}
                 </q-chip>
               </div>
@@ -34,37 +28,23 @@
           <template v-slot:avatar>
             <q-icon name="info" color="blue" />
           </template>
-          <div class="text-weight-medium">{{ t('warehouse.fastNavigation', 'Fast Navigation') }}</div>
-          <div class="text-caption">{{ t('warehouse.clickRowToViewItems', 'Click on any warehouse row to quickly view its items') }}</div>
-        </q-banner> -->
+<div class="text-weight-medium">{{ t('warehouse.fastNavigation', 'Fast Navigation') }}</div>
+<div class="text-caption">{{ t('warehouse.clickRowToViewItems', 'Click on any warehouse row to quickly view its items')
+  }}</div>
+</q-banner> -->
 
         <div class="filter-container q-mb-md">
           <Filter @filter="handleFilter" class="warehouse-filter" />
         </div>
 
-        <Qtable
-          v-if="warehouseStore.branchWarehouses"
-          :show-bottom="false"
-          :menu-items="menuItems"
-          :columns="warehouseColumns"
-          :rows="warehouseStore.branchWarehouses.warehouses"
-          :loading="warehouseStore.loading"
-          row-key="id"
-          class="warehouse-table"
-          @menu-action="handleAction"
-          :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
-          @top-right-action="handleAddWarehouse"
-          :top-right-icon="'add_circle'"
-          flat
-          bordered
-        >
+        <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
+          :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
+          :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
+          :top-right="isAdmin || isUserBranch" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
+          @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'" flat bordered>
           <template v-slot:body-cell-is_active="props">
             <q-td :props="props">
-              <q-chip
-                :color="props.value ? 'positive' : 'negative'"
-                text-color="white"
-                size="sm"
-              >
+              <q-chip :color="props.value ? 'positive' : 'negative'" text-color="white" size="sm">
                 <q-icon :name="props.value ? 'check_circle' : 'cancel'" left />
                 {{ props.value ? t('warehouse.active', 'Active') : t('warehouse.inactive', 'Inactive') }}
               </q-chip>
@@ -83,7 +63,8 @@
           <div class="text-subtitle1 q-mt-sm">
             {{ t('warehouse.createFirst', 'Create your first warehouse for this branch') }}
           </div>
-          <q-btn color="primary" class="q-mt-md" icon="add_circle" :label="t('warehouse.addNew', 'Add Warehouse')" @click="handleAddWarehouse" />
+          <q-btn v-if="isAdmin || isUserBranch" color="primary" class="q-mt-md" icon="add_circle"
+            :label="t('warehouse.addNew', 'Add Warehouse')" @click="handleAddWarehouse" />
         </q-card>
       </div>
 
@@ -93,25 +74,17 @@
         <div class="text-subtitle1 q-mt-sm">
           {{ t('warehouse.selectBranchDesc', 'Please select a branch to view its warehouses') }}
         </div>
-        <q-btn color="primary" class="q-mt-md" :icon="goBackIcon" :label="t('common.back', 'Go Back')" @click="$emit('go-back')" />
+        <q-btn color="primary" class="q-mt-md" :icon="goBackIcon" :label="t('common.back', 'Go Back')"
+          @click="$emit('go-back')" />
       </div>
     </div>
 
     <!-- Add Warehouse Modal -->
-    <WarehouseAdd
-      v-model="showAddWarehouseModal"
-      :branch-id="branch?.id || 0"
-      @submit="handleAddWarehouseSubmit"
-    />
+    <WarehouseAdd v-model="showAddWarehouseModal" :branch-id="branch?.id || 0" @submit="handleAddWarehouseSubmit" />
 
     <!-- Update Warehouse Modal -->
-    <WarehouseUpdate
-      v-if="warehouseToEdit"
-        :branch_id="branch?.id || 0"
-      v-model="showUpdateWarehouseModal"
-      :warehouse="warehouseToEdit"
-      @update="handleUpdateWarehouseSubmit"
-    />
+    <WarehouseUpdate v-if="warehouseToEdit" :branch_id="branch?.id || 0" v-model="showUpdateWarehouseModal"
+      :warehouse="warehouseToEdit" @update="handleUpdateWarehouseSubmit" />
   </div>
 </template>
 
@@ -120,6 +93,7 @@ import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { date } from 'quasar';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
+import { useMeStore } from 'src/stores/meStore';
 import type { Branch } from 'src/types/branch';
 import type { Warehouse } from 'src/types/warehouse';
 import Qtable from 'src/components/common/Qtable.vue';
@@ -136,10 +110,21 @@ const emit = defineEmits(['view-items', 'go-back', 'add-warehouse', 'edit-wareho
 
 const { t, locale } = useI18n();
 const warehouseStore = useWarehouseStore();
+const meStore = useMeStore();
 const filter = ref('');
 const showAddWarehouseModal = ref(false);
 const showUpdateWarehouseModal = ref(false);
 const warehouseToEdit = ref<Warehouse | null>(null);
+
+// Check if user is admin
+const isAdmin = computed(() => meStore.me?.type === 'admin');
+
+// Check if current branch belongs to the employee user
+const isUserBranch = computed(() => {
+  const isEmployee = meStore.me?.type === 'employee';
+  const userBranchId = meStore.me?.branch?.id;
+  return isEmployee && userBranchId === props.branch?.id;
+});
 
 // Check if current locale is RTL
 const isRTL = computed(() => {
@@ -181,6 +166,12 @@ function handleFilter(filterText: string) {
 
 // Handle add warehouse button click
 function handleAddWarehouse() {
+  // Security check - only admin or employee of the current branch can add warehouses
+  if (!isAdmin.value && !isUserBranch.value) {
+    console.warn('Employee attempted to add warehouse to another branch');
+    return;
+  }
+
   if (props.branch) {
     showAddWarehouseModal.value = true;
   }
@@ -205,30 +196,49 @@ function handleUpdateWarehouseSubmit() {
   }
 }
 
-// Menu items for warehouse actions
-const menuItems = [
-  { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
-  {
-    label: t('warehouse.toggleActive', 'Activate/Deactivate'),
-    icon: 'swap_horiz',
-    value: 'toggleActive',
-  },
-  {
-    label: t('warehouse.viewItems', 'View Items'),
-    icon: 'inventory',
-    value: 'viewItems',
-  },
-];
+// Menu items for warehouse actions - conditional based on user permissions
+const menuItems = computed(() => {
+  const baseItems = [
+    {
+      label: t('warehouse.viewItems', 'View Items'),
+      icon: 'inventory',
+      value: 'viewItems',
+    }
+  ];
+
+  // Admin or employee can edit/manage warehouses only for their own branch
+  if (isAdmin.value || isUserBranch.value) {
+    baseItems.unshift(
+      { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
+      {
+        label: t('warehouse.toggleActive', 'Activate/Deactivate'),
+        icon: 'swap_horiz',
+        value: 'toggleActive',
+      }
+    );
+  }
+
+  return baseItems;
+});
 
 // Handle menu actions from Qtable
 async function handleAction(payload: { item: { value: string }, rowId: number }) {
   const warehouse = warehouseStore.branchWarehouses?.warehouses.find(w => w.id === payload.rowId);
   if (!warehouse) return;
 
+  // Security check for edit and toggle actions
+  if (payload.item.value === 'edit' || payload.item.value === 'toggleActive') {
+    // Only admin or employee of the current branch can edit/toggle warehouses
+    if (!isAdmin.value && !isUserBranch.value) {
+      console.warn('Employee attempted to edit warehouse of another branch');
+      return;
+    }
+  }
+
   if (payload.item.value === 'edit') {
     warehouseToEdit.value = warehouse;
     showUpdateWarehouseModal.value = true;
-  } else if  (payload.item.value === 'toggleActive') {
+  } else if (payload.item.value === 'toggleActive') {
     await handleToggleActive(warehouse.id);
   } else if (payload.item.value === 'viewItems') {
     emit('view-items', warehouse);
@@ -250,7 +260,7 @@ const warehouseColumns = [
     name: 'name',
     required: true,
     label: t('warehouse.name', 'Warehouse Name'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: 'name',
     sortable: true,
   },
@@ -258,7 +268,7 @@ const warehouseColumns = [
     name: 'code',
     required: true,
     label: t('warehouse.code', 'Code'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: 'code',
     sortable: true,
   },
@@ -266,7 +276,7 @@ const warehouseColumns = [
     name: 'address',
     required: true,
     label: t('warehouse.address', 'Address'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: 'address',
     sortable: true,
   },
@@ -274,26 +284,26 @@ const warehouseColumns = [
     name: 'capacity',
     required: true,
     label: t('warehouse.capacity', 'Capacity'),
-    align: 'right'as const,
+    align: 'right' as const,
     field: 'capacity',
     sortable: true,
   },
 
 
-   {
+  {
     name: 'is_active',
     required: true,
     label: t('common.status', 'Status'),
     align: 'center' as const,
     field: 'is_active',
     sortable: true,
-   format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
+    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
   },
   {
     name: 'created_at',
     required: true,
     label: t('common.createdAt', 'Created At'),
-    align: 'left'as const,
+    align: 'left' as const,
     field: 'created_at',
     format: (val: unknown, _row: Record<string, unknown>) =>
       date.formatDate(val as string, 'MMM YYYY'),
@@ -303,7 +313,7 @@ const warehouseColumns = [
     name: 'actions',
     required: true,
     label: t('common.actions', 'Actions'),
-    align: 'center'as const,
+    align: 'center' as const,
     field: 'actions',
     sortable: false,
   },
