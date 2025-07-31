@@ -70,7 +70,7 @@ export const endPoints = {
     list: (type: 'purchase'|'sell') => `/transactions/${type}/index`,
     one: (transactionId: string) => `/transactions/${transactionId}`,
     freeding: (transactionId:string)=>`/transactions/freeding/${transactionId}`,
-    paySupplier: '/transactions/payment/pay/supplier',
+    paySupplier: (transactionId: string) => `/transactions/${transactionId}/payment/pay/supplier`,
     refund: '/transactions/refund/items',
     receiveCustomer: '/transactions/payment/receive/customer'
   },

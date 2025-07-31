@@ -257,11 +257,21 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     selectedItems.value = [];
   };
 
-  const paySupplier = async (paymentData: { customer_id: number; amount: number; note: string }) => {
+  const paySupplier = async (
+    transactionId: string,
+    paymentData: {
+      customer_id: number;
+      iqd_price: number;
+      usd_price: number;
+      iqd_return_amount: number;
+      usd_return_amount: number;
+      note: string
+    }
+  ) => {
     try {
       loading.value = true;
       const response = await api.post<ApiResponse<any>>(
-        endPoints.transaction.paySupplier,
+        endPoints.transaction.paySupplier(transactionId),
         paymentData
       );
 
