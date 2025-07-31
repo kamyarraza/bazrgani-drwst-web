@@ -23,12 +23,19 @@ const emit = defineEmits(['update:selectedItems']);
 
 const itemStore = useItemStore();
 const categoryStore = useItemCategoryStore();
-const { items, loading } = storeToRefs(itemStore);
+const { items, loading, pagination } = storeToRefs(itemStore);
 const { itemCategories } = storeToRefs(categoryStore);
 
 const searchQuery = ref('');
 const selectedCategoryId = ref<number | null>(null);
 let searchTimeout: any = null;
+
+// Pagination state
+const currentPage = ref(1);
+const isLoadingMore = ref(false);
+const hasMorePages = computed(() => {
+  return pagination.value ? currentPage.value < pagination.value.last_page : false;
+});
 
 const selectedItems = ref<SelectedItem[]>([]);
 const selectedItemIds = computed(() => new Set(selectedItems.value.map(sel => sel.item.id)));
@@ -61,10 +68,42 @@ onMounted(async () => {
   await categoryStore.fetchItemCategories();
 
   if (props.transactionType === 'purchase') {
-    await itemStore.fetchItems(selectedCategoryId.value);
+    await loadInitialItems();
   }
   // For sell, do not fetch items until warehouse is selected
 });
+
+async function loadInitialItems() {
+  currentPage.value = 1;
+  await itemStore.fetchItemsPaginated(currentPage.value, selectedCategoryId.value);
+}
+
+async function loadMoreItems() {
+  if (hasMorePages.value && !loading.value && !isLoadingMore.value) {
+    isLoadingMore.value = true;
+    currentPage.value += 1;
+
+    try {
+      await itemStore.fetchItemsPaginated(currentPage.value, selectedCategoryId.value, true);
+    } catch {
+      currentPage.value -= 1; // Revert page number on error
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+}
+
+function onScroll(event: Event) {
+  const target = event.target as HTMLElement;
+  const scrollTop = target.scrollTop;
+  const scrollHeight = target.scrollHeight;
+  const clientHeight = target.clientHeight;
+
+  // Load more when scrolled to within 200px of bottom
+  if (scrollHeight - scrollTop - clientHeight < 200) {
+    void loadMoreItems();
+  }
+}
 
 watch(() => props.warehouseId, (warehouseId) => {
   if (props.transactionType === 'sell' && warehouseId) {
@@ -73,11 +112,11 @@ watch(() => props.warehouseId, (warehouseId) => {
 });
 
 // Watch for category changes to refetch items
-watch(selectedCategoryId, (categoryId) => {
+watch(selectedCategoryId, () => {
   if (props.transactionType === 'purchase') {
-    void itemStore.fetchItems(categoryId);
+    void loadInitialItems();
   } else if (props.transactionType === 'sell' && props.warehouseId) {
-    void itemStore.fetchItemsByWarehouse(props.warehouseId, categoryId);
+    void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
   }
 });
 
@@ -88,6 +127,7 @@ function onSearch() {
     void itemStore['searchItemsByWarehouse']((searchQuery.value || '').trim(), props.warehouseId, selectedCategoryId.value);
     return;
   }
+  // For purchase, use regular search (not paginated for search results)
   void itemStore.searchItems((searchQuery.value || '').trim(), selectedCategoryId.value);
 }
 
@@ -99,7 +139,7 @@ watch(searchQuery, (val) => {
       if (props.transactionType === 'sell' && props.warehouseId) {
         void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
       } else {
-        void itemStore.fetchItems(selectedCategoryId.value);
+        void loadInitialItems();
       }
     }, 1000);
     return;
@@ -181,6 +221,8 @@ function clearAll() {
 function fetchItemsForWarehouse() {
   if (props.transactionType === 'sell' && props.warehouseId) {
     void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
+  } else if (props.transactionType === 'purchase') {
+    void loadInitialItems();
   }
 }
 
@@ -230,19 +272,23 @@ defineExpose({
             <div class="section-badge">{{ filteredItems.length }} {{ t('transactionAlpha.items', 'items') }}</div>
           </div>
 
-          <div class="items-container">
-            <div v-if="loading" class="loading-state">
-              <q-spinner color="primary" size="2em" />
-              <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
-            </div>
+          <div v-if="loading && currentPage === 1" class="loading-state">
+            <q-spinner color="primary" size="2em" />
+            <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
+          </div>
 
-            <div v-else-if="filteredItems.length === 0" class="empty-state">
-              <q-icon name="inventory_2" size="3em" color="grey-4" />
-              <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
-              <p class="empty-subtext">{{ selectedCategoryId ? t('transactionAlpha.noCategoryItems', 'No items found in selected category') : t('transactionAlpha.tryDifferentSearch') }}</p>
-            </div>
+          <div v-else-if="filteredItems.length === 0" class="empty-state">
+            <q-icon name="inventory_2" size="3em" color="grey-4" />
+            <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
+            <p class="empty-subtext">
+              {{ selectedCategoryId
+                ? t('transactionAlpha.noCategoryItems', 'No items found in selected category')
+                : t('transactionAlpha.tryDifferentSearch') }}
+            </p>
+          </div>
 
-            <div v-else class="items-grid">
+          <div v-else class="items-grid-container" @scroll="onScroll">
+            <div class="items-grid">
               <div v-for="item in filteredItems" :key="item.id" class="item-card"
                 :class="{ 'item-selected': selectedItemIds.has(item.id) }">
                 <div class="item-header">
@@ -292,6 +338,19 @@ defineExpose({
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Load more indicator -->
+            <div v-if="isLoadingMore" class="load-more-indicator">
+              <q-spinner color="primary" size="1.5em" />
+              <p class="loading-text">{{ t('transactionAlpha.loadingMoreItems', 'Loading more items...') }}</p>
+            </div>
+
+            <!-- End of list indicator -->
+            <div v-else-if="!hasMorePages && pagination && filteredItems.length > 0" class="end-of-list">
+              <q-icon name="check_circle" color="positive" size="1.5em" />
+              <p class="end-text">{{ t('transactionAlpha.allItemsLoaded', 'All items loaded') }}</p>
+              <p class="end-subtext">{{ t('transactionAlpha.totalItemsCount', { count: pagination.total }) }}</p>
             </div>
           </div>
         </div>
@@ -449,17 +508,6 @@ defineExpose({
 }
 
 /* Professional Item Cards Design */
-.items-container {
-  max-height: 280px;
-  overflow-y: auto;
-  width: 100%;
-  margin-top: 0;
-  padding: 8px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-}
-
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -467,6 +515,11 @@ defineExpose({
   justify-content: center;
   padding: 40px 20px;
   color: #6b7280;
+  width: 100%;
+  margin-top: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
 }
 
 .loading-text {
@@ -483,6 +536,11 @@ defineExpose({
   padding: 40px 20px;
   text-align: center;
   color: #9ca3af;
+  width: 100%;
+  margin-top: 0;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
 }
 
 .empty-text {
@@ -1059,5 +1117,95 @@ defineExpose({
 .clear-all-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Pagination and infinite scroll styles */
+.items-grid-container {
+  max-height: 500px;
+  overflow-y: auto;
+  width: 100%;
+  margin-top: 0;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  scroll-behavior: smooth;
+}
+
+.items-grid-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.items-grid-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.items-grid-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.items-grid-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.load-more-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  margin: 16px 0;
+  border: 2px dashed rgba(102, 126, 234, 0.3);
+}
+
+.load-more-indicator .loading-text {
+  margin: 0;
+  color: #667eea;
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: fadeInOut 1.5s ease-in-out infinite;
+}
+
+.end-of-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  gap: 8px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: 12px;
+  margin: 16px 0;
+  border: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+.end-of-list .end-text {
+  margin: 0;
+  color: #059669;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.end-of-list .end-subtext {
+  margin: 0;
+  color: #065f46;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+@keyframes fadeInOut {
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 </style>

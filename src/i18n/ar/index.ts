@@ -1570,7 +1570,11 @@ receiveFromCustomer: "استلام من العميل",
     // عناوين الأقسام
     availableItems: 'العناصر المتاحة',
     items: 'عناصر',
-    selected: 'مختار'
+    selected: 'مختار',
+    // ترقيم الصفحات والتمرير اللانهائي
+    loadingMoreItems: 'تحميل المزيد من العناصر...',
+    allItemsLoaded: 'تم تحميل جميع العناصر',
+    totalItemsCount: 'المجموع: {count} عنصر'
   },
   dashboard: {
     title: 'لوحة التحكم',

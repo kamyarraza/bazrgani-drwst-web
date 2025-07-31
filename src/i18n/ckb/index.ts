@@ -2359,7 +2359,11 @@ receiveFromCustomer: "وەرگرتن لە کڕیار",
     // ناونیشانی بەشەکان
     availableItems: 'کاڵا بەردەستەکان',
     items: 'کاڵا',
-    selected: 'هەڵبژێردراو'
+    selected: 'هەڵبژێردراو',
+    // پەڕەبەندی و سکرۆڵی بێکۆتایی
+    loadingMoreItems: 'باری کردنی کاڵای زیاتر...',
+    allItemsLoaded: 'هەموو کاڵاکان بار کران',
+    totalItemsCount: 'کۆ: {count} کاڵا'
   },
 
   // بەڕێوەبردنی صندوق

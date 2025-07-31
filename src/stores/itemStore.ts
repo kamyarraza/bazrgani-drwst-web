@@ -268,7 +268,7 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function fetchItemsPaginated(page: number = 1, categoryId?: number | null) {
+  async function fetchItemsPaginated(page: number = 1, categoryId?: number | null, append: boolean = false) {
     loading.value = true;
     error.value = null;
     let url = `${endPoints.item.list}?page=${page}&relations=category&paginate=true`;
@@ -279,7 +279,15 @@ export const useItemStore = defineStore('item', () => {
 
     try {
       const { data } = await api.get<ApiResponse<Product[]>>(url);
-      items.value = data.data;
+
+      if (append && page > 1) {
+        // Append new items to existing ones for infinite scroll
+        items.value = [...items.value, ...data.data];
+      } else {
+        // Replace items for first page or reset
+        items.value = data.data;
+      }
+
       pagination.value = data.pagination || null;
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch items';

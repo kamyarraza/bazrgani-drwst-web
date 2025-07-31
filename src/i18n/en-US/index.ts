@@ -2193,7 +2193,11 @@ export default {
     // Section titles
     availableItems: 'Available Items',
     items: 'items',
-    selected: 'selected'
+    selected: 'selected',
+    // Pagination and infinite scroll
+    loadingMoreItems: 'Loading more items...',
+    allItemsLoaded: 'All items loaded',
+    totalItemsCount: 'Total: {count} items'
   },
 
   // Cashbox Management
