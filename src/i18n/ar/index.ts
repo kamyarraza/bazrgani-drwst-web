@@ -841,7 +841,21 @@ receiveFromCustomer: "استلام من العميل",
     packets: 'الطرود',
     packages: 'الحزم',
     availableForSale: 'متاح للبيع',
-    units: 'وحدات'
+    units: 'وحدات',
+    // Stock Adjustment
+    adjust: 'تعديل المخزون',
+    adjustStock: 'تعديل المخزون',
+    currentQuantity: 'الكمية الحالية',
+    add: 'إضافة إلى المخزون',
+    remove: 'إزالة من المخزون',
+    addToQueue: 'إضافة إلى القائمة',
+    adjustmentAdded: 'تمت إضافة التعديل إلى القائمة',
+    submitAdjustments: 'إرسال الكل',
+    confirmAdjustments: 'تأكيد تعديلات المخزون',
+    aboutToAdjust: 'أنت على وشك تعديل المخزون للعناصر التالية:',
+    confirmSubmit: 'تأكيد وإرسال',
+    adjustmentSuccess: 'تم تطبيق تعديلات المخزون بنجاح',
+    adjustmentError: 'فشل في تعديل المخزون'
   },
   employee: {
     addNew: 'إضافة موظف جديد',

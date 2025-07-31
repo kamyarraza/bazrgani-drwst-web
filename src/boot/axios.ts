@@ -15,8 +15,8 @@ declare module 'vue' {
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
       // baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
-     baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
-    //  baseURL: 'http://localhost:4000/api',
+    //  baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
+     baseURL: 'http://localhost:4000/api',
 
   withCredentials: true,
   timeout: 7000, // 10 seconds timeout for all requests mr kamyar you needed only this line

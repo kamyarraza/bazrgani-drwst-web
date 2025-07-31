@@ -454,7 +454,21 @@ export default {
     packets: 'Packets',
     packages: 'Packages',
     availableForSale: 'Available for sale',
-    units: 'units'
+    units: 'units',
+    // Stock Adjustment
+    adjust: 'Adjust Stock',
+    adjustStock: 'Adjust Stock',
+    currentQuantity: 'Current Quantity',
+    add: 'Add to Stock',
+    remove: 'Remove from Stock',
+    addToQueue: 'Add to Queue',
+    adjustmentAdded: 'Adjustment added to queue',
+    submitAdjustments: 'Submit All',
+    confirmAdjustments: 'Confirm Stock Adjustments',
+    aboutToAdjust: 'You are about to adjust stock for the following items:',
+    confirmSubmit: 'Confirm & Submit',
+    adjustmentSuccess: 'Stock adjustments applied successfully',
+    adjustmentError: 'Failed to adjust stock'
   },
   employee: {
     addNew: 'Add new employee',
