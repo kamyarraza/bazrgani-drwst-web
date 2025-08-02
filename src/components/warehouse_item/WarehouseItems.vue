@@ -9,7 +9,7 @@
             {{ t('warehouseItem.title', 'Warehouse Items') }}
           </div>
           <div class="text-subtitle2 text-grey-6">
-            <span>{{ t('warehouseItem.warehouseName', 'Warehouse') }}:</span>
+            <b>{{ t('warehouseItem.warehouseName', 'Warehouse') }}: </b>
             <strong>{{ selectedWarehouse.name }}</strong>
             <q-chip color="primary" text-color="white" size="sm" class="q-ml-sm" icon="inventory">
               {{ selectedWarehouse.code || 'N/A' }}
@@ -740,20 +740,20 @@ const itemColumns = [
       return num.toLocaleString();
     },
   },
-  {
-    name: 'pieces',
-    label: t('warehouseItem.pieces', 'Pieces'),
-    align: 'center' as const,
-    field: 'pieces',
-    sortable: true,
-  },
-  {
-    name: 'reservations',
-    label: t('warehouseItem.reservations', 'Reserved'),
-    align: 'center' as const,
-    field: 'reservations',
-    sortable: true,
-  },
+  // {
+  //   name: 'pieces',
+  //   label: t('warehouseItem.pieces', 'Pieces'),
+  //   align: 'center' as const,
+  //   field: 'pieces',
+  //   sortable: true,
+  // },
+  // {
+  //   name: 'reservations',
+  //   label: t('warehouseItem.reservations', 'Reserved'),
+  //   align: 'center' as const,
+  //   field: 'reservations',
+  //   sortable: true,
+  // },
   {
     name: 'actions',
     label: t('common.actions', 'Actions'),

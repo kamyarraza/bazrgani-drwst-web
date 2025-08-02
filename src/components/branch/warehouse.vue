@@ -12,7 +12,7 @@
                 {{ t('warehouse.branchWarehouses', 'Branch Warehouses') }}
               </div>
               <div class="text-subtitle2 text-grey-6">
-                <span>{{ t('warehouse.branchName', 'Branch') }}:</span>
+                <b>{{ t('warehouse.branchName', 'Branch') }}: </b>
                 <strong>{{ branch.name }}</strong>
                 <q-chip color="primary" text-color="white" size="sm" class="q-ml-sm" icon="store">
                   {{ branch.code || 'N/A' }}
@@ -24,14 +24,15 @@
         </div>
 
         <!-- Info Banner for Fast Navigation -->
-        <!-- <q-banner inline-actions class="bg-blue-1 text-blue-8 q-mb-md" rounded>
+        <q-banner inline-actions class="bg-blue-1 text-blue-8 q-mb-md" rounded>
           <template v-slot:avatar>
             <q-icon name="info" color="blue" />
           </template>
-<div class="text-weight-medium">{{ t('warehouse.fastNavigation', 'Fast Navigation') }}</div>
-<div class="text-caption">{{ t('warehouse.clickRowToViewItems', 'Click on any warehouse row to quickly view its items')
-  }}</div>
-</q-banner> -->
+          <div class="text-weight-medium">{{ t('warehouse.fastNavigation', 'Fast Navigation') }}</div>
+          <div class="text-caption">
+            {{ t('warehouse.clickRowToViewItems', 'Click on any warehouse row to quickly view its items') }}
+          </div>
+        </q-banner>
 
         <div class="filter-container q-mb-md">
           <Filter @filter="handleFilter" class="warehouse-filter" />
@@ -272,14 +273,14 @@ const warehouseColumns = [
     field: 'code',
     sortable: true,
   },
-  {
-    name: 'address',
-    required: true,
-    label: t('warehouse.address', 'Address'),
-    align: 'left' as const,
-    field: 'address',
-    sortable: true,
-  },
+  // {
+  //   name: 'address',
+  //   required: true,
+  //   label: t('warehouse.address', 'Address'),
+  //   align: 'left' as const,
+  //   field: 'address',
+  //   sortable: true,
+  // },
   {
     name: 'capacity',
     required: true,
@@ -299,16 +300,16 @@ const warehouseColumns = [
     sortable: true,
     format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
   },
-  {
-    name: 'created_at',
-    required: true,
-    label: t('common.createdAt', 'Created At'),
-    align: 'left' as const,
-    field: 'created_at',
-    format: (val: unknown, _row: Record<string, unknown>) =>
-      date.formatDate(val as string, 'MMM YYYY'),
-    sortable: true,
-  },
+  // {
+  //   name: 'created_at',
+  //   required: true,
+  //   label: t('common.createdAt', 'Created At'),
+  //   align: 'left' as const,
+  //   field: 'created_at',
+  //   format: (val: unknown, _row: Record<string, unknown>) =>
+  //     date.formatDate(val as string, 'MMM YYYY'),
+  //   sortable: true,
+  // },
   {
     name: 'actions',
     required: true,

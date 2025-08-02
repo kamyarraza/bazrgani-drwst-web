@@ -1,7 +1,7 @@
 <template>
   <QModalForm v-model="model" :title="t('warehouse.add', 'Add New Warehouse')" :show-user-info="true"
     :user-name="form.name" :default-user-name="t('warehouse.newWarehouse', 'New Warehouse')"
-    :user-role="t('warehouse.role', 'Warehouse')" :user-icon="'inventory'">
+    user-role="Warehouse" :user-icon="'inventory'">
     <template #default>
       <q-form @submit.prevent="submitForm" ref="formRef">
         <div class="q-pa-md">

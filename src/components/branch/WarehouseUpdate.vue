@@ -5,7 +5,7 @@
     :show-user-info="true"
     :user-name="form.name"
     :default-user-name="t('warehouse.warehouseDetails', 'Warehouse Details')"
-    :user-role="t('warehouse.role', 'Warehouse')"
+    user-role="Warehouse"
     :user-icon="'inventory'"
   >
     <template #default>

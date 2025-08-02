@@ -138,14 +138,14 @@ const columns = [
     field: 'code',
     sortable: true,
   },
-  {
-    name: 'location',
-    required: true,
-    label: t('branch.location', 'Location'),
-    align: 'left' as const,
-    field: (row: any) => row.location?.name || 'N/A',
-    sortable: true,
-  },
+  // {
+  //   name: 'location',
+  //   required: true,
+  //   label: t('branch.location', 'Location'),
+  //   align: 'left' as const,
+  //   field: (row: any) => row.location?.name || 'N/A',
+  //   sortable: true,
+  // },
   {
     name: 'phone',
     required: true,
