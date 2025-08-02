@@ -6,8 +6,7 @@
                 <div class="col-auto">
                     <div class="page-title-section">
                         <h2 class="page-title">{{ t('admin.sendNotification.title', 'Send Notification') }}</h2>
-                        <p class="page-subtitle">{{ t('admin.sendNotification.subtitle', 'Send notifications to users
-                            across the system') }}</p>
+                        <p class="page-subtitle">{{ t('admin.sendNotification.subtitle', 'Send notifications to users across the system') }}</p>
                     </div>
                 </div>
                 <div class="col-auto">

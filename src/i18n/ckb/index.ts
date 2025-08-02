@@ -18,8 +18,8 @@ export default {
     branch: 'لق', // Singular form for employees
     cashbox: 'صندوق',
     viewCashbox: 'بینینی صندوق',
-    categories: 'پۆلەکان',
-    category: 'پۆل', // Singular form for employees
+    categories: 'جۆرەکانی کاڵا',
+    category: 'جۆری کاڵا', // Singular form for employees
     offers: 'ئۆفەرەکان',
     offer: 'ئۆفەر', // Singular form for employees
     transferRequests: 'داواکاری گواستنەوە',
@@ -598,8 +598,8 @@ export default {
     }
   },
   itemCategory: {
-    title: 'بەشەکانی کەلوپەل',
-    subtitle: 'بەڕێوەبردنی بەشەکانی کەلوپەل',
+    title: 'بەشی جۆرەکانی کاڵا',
+    subtitle: 'بەڕێوەبردنی بەشی جۆرەکانی کاڵا',
     addNew: 'زیادکردنی بەشی نوێ',
     update: 'نوێکردنەوەی بەش',
     delete: 'سڕینەوەی بەش',

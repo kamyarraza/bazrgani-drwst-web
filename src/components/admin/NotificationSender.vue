@@ -8,8 +8,7 @@
         </div>
         <div class="header-text">
           <h3 class="section-title">{{ t('admin.sendNotification.title', 'Send Notification') }}</h3>
-          <p class="section-subtitle">{{ t('admin.sendNotification.subtitle', 'Send notifications to users across the
-            system') }}</p>
+          <p class="section-subtitle">{{ t('admin.sendNotification.subtitle', 'Send notifications to users across the system') }}</p>
         </div>
       </div>
     </div>
@@ -35,8 +34,7 @@
                       </div>
                       <div class="recipient-details">
                         <div class="recipient-label">{{ t('admin.sendNotification.allUsers', 'All Users') }}</div>
-                        <div class="recipient-description">{{ t('admin.sendNotification.allUsersDesc', 'Send to everyone
-                          in the system') }}</div>
+                        <div class="recipient-description">{{ t('admin.sendNotification.allUsersDesc', 'Send to everyone in the system') }}</div>
                       </div>
                     </div>
                   </template>
@@ -52,8 +50,7 @@
                       </div>
                       <div class="recipient-details">
                         <div class="recipient-label">{{ t('admin.sendNotification.admins', 'Administrators') }}</div>
-                        <div class="recipient-description">{{ t('admin.sendNotification.adminsDesc', 'Send to system
-                          administrators only') }}</div>
+                        <div class="recipient-description">{{ t('admin.sendNotification.adminsDesc', 'Send to system administrators only') }}</div>
                       </div>
                     </div>
                   </template>
@@ -69,8 +66,7 @@
                       </div>
                       <div class="recipient-details">
                         <div class="recipient-label">{{ t('admin.sendNotification.employees', 'Employees') }}</div>
-                        <div class="recipient-description">{{ t('admin.sendNotification.employeesDesc', 'Send to regular
-                          employees') }}</div>
+                        <div class="recipient-description">{{ t('admin.sendNotification.employeesDesc', 'Send to regular employees') }}</div>
                       </div>
                     </div>
                   </template>
@@ -86,8 +82,7 @@
                       </div>
                       <div class="recipient-details">
                         <div class="recipient-label">{{ t('admin.sendNotification.accountants', 'Accountants') }}</div>
-                        <div class="recipient-description">{{ t('admin.sendNotification.accountantsDesc', 'Send to
-                          accounting department') }}</div>
+                        <div class="recipient-description">{{ t('admin.sendNotification.accountantsDesc', 'Send to accounting department') }}</div>
                       </div>
                     </div>
                   </template>
@@ -171,13 +166,10 @@
                     <q-icon :name="getPriorityIcon(notificationForm.priority)"
                       :color="getPriorityColor(notificationForm.priority)" size="1.2rem" class="q-mr-sm" />
                     <span class="preview-title">{{ notificationForm.title ||
-                      t('admin.sendNotification.titlePlaceholder', 'Enter
-                      notification title...') }}</span>
+                      t('admin.sendNotification.titlePlaceholder', 'Enter notification title...') }}</span>
                   </div>
                   <div class="preview-description">
-                    {{ notificationForm.description || t('admin.sendNotification.descriptionPlaceholder', 'Enter
-                    notification
-                    description...') }}
+                    {{ notificationForm.description || t('admin.sendNotification.descriptionPlaceholder', 'Enter notification description...') }}
                   </div>
                   <div class="preview-meta">
                     <q-chip size="sm" :color="getRecipientColor(notificationForm.recipients)" text-color="white">
@@ -206,7 +198,7 @@
         <div class="section-header-simple">
           <q-icon name="history" color="primary" size="1.2rem" class="q-mr-sm" />
           <span class="section-title-simple">{{ t('admin.sendNotification.recentNotifications', 'Recent Notifications')
-            }}</span>
+          }}</span>
         </div>
 
         <q-list v-if="recentNotifications.length > 0" separator class="recent-list">

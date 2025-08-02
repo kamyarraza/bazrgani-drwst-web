@@ -180,15 +180,46 @@ export default defineConfig((ctx) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'GenerateSW' // 'GenerateSW' or 'InjectManifest'
-      // swFilename: 'sw.js',
-      // manifestFilename: 'manifest.json',
-      // extendManifestJson (json) {},
-      // useCredentialsForManifestTag: true,
-      // injectPwaMetaTags: false,
-      // extendPWACustomSWConf (esbuildConf) {},
-      // extendGenerateSWOptions (cfg) {},
-      // extendInjectManifestOptions (cfg) {}
+      workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
+      manifestFilename: 'manifest.json',
+      extendManifestJson (json) {
+        json.name = 'Bazrgani Drwst';
+        json.short_name = 'Bazrgani Drwst';
+        json.description = 'ERP System for Business Management';
+        json.theme_color = '#1976d2';
+        json.background_color = '#ffffff';
+        json.display = 'standalone';
+        json.start_url = '/';
+        json.icons = [
+          {
+            src: 'new-brand-icon.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+            purpose: 'any'
+          },
+          {
+            src: 'new-brand-icon.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml',
+            purpose: 'any'
+          },
+          {
+            src: 'icons/favicon-128x128.svg',
+            sizes: '128x128',
+            type: 'image/svg+xml'
+          },
+          {
+            src: 'icons/favicon-96x96.svg',
+            sizes: '96x96',
+            type: 'image/svg+xml'
+          },
+          {
+            src: 'icons/favicon-32x32.svg',
+            sizes: '32x32',
+            type: 'image/svg+xml'
+          }
+        ];
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova
@@ -197,9 +228,9 @@ export default defineConfig((ctx) => {
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
-    capacitor: {
-      hideSplashscreen: true
-    },
+    // capacitor: {
+    //   hideSplashscreen: true
+    // },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
     electron: {

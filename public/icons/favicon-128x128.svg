@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 200 200">
+  <!-- Green circle background -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#8BC34A" stroke-width="10"/>
+  
+  <!-- Chart bars -->
+  <rect x="60" y="120" width="20" height="50" fill="#00695C"/>
+  <rect x="90" y="100" width="20" height="70" fill="#00695C"/>
+  <rect x="120" y="80" width="20" height="90" fill="#00695C"/>
+  
+  <!-- Green checkmark -->
+  <path d="M45 110 L75 135 L155 65" stroke="#8BC34A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

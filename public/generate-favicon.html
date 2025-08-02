@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Favicon</title>
+</head>
+<body>
+    <canvas id="canvas" width="512" height="512" style="border: 1px solid #ccc;"></canvas>
+    <br>
+    <button onclick="generate16()">Generate 16x16</button>
+    <button onclick="generate32()">Generate 32x32</button>
+    <button onclick="generate96()">Generate 96x96</button>
+    <button onclick="generate128()">Generate 128x128</button>
+    <button onclick="generate192()">Generate 192x192</button>
+    <button onclick="generate512()">Generate 512x512</button>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = size;
+            canvas.height = size;
+            
+            const scale = size / 200;
+            ctx.scale(scale, scale);
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 200, 200);
+            
+            // Green circle background
+            ctx.strokeStyle = '#8BC34A';
+            ctx.lineWidth = 10;
+            ctx.beginPath();
+            ctx.arc(100, 100, 95, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Chart bars
+            ctx.fillStyle = '#00695C';
+            ctx.fillRect(60, 120, 20, 50);
+            ctx.fillRect(90, 100, 20, 70);
+            ctx.fillRect(120, 80, 20, 90);
+            
+            // Green checkmark
+            ctx.strokeStyle = '#8BC34A';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(45, 110);
+            ctx.lineTo(75, 135);
+            ctx.lineTo(155, 65);
+            ctx.stroke();
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function generate16() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 16);
+            downloadCanvas(canvas, 'favicon-16x16.png');
+        }
+
+        function generate32() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 32);
+            downloadCanvas(canvas, 'favicon-32x32.png');
+        }
+
+        function generate96() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 96);
+            downloadCanvas(canvas, 'favicon-96x96.png');
+        }
+
+        function generate128() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 128);
+            downloadCanvas(canvas, 'favicon-128x128.png');
+        }
+
+        function generate192() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 192);
+            downloadCanvas(canvas, 'favicon-192x192.png');
+        }
+
+        function generate512() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 512);
+            downloadCanvas(canvas, 'favicon-512x512.png');
+        }
+
+        // Generate initial 512x512 display
+        window.onload = function() {
+            const canvas = document.getElementById('canvas');
+            drawIcon(canvas, 512);
+        };
+    </script>
+</body>
+</html>
