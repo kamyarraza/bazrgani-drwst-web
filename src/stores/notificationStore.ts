@@ -16,6 +16,177 @@ export const useNotificationStore = defineStore('notification', () => {
   const isTabVisible = ref(true);
   const autoRefreshInterval = 50000; // 50 seconds
 
+  // Track previous notification count for sound alerts
+  const previousUnreadCount = ref(0);
+
+  // Track sound permission state
+  const soundEnabled = ref(false);
+  const soundPermissionAsked = ref(false);
+
+  // Pre-load audio for better performance
+  let audioInstance: HTMLAudioElement | null = null;
+
+  // Initialize audio instance
+  const initializeAudio = () => {
+    if (!audioInstance) {
+      audioInstance = new Audio('/sounds/notification.mp3');
+      audioInstance.volume = 0.5;
+      audioInstance.preload = 'auto';
+    }
+    return audioInstance;
+  };
+
+  // Request permission to enable notification sounds
+  const requestSoundPermission = async () => {
+    if (soundPermissionAsked.value) return soundEnabled.value;
+
+    try {
+      // Try to play a silent audio to test autoplay capability
+      const audio = initializeAudio();
+      audio.volume = 0; // Silent test
+
+      await audio.play();
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = 0.5; // Restore volume
+
+      soundEnabled.value = true;
+      soundPermissionAsked.value = true;
+
+      // console.log('✅ Notification sounds enabled');
+
+      // Show success notification
+      // Notify.create({
+      //   type: 'positive',
+      //   message: 'Notification sounds enabled',
+      //   position: 'top-right',
+      //   timeout: 3000
+      // });
+
+      return true;
+    } catch {
+      soundPermissionAsked.value = true;
+      console.log('🔇 Notification sounds blocked by browser policy');
+
+      // Show informational notification about sound permission
+      Notify.create({
+        type: 'info',
+        message: 'Click anywhere to enable notification sounds',
+        position: 'top-right',
+        timeout: 5000,
+        actions: [
+          {
+            label: 'Enable Sounds',
+            color: 'white',
+            handler: () => {
+              // Reset permission state to allow retry
+              soundPermissionAsked.value = false;
+              void requestSoundPermission();
+            }
+          }
+        ]
+      });
+
+      return false;
+    }
+  };
+
+  // Function to play notification sound
+  const playNotificationSound = async () => {
+    try {
+      console.log('🔊 Attempting to play notification sound...');
+
+      // Check if sound is enabled, if not try to enable it
+      if (!soundEnabled.value && !soundPermissionAsked.value) {
+        const enabled = await requestSoundPermission();
+        if (!enabled) {
+          showVisualNotification();
+          return;
+        }
+      }
+
+      // If sound is still not enabled, show visual notification
+      if (!soundEnabled.value) {
+        showVisualNotification();
+        return;
+      }
+
+      const audio = initializeAudio();
+
+      // Add event listeners for debugging
+      audio.addEventListener('canplay', () => {
+        console.log('🎵 Audio can play - starting playback');
+      }, { once: true });
+
+      audio.addEventListener('ended', () => {
+        console.log('✅ Audio playback completed');
+      }, { once: true });
+
+      audio.addEventListener('error', (e) => {
+        console.error('❌ Audio error:', e);
+        showVisualNotification();
+      }, { once: true });
+
+      // Reset audio position and play
+      audio.currentTime = 0;
+      await audio.play();
+
+      console.log('🎵 Audio started playing successfully');
+    } catch (error) {
+      console.warn('⚠️ Could not play notification sound:', error);
+      showVisualNotification();
+    }
+  };
+
+  // Show visual notification when sound can't play
+  const showVisualNotification = () => {
+    Notify.create({
+      type: 'info',
+      message: '🔔 New notification received',
+      position: 'top-right',
+      timeout: 3000,
+      color: 'primary',
+      textColor: 'white',
+      actions: [
+        {
+          label: 'View',
+          color: 'white',
+          handler: () => {
+            isOpenNotfication.value = true;
+          }
+        }
+      ]
+    });
+  };
+
+  // Manual test function for sound (can be called from browser console)
+  const testNotificationSound = () => {
+    console.log('🧪 Manual test: Playing notification sound...');
+    void playNotificationSound();
+  };
+
+  // Test function to simulate new notifications for debugging
+  const simulateNewNotification = () => {
+    console.log('🧪 Simulating new notification arrival...');
+    console.log('Current unread count:', previousUnreadCount.value);
+
+    // Temporarily decrease the count to simulate new notifications
+    const originalCount = previousUnreadCount.value;
+    previousUnreadCount.value = Math.max(0, originalCount - 1);
+
+    console.log('Decreased count to:', previousUnreadCount.value);
+    console.log('Now calling getNotifications to trigger sound...');
+
+    // Force refresh to trigger sound
+    void getNotifications(true);
+  };
+
+  // Expose test functions globally for debugging
+  if (typeof window !== 'undefined') {
+    (window as any).testNotificationSound = testNotificationSound;
+    (window as any).simulateNewNotification = simulateNewNotification;
+  }
+
   // Computed properties
   const unreadNotifications = computed(() =>
     notifications.value.filter(notification => !notification.read)
@@ -45,6 +216,9 @@ export const useNotificationStore = defineStore('notification', () => {
     loading.value = true;
     error.value = null;
 
+    // Store the current unread count before fetching
+    const wasFirstLoad = notifications.value.length === 0;
+
     try {
       const response = await api.get<ApiResponse<Notification[]>>(endPoints.notification.getUnreads);
 
@@ -57,7 +231,27 @@ export const useNotificationStore = defineStore('notification', () => {
           }
           // Then sort by date - newest first
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        });
+        });        // Check if there are new notifications and play sound
+        const currentUnreadCount = sortedNotifications.filter(n => !n.read).length;
+
+        console.log('🔔 Notification count check:');
+        console.log('  - Previous unread count:', previousUnreadCount.value);
+        console.log('  - Current unread count:', currentUnreadCount);
+        console.log('  - Was first load:', wasFirstLoad);
+
+        // Play sound if there are more unread notifications than before
+        // Don't play sound on first load (when wasFirstLoad is true)
+        if (currentUnreadCount > previousUnreadCount.value && !wasFirstLoad) {
+          console.log('🎵 Triggering notification sound!');
+          void playNotificationSound();
+        } else {
+          console.log('🔇 No sound triggered because:');
+          if (wasFirstLoad) console.log('  - This is the first load');
+          if (currentUnreadCount <= previousUnreadCount.value) console.log('  - No new notifications');
+        }
+
+        // Update the previous count for next comparison
+        previousUnreadCount.value = currentUnreadCount;
 
         notifications.value = sortedNotifications;
       } else {
@@ -289,6 +483,8 @@ export const useNotificationStore = defineStore('notification', () => {
     toggleNotificationPopup,
     refreshNotifications,
     startAutoRefresh,
-    stopAutoRefresh
+    stopAutoRefresh,
+    testNotificationSound,
+    simulateNewNotification
   };
 });
