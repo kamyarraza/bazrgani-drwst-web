@@ -4,17 +4,13 @@
       <q-form @submit.prevent="submitForm" class="q-pa-md">
         <div class="row q-col-gutter-md">
           <div class="col-12">
-            <div class="text-subtitle1 text-primary q-mb-sm">{{ t('exchange.rateDetails', 'Exchange Rate Details') }}</div>
+            <div class="text-subtitle1 text-primary q-mb-sm">{{ t('exchange.rateDetails', 'Exchange Rate Details') }}
+            </div>
 
-            <Qinput
-              v-model.number="form.usd_iqd_rate"
-              type="number"
-              step="0.01"
+            <Qinput v-model.number="form.usd_iqd_rate" type="number" step="0.01"
               :label="t('exchange.usdIqdRate', 'USD to IQD Rate')"
-              :rules="[val => !!val || t('validation.required', 'This field is required')]"
-              outlined
-              class="enhanced-input"
-            >
+              :rules="[val => !!val || t('validation.required', 'This field is required')]" outlined
+              class="enhanced-input">
               <template #before>
                 <q-icon name="currency_exchange" color="primary" />
               </template>
@@ -23,14 +19,8 @@
               </template>
             </Qinput>
 
-            <Qinput
-              v-model.number="form.eur_usd_rate"
-              type="number"
-              step="0.01"
-              :label="t('exchange.eurUsdRate', 'EUR to USD Rate')"
-              outlined
-              class="enhanced-input q-mt-md"
-            >
+            <Qinput v-model.number="form.eur_usd_rate" type="number" step="0.01"
+              :label="t('exchange.eurUsdRate', 'EUR to USD Rate')" outlined class="enhanced-input q-mt-md">
               <template #before>
                 <q-icon name="euro_symbol" color="primary" />
               </template>
@@ -39,13 +29,8 @@
               </template>
             </Qinput>
 
-            <Qinput
-              v-model="form.source"
-              :label="t('exchange.source', 'Source')"
-              :rules="[val => !!val || t('validation.required', 'This field is required')]"
-              outlined
-              class="enhanced-input q-mt-md"
-            >
+            <Qinput v-model="form.source" :label="t('exchange.source', 'Source')" outlined
+              class="enhanced-input q-mt-md">
               <template #before>
                 <q-icon name="source" color="primary" />
               </template>
@@ -54,14 +39,8 @@
               </template>
             </Qinput>
 
-            <Qinput
-              v-model="form.note"
-              type="textarea"
-              :label="t('exchange.note', 'Note')"
-              outlined
-              class="enhanced-input q-mt-md"
-              autogrow
-            >
+            <Qinput v-model="form.note" type="textarea" :label="t('exchange.note', 'Note')" outlined
+              class="enhanced-input q-mt-md" autogrow>
               <template #before>
                 <q-icon name="note" color="primary" />
               </template>
@@ -70,19 +49,8 @@
         </div>
 
         <div class="row justify-end q-mt-lg">
-          <q-btn
-            :label="t('common.cancel', 'Cancel')"
-            color="grey-7"
-            flat
-            class="q-mr-sm"
-            @click="closeModal"
-          />
-          <q-btn
-            :label="t('common.save', 'Save')"
-            type="submit"
-            color="primary"
-            :loading="loading"
-          />
+          <q-btn :label="t('common.cancel', 'Cancel')" color="grey-7" flat class="q-mr-sm" @click="closeModal" />
+          <q-btn :label="t('common.save', 'Save')" type="submit" color="primary" :loading="loading" />
         </div>
       </q-form>
     </template>
