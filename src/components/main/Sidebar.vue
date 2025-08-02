@@ -24,13 +24,23 @@
           </div>
 
           <div class="nav-links" v-show="sectionStates[index]">
-            <router-link v-for="link in section.links" :key="link.path" :to="link.path" class="nav-link"
-              active-class="nav-link-active" :exact="link.path === '/'" @click="handleNavLinkClick">
+            <router-link v-for="link in section.links.filter(l => l.path !== '/admin-notifications')" :key="link.path"
+              :to="link.path" class="nav-link" active-class="nav-link-active" :exact="link.path === '/'"
+              @click="handleNavLinkClick">
               <div class="link-icon">
                 <q-icon :name="link.icon" size="sm" />
               </div>
               <div class="link-text">{{ singularizeMenuLabel(link.label) }}</div>
             </router-link>
+
+            <!-- Special handling for notifications link -->
+            <div v-for="link in section.links.filter(l => l.path === '/admin-notifications')" :key="link.path"
+              class="nav-link" @click="navigateToNotifications">
+              <div class="link-icon">
+                <q-icon :name="link.icon" size="sm" />
+              </div>
+              <div class="link-text">{{ singularizeMenuLabel(link.label) }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -40,6 +50,9 @@
         <div class="app-version">{{ t('layout.version') }}</div>
       </div>
     </div>
+
+    <!-- Notification Sender Modal -->
+    <NotificationSenderModal v-model="showNotificationModal" @notification-sent="onNotificationSent" />
   </div>
 </template>
 
@@ -49,11 +62,15 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { usePermissions } from 'src/composables/usePermissions';
 import { useMeStore } from 'src/stores/meStore';
+import NotificationSenderModal from 'src/components/common/NotificationSenderModal.vue';
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const permissions = usePermissions();
 const meStore = useMeStore();
+
+// Notification modal state
+const showNotificationModal = ref(false);
 
 // Helper function to singularize menu labels for employees
 const singularizeMenuLabel = (label: string): string => {
@@ -133,6 +150,22 @@ const handleNavLinkClick = () => {
   if (isMobile.value) {
     closeSidebar();
   }
+};
+
+// Special function for opening notification modal
+const navigateToNotifications = () => {
+  showNotificationModal.value = true;
+
+  // Close sidebar on mobile
+  if (isMobile.value) {
+    closeSidebar();
+  }
+};
+
+// Handle notification sent event
+const onNotificationSent = () => {
+  // Optional: Add any additional logic when notification is sent
+  console.log('Notification sent successfully');
 };
 
 // Function to toggle section expansion
@@ -234,6 +267,7 @@ const allNavigationSections = [
     isOpen: false,
     links: [
       { path: '/logs-section', label: t('sidebar.activityLog'), icon: 'history', permission: 'logs-section' },
+      { path: '/admin-notifications', label: t('sidebar.notifications'), icon: 'notifications_active', permission: 'admin-section' },
     ]
   }
 ];

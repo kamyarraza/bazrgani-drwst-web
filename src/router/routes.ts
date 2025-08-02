@@ -22,6 +22,18 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/admin/Index.vue'),
       },
       {
+        path: 'admin-notifications',
+        component: () => import('src/pages/admin/NotificationsPage.vue'),
+      },
+      {
+        path: 'simple-notifications',
+        component: () => import('src/pages/admin/SimpleNotifications.vue'),
+      },
+      {
+        path: 'test-notifications',
+        component: () => import('src/pages/admin/TestNotifications.vue'),
+      },
+      {
         path: 'accountant-section',
         component: () => import('src/pages/accountant/Index.vue'),
       },

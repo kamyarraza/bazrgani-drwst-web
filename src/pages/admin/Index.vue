@@ -1,19 +1,15 @@
 <template>
     <q-page class="q-pa-md">
         <!-- Admin Dashboard Header Card -->
-        <Header
-            :title="t('admin.dashboardTitle')"
-            :subtitle="t('admin.managingAdmins')"
-            icon="admin_panel_settings"
-            icon-size="3rem"
-            icon-color="white"
-            :show-waves="true"
-            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-        />
+        <Header :title="t('admin.dashboardTitle')" :subtitle="t('admin.managingAdmins')" icon="admin_panel_settings"
+            icon-size="3rem" icon-color="white" :show-waves="true"
+            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
+
         <!-- Sticky Notes Overlay (absolute, not in normal flow) -->
         <div class="sticky-notes-overlay">
             <div v-for="(note, idx) in notes" :key="note.id" style="margin-bottom: 12px;">
-                <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }" @close="removeNote(note.id)" />
+                <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }"
+                    @close="removeNote(note.id)" />
             </div>
         </div>
         <!-- Filters Section -->
@@ -32,34 +28,17 @@
                         ({{ data.length }} {{ t('admin.adminsFound', 'admins found') }})
                     </span>
                     <q-space />
-                    <q-btn
-                        flat
-                        round
-                        icon="close"
-                        size="sm"
-                        @click="clearSearch"
-                        :title="t('admin.clearSearch', 'Clear search')"
-                    />
+                    <q-btn flat round icon="close" size="sm" @click="clearSearch"
+                        :title="t('admin.clearSearch', 'Clear search')" />
                 </div>
             </q-card>
         </div>
 
         <!-- Admin Table with Enhanced UI -->
-        <QtableB
-        show-bottom
-        :user-type="me?.type!"
-        :allowed-types="['admin']"
-            :hasExpandableRows="false"
-            @menu-action="handleAction"
-            :columns="columns"
-            :rows="filteredData"
-            :loading="adminStore.loading"
-            :menuItems="menuItems"
-            :pagination="pagination"
-            @page-change="handlePageChange"
-            @top-right-action="() => showModal = !showModal"
-            :top-right-title="t('admin.addNew')"
-        >
+        <QtableB show-bottom :user-type="me?.type!" :allowed-types="['admin']" :hasExpandableRows="false"
+            @menu-action="handleAction" :columns="columns" :rows="filteredData" :loading="adminStore.loading"
+            :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange"
+            @top-right-action="() => showModal = !showModal" :top-right-title="t('admin.addNew')">
 
         </QtableB>
 
@@ -68,7 +47,7 @@
         <Add v-model="showModal"></Add>
         <Update v-model="showUpdateModal" v-if="userToUpdate" :admin="userToUpdate"></Update>
         <Update v-model="showUpdateModal" v-else></Update>
-</q-page>
+    </q-page>
 </template>
 
 <script setup lang="ts">
@@ -84,7 +63,7 @@ import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 import Note from 'src/components/common/Note.vue'
 import type { AdminForm } from 'src/types/admin'
 import { useMeStore } from 'src/stores/meStore'
-const {me} = useMeStore()
+const { me } = useMeStore()
 // decleration
 const adminStore = useAdminStore()
 const { t } = useI18n()
@@ -247,29 +226,29 @@ const handleAction = (payload: { item: MenuItem; rowId: string | number }) => {
 const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
 
 function removeNote(id: number) {
-  const idx = notes.findIndex(n => n.id === id)
-  if (idx !== -1) notes.splice(idx, 1)
+    const idx = notes.findIndex(n => n.id === id)
+    if (idx !== -1) notes.splice(idx, 1)
 }
 
 // Handle page change for pagination
 async function handlePageChange(page: number) {
-  // Only allow pagination if we're not in search mode
-  const searchQuery = filters.value.search?.trim()
+    // Only allow pagination if we're not in search mode
+    const searchQuery = filters.value.search?.trim()
 
-  if (searchQuery) {
-    // If we're in search mode, don't paginate
-    return
-  }
+    if (searchQuery) {
+        // If we're in search mode, don't paginate
+        return
+    }
 
-  currentPage.value = page;
-  // We're not resetting filters to maintain the user's filter state when paging
-  await adminStore.fetchAdmins(page);
+    currentPage.value = page;
+    // We're not resetting filters to maintain the user's filter state when paging
+    await adminStore.fetchAdmins(page);
 
-  // Scroll to top when changing pages for better UX
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+    // Scroll to top when changing pages for better UX
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 // hooks
@@ -303,7 +282,7 @@ onUnmounted(() => {
 }
 
 .bg-primary {
-  background: linear-gradient(135deg, var(--q-primary) 0%, rgba(25, 92, 170, 1) 100%) !important;
+    background: linear-gradient(135deg, var(--q-primary) 0%, rgba(25, 92, 170, 1) 100%) !important;
 }
 
 .text-h4 {
@@ -341,7 +320,8 @@ onUnmounted(() => {
     }
 }
 
-.text-h2, .text-h5.text-weight-bold.countup {
+.text-h2,
+.text-h5.text-weight-bold.countup {
     font-size: 2rem !important;
     font-weight: 700;
     animation: countUp 0.5s ease-out forwards;
@@ -364,13 +344,15 @@ onUnmounted(() => {
     align-items: flex-end;
     pointer-events: none;
 }
-.sticky-notes-overlay > div {
+
+.sticky-notes-overlay>div {
     pointer-events: auto;
 }
 
 // Pagination styles
 .q-pagination {
     margin-top: 16px;
+
     .q-btn {
         min-width: 36px;
         min-height: 36px;
