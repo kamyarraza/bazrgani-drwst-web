@@ -23,17 +23,6 @@
           </div>
         </div>
 
-        <!-- Info Banner for Fast Navigation -->
-        <q-banner inline-actions class="bg-blue-1 text-blue-8 q-mb-md" rounded>
-          <template v-slot:avatar>
-            <q-icon name="info" color="blue" />
-          </template>
-          <div class="text-weight-medium">{{ t('warehouse.fastNavigation', 'Fast Navigation') }}</div>
-          <div class="text-caption">
-            {{ t('warehouse.clickRowToViewItems', 'Click on any warehouse row to quickly view its items') }}
-          </div>
-        </q-banner>
-
         <div class="filter-container q-mb-md">
           <Filter @filter="handleFilter" class="warehouse-filter" />
         </div>
@@ -41,8 +30,10 @@
         <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
           :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
           :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
-          :top-right="isAdmin || isUserBranch" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
-          @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'" flat bordered>
+          :top-right="true" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
+          @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'"
+          :top-right-secondary-title="t('warehouse.viewItems', 'View Items')"
+          @top-right-secondary-action="handleViewItems" :top-right-secondary-icon="'inventory_2'" flat bordered>
           <template v-slot:body-cell-is_active="props">
             <q-td :props="props">
               <q-chip :color="props.value ? 'positive' : 'negative'" text-color="white" size="sm">
@@ -187,6 +178,19 @@ function handleAddWarehouseSubmit() {
   }
 }
 
+// Handle view items button click
+function handleViewItems() {
+  // This will be handled by the parent component to navigate to warehouse items tab
+  // For now, we'll emit an event to notify the parent
+  if (props.branch) {
+    // Find the first warehouse to view its items
+    const firstWarehouse = warehouseStore.branchWarehouses?.warehouses[0];
+    if (firstWarehouse) {
+      emit('view-items', firstWarehouse);
+    }
+  }
+}
+
 // Handle update warehouse submit
 function handleUpdateWarehouseSubmit() {
   showUpdateWarehouseModal.value = false;
@@ -199,17 +203,11 @@ function handleUpdateWarehouseSubmit() {
 
 // Menu items for warehouse actions - conditional based on user permissions
 const menuItems = computed(() => {
-  const baseItems = [
-    {
-      label: t('warehouse.viewItems', 'View Items'),
-      icon: 'inventory',
-      value: 'viewItems',
-    }
-  ];
+  const baseItems: any[] = [];
 
   // Admin or employee can edit/manage warehouses only for their own branch
   if (isAdmin.value || isUserBranch.value) {
-    baseItems.unshift(
+    baseItems.push(
       { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
       {
         label: t('warehouse.toggleActive', 'Activate/Deactivate'),
@@ -241,8 +239,6 @@ async function handleAction(payload: { item: { value: string }, rowId: number })
     showUpdateWarehouseModal.value = true;
   } else if (payload.item.value === 'toggleActive') {
     await handleToggleActive(warehouse.id);
-  } else if (payload.item.value === 'viewItems') {
-    emit('view-items', warehouse);
   }
 }
 
