@@ -14,6 +14,20 @@
     <div v-if="showResultsList" class="customer-results q-mt-sm">
       <q-card flat bordered class="results-card">
         <q-list separator class="results-list">
+          <!-- Clear selection option when a customer is selected -->
+          <q-item v-if="modelValue !== null && modelValue !== undefined" clickable v-ripple @click="clearSelection()"
+            class="customer-item clear-item">
+            <q-item-section avatar>
+              <q-avatar color="grey-5" text-color="white" size="md">
+                <q-icon name="clear" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="customer-name text-grey-6">
+                {{ t('transactionAlpha.clearSelection') }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-for="customer in customerOptions" :key="customer.id" clickable v-ripple
             @click="selectCustomer(customer)" class="customer-item" :class="{ 'selected': modelValue === customer.id }">
             <q-item-section avatar>
@@ -90,7 +104,7 @@ watch(searchQuery, (val) => {
       emit('update:modelValue', null);
       emit('select', null);
     }
-  }, 1000);
+  }, 300); // Reduced delay for better UX
 });
 
 async function fetchCustomers(query = '', type = props.customerType as 'customer' | 'supplier') {
@@ -98,14 +112,11 @@ async function fetchCustomers(query = '', type = props.customerType as 'customer
   try {
     const customers = await customerStore.searchCustomers(query, type);
     customerOptions.value = customers.map((c: any) => ({ id: c.id, name: c.fname && c.sname ? `${c.fname} ${c.sname}` : c.name, location: c.location }));
-    // Auto-select first customer if none is selected
-    if (customerOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
-      const first = customerOptions.value[0];
-      if (first) {
-        emit('update:modelValue', first.id);
-        emit('select', first);
-        selectedCustomerId.value = first.id;
-        searchQuery.value = first.name;
+    // If a customer is already selected, update the search query to show its name
+    if (props.modelValue !== null && props.modelValue !== undefined) {
+      const selectedCustomer = customerOptions.value.find(c => c.id === props.modelValue);
+      if (selectedCustomer && !isSelecting.value) {
+        searchQuery.value = selectedCustomer.name;
       }
     }
   } catch {
@@ -122,6 +133,14 @@ function selectCustomer(customer: CustomerOption) {
   isFocused.value = false;
 }
 
+function clearSelection() {
+  emit('update:modelValue', null);
+  emit('select', null);
+  isSelecting.value = true;
+  searchQuery.value = '';
+  isFocused.value = false;
+}
+
 function onFocus() {
   isFocused.value = true;
 }
@@ -130,7 +149,11 @@ function onBlur() {
 }
 
 onMounted(async () => {
-  await fetchCustomers('', props.customerType as 'customer' | 'supplier');
+  // Only fetch customers if we have a pre-selected value or if the user starts typing
+  // This prevents auto-loading and auto-selecting on mount
+  if (props.modelValue !== null && props.modelValue !== undefined) {
+    await fetchCustomers('', props.customerType as 'customer' | 'supplier');
+  }
 });
 
 watch(() => props.modelValue, (val) => {
@@ -151,5 +174,13 @@ watch(() => props.modelValue, (val) => {
 
 .customer-item.selected {
   background: #e0f7fa;
+}
+
+.customer-item.clear-item {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.customer-item.clear-item:hover {
+  background: #f5f5f5;
 }
 </style>

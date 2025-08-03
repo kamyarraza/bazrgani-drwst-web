@@ -111,6 +111,11 @@ watch(() => props.warehouseId, (warehouseId) => {
   }
 });
 
+// Watch for transaction type changes to refresh items
+watch(() => props.transactionType, () => {
+  refreshItems();
+});
+
 // Watch for category changes to refetch items
 watch(selectedCategoryId, () => {
   if (props.transactionType === 'purchase') {
@@ -155,11 +160,17 @@ watch(searchQuery, (val) => {
 
 function selectItem(item) {
   if (selectedItemIds.value.has(item.id)) return;
+
+  // For sell transactions, prioritize solo price as default selling price
+  const defaultPrice = props.transactionType === 'sell'
+    ? (Number(item.solo_unit_price) || Number(item.unit_cost) || 0)
+    : (Number(item.unit_cost) || 0);
+
   selectedItems.value.push({
     item,
-    unit_cost: item.unit_cost || 0,
-    solo_unit_cost: item.solo_unit_price || 0,
-    bulk_unit_cost: item.bulk_unit_price || 0,
+    unit_cost: defaultPrice, // This will be the editable selling price
+    solo_unit_cost: Number(item.solo_unit_price) || 0, // Reference only
+    bulk_unit_cost: Number(item.bulk_unit_price) || 0, // Reference only
     quantity: 1,
     packages: 0,
     packets: 0
@@ -226,9 +237,35 @@ function fetchItemsForWarehouse() {
   }
 }
 
+function refreshItems() {
+  // Clear current items and reload to get updated quantities
+  if (props.transactionType === 'sell' && props.warehouseId) {
+    void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
+  } else if (props.transactionType === 'purchase') {
+    void loadInitialItems();
+  }
+}
+
+function refreshAfterTransaction() {
+  // This method should be called after a successful transaction submission
+  // It will refresh the items to show updated stock quantities
+  refreshItems();
+  // Optionally clear selected items as they've been processed
+  clearAll();
+}
+
+function formatTotalPrice(quantity: number, unitPrice: number): string {
+  const qty = Number(quantity || 0);
+  const price = Number(unitPrice || 0);
+  const total = qty * price;
+  return total.toFixed(2);
+}
+
 defineExpose({
   fetchItemsForWarehouse,
-  clearAll
+  clearAll,
+  refreshItems,
+  refreshAfterTransaction
 });
 </script>
 
@@ -249,8 +286,8 @@ defineExpose({
             </div>
             <div class="col-md-4 col-xs-12">
               <q-select v-model="selectedCategoryId" :options="categoryOptions"
-                :label="t('transactionAlpha.filterByCategory', 'Filter by Category')" outlined dense clearable
-                option-value="value" option-label="label" emit-value map-options class="category-filter">
+                :label="t('transactionAlpha.filterByCategory')" outlined dense clearable option-value="value"
+                option-label="label" emit-value map-options class="category-filter">
                 <template v-slot:prepend>
                   <q-icon name="category" />
                 </template>
@@ -268,8 +305,8 @@ defineExpose({
             <div class="section-icon">
               <q-icon name="inventory_2" size="20px" />
             </div>
-            <h3 class="section-title">🛍️ {{ t('transactionAlpha.availableItems', 'Available Items') }}</h3>
-            <div class="section-badge">{{ filteredItems.length }} {{ t('transactionAlpha.items', 'items') }}</div>
+            <h3 class="section-title">🛍️ {{ t('transactionAlpha.availableItems') }}</h3>
+            <div class="section-badge">{{ filteredItems.length }} {{ t('transactionAlpha.items') }}</div>
           </div>
 
           <div v-if="loading && currentPage === 1" class="loading-state">
@@ -282,7 +319,7 @@ defineExpose({
             <p class="empty-text">{{ t('transactionAlpha.noItemsFound') }}</p>
             <p class="empty-subtext">
               {{ selectedCategoryId
-                ? t('transactionAlpha.noCategoryItems', 'No items found in selected category')
+                ? t('transactionAlpha.noCategoryItems')
                 : t('transactionAlpha.tryDifferentSearch') }}
             </p>
           </div>
@@ -301,40 +338,75 @@ defineExpose({
 
                 <div class="item-details">
                   <div class="item-meta">
-                    <span v-if="item.sku" class="item-sku">SKU: {{ item.sku }}</span>
+                    <span v-if="item.sku" class="item-sku">{{ t('transactionAlpha.sku') }}: {{ item.sku }}</span>
                     <span v-if="item.category" class="item-category">{{ item.category.name }}</span>
                   </div>
 
                   <div class="item-quantities">
-                    <!-- @Deprecated -->
-                    <!-- <div v-if="props.transactionType == 'sell'" class="quantity-badge available">
-                      <q-icon name="inventory" size="14px" />
-                      <span>{{ t('transactionAlpha.qty') }}: {{ item.quantity ?? 0 }}</span>
-                    </div> -->
-                    <!-- For purchase: show package_units and packet_units instead of calculated packages/packets -->
-                    <div v-if="item.package_units && props.transactionType === 'purchase'"
-                      class="quantity-badge packages">
-                      <q-icon name="inventory_2" size="14px" />
-                      <span>{{ t('transactionAlpha.pkg') }}: {{ item.package_units }}</span>
+                    <!-- Stock Information Display -->
+                    <div class="stock-header">
+                      <q-icon name="inventory" size="14px" color="primary" />
+                      <span class="stock-title">{{ t('transactionAlpha.inStock') }}</span>
                     </div>
-                    <div v-if="item.packet_units && props.transactionType === 'purchase'"
-                      class="quantity-badge packets">
-                      <q-icon name="category" size="14px" />
-                      <span>{{ t('transactionAlpha.pkt') }}: {{ item.packet_units }}</span>
+
+                    <!-- Total Quantity (always show) -->
+                    <div class="quantity-badge total-stock">
+                      <q-icon name="apps" size="14px" />
+                      <span>{{ t('transactionAlpha.total') }}: {{ item.quantity || 0 }} {{ t('transactionAlpha.pcs')
+                      }}</span>
                     </div>
-                    <!-- For sell: show calculated packages and packets -->
-                    <div v-if="item.package_units && props.transactionType === 'sell'" class="quantity-badge packages">
-                      <q-icon name="inventory_2" size="14px" />
-                      <span>{{ t('transactionAlpha.pkg') }}: {{ item.packages }}</span>
-                    </div>
-                    <div v-if="item.packet_units && props.transactionType === 'sell'" class="quantity-badge packets">
-                      <q-icon name="category" size="14px" />
-                      <span>{{ t('transactionAlpha.pkt') }}: {{ item.packets }}</span>
-                    </div>
-                    <div v-if="item.pieces" class="quantity-badge pieces">
-                      <q-icon name="style" size="14px" />
-                      <span>{{ t('transactionAlpha.pieces') }}: {{ item.pieces }}</span>
-                    </div>
+
+                    <!-- Stock Breakdown (if item has packaging structure) -->
+                    <template v-if="(item.package_units || 0) > 0 && (item.packet_units || 0) > 0">
+                      <!-- Calculate breakdown: packages, remaining packets, remaining pieces -->
+                      <div class="quantity-badge packages">
+                        <q-icon name="inventory_2" size="14px" />
+                        <span>{{ Math.floor((item.quantity || 0) / ((item.package_units || 1) * (item.packet_units ||
+                          1))) }} {{ t('transactionAlpha.pkg') }}</span>
+                      </div>
+
+                      <div class="quantity-badge packets">
+                        <q-icon name="category" size="14px" />
+                        <span>{{ Math.floor(((item.quantity || 0) % ((item.package_units || 1) * (item.packet_units ||
+                          1))) / (item.packet_units || 1)) }} {{ t('transactionAlpha.pkt') }}</span>
+                      </div>
+
+                      <div class="quantity-badge pieces">
+                        <q-icon name="style" size="14px" />
+                        <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
+                        }}</span>
+                      </div>
+                    </template>
+
+                    <!-- If only packet_units (no packages) -->
+                    <template v-else-if="(item.packet_units || 0) > 0">
+                      <div class="quantity-badge packets">
+                        <q-icon name="category" size="14px" />
+                        <span>{{ Math.floor((item.quantity || 0) / (item.packet_units || 1)) }} {{
+                          t('transactionAlpha.pkt') }}</span>
+                      </div>
+
+                      <div class="quantity-badge pieces">
+                        <q-icon name="style" size="14px" />
+                        <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
+                        }}</span>
+                      </div>
+                    </template>
+
+                    <!-- If only package_units (no packets) -->
+                    <template v-else-if="(item.package_units || 0) > 0">
+                      <div class="quantity-badge packages">
+                        <q-icon name="inventory_2" size="14px" />
+                        <span>{{ Math.floor((item.quantity || 0) / (item.package_units || 1)) }} {{
+                          t('transactionAlpha.pkg') }}</span>
+                      </div>
+
+                      <div class="quantity-badge pieces">
+                        <q-icon name="style" size="14px" />
+                        <span>{{ (item.quantity || 0) % (item.package_units || 1) }} {{ t('transactionAlpha.pcs')
+                        }}</span>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -343,13 +415,13 @@ defineExpose({
             <!-- Load more indicator -->
             <div v-if="isLoadingMore" class="load-more-indicator">
               <q-spinner color="primary" size="1.5em" />
-              <p class="loading-text">{{ t('transactionAlpha.loadingMoreItems', 'Loading more items...') }}</p>
+              <p class="loading-text">{{ t('transactionAlpha.loadingMoreItems') }}</p>
             </div>
 
             <!-- End of list indicator -->
             <div v-else-if="!hasMorePages && pagination && filteredItems.length > 0" class="end-of-list">
               <q-icon name="check_circle" color="positive" size="1.5em" />
-              <p class="end-text">{{ t('transactionAlpha.allItemsLoaded', 'All items loaded') }}</p>
+              <p class="end-text">{{ t('transactionAlpha.allItemsLoaded') }}</p>
               <p class="end-subtext">{{ t('transactionAlpha.totalItemsCount', { count: pagination.total }) }}</p>
             </div>
           </div>
@@ -363,9 +435,8 @@ defineExpose({
             <q-icon name="shopping_cart" size="20px" />
           </div>
           <h3 class="section-title">🛒 {{ t('transactionAlpha.selectedItems') }}</h3>
-          <div class="section-badge selected-badge">{{ selectedItems.length }} {{ t('transactionAlpha.selected',
-            'selected')
-          }}</div>
+          <div class="section-badge selected-badge">{{ selectedItems.length }} {{ t('transactionAlpha.selected') }}
+          </div>
         </div>
 
         <div class="selected-items-scroll">
@@ -376,7 +447,7 @@ defineExpose({
               <div class="col-auto item-info-col">
                 <div class="text-weight-bold text-lg">{{ selected.item.name }}</div>
                 <div class="text-caption text-grey-7">
-                  <span v-if="selected.item.sku">SKU: {{ selected.item.sku }}</span>
+                  <span v-if="selected.item.sku">{{ t('transactionAlpha.sku') }}: {{ selected.item.sku }}</span>
                   <span v-if="selected.item.category"> | {{ selected.item.category.name }}</span>
                 </div>
               </div>
@@ -414,30 +485,71 @@ defineExpose({
                     type="number" dense outlined min="0" style="max-width:110px;" />
                 </template>
 
-                <!-- For Sell Transactions: Show only unit price with cute design -->
+                <!-- For Sell Transactions: Show only ONE selling price input -->
                 <template v-else>
                   <div class="cute-price-container">
-                    <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitPrice')" type="number"
-                      dense outlined min="0" step="0.01" class="cute-price-input">
+                    <!-- Single selling price input -->
+                    <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.sellingPrice')"
+                      type="number" dense outlined min="0" step="0.01" class="cute-price-input">
                       <template v-slot:prepend>
                         <q-icon name="attach_money" color="positive" />
                       </template>
                     </q-input>
-                    <!-- Helper price information -->
-                    <div class="price-helpers">
-                      <div v-if="selected.solo_unit_cost && selected.solo_unit_cost > 0" class="price-helper solo">
-                        <q-icon name="person" size="12px" />
-                        <span>${{ Number(selected.solo_unit_cost).toFixed(2) }}</span>
-                        <q-tooltip>
-                          {{ t('transactionAlpha.soloUnitPrice') }}
-                        </q-tooltip>
+
+                    <!-- Reference price badges (solo and bulk) -->
+                    <div class="reference-badges q-mt-sm">
+                      <q-badge v-if="selected.solo_unit_cost > 0" color="blue-4" text-color="white" class="q-mr-sm">
+                        {{ t('transactionAlpha.soloUnitPrice') }}: ${{ Number(selected.solo_unit_cost || 0).toFixed(2)
+                        }}
+                      </q-badge>
+                      <q-badge v-if="selected.bulk_unit_cost > 0" color="purple-4" text-color="white">
+                        {{ t('transactionAlpha.bulkUnitPrice') }}: ${{ Number(selected.bulk_unit_cost || 0).toFixed(2)
+                        }}
+                      </q-badge>
+                    </div>
+
+                    <!-- Compact Total Prices Display -->
+                    <div class="cute-totals-display">
+                      <!-- Package Total -->
+                      <div v-if="selected.item?.package_units > 0 && selected.packages > 0" class="total-line">
+                        <div class="total-info">
+                          <q-icon name="inventory" color="purple" size="12px" />
+                          <span class="total-label">{{ selected.packages }} {{ t('transactionAlpha.pkg') }}</span>
+                          <span class="total-value">${{ formatTotalPrice(Number(selected.packages) *
+                            Number(selected.item?.package_units || 0) * Number(selected.item?.packet_units || 0),
+                            Number(selected.unit_cost || 0)) }}</span>
+                        </div>
                       </div>
-                      <div v-if="selected.bulk_unit_cost && selected.bulk_unit_cost > 0" class="price-helper bulk">
-                        <q-icon name="inventory_2" size="12px" />
-                        <span>${{ Number(selected.bulk_unit_cost).toFixed(2) }}</span>
-                        <q-tooltip>
-                          {{ t('transactionAlpha.bulkUnitPrice') }}
-                        </q-tooltip>
+
+                      <!-- Packet Total -->
+                      <div v-if="selected.item?.packet_units > 0 && selected.packets > 0" class="total-line">
+                        <div class="total-info">
+                          <q-icon name="inbox" color="orange" size="12px" />
+                          <span class="total-label">{{ selected.packets }} {{ t('transactionAlpha.pkt') }}</span>
+                          <span class="total-value">${{ formatTotalPrice(Number(selected.packets) *
+                            Number(selected.item?.packet_units || 0), Number(selected.unit_cost || 0)) }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Pieces Total -->
+                      <div v-if="selected.quantity > 0" class="total-line">
+                        <div class="total-info">
+                          <q-icon name="widgets" color="green" size="12px" />
+                          <span class="total-label">{{ selected.quantity }} {{ t('transactionAlpha.pcs') }}</span>
+                          <span class="total-value">${{ formatTotalPrice(Number(selected.quantity),
+                            Number(selected.unit_cost ||
+                              0)) }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Grand Total -->
+                      <div class="grand-total-line">
+                        <div class="total-info grand">
+                          <q-icon name="paid" color="primary" size="14px" />
+                          <span class="total-label grand">{{ t('transactionAlpha.total') }}</span>
+                          <span class="total-value grand">${{ formatTotalPrice(Number(selected.quantity),
+                            Number(selected.unit_cost || 0)) }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -675,6 +787,29 @@ defineExpose({
 .quantity-badge.pieces {
   background: #f3e8ff;
   color: #7c3aed;
+}
+
+.quantity-badge.total-stock {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+  border: 1px solid #0369a1;
+}
+
+.stock-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  padding: 2px 0;
+}
+
+.stock-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #1976d2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .item-list {
@@ -969,6 +1104,115 @@ defineExpose({
     font-size: 0.65rem !important;
     padding: 2px 6px !important;
     flex: none !important;
+  }
+}
+
+/* Reference price badges styling */
+.reference-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.reference-badges .q-badge {
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.reference-badges .q-badge:hover {
+  opacity: 1;
+}
+
+/* Compact totals display */
+.cute-totals-display {
+  margin-top: 12px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.total-line {
+  display: flex;
+  align-items: center;
+  margin: 3px 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.total-line:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.total-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.total-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4a5568;
+  min-width: 45px;
+}
+
+.total-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-left: auto;
+}
+
+/* Grand total styling */
+.grand-total-line {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.total-info.grand {
+  font-weight: 600;
+}
+
+.total-label.grand {
+  color: #2b6cb0;
+  font-weight: 600;
+}
+
+.total-value.grand {
+  color: #2b6cb0;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+
+  /* Mobile responsive adjustments for compact price container */
+  .cute-price-container {
+    max-width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .total-line {
+    margin: 2px 0;
+    padding: 3px 4px;
+  }
+
+  .total-label {
+    font-size: 0.7rem;
+    min-width: 35px;
+  }
+
+  .total-value {
+    font-size: 0.75rem;
   }
 }
 

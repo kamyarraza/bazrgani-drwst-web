@@ -224,25 +224,41 @@
                   </h2>
                 </div>
 
+                <!-- Cash payment requirement notice -->
+                <div v-if="selectedPaymentType === 'cash'" class="payment-notice">
+                  <q-icon name="info" color="primary" size="16px" />
+                  <span class="notice-text">
+                    {{ t('transactionAlpha.paymentAmountRequired') }}
+                  </span>
+                </div>
+
                 <div class="payment-grid">
                   <div class="payment-item">
-                    <label class="form-label">
+                    <label class="form-label" :class="{ 'required-field': selectedPaymentType === 'cash' }">
                       <q-icon name="currency_exchange" color="primary" size="16px" />
                       {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdAmountWePay' :
                         'iqdAmountCustomerPays'}`) }}
+                      <span v-if="selectedPaymentType === 'cash'" class="required-asterisk">*</span>
                     </label>
                     <q-input v-model.number="iqdPrice" type="number" min="0" dense outlined suffix="IQD"
-                      class="payment-input" :placeholder="t('transactionAlpha.enterIqdAmount')" />
+                      class="payment-input" :placeholder="t('transactionAlpha.enterIqdAmount')"
+                      :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || usdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
+                      :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
+                      :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
                   </div>
 
                   <div class="payment-item">
-                    <label class="form-label">
+                    <label class="form-label" :class="{ 'required-field': selectedPaymentType === 'cash' }">
                       <q-icon name="attach_money" color="primary" size="16px" />
                       {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdAmountWePay' :
                         'usdAmountCustomerPays'}`) }}
+                      <span v-if="selectedPaymentType === 'cash'" class="required-asterisk">*</span>
                     </label>
                     <q-input v-model.number="usdPrice" type="number" min="0" step="0.01" dense outlined suffix="USD"
-                      class="payment-input" :placeholder="t('transactionAlpha.enterUsdAmount')" />
+                      class="payment-input" :placeholder="t('transactionAlpha.enterUsdAmount')"
+                      :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || iqdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
+                      :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
+                      :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
                   </div>
 
                   <div class="payment-item">
@@ -400,6 +416,17 @@ watch(selectedWarehouseId, (warehouseId) => {
   }
 });
 
+// Watch for modal opening to refresh items
+watch(show, (isOpen) => {
+  if (isOpen) {
+    void nextTick(() => {
+      if (itemSelectorRef.value && typeof itemSelectorRef.value.refreshItems === 'function') {
+        itemSelectorRef.value.refreshItems();
+      }
+    });
+  }
+});
+
 const $q = useQuasar();
 const itemTransactionStore = useItemTransactionStore();
 const submitting = ref(false);
@@ -409,7 +436,15 @@ const showInvoiceModal = ref(false);
 const createdTransaction = ref<List | null>(null);
 
 const canSubmit = computed(() => {
-  return selectedCustomerId.value && selectedBranchId.value && selectedPaymentType.value && selectedItems.value.length > 0;
+  const basicRequirements = selectedCustomerId.value && selectedBranchId.value && selectedPaymentType.value && selectedItems.value.length > 0;
+
+  // If payment type is cash, require at least one payment amount
+  if (selectedPaymentType.value === 'cash') {
+    const hasPaymentAmount = (iqdPrice.value && iqdPrice.value > 0) || (usdPrice.value && usdPrice.value > 0);
+    return basicRequirements && hasPaymentAmount;
+  }
+
+  return basicRequirements;
 });
 
 const totalSelectedItemsPrice = computed(() => {
@@ -498,10 +533,19 @@ function clearModalData() {
 
 async function handleSubmit() {
   if (!canSubmit.value) {
+    let errorMessage = '🚫 Please complete all required fields';
+    let errorCaption = 'Fill customer info, branch, warehouse, and select items';
+
+    // Check for payment-specific errors
+    if (selectedPaymentType.value === 'cash' && !iqdPrice.value && !usdPrice.value) {
+      errorMessage = '💰 Payment amount required for cash transactions';
+      errorCaption = 'Please enter either IQD or USD payment amount';
+    }
+
     $q.notify({
       type: 'negative',
-      message: '🚫 Please complete all required fields',
-      caption: 'Fill customer info, branch, warehouse, and select items',
+      message: errorMessage,
+      caption: errorCaption,
       timeout: 3000,
       position: 'top',
       avatar: '📝',
@@ -588,6 +632,17 @@ async function handleSubmit() {
       createdTransaction.value = transformedTransaction;
       showInvoiceModal.value = true;
     }
+
+    // Refresh items to get updated quantities after transaction
+    if (itemSelectorRef.value && typeof itemSelectorRef.value.refreshAfterTransaction === 'function') {
+      itemSelectorRef.value.refreshAfterTransaction();
+    }
+
+    // Clear payment and return amount inputs after successful transaction
+    iqdPrice.value = 0;
+    usdPrice.value = 0;
+    iqdReturnAmount.value = 0;
+    usdReturnAmount.value = 0;
 
     $q.notify({
       type: 'positive',
@@ -1065,6 +1120,43 @@ function getProgressPercentage() {
   font-weight: 500;
   color: #4a5568;
   margin-bottom: 8px;
+}
+
+/* Required field styling */
+.form-label.required-field {
+  color: #2b6cb0;
+  font-weight: 600;
+}
+
+.required-asterisk {
+  color: #e53e3e;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Payment input error styling */
+.payment-input.q-field--error .q-field__control {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 1px rgba(229, 62, 62, 0.2) !important;
+}
+
+/* Payment notice styling */
+.payment-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border: 1px solid #60a5fa;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e40af;
+}
+
+.notice-text {
+  flex: 1;
 }
 
 .payment-input {
