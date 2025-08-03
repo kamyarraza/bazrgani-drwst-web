@@ -4,10 +4,15 @@
       <Filter @filter="handleFilter" class="branch-filter" />
     </div>
 
-    <Qtable show-bottom :top-right="isAdmin" :menu-items="menuItems" :columns="columns" :rows="enhancedBranches"
+    <Qtable show-bottom :top-right="true" :menu-items="menuItems" :columns="columns" :rows="enhancedBranches"
       :loading="branchStore.loading" row-key="id" class="branch-table" @menu-action="handleAction"
       :top-right-title="t('branch.addNew', 'Add Branch')" :top-right-icon="'add_business'"
-      @top-right-action="$emit('add-branch')" :pagination="pagination" @page-change="handlePageChange" flat bordered
+      @top-right-action="$emit('add-branch')" 
+      :top-right-secondary-title="t('warehouse.viewWarehouses', 'View Warehouses')"
+      @top-right-secondary-action="handleViewWarehouses" :top-right-secondary-icon="'inventory'"
+      :top-right-tertiary-title="t('branch.viewCashbox', 'View Cashbox')"
+      @top-right-tertiary-action="handleViewCashbox" :top-right-tertiary-icon="'account_balance_wallet'"
+      :pagination="pagination" @page-change="handlePageChange" flat bordered
       :user-type="userType" :allowed-types="['admin']">
     </Qtable>
   </div>
@@ -61,32 +66,11 @@ async function fetchBranches() {
 // Menu items for branch actions - different for admin vs employee
 const menuItems = computed(() => {
   return (row: any) => {
-    const baseItems = [
-      {
-        label: t('warehouse.viewWarehouses', 'View Warehouses'),
-        icon: 'inventory',
-        value: 'viewWarehouses',
-      }
-    ];
-
-    // Cashbox access rules:
-    // - Admin: Can access all branches' cashboxes
-    // - Employee: Can only access their own branch's cashbox
-    const isEmployee = meStore.me?.type === 'employee';
-    const userBranchId = meStore.me?.branch?.id;
-    const isUserBranch = isEmployee && userBranchId === row.id;
-
-    if (isAdmin.value || isUserBranch) {
-      baseItems.push({
-        label: t('branch.viewCashbox', 'View Cashbox'),
-        icon: 'account_balance_wallet',
-        value: 'viewCashbox',
-      });
-    }
+    const baseItems: any[] = [];
 
     // Only admins can edit and toggle active status
     if (isAdmin.value) {
-      baseItems.unshift(
+      baseItems.push(
         { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
         {
           label: t('branch.toggleActive', 'Activate/Deactivate'),
@@ -226,32 +210,33 @@ function handleFilter(filterText: string) {
   filter.value = filterText;
 }
 
+// Handle view warehouses button click
+function handleViewWarehouses() {
+  // Find the first branch to view its warehouses
+  const firstBranch = branches.value[0];
+  if (firstBranch) {
+    emit('view-warehouses', firstBranch);
+  }
+}
+
+// Handle view cashbox button click
+function handleViewCashbox() {
+  // Find the first branch to view its cashbox
+  const firstBranch = branches.value[0];
+  if (firstBranch) {
+    emit('view-cashbox', firstBranch);
+  }
+}
+
 // Handle menu actions from Qtable
 function handleAction(payload: { item: { value: string }, rowId: number }) {
   const branch = branches.value.find(b => b.id === payload.rowId);
   if (!branch) return;
 
-  // Security check for cashbox access
-  if (payload.item.value === 'viewCashbox') {
-    const isEmployee = meStore.me?.type === 'employee';
-    const userBranchId = meStore.me?.branch?.id;
-    const isUserBranch = isEmployee && userBranchId === branch.id;
-
-    // Employees can only access their own branch's cashbox
-    if (isEmployee && !isUserBranch) {
-      console.warn('Employee attempted to access cashbox of another branch');
-      return;
-    }
-  }
-
   if (payload.item.value === 'edit') {
     emit('edit-branch', branch);
   } else if (payload.item.value === 'toggleActive') {
     emit('toggle-active', branch.id);
-  } else if (payload.item.value === 'viewWarehouses') {
-    emit('view-warehouses', branch);
-  } else if (payload.item.value === 'viewCashbox') {
-    emit('view-cashbox', branch);
   }
 }
 </script>

@@ -19,9 +19,16 @@
 
     <!-- Activity Logs Table -->
     <QtableB show-bottom :top-right="false" :hasExpandableRows="false" :columns="columns" :rows="filteredData"
-      :loading="logStore.loading" :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange">
+      :loading="logStore.loading" :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange"
+      @menu-action="handleAction">
 
     </QtableB>
+
+    <!-- Log Details Modal -->
+    <LogDetailsModal
+      v-model="showDetailsModal"
+      :log-data="selectedLog"
+    />
   </q-page>
 </template>
 
@@ -30,11 +37,13 @@ import Header from 'src/components/common/Header.vue'
 import QtableB from 'src/components/common/Qtable.vue'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 import Note from 'src/components/common/Note.vue'
+import LogDetailsModal from 'src/components/logs/LogDetailsModal.vue'
 import { useLogStore } from 'src/stores/logStore'
 import { ref, computed, onMounted, reactive } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 import type { AuditLogEntry } from 'src/types/log'
+import type { MenuItem } from 'src/types'
 
 // Store and composables
 const logStore = useLogStore()
@@ -42,6 +51,8 @@ const { t } = useI18n()
 
 // Variables
 const currentPage = ref(1)
+const showDetailsModal = ref(false)
+const selectedLog = ref<AuditLogEntry | null>(null)
 
 // Computed values
 const data = computed<AuditLogEntry[]>(() => logStore.logs)
@@ -124,7 +135,13 @@ const columns = computed(() => [
     },
     sortable: true
   },
-
+  {
+    name: 'actions',
+    label: t('logs.columns.actions', 'Actions'),
+    align: 'center' as const,
+    field: 'actions',
+    sortable: false
+  }
 ])
 
 // Filtered data based on search and filters
@@ -158,6 +175,17 @@ function resetFilters() {
 
 function handleFilterChange(_newFilters: { search?: string; entity?: string | null; platform?: string | null }) {
   // intentionally left blank
+}
+
+// Handle menu actions from Qtable
+function handleAction(payload: { item: MenuItem; rowId: string | number }) {
+  if (payload.item.value === 'view') {
+    const log = data.value.find(l => l.id === payload.rowId)
+    if (log) {
+      selectedLog.value = log
+      showDetailsModal.value = true
+    }
+  }
 }
 
 

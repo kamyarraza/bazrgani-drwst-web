@@ -27,18 +27,48 @@
     bordered
     dense
   >
-    <!-- Top Right Button -->
+    <!-- Top Right Buttons -->
     <template v-if="topRight && canViewTopRightAction" #top-right>
-      <Qbutton
-        :isFlat="true"
-        :btn-color="'primary'"
-        :btn-label="topRightTitle || ''"
-        :no-caps="true"
-        @click="$emit('top-right-action')"
-        class="table-top-action"
-      >
-        <q-icon v-if="topRightIcon" :name="topRightIcon" class="q-mr-xs" />
-      </Qbutton>
+      <div class="top-right-buttons">
+        <!-- Primary Action Button -->
+        <Qbutton
+          v-if="topRightTitle"
+          :isFlat="true"
+          :btn-color="'primary'"
+          :btn-label="topRightTitle"
+          :no-caps="true"
+          @click="$emit('top-right-action')"
+          class="table-top-action"
+        >
+          <q-icon v-if="topRightIcon" :name="topRightIcon" class="q-mr-xs" />
+        </Qbutton>
+        
+        <!-- Secondary Action Button -->
+        <Qbutton
+          v-if="topRightSecondaryTitle"
+          :isFlat="true"
+          :btn-color="'secondary'"
+          :btn-label="topRightSecondaryTitle"
+          :no-caps="true"
+          @click="$emit('top-right-secondary-action')"
+          class="table-top-action secondary-action"
+        >
+          <q-icon v-if="topRightSecondaryIcon" :name="topRightSecondaryIcon" class="q-mr-xs" />
+        </Qbutton>
+
+        <!-- Tertiary Action Button -->
+        <Qbutton
+          v-if="topRightTertiaryTitle"
+          :isFlat="true"
+          :btn-color="'tertiary'"
+          :btn-label="topRightTertiaryTitle"
+          :no-caps="true"
+          @click="$emit('top-right-tertiary-action')"
+          class="table-top-action tertiary-action"
+        >
+          <q-icon v-if="topRightTertiaryIcon" :name="topRightTertiaryIcon" class="q-mr-xs" />
+        </Qbutton>
+      </div>
     </template>
 
     <!-- Grid Mode - Custom Item Slot -->
@@ -296,7 +326,7 @@ const expanded = ref<Record<string | number, boolean>>({});
 const currentPage = ref(1);
 const selectedGridItems = ref<Array<number | string>>([]);
 
-const emit = defineEmits(['menu-action', 'top-right-action', 'row-expand', 'update:pagination', 'page-change']);
+const emit = defineEmits(['menu-action', 'top-right-action', 'top-right-secondary-action', 'top-right-tertiary-action', 'row-expand', 'update:pagination', 'page-change']);
 
 // Determine if the current language direction is RTL
 const isRTL = computed(() => {
@@ -319,6 +349,10 @@ const props = withDefaults(defineProps<{
   extraItem?: MenuItem,
   topRightTitle?: string,
   topRightIcon?: string,
+  topRightSecondaryTitle?: string,
+  topRightSecondaryIcon?: string,
+  topRightTertiaryTitle?: string,
+  topRightTertiaryIcon?: string,
   columns: Array<Column>,
   rows: Array<unknown>,
   hasExpandableRows?: boolean,
@@ -975,6 +1009,13 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
   }
 }
 
+/* Top Right Buttons Container */
+.top-right-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 /* Top Right Button - add spacing and fix alignment */
 .table-top-action {
   font-weight: 500;
@@ -984,13 +1025,20 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
   letter-spacing: 0.3px;
   margin-top: 12px;
   margin-bottom: 12px;
-  margin-right: 12px;
   padding: 0 16px !important;
   border-radius: 4px;
   min-height: 36px;
   display: flex;
   align-items: center;
   color: #fff !important; /* Ensure label is visible on colored background */
+}
+
+.table-top-action.secondary-action {
+  background: #6c757d !important;
+}
+
+.table-top-action.tertiary-action {
+  background: #28a745 !important;
 }
 
 .table-top-action :deep(.q-btn__content) {
