@@ -14,10 +14,9 @@ declare module 'vue' {
 
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
-  //  baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
-  //  baseURL: 'http://localhost:4000/api',
-
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api',
+      // baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
+     baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
+    //  baseURL: 'http://localhost:4000/api',
 
   withCredentials: true,
   timeout: 7000, // 10 seconds timeout for all requests mr kamyar you needed only this line
@@ -91,10 +90,7 @@ api.interceptors.response.use(
           try {
             const { data } = await api.post('/refresh', { refresh_token: refreshToken });
             if (data && data.status === 'success' && data.data.token && data.data.refresh_token) {
-              if (import.meta.env.VITE_APP_ENV === 'local') {
-                // Debugging log
-                console.log('data', data, 'and', data.data);
-              }
+              console.log('data', data,'and',data.data);
               authStore.updateTokens(data.data.token, data.data.refresh_token);
               isRefreshing = false;
               onRefreshed();
@@ -124,9 +120,7 @@ api.interceptors.response.use(
             try {
               await authStore.logout();
             } catch (logoutError) {
-              if (import.meta.env.VITE_APP_ENV === 'local') {
-                console.error('Error during logout:', logoutError);
-              }
+              console.error('Error during logout:', logoutError);
             } finally {
               isLoggingOut = false;
             }
