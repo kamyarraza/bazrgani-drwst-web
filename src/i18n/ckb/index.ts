@@ -1,7 +1,7 @@
 // Fixed version of the Kurdish translation file
 export default {
-   failed: 'کردار سەرکەوتوو نەبوو',
-  success: 'کردار سەرکەوتوو بوو',
+   failed: 'کردارەکە سەرکەوتوو نەبوو',
+  success: 'کردارەکە سەرکەوتوو بوو',
   noItems: 'هیچ کاڵایەک بەردەست نییە بۆ ئەم ڕیزە',
   sidebar: {
     overview: 'پوختە',
@@ -24,8 +24,8 @@ export default {
     offer: 'ئۆفەر', // Singular form for employees
     transferRequests: 'داواکاری گواستنەوە',
     transferRequest: 'داواکاری گواستنەوە', // Singular form for employees
-    warehouseTransfers: 'گواستنەوەی کۆگا',
-    warehouseTransfer: 'گواستنەوەی کۆگا', // Singular form for employees
+    warehouseTransfers: 'کاڵا گواستنەوەکانی کۆگا',
+    warehouseTransfer: 'گواستنەوەی کاڵای کۆگا', // Singular form for employees
     transactions: 'مامەڵەکان',
     transaction: 'مامەڵە', // Singular form for employees
     itemTransaction: 'مامەڵەی کاڵا',
