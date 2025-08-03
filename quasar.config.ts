@@ -183,9 +183,9 @@ export default defineConfig((ctx) => {
       workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       manifestFilename: 'manifest.json',
       extendManifestJson (json) {
-        json.name = 'Bazrgani Drwst';
-        json.short_name = 'Bazrgani Drwst';
-        json.description = 'ERP System for Business Management';
+        json.name = 'بازرگانی دروست';
+        json.short_name = 'بازرگانی دروست';
+        json.description = 'سیستەمی بەڕێوەبردنی کۆگاکان';
         json.theme_color = '#1976d2';
         json.background_color = '#ffffff';
         json.display = 'standalone';
