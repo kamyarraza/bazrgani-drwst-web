@@ -8,10 +8,9 @@
       :loading="branchStore.loading" row-key="id" class="branch-table" @menu-action="handleAction"
       :top-right-title="t('branch.addNew', 'Add Branch')" :top-right-icon="'add_business'"
       @top-right-action="$emit('add-branch')" 
-      :top-right-secondary-title="t('warehouse.viewWarehouses', 'View Warehouses')"
-      @top-right-secondary-action="handleViewWarehouses" :top-right-secondary-icon="'inventory'"
-      :top-right-tertiary-title="t('branch.viewCashbox', 'View Cashbox')"
-      @top-right-tertiary-action="handleViewCashbox" :top-right-tertiary-icon="'account_balance_wallet'"
+      :top-right-secondary-title="employeeCashboxTitle"
+      @top-right-secondary-action="isEmployee ? handleViewCashbox : undefined" 
+      :top-right-secondary-icon="employeeCashboxIcon"
       :pagination="pagination" @page-change="handlePageChange" flat bordered
       :user-type="userType" :allowed-types="['admin']">
     </Qtable>
@@ -38,8 +37,15 @@ const perPage = ref(10);
 // Check if user is admin to show top-right button
 const isAdmin = computed(() => meStore.me?.type === 'admin');
 
+// Check if user is employee
+const isEmployee = computed(() => meStore.me?.type === 'employee');
+
 // Get user type for Qtable permissions
 const userType = computed(() => meStore.me?.type || '');
+
+// Computed properties for employee cashbox button
+const employeeCashboxTitle = computed(() => isEmployee.value ? t('branch.viewCashbox', 'View Cashbox') : '');
+const employeeCashboxIcon = computed(() => isEmployee.value ? 'account_balance_wallet' : '');
 
 // Add pagination computed property
 const pagination = computed(() => branchStore.pagination);
@@ -66,11 +72,22 @@ async function fetchBranches() {
 // Menu items for branch actions - different for admin vs employee
 const menuItems = computed(() => {
   return (row: any) => {
-    const baseItems: any[] = [];
+    const baseItems = [
+      {
+        label: t('warehouse.viewWarehouses', 'View Warehouses'),
+        icon: 'inventory',
+        value: 'viewWarehouses',
+      },
+      {
+        label: t('branch.viewCashbox', 'View Cashbox'),
+        icon: 'account_balance_wallet',
+        value: 'viewCashbox',
+      }
+    ];
 
     // Only admins can edit and toggle active status
     if (isAdmin.value) {
-      baseItems.push(
+      baseItems.unshift(
         { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
         {
           label: t('branch.toggleActive', 'Activate/Deactivate'),
@@ -210,21 +227,15 @@ function handleFilter(filterText: string) {
   filter.value = filterText;
 }
 
-// Handle view warehouses button click
-function handleViewWarehouses() {
-  // Find the first branch to view its warehouses
-  const firstBranch = branches.value[0];
-  if (firstBranch) {
-    emit('view-warehouses', firstBranch);
-  }
-}
-
-// Handle view cashbox button click
+// Handle view cashbox button click (for employee top-right button)
 function handleViewCashbox() {
-  // Find the first branch to view its cashbox
-  const firstBranch = branches.value[0];
-  if (firstBranch) {
-    emit('view-cashbox', firstBranch);
+  // Find the user's branch to view its cashbox
+  const userBranchId = meStore.me?.branch?.id;
+  if (userBranchId) {
+    const userBranch = branches.value.find(b => b.id === userBranchId);
+    if (userBranch) {
+      emit('view-cashbox', userBranch);
+    }
   }
 }
 
@@ -233,10 +244,27 @@ function handleAction(payload: { item: { value: string }, rowId: number }) {
   const branch = branches.value.find(b => b.id === payload.rowId);
   if (!branch) return;
 
+  // Security check for cashbox access
+  if (payload.item.value === 'viewCashbox') {
+    const isEmployee = meStore.me?.type === 'employee';
+    const userBranchId = meStore.me?.branch?.id;
+    const isUserBranch = isEmployee && userBranchId === branch.id;
+
+    // Employees can only access their own branch's cashbox
+    if (isEmployee && !isUserBranch) {
+      console.warn('Employee attempted to access cashbox of another branch');
+      return;
+    }
+  }
+
   if (payload.item.value === 'edit') {
     emit('edit-branch', branch);
   } else if (payload.item.value === 'toggleActive') {
     emit('toggle-active', branch.id);
+  } else if (payload.item.value === 'viewWarehouses') {
+    emit('view-warehouses', branch);
+  } else if (payload.item.value === 'viewCashbox') {
+    emit('view-cashbox', branch);
   }
 }
 </script>

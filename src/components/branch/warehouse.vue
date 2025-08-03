@@ -30,10 +30,8 @@
         <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
           :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
           :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
-          :top-right="true" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
-          @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'"
-          :top-right-secondary-title="t('warehouse.viewItems', 'View Items')"
-          @top-right-secondary-action="handleViewItems" :top-right-secondary-icon="'inventory_2'" flat bordered>
+          :top-right="isAdmin || isUserBranch" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
+          @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'" flat bordered>
           <template v-slot:body-cell-is_active="props">
             <q-td :props="props">
               <q-chip :color="props.value ? 'positive' : 'negative'" text-color="white" size="sm">
@@ -178,18 +176,7 @@ function handleAddWarehouseSubmit() {
   }
 }
 
-// Handle view items button click
-function handleViewItems() {
-  // This will be handled by the parent component to navigate to warehouse items tab
-  // For now, we'll emit an event to notify the parent
-  if (props.branch) {
-    // Find the first warehouse to view its items
-    const firstWarehouse = warehouseStore.branchWarehouses?.warehouses[0];
-    if (firstWarehouse) {
-      emit('view-items', firstWarehouse);
-    }
-  }
-}
+
 
 // Handle update warehouse submit
 function handleUpdateWarehouseSubmit() {
@@ -203,11 +190,17 @@ function handleUpdateWarehouseSubmit() {
 
 // Menu items for warehouse actions - conditional based on user permissions
 const menuItems = computed(() => {
-  const baseItems: any[] = [];
+  const baseItems = [
+    {
+      label: t('warehouse.viewItems', 'View Items'),
+      icon: 'inventory',
+      value: 'viewItems',
+    }
+  ];
 
   // Admin or employee can edit/manage warehouses only for their own branch
   if (isAdmin.value || isUserBranch.value) {
-    baseItems.push(
+    baseItems.unshift(
       { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
       {
         label: t('warehouse.toggleActive', 'Activate/Deactivate'),
@@ -239,6 +232,8 @@ async function handleAction(payload: { item: { value: string }, rowId: number })
     showUpdateWarehouseModal.value = true;
   } else if (payload.item.value === 'toggleActive') {
     await handleToggleActive(warehouse.id);
+  } else if (payload.item.value === 'viewItems') {
+    emit('view-items', warehouse);
   }
 }
 
