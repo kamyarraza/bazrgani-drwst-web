@@ -7,9 +7,10 @@
     <Qtable show-bottom :top-right="true" :menu-items="menuItems" :columns="columns" :rows="enhancedBranches"
       :loading="branchStore.loading" row-key="id" class="branch-table" @menu-action="handleAction"
       :top-right-title="t('branch.addNew', 'Add Branch')" :top-right-icon="'add_business'"
-      @top-right-action="$emit('add-branch')" 
+      @top-right-action="$emit('add-branch')"
+      @handle-cashbox="ViewCashbox"
       :top-right-secondary-title="employeeCashboxTitle"
-      @top-right-secondary-action="isEmployee ? handleViewCashbox : undefined" 
+      @top-right-secondary-action="isEmployee ? handleViewCashbox : undefined"
       :top-right-secondary-icon="employeeCashboxIcon"
       :pagination="pagination" @page-change="handlePageChange" flat bordered
       :user-type="userType" :allowed-types="['admin']">
@@ -147,7 +148,8 @@ const columns = [
   //   field: (row: any) => row.location?.name || 'N/A',
   //   sortable: true,
   // },
-  {
+
+ {
     name: 'phone',
     required: true,
     label: t('branch.phone', 'Phone Number'),
@@ -165,6 +167,14 @@ const columns = [
     format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
   },
   {
+    name: 'cashbox',
+    required: true,
+    label: t('common.cashbox', 'Cashbox'),
+    align: 'center' as const,
+    field: 'cashbox',
+    sortable: false,
+  },
+  {
     name: 'actions',
     required: true,
     label: t('common.actions', 'Actions'),
@@ -174,6 +184,12 @@ const columns = [
   },
 ];
 
+
+const ViewCashbox =(payload: { item: { value: string }, rowId: number }) => {
+
+    const branch = branches.value.find(b => b.id === payload.rowId);
+     emit('view-cashbox', branch);
+}
 // Function to apply highlighting to user's branch row
 const applyBranchHighlighting = async () => {
   await nextTick();

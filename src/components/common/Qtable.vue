@@ -42,7 +42,7 @@
         >
           <q-icon v-if="topRightIcon" :name="topRightIcon" class="q-mr-xs" />
         </Qbutton>
-        
+
         <!-- Secondary Action Button -->
         <Qbutton
           v-if="topRightSecondaryTitle"
@@ -214,6 +214,21 @@
           <template v-else-if="col.name === 'index'">
             <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1 }}</span>
           </template>
+
+   <!-- cashbox Column -->
+               <template v-if="col.name === 'cashbox'">
+            <slot name="body-cell-actions" :props="props" :row="props.row">
+              <Qbutton
+                @click="() => $emit('handle-cashbox',props.row.id)"
+                is-flat
+                round
+                btn-label=""
+              >
+                 <q-icon  name="account_balance_wallet" />
+              </Qbutton>
+            </slot>
+          </template>
+
           <!-- Actions Slot -->
           <template v-else-if="col.name === 'actions'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
@@ -243,6 +258,7 @@
               </Qbutton>
             </slot>
           </template>
+
           <!-- Image Column -->
           <template v-else-if="col.name === 'image'">
             <q-avatar size="42px" class="table-image">
@@ -326,7 +342,7 @@ const expanded = ref<Record<string | number, boolean>>({});
 const currentPage = ref(1);
 const selectedGridItems = ref<Array<number | string>>([]);
 
-const emit = defineEmits(['menu-action', 'top-right-action', 'top-right-secondary-action', 'top-right-tertiary-action', 'row-expand', 'update:pagination', 'page-change']);
+const emit = defineEmits(['handle-cashbox','menu-action', 'top-right-action', 'top-right-secondary-action', 'top-right-tertiary-action', 'row-expand', 'update:pagination', 'page-change']);
 
 // Determine if the current language direction is RTL
 const isRTL = computed(() => {
