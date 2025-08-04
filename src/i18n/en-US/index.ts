@@ -1021,6 +1021,7 @@ export default {
       type: 'Type',
       customer: 'Customer',
       warehouse: 'Warehouse',
+      paymentProgress: 'Payment Progress',
       paymentType: 'Payment Type',
       totalPrice: 'Total Price',
       paidPrice: 'Paid Price',

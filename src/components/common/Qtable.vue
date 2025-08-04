@@ -186,6 +186,25 @@
             </slot>
           </template>
 
+          <!-- progress Column -->
+          <template v-if="col.name === 'progress'">
+            <slot name="body-cell-actions" :props="props" :row="props.row">
+              <div class="progress-container">
+                <q-linear-progress
+                  :value="col.value"
+                  color="primary"
+                  track-color="grey-3"
+                  rounded
+                  size="8px"
+                  class="progress-bar cute-wave-progress"
+                  animation-speed="800"
+                  stripe
+                />
+                <span class="progress-label q-ml-sm">{{ col.value }}%</span>
+              </div>
+            </slot>
+          </template>
+
           <!-- Actions Slot -->
           <template v-else-if="col.name === 'actions'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
@@ -1153,3 +1172,4 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
   color: #9ca3af !important;
 }
 </style>
+style

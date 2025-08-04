@@ -341,6 +341,13 @@ const columns = computed(() => {
       sortable: true
     },
     {
+      name: 'progress',
+      label: t('transaction.columns.paymentProgress'),
+      align: "center" as const,
+      field: (row: any) => Math.round(row.paid_price / row.total_price * 100 || 0),
+      sortable: false
+    },
+    {
       name: 'payment_type',
       label: t('transaction.columns.paymentType'),
       align: "center" as const,
