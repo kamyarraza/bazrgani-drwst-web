@@ -140,7 +140,7 @@
     </QtableB>
 
     <!-- Add Item Transaction Modal - New Redesigned Modal -->
-    <TransactionModal v-model="showAddModal" :transactionType="transactionType" />
+    <TransactionModal v-model="showAddModal" :transactionType="transactionType" @success="handleTransactionAdded" />
 
     <!-- Payment Modals -->
     <PaySupplier v-model="showPaySupplierModal" :transaction-data="selectedTransactionData"
@@ -371,15 +371,15 @@ const columns = computed(() => {
   ];
 
   // Add refund status column only for sell transactions
-  if (transactionType.value === 'sell') {
-    baseColumns.push({
-      name: 'refund_status',
-      label: t('transaction.columns.refundStatus'),
-      align: "center" as const,
-      field: (row: any) => row.refunded ? 'refunded' : 'not_refunded',
-      sortable: true
-    } as any);
-  }
+  // if (transactionType.value === 'sell') {
+  //   baseColumns.push({
+  //     name: 'refund_status',
+  //     label: t('transaction.columns.refundStatus'),
+  //     align: "center" as const,
+  //     field: (row: any) => row.refunded ? 'refunded' : 'not_refunded',
+  //     sortable: true
+  //   } as any);
+  // }
 
   // Add remaining columns
   baseColumns.push(
@@ -629,7 +629,7 @@ const handleTypeChange = async (newType: 'purchase' | 'sell') => {
 };
 
 // Handle transaction added
-const _handleTransactionAdded = async () => {
+const handleTransactionAdded = async () => {
   await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
 };
 

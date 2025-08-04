@@ -71,8 +71,8 @@ export const endPoints = {
     one: (transactionId: string) => `/transactions/${transactionId}`,
     freeding: (transactionId:string)=>`/transactions/freeding/${transactionId}`,
     paySupplier: (transactionId: string) => `/transactions/${transactionId}/payment/pay/supplier`,
-    refund: '/transactions/refund/items',
-    receiveCustomer: '/transactions/payment/receive/customer'
+    receiveCustomer: (transactionId: string) => `/transactions/${transactionId}/payment/receive/customer`,
+    refund: '/transactions/refund/items'
   },
 
   // Rename items to item to match our store naming convention

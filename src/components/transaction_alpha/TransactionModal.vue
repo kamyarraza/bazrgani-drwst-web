@@ -346,7 +346,7 @@ const props = defineProps({
   modelValue: { type: Boolean, required: true },
   transactionType: { type: String, default: 'purchase' } // 'purchase' or 'sell'
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'success']);
 
 const show = computed({
   get: () => props.modelValue,
@@ -631,6 +631,9 @@ async function handleSubmit() {
 
       createdTransaction.value = transformedTransaction;
       showInvoiceModal.value = true;
+
+      // Emit success event to notify parent component for list refresh
+      emit('success', transformedTransaction);
     }
 
     // Refresh items to get updated quantities after transaction
