@@ -77,8 +77,7 @@
                           {{ t('blumTransaction.quantity') }}: {{ item.quantity }}
                         </q-badge>
                         <q-badge color="green-4" text-color="white" class="q-pa-sm" rounded>
-                          {{ t('blumTransaction.unitPrice') }}: ${{ item.unit_price.toFixed(2)
-                          }}
+                          {{ t('blumTransaction.unitPrice') }}: {{ formatCurrency(item.unit_price) }}
                         </q-badge>
                       </div>
                     </q-item-section>
@@ -97,7 +96,7 @@
       <template #body-cell-total_price="props">
         <q-td :props="props" class="text-center">
           <q-chip color="indigo-7" text-color="white" icon="monetization_on" size="sm" class="price-chip total-chip">
-            ${{ Number(props.row.total_price).toFixed(2) }}
+            {{ formatCurrency(Number(props.row.total_price)) }}
           </q-chip>
           <div class="price-label">{{ t('transaction.labels.total') }}</div>
         </q-td>
@@ -107,7 +106,7 @@
         <q-td :props="props" class="text-center">
           <q-chip :color="Number(props.row.paid_price) > 0 ? 'green-6' : 'grey-5'" text-color="white"
             icon="check_circle" size="sm" class="price-chip paid-chip">
-            ${{ Number(props.row.paid_price).toFixed(2) }}
+            {{ formatCurrency(Number(props.row.paid_price)) }}
           </q-chip>
           <div class="price-label">{{ t('transaction.labels.paid') }}</div>
         </q-td>
@@ -118,7 +117,7 @@
           <q-chip :color="Number(props.row.unpaid_price) > 0 ? 'red-6' : 'light-green-6'" text-color="white"
             :icon="Number(props.row.unpaid_price) > 0 ? 'schedule' : 'paid'" size="sm"
             class="price-chip remaining-chip">
-            ${{ Number(props.row.unpaid_price).toFixed(2) }}
+            {{ formatCurrency(Number(props.row.unpaid_price)) }}
           </q-chip>
           <div class="price-label">{{ Number(props.row.unpaid_price) > 0 ? t('transaction.labels.remaining') :
             t('transaction.labels.complete') }}</div>
@@ -181,6 +180,7 @@ import RefundDetailsModal from 'src/components/transaction/RefundDetailsModal.vu
 import TransactionModal from 'src/components/transaction_alpha/TransactionModal.vue'
 import { useAuthStore } from 'src/stores/authStore'
 import { useQuasar } from 'quasar'
+import { formatCurrency } from 'src/composables/useFormat'
 
 const { user } = useAuthStore()
 const $q = useQuasar()
@@ -351,21 +351,21 @@ const columns = computed(() => {
       name: 'total_price',
       label: t('transaction.columns.totalPrice'),
       align: "center" as const,
-      field: (row: any) => `$ ${Number(row.total_price).toFixed(2)}`,
+      field: (row: any) => formatCurrency(Number(row.total_price)),
       sortable: true
     },
     {
       name: 'paid_price',
       label: t('transaction.columns.paidPrice'),
       align: "center" as const,
-      field: (row: any) => `$ ${Number(row.paid_price).toFixed(2)}`,
+      field: (row: any) => formatCurrency(Number(row.paid_price)),
       sortable: true
     },
     {
       name: 'remaining_price',
       label: t('transaction.columns.remainingPrice'),
       align: "center" as const,
-      field: (row: any) => `$ ${Number(row.unpaid_price).toFixed(2)}`,
+      field: (row: any) => formatCurrency(Number(row.unpaid_price)),
       sortable: true
     }
   ];
