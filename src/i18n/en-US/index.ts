@@ -691,14 +691,36 @@ export default {
     addBtn: 'Add Customer',
     updateBtn: 'Update Customer',
     columns: {
+      id: 'ID',
       name: 'Name',
       type: 'Type',
       phone: 'Phone',
       place: 'Place',
       location: 'Location',
       createdAt: 'Created At',
+      sellBorrow: 'Our Credit Balance',
+      purchaseBorrow: 'Customer Credit Balance',
       actions: 'Actions'
     },
+
+    // Customer Details Modal
+    customerDetails: 'Customer Details',
+    viewCustomerInformation: 'View detailed customer information',
+    basicInformation: 'Basic Information',
+    locationInformation: 'Location Information',
+    creditInformation: 'Credit Information',
+    additionalInformation: 'Additional Information',
+    weOwe: 'We Owe',
+    theyOwe: 'They Owe',
+    ourDebtToSupplier: 'This is the amount we need to pay to this supplier',
+    customerDebtToUs: 'This is the amount the customer needs to pay us',
+    exportAsImage: 'Export as Image',
+    exporting: 'Exporting...',
+    exportSuccess: 'Customer details exported successfully',
+    exportFailed: 'Failed to export customer details',
+    noCustomerData: 'No Customer Data',
+    customerNotFound: 'Customer information could not be found',
+
     // New User Account Creation
     accountCreated: 'Account Created Successfully!',
     newUserAccountMessage: 'A new user account has been created for this customer',

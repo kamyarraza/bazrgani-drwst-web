@@ -649,14 +649,36 @@ export default {
     addBtn: 'زیادکردنی کڕیار',
     updateBtn: 'نوێکردنەوەی کڕیار',
     columns: {
+      id: 'ناسنامە',
       name: 'ناو',
       type: 'جۆر',
       phone: 'مۆبایل',
       place: 'شوێن',
       location: 'ناوچە',
       createdAt: 'دروستکراو لە',
+      sellBorrow: 'باڵانسی قەرزی ئێمە',
+      purchaseBorrow: 'باڵانسی قەرزی کڕیار',
       actions: 'کردارەکان'
     },
+
+    // Customer Details Modal
+    customerDetails: 'وردەکاری کڕیار',
+    viewCustomerInformation: 'بینینی زانیاری ورد ی کڕیار',
+    basicInformation: 'زانیاری بنەڕەتی',
+    locationInformation: 'زانیاری شوێن',
+    creditInformation: 'زانیاری قەرز',
+    additionalInformation: 'زانیاری زیادە',
+    weOwe: 'ئێمە قەرزارین',
+    theyOwe: 'ئەوان قەرزارن',
+    ourDebtToSupplier: 'ئەمە بڕی پارەیەکە کە دەبێت بیدەین بەم فرۆشیارە',
+    customerDebtToUs: 'ئەمە بڕی پارەیەکە کە کڕیارەکە دەبێت بیدات بە ئێمە',
+    exportAsImage: 'هەناردەکردن وەک وێنە',
+    exporting: 'هەناردەکردن...',
+    exportSuccess: 'وردەکاری کڕیار بە سەرکەوتوویی هەناردە کرا',
+    exportFailed: 'هەناردەکردنی وردەکاری کڕیار سەرکەوتوو نەبوو',
+    noCustomerData: 'زانیاری کڕیار نیە',
+    customerNotFound: 'زانیاری کڕیار نەدۆزرایەوە',
+
     // New User Account Creation
     accountCreated: 'هەژمار بە سەرکەوتوویی دروستکرا!',
     newUserAccountMessage: 'هەژمارێکی نوێی بەکارهێنەر بۆ ئەم کڕیارە دروستکراوە',
