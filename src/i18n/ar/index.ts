@@ -1171,7 +1171,9 @@ receiveFromCustomer: "استلام من العميل",
     next: 'التالي',
     notes: 'الملاحظات',
     remove: 'إزالة',
-    error: 'خطأ'
+    error: 'خطأ',
+    cashbox: 'صندوق النقد',
+    warehouses: 'المستودعات'
   },
   invoice: {
         "oldBorrowedPrice": "السعر المُقترض القديم",

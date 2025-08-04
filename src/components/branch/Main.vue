@@ -7,13 +7,11 @@
     <Qtable show-bottom :top-right="true" :menu-items="menuItems" :columns="columns" :rows="enhancedBranches"
       :loading="branchStore.loading" row-key="id" class="branch-table" @menu-action="handleAction"
       :top-right-title="t('branch.addNew', 'Add Branch')" :top-right-icon="'add_business'"
-      @top-right-action="$emit('add-branch')"
-      @handle-cashbox="ViewCashbox"
+      @top-right-action="$emit('add-branch')" @handle-cashbox="ViewCashbox" @handle-warehouses="handleViewWarehouses"
       :top-right-secondary-title="employeeCashboxTitle"
       @top-right-secondary-action="isEmployee ? handleViewCashbox : undefined"
-      :top-right-secondary-icon="employeeCashboxIcon"
-      :pagination="pagination" @page-change="handlePageChange" flat bordered
-      :user-type="userType" :allowed-types="['admin']">
+      :top-right-secondary-icon="employeeCashboxIcon" :pagination="pagination" @page-change="handlePageChange" flat
+      bordered :user-type="userType" :allowed-types="['admin']" :user-branch-id="userBranchId">
     </Qtable>
   </div>
 </template>
@@ -44,6 +42,9 @@ const isEmployee = computed(() => meStore.me?.type === 'employee');
 // Get user type for Qtable permissions
 const userType = computed(() => meStore.me?.type || '');
 
+// Get user's branch ID for cashbox access control
+const userBranchId = computed(() => meStore.me?.branch?.id || null);
+
 // Computed properties for employee cashbox button
 const employeeCashboxTitle = computed(() => isEmployee.value ? t('branch.viewCashbox', 'View Cashbox') : '');
 const employeeCashboxIcon = computed(() => isEmployee.value ? 'account_balance_wallet' : '');
@@ -72,11 +73,11 @@ async function fetchBranches() {
 
 // Menu items for branch actions - different for admin vs employee
 const menuItems = computed(() => {
-  return (row: any) => {
+  return () => {
     const baseItems = [
       {
         label: t('warehouse.viewWarehouses', 'View Warehouses'),
-        icon: 'inventory',
+        icon: 'warehouse',
         value: 'viewWarehouses',
       },
       {
@@ -123,7 +124,6 @@ const enhancedBranches = computed(() => {
 
 // Table columns definition
 const columns = [
-
   {
     name: 'name',
     required: true,
@@ -149,7 +149,7 @@ const columns = [
   //   sortable: true,
   // },
 
- {
+  {
     name: 'phone',
     required: true,
     label: t('branch.phone', 'Phone Number'),
@@ -167,6 +167,14 @@ const columns = [
     format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
   },
   {
+    name: 'warehouses',
+    required: true,
+    label: t('common.warehouses', 'Warehouses'),
+    align: 'center' as const,
+    field: 'warehouse',
+    sortable: false,
+  },
+  {
     name: 'cashbox',
     required: true,
     label: t('common.cashbox', 'Cashbox'),
@@ -182,13 +190,31 @@ const columns = [
     field: 'actions',
     sortable: false,
   },
-];
+].filter(col => {
+  // Only show actions column for admins
+  if (col.name === 'actions') {
+    return isAdmin.value;
+  }
+  return true;
+});
 
 
-const ViewCashbox =(payload: { item: { value: string }, rowId: number }) => {
+const ViewCashbox = (rowId: number) => {
+  const branch = branches.value.find(b => b.id === rowId);
+  if (!branch) return;
 
-    const branch = branches.value.find(b => b.id === payload.rowId);
-     emit('view-cashbox', branch);
+  // Security check for cashbox access
+  const isEmployee = meStore.me?.type === 'employee';
+  const userBranchId = meStore.me?.branch?.id;
+  const isUserBranch = isEmployee && userBranchId === branch.id;
+
+  // Employees can only access their own branch's cashbox
+  if (isEmployee && !isUserBranch) {
+    console.warn('Employee attempted to access cashbox of another branch');
+    return;
+  }
+
+  emit('view-cashbox', branch);
 }
 // Function to apply highlighting to user's branch row
 const applyBranchHighlighting = async () => {
@@ -252,6 +278,14 @@ function handleViewCashbox() {
     if (userBranch) {
       emit('view-cashbox', userBranch);
     }
+  }
+}
+
+// Handle view warehouses button click (for employee top-right button)
+function handleViewWarehouses(branchId: number) {
+  const userBranch = branches.value.find(b => b.id === branchId);
+  if (userBranch) {
+    emit('view-warehouses', userBranch);
   }
 }
 

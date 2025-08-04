@@ -21,7 +21,7 @@
 
               <q-tab name="warehouse" class="enhanced-tab">
                 <div class="tab-content">
-                  <q-icon name="inventory" size="20px" />
+                  <q-icon name="warehouse" size="20px" />
                   <span class="tab-label">{{ t('branch.warehouse', 'Warehouse') }}</span>
                 </div>
               </q-tab>
@@ -132,7 +132,6 @@ function viewCashbox(branch: Branch) {
 function handleViewItems(warehouse: Warehouse) {
   selectedWarehouse.value = warehouse;
   activeTab.value = 'warehouseItems';
-  // Removed manual fetch - handled by WarehouseItems component watchers
 }
 
 // Toggle branch active status

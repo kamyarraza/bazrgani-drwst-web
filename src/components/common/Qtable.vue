@@ -1,71 +1,32 @@
 <template>
   <!-- Show loading component when loading -->
   <div v-if="loading">
-    <EnhancedLoading
-      table-mode
-      :show-dots="false"
-      spinner-color="primary"
-      spinner-size="3rem"
-    />
+    <EnhancedLoading table-mode :show-dots="false" spinner-color="primary" spinner-size="3rem" />
   </div>
 
   <!-- Show table when not loading -->
-  <q-table
-    v-else
-    :rows-per-page-options="[paginationNumber]"
-    class="beautiful-table"
-    :class="{ 'grid-mode': isGridMode }"
-    :columns="internalColumns"
-    :rows="rows"
-    :loading="false"
-    :grid="isGridMode"
-    :grid-header="isGridMode"
-    :hide-header="isGridMode"
-    separator="horizontal"
-    hide-pagination
-    flat
-    bordered
-    dense
-  >
+  <q-table v-else :rows-per-page-options="[paginationNumber]" class="beautiful-table"
+    :class="{ 'grid-mode': isGridMode }" :columns="internalColumns" :rows="rows" :loading="false" :grid="isGridMode"
+    :grid-header="isGridMode" :hide-header="isGridMode" separator="horizontal" hide-pagination flat bordered dense>
     <!-- Top Right Buttons -->
     <template v-if="topRight && canViewTopRightAction" #top-right>
       <div class="top-right-buttons">
         <!-- Primary Action Button -->
-        <Qbutton
-          v-if="topRightTitle"
-          :isFlat="true"
-          :btn-color="'primary'"
-          :btn-label="topRightTitle"
-          :no-caps="true"
-          @click="$emit('top-right-action')"
-          class="table-top-action"
-        >
+        <Qbutton v-if="topRightTitle" :isFlat="true" :btn-color="'primary'" :btn-label="topRightTitle" :no-caps="true"
+          @click="$emit('top-right-action')" class="table-top-action">
           <q-icon v-if="topRightIcon" :name="topRightIcon" class="q-mr-xs" />
         </Qbutton>
 
         <!-- Secondary Action Button -->
-        <Qbutton
-          v-if="topRightSecondaryTitle"
-          :isFlat="true"
-          :btn-color="'secondary'"
-          :btn-label="topRightSecondaryTitle"
-          :no-caps="true"
-          @click="$emit('top-right-secondary-action')"
-          class="table-top-action secondary-action"
-        >
+        <Qbutton v-if="topRightSecondaryTitle" :isFlat="true" :btn-color="'secondary'"
+          :btn-label="topRightSecondaryTitle" :no-caps="true" @click="$emit('top-right-secondary-action')"
+          class="table-top-action secondary-action">
           <q-icon v-if="topRightSecondaryIcon" :name="topRightSecondaryIcon" class="q-mr-xs" />
         </Qbutton>
 
         <!-- Tertiary Action Button -->
-        <Qbutton
-          v-if="topRightTertiaryTitle"
-          :isFlat="true"
-          :btn-color="'tertiary'"
-          :btn-label="topRightTertiaryTitle"
-          :no-caps="true"
-          @click="$emit('top-right-tertiary-action')"
-          class="table-top-action tertiary-action"
-        >
+        <Qbutton v-if="topRightTertiaryTitle" :isFlat="true" :btn-color="'tertiary'" :btn-label="topRightTertiaryTitle"
+          :no-caps="true" @click="$emit('top-right-tertiary-action')" class="table-top-action tertiary-action">
           <q-icon v-if="topRightTertiaryIcon" :name="topRightTertiaryIcon" class="q-mr-xs" />
         </Qbutton>
       </div>
@@ -74,60 +35,43 @@
     <!-- Grid Mode - Custom Item Slot -->
     <template v-if="isGridMode" #item="props">
       <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 q-pa-sm">
-        <q-card
-          class="grid-card cursor-pointer transition-all"
-          @click="handleGridCardClick(props.row)"
-          :class="{ 'selected-card': selectedGridItems.includes(getRowKey(props.row)), 'mobile-grid-card': $q.screen.lt.sm }"
-        >
+        <q-card class="grid-card cursor-pointer transition-all" @click="handleGridCardClick(props.row)"
+          :class="{ 'selected-card': selectedGridItems.includes(getRowKey(props.row)), 'mobile-grid-card': $q.screen.lt.sm }">
           <q-card-section :class="$q.screen.lt.sm ? 'q-pa-sm' : 'q-pa-md'">
             <!-- Card Header with Image or Icon -->
             <div class="grid-card-header q-mb-md" :class="$q.screen.lt.sm ? 'mobile-grid-card-header' : ''">
               <div class="flex items-center justify-between" :class="$q.screen.lt.sm ? 'mobile-header-row' : ''">
                 <div class="flex items-center flex-grow" :class="$q.screen.lt.sm ? 'mobile-header-main' : ''">
-                  <q-avatar
-                    v-if="hasImageColumn()"
-                    size="$q.screen.lt.sm ? '36px' : '48px'"
-                    class="q-mr-sm grid-avatar"
-                  >
-                    <img v-if="getImageColumn(props.row)" :src="getImageColumn(props.row)!" :alt="getPrimaryText(props.row)" />
+                  <q-avatar v-if="hasImageColumn()" size="$q.screen.lt.sm ? '36px' : '48px'"
+                    class="q-mr-sm grid-avatar">
+                    <img v-if="getImageColumn(props.row)" :src="getImageColumn(props.row)!"
+                      :alt="getPrimaryText(props.row)" />
                     <q-icon v-else name="image" :size="$q.screen.lt.sm ? '20px' : '28px'" color="grey-5" />
                   </q-avatar>
-                  <q-icon
-                    v-else
-                    :name="getCardIcon(props.row)"
-                    :size="$q.screen.lt.sm ? '36px' : '48px'"
-                    color="primary"
-                    class="q-mr-sm grid-avatar"
-                  />
+                  <q-icon v-else :name="getCardIcon(props.row)" :size="$q.screen.lt.sm ? '36px' : '48px'"
+                    color="primary" class="q-mr-sm grid-avatar" />
                   <div class="grid-card-title flex-grow">
-                    <div class="text-h6 text-primary ellipsis grid-title" :class="$q.screen.lt.sm ? 'mobile-title' : ''">{{ getPrimaryText(props.row) }}</div>
-                    <div class="text-caption text-grey-6 grid-description" :class="$q.screen.lt.sm ? 'mobile-description' : ''">{{ getSecondaryText(props.row) }}</div>
+                    <div class="text-h6 text-primary ellipsis grid-title"
+                      :class="$q.screen.lt.sm ? 'mobile-title' : ''">{{ getPrimaryText(props.row) }}</div>
+                    <div class="text-caption text-grey-6 grid-description"
+                      :class="$q.screen.lt.sm ? 'mobile-description' : ''">{{ getSecondaryText(props.row) }}</div>
                   </div>
                   <q-badge color="primary" class="q-ml-sm grid-badge" v-if="pagination">
-                    {{ (pagination && pagination.per_page ? (pagination.current_page - 1) * pagination.per_page : 0) + props.rowIndex + 1 }}
+                    {{ (pagination && pagination.per_page ? (pagination.current_page - 1) * pagination.per_page : 0) +
+                    props.rowIndex + 1 }}
                   </q-badge>
                 </div>
                 <!-- Enhanced Actions Menu -->
                 <div class="grid-actions-container" :class="$q.screen.lt.sm ? 'mobile-actions' : ''">
-                  <q-btn
-                    flat
-                    round
-                    icon="more_vert"
-                    :size="$q.screen.lt.sm ? 'lg' : 'md'"
-                    class="grid-actions-btn"
-                    @click.stop="handleGridAction(props.row)"
-                  >
-                    <q-tooltip class="bg-primary text-white shadow-2" anchor="top middle" self="bottom middle" :offset="[0, 8]">
+                  <q-btn flat round icon="more_vert" :size="$q.screen.lt.sm ? 'lg' : 'md'" class="grid-actions-btn"
+                    @click.stop="handleGridAction(props.row)">
+                    <q-tooltip class="bg-primary text-white shadow-2" anchor="top middle" self="bottom middle"
+                      :offset="[0, 8]">
                       Actions
                     </q-tooltip>
-                    <MenuDropdown
-                      @hide-menu="selectedRowId = null"
-                      :menu-items="getMenuItemsForRow(props.row)"
-                      v-bind="extraItem ? { extraItem } : {}"
-                      :min-width="'160px'"
-                      :has-separator="true"
-                      @item-click="(data) => handleItemClick(data, props.row)"
-                    />
+                    <MenuDropdown @hide-menu="selectedRowId = null" :menu-items="getMenuItemsForRow(props.row)"
+                      v-bind="extraItem ? { extraItem } : {}" :min-width="'160px'" :has-separator="true"
+                      @item-click="(data) => handleItemClick(data, props.row)" />
                   </q-btn>
                 </div>
               </div>
@@ -135,21 +79,16 @@
             <!-- Card Body with Key Information -->
             <div class="grid-card-body" :class="$q.screen.lt.sm ? 'mobile-grid-card-body' : ''">
               <div class="row q-col-gutter-sm">
-                <div
-                  v-for="col in $q.screen.lt.sm ? getDisplayColumns(props.row, 2) : getDisplayColumns(props.row)"
-                  :key="col.name"
-                  class="col-6"
-                >
+                <div v-for="col in $q.screen.lt.sm ? getDisplayColumns(props.row, 2) : getDisplayColumns(props.row)"
+                  :key="col.name" class="col-6">
                   <div class="grid-field" :class="$q.screen.lt.sm ? 'mobile-grid-field' : ''">
-                    <div class="grid-field-label text-caption text-grey-6" :class="$q.screen.lt.sm ? 'mobile-grid-field-label' : ''">{{ col.label }}</div>
-                    <div class="grid-field-value text-body2 text-weight-medium" :class="$q.screen.lt.sm ? 'mobile-grid-field-value' : ''">
+                    <div class="grid-field-label text-caption text-grey-6"
+                      :class="$q.screen.lt.sm ? 'mobile-grid-field-label' : ''">{{ col.label }}</div>
+                    <div class="grid-field-value text-body2 text-weight-medium"
+                      :class="$q.screen.lt.sm ? 'mobile-grid-field-value' : ''">
                       <template v-if="col.name === 'status' || col.name === 'is_active'">
-                        <q-badge
-                          :color="getStatusColor(col.value)"
-                          :label="String(col.value || '')"
-                          rounded
-                          class="grid-status-badge"
-                        />
+                        <q-badge :color="getStatusColor(col.value)" :label="String(col.value || '')" rounded
+                          class="grid-status-badge" />
                       </template>
                       <template v-else-if="col.format && typeof col.format === 'function'">
                         <span class="grid-formatted-value">{{ col.format(col.value, props.row) }}</span>
@@ -163,7 +102,8 @@
               </div>
             </div>
             <!-- Expandable Content for Grid -->
-            <div v-if="hasExpandableRows && expanded[getRowKey(props.row)]" class="grid-expanded-content q-mt-md q-pt-md">
+            <div v-if="hasExpandableRows && expanded[getRowKey(props.row)]"
+              class="grid-expanded-content q-mt-md q-pt-md">
               <q-separator class="q-mb-md" />
               <slot name="expanded-row" :row="props.row">
                 <div class="text-center q-pa-md text-grey-6">
@@ -175,16 +115,10 @@
           </q-card-section>
           <!-- Expand Button for Grid -->
           <q-card-actions v-if="hasExpandableRows" align="center" class="q-pt-none grid-expand-section">
-            <q-btn
-              flat
-              :size="$q.screen.lt.sm ? 'md' : 'md'"
-              color="primary"
+            <q-btn flat :size="$q.screen.lt.sm ? 'md' : 'md'" color="primary"
               :icon="expanded[getRowKey(props.row)] ? 'expand_less' : 'expand_more'"
-              :label="expanded[getRowKey(props.row)] ? 'Show Less' : 'Show More'"
-              @click.stop="toggleExpand(props.row)"
-              class="grid-expand-btn"
-              no-caps
-            />
+              :label="expanded[getRowKey(props.row)] ? 'Show Less' : 'Show More'" @click.stop="toggleExpand(props.row)"
+              class="grid-expand-btn" no-caps />
           </q-card-actions>
         </q-card>
       </div>
@@ -192,68 +126,76 @@
 
     <!-- Table Body -->
     <template #body="props">
-      <q-tr
-        :props="props"
-        :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }"
-      >
+      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }">
         <q-td v-for="col in props.cols" :key="col.name" :props="props" class="table-cell">
           <!-- Expand Button -->
           <template v-if="col.name === 'expand' && hasExpandableRows">
-            <q-btn
-              flat
-              round
-              dense
-              size="sm"
-              color="primary"
-              class="expand-button"
-              @click.stop="toggleExpand(props.row)"
-              :icon="expanded[getRowKey(props.row)] ? 'remove' : 'add'"
-            />
+            <q-btn flat round dense size="sm" color="primary" class="expand-button"
+              @click.stop="toggleExpand(props.row)" :icon="expanded[getRowKey(props.row)] ? 'remove' : 'add'" />
           </template>
           <!-- Index Icon -->
           <template v-else-if="col.name === 'index'">
-            <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1 }}</span>
+            <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1
+              }}</span>
           </template>
 
-   <!-- cashbox Column -->
-               <template v-if="col.name === 'cashbox'">
+          <!-- warehouses Column -->
+          <template v-if="col.name === 'warehouses'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
-              <Qbutton
-                @click="() => $emit('handle-cashbox',props.row.id)"
+                <Qbutton
+                @click="() => $emit('handle-warehouses', props.row.id)"
                 is-flat
                 round
                 btn-label=""
-              >
-                 <q-icon  name="account_balance_wallet" />
-              </Qbutton>
+                btn-color="indigo"
+                >
+                <q-icon name="warehouse" />
+                </Qbutton>
+            </slot>
+          </template>
+
+          <!-- cashbox Column -->
+          <template v-if="col.name === 'cashbox'">
+            <slot name="body-cell-actions" :props="props" :row="props.row">
+                <Qbutton
+                @click="() => $emit('handle-cashbox', props.row.id)"
+                is-flat
+                round
+                btn-label=""
+                btn-color="green"
+                :disable="isEmployee && userBranchId !== props.row.id"
+                :class="{ 'disabled-cashbox': isEmployee && userBranchId !== props.row.id }"
+                >
+                <q-icon name="account_balance_wallet" />
+                </Qbutton>
+            </slot>
+          </template>
+
+          <!-- items Column -->
+          <template v-if="col.name === 'items'">
+            <slot name="body-cell-actions" :props="props" :row="props.row">
+                <Qbutton
+                @click="() => $emit('handle-items', props.row.id)"
+                is-flat
+                round
+                btn-label=""
+                btn-color="grey"
+                >
+                <q-icon name="inventory" />
+                </Qbutton>
             </slot>
           </template>
 
           <!-- Actions Slot -->
           <template v-else-if="col.name === 'actions'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
-              <Qbutton
-                @click="() => { selectedRowId = props.row.id }"
-                is-flat
-                round
-                btn-label=""
-              >
+              <Qbutton @click="() => { selectedRowId = props.row.id }" is-flat round btn-label="">
                 <template #default>
-                  <q-spinner-gears
-                    v-if="selectedRowId === props.row.id"
-                    color="primary"
-                    size="24px"
-                  />
+                  <q-spinner-gears v-if="selectedRowId === props.row.id" color="primary" size="24px" />
                   <q-icon v-else name="more_vert" />
-                  <MenuDropdown
-                    @hide-menu="selectedRowId = null"
-                    :menu-items="getMenuItemsForRow(props.row)"
-                    v-bind="extraItem ? { extraItem } : {}"
-                    :min-width="'150px'"
-                    :has-separator="true"
-                    @item-click="(data) => handleItemClick(data, props.row)"
-
-                  />
+                  <MenuDropdown @hide-menu="selectedRowId = null" :menu-items="getMenuItemsForRow(props.row)"
+                    v-bind="extraItem ? { extraItem } : {}" :min-width="'150px'" :has-separator="true"
+                    @item-click="(data) => handleItemClick(data, props.row)" />
                 </template>
               </Qbutton>
             </slot>
@@ -290,32 +232,17 @@
 
     <!-- Bottom Row with Pagination aligned to the right -->
     <template v-if="showBottom" #bottom>
-      <div  class="row full-width pagination-container">
+      <div class="row full-width pagination-container">
         <div class="col"></div>
         <div class="col-auto q-pa-sm flex justify-end items-center">
           <slot name="pagination">
             <div class="pagination-wrapper flex flex-center">
-              <q-pagination
-                v-model="currentPage"
-                :max="maxPage"
-                :input="true"
-                direction-links
-                boundary-links
-                input-class="text-center pagination-input"
-                color="primary"
-                active-color="primary"
-                :ripple="true"
-                :max-pages="6"
-                :boundary-numbers="true"
-                padding="sm"
-                @update:model-value="handlePageChange"
-                :disable="loading"
-                :icon-first="isRTL ? 'last_page' : 'first_page'"
-                :icon-last="isRTL ? 'first_page' : 'last_page'"
-                :icon-prev="isRTL ? 'chevron_right' : 'chevron_left'"
-                :icon-next="isRTL ? 'chevron_left' : 'chevron_right'"
-                class="beautiful-pagination"
-              />
+              <q-pagination v-model="currentPage" :max="maxPage" :input="true" direction-links boundary-links
+                input-class="text-center pagination-input" color="primary" active-color="primary" :ripple="true"
+                :max-pages="6" :boundary-numbers="true" padding="sm" @update:model-value="handlePageChange"
+                :disable="loading" :icon-first="isRTL ? 'last_page' : 'first_page'"
+                :icon-last="isRTL ? 'first_page' : 'last_page'" :icon-prev="isRTL ? 'chevron_right' : 'chevron_left'"
+                :icon-next="isRTL ? 'chevron_left' : 'chevron_right'" class="beautiful-pagination" />
               <span v-if="pagination" class="q-ml-md text-caption text-grey-6 pagination-info">
                 {{ pagination.current_page }} / {{ pagination.last_page }}
               </span>
@@ -342,7 +269,7 @@ const expanded = ref<Record<string | number, boolean>>({});
 const currentPage = ref(1);
 const selectedGridItems = ref<Array<number | string>>([]);
 
-const emit = defineEmits(['handle-cashbox','menu-action', 'top-right-action', 'top-right-secondary-action', 'top-right-tertiary-action', 'row-expand', 'update:pagination', 'page-change']);
+const emit = defineEmits(['handle-cashbox', 'handle-warehouses', 'handle-items', 'menu-action', 'top-right-action', 'top-right-secondary-action', 'top-right-tertiary-action', 'row-expand', 'update:pagination', 'page-change']);
 
 // Determine if the current language direction is RTL
 const isRTL = computed(() => {
@@ -358,6 +285,16 @@ const isGridMode = computed(() => {
 const canViewTopRightAction = computed(() => {
   if (!props.userType || !props.allowedTypes.length) return true; // Show by default if no permissions set
   return props.allowedTypes.includes(props.userType);
+});
+
+// Check if current user is an employee
+const isEmployee = computed(() => {
+  return props.userType === 'employee';
+});
+
+// Get user's branch ID for cashbox access control
+const userBranchId = computed(() => {
+  return props.userBranchId;
 });
 
 const props = withDefaults(defineProps<{
@@ -379,6 +316,7 @@ const props = withDefaults(defineProps<{
   showBottom: boolean,
   userType?: string,
   allowedTypes?: Array<string>,
+  userBranchId?: number | null,
   pagination?: {
     current_page: number,
     last_page: number,
@@ -388,11 +326,12 @@ const props = withDefaults(defineProps<{
 }>(), {
   topRight: true,
   userType: '',
-  allowedTypes: () => []
+  allowedTypes: () => [],
+  userBranchId: null
 });
 
-const paginationNumber = computed(()=>{
-  return  props.pagination?.per_page?Number(props.pagination?.per_page):10
+const paginationNumber = computed(() => {
+  return props.pagination?.per_page ? Number(props.pagination?.per_page) : 10
 })
 const maxPage = computed(() => {
   return props.pagination?.last_page || props.maxPages || 5;
@@ -411,7 +350,7 @@ const internalColumns = computed(() => {
     columns.unshift({
       name: 'index',
       label: '#', // Show # for index column header
-      field:'index',
+      field: 'index',
       // field: (row: any, rowIndex: number) => rowIndex + 1 + ((props.pagination?.current_page - 1 || 0) * (props.pagination?.per_page || 0)),
       align: 'center',
       sortable: false
@@ -672,7 +611,8 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
 }
 
 .grid-card-title {
-  min-width: 0; /* Allow text truncation */
+  min-width: 0;
+  /* Allow text truncation */
 }
 
 .grid-title {
@@ -824,8 +764,8 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
 /* Table Styling - Quasar recommended modern look */
 .beautiful-table {
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.04);
   overflow: hidden;
   background: #fff;
 }
@@ -860,7 +800,7 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
 
 .beautiful-table :deep(.q-table tbody td) {
   padding: 12px;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   font-size: 0.97rem;
   color: #1a202c;
 }
@@ -961,58 +901,70 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
   .grid-card {
     margin-bottom: 10px;
     border-radius: 12px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
     padding: 0;
   }
+
   .mobile-grid-card-header {
     padding-bottom: 6px !important;
-    border-bottom: 1px solid rgba(0,0,0,0.04);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     flex-direction: column !important;
     align-items: flex-start !important;
   }
+
   .mobile-header-row {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 4px;
   }
+
   .mobile-header-main {
     flex-direction: row;
     align-items: center;
     gap: 8px;
   }
+
   .mobile-title {
     font-size: 1rem !important;
     font-weight: 600;
   }
+
   .mobile-description {
     font-size: 0.85rem !important;
     color: #64748b !important;
   }
+
   .mobile-actions {
     margin-left: 0 !important;
     margin-top: 4px;
     align-self: flex-end;
   }
+
   .mobile-grid-card-body {
     padding: 0 !important;
   }
+
   .mobile-grid-field {
     padding: 6px !important;
     margin-bottom: 8px !important;
     border-radius: 6px !important;
   }
+
   .mobile-grid-field-label {
     font-size: 0.7rem !important;
     margin-bottom: 2px !important;
   }
+
   .mobile-grid-field-value {
     font-size: 0.85rem !important;
   }
+
   .grid-actions-btn {
     width: 40px !important;
     height: 40px !important;
     font-size: 1.2rem !important;
   }
+
   .grid-expand-btn {
     font-size: 0.8rem;
     padding: 6px 12px;
@@ -1046,7 +998,8 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
   min-height: 36px;
   display: flex;
   align-items: center;
-  color: #fff !important; /* Ensure label is visible on colored background */
+  color: #fff !important;
+  /* Ensure label is visible on colored background */
 }
 
 .table-top-action.secondary-action {
@@ -1058,7 +1011,8 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
 }
 
 .table-top-action :deep(.q-btn__content) {
-  color: #fff !important; /* Ensure label is visible on colored background */
+  color: #fff !important;
+  /* Ensure label is visible on colored background */
   padding: 0 8px;
 }
 
@@ -1129,6 +1083,7 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1140,6 +1095,7 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
     opacity: 0;
     transform: translateX(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1185,5 +1141,15 @@ function getMenuItemsForRow(row: any): Array<MenuItem> {
     transform: none !important;
     background: transparent !important;
   }
+}
+
+/* Disabled cashbox button styling */
+.disabled-cashbox {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.disabled-cashbox:deep(.q-icon) {
+  color: #9ca3af !important;
 }
 </style>

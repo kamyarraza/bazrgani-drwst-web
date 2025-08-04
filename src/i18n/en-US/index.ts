@@ -781,7 +781,9 @@ export default {
     errorOccurred: 'An error occurred',
     notes: 'Notes',
     remove: 'Remove',
-    error: 'Error'
+    error: 'Error',
+    cashbox: 'Cashbox',
+    warehouses: 'Warehouses'
   },
   validation: {
     required: 'This field is required',

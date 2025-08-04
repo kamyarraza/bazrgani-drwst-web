@@ -30,6 +30,7 @@
         <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
           :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
           :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
+          @handle-items="handleViewItems"
           :top-right="isAdmin || isUserBranch" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
           @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'" flat bordered>
           <template v-slot:body-cell-is_active="props">
@@ -237,6 +238,14 @@ async function handleAction(payload: { item: { value: string }, rowId: number })
   }
 }
 
+// Handle view items button click (for employee top-right button)
+function handleViewItems(warehouseId: number) {
+  const warehouse = warehouseStore.branchWarehouses?.warehouses.find(w => w.id === warehouseId);
+  if (!warehouse) return;
+
+  emit('view-items', warehouse);
+}
+
 // Handle toggle active
 async function handleToggleActive(warehouseId: number) {
   try {
@@ -301,6 +310,14 @@ const warehouseColumns = [
   //     date.formatDate(val as string, 'MMM YYYY'),
   //   sortable: true,
   // },
+  {
+    name: 'items',
+    required: true,
+    label: t('common.items', 'Items'),
+    align: 'center' as const,
+    field: 'items',
+    sortable: false,
+  },
   {
     name: 'actions',
     required: true,

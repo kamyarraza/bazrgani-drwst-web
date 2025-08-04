@@ -741,7 +741,9 @@ export default {
     next: 'دواتر',
     notes: 'تێبینییەکان',
     remove: 'لابردن',
-    error: 'هەڵە'
+    error: 'هەڵە',
+    cashbox: 'سندووقی پارە',
+    warehouses: 'کۆگاکان'
   },
   validation: {
     required: 'ئەم خانەیە پێویستە',
