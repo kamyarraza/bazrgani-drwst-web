@@ -191,7 +191,7 @@
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <div class="progress-container">
                 <q-linear-progress
-                  :value="col.value"
+                  :value="col.value/100"
                   color="primary"
                   track-color="grey-3"
                   rounded

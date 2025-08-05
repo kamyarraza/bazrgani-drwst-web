@@ -383,7 +383,7 @@ import { Notify } from 'quasar';
 import type { List } from 'src/types/item_transaction';
 import { useProfileStore } from 'src/stores/profileStore';
 
-const brandLogo = 'brand.jpg';
+const brandLogo = '/brand.jpg';
 
 // Composables
 const { t } = useI18n();
