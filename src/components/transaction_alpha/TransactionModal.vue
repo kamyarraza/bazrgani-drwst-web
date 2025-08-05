@@ -38,7 +38,9 @@
                 <div class="warning-title">{{ t('transactionAlpha.cashboxClosed') }}</div>
                 <div class="warning-message">{{ t('transactionAlpha.cashboxMustBeOpened') }}</div>
               </div>
-              <!-- <q-btn flat dense round icon="close" color="white" size="sm" @click="() => { }" class="warning-close" /> -->
+              <q-btn color="positive" icon="lock_open" :label="t('cashbox.openCashbox', 'Open Cashbox')"
+                @click="showOpenDialog = true" :loading="cashboxStore.loading" class="open-cashbox-btn" rounded
+                outline />
             </div>
           </div>
 
@@ -335,6 +337,43 @@
   <!-- Invoice Modal -->
   <PrintableInvoice v-model="showInvoiceModal" :transaction="createdTransaction"
     @transaction-updated="handleTransactionUpdated" @close="closeInvoiceModal" />
+
+  <!-- Open Cashbox Password Confirmation Dialog -->
+  <q-dialog v-model="showOpenDialog" persistent>
+    <q-card class="password-dialog">
+      <q-card-section class="dialog-header">
+        <div class="dialog-title">
+          <q-icon name="lock_open" color="positive" size="2rem" />
+          <h6>{{ t('cashbox.openCashbox', 'Open Cashbox') }}</h6>
+        </div>
+        <p class="dialog-subtitle">{{ t('cashbox.enterPasswordToOpen', 'Enter your password to open the cashbox') }}
+        </p>
+      </q-card-section>
+
+      <q-card-section>
+        <div class="password-input">
+          <q-input v-model="openPassword" :label="t('cashbox.password', 'Password')" type="password" outlined
+            :error="!!openPasswordError" :error-message="openPasswordError || undefined"
+            @keyup.enter="handleOpenCashbox" @input="openPasswordError = null" class="password-field" autofocus>
+            <template v-slot:prepend>
+              <q-icon name="lock" />
+            </template>
+          </q-input>
+        </div>
+
+        <div class="security-note">
+          <q-icon name="security" class="security-icon" />
+          <span>{{ t('cashbox.securityNote', 'Your password is required for security purposes') }}</span>
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat :label="t('common.cancel', 'Cancel')" @click="closeOpenDialog" />
+        <q-btn color="positive" :label="t('cashbox.openCashbox', 'Open Cashbox')" @click="handleOpenCashbox"
+          :loading="cashboxStore.loading" :disable="!openPassword.trim()" icon="lock_open" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -465,6 +504,11 @@ const submitting = ref(false);
 // Invoice modal state
 const showInvoiceModal = ref(false);
 const createdTransaction = ref<List | null>(null);
+
+// Cashbox opening state
+const showOpenDialog = ref(false);
+const openPassword = ref('');
+const openPasswordError = ref<string | null>(null);
 
 const canSubmit = computed(() => {
   const basicRequirements = selectedCustomerId.value && selectedBranchId.value && selectedPaymentType.value && selectedItems.value.length > 0;
@@ -756,6 +800,29 @@ function closeInvoiceModal() {
 
   // Clear the main modal data after invoice is closed
   void clearModalData();
+}
+
+// Cashbox opening functions
+function closeOpenDialog() {
+  showOpenDialog.value = false;
+  openPassword.value = '';
+  openPasswordError.value = null;
+}
+
+async function handleOpenCashbox() {
+  if (!selectedBranchId.value || !openPassword.value.trim()) {
+    return;
+  }
+
+  openPasswordError.value = null;
+
+  const success = await cashboxStore.openCashbox(selectedBranchId.value, openPassword.value);
+
+  if (success) {
+    closeOpenDialog();
+  } else {
+    openPasswordError.value = t('cashbox.invalidPassword', 'Invalid password. Please try again.');
+  }
 }
 
 const isFirstSectionComplete = computed(() => {
@@ -1384,6 +1451,7 @@ async function checkCashboxStatus() {
 .warning-content {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
   position: relative;
 }
@@ -1410,5 +1478,83 @@ async function checkCashboxStatus() {
 
 .warning-close:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* Open Cashbox Button */
+.open-cashbox-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.open-cashbox-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Password Dialog Styles */
+.password-dialog {
+  max-width: 450px;
+  width: 90vw;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-header {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.dialog-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.dialog-title h6 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.dialog-subtitle {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.password-input {
+  margin-bottom: 16px;
+}
+
+.password-field {
+  width: 100%;
+}
+
+.security-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #065f46;
+}
+
+.security-icon {
+  color: #10b981;
 }
 </style>
