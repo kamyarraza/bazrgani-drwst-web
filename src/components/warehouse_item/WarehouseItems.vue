@@ -190,8 +190,9 @@
   <!-- <AddWarehouseItem v-model="showAddItemModal" :warehouse-id="selectedWarehouse?.id" @submit="handleAddSubmit" /> -->
 
   <!-- View Item Modal -->
-  <q-dialog v-model="showViewModal" persistent>
-    <q-card style="min-width: 600px; max-width: 900px;">
+  <q-dialog v-model="showViewModal" persistent :maximized="$q.screen.xs" transition-show="slide-up"
+    transition-hide="slide-down">
+    <q-card class="item-details-modal" :class="{ 'full-screen-mobile': $q.screen.xs }">
       <q-card-section class="bg-primary text-white">
         <div class="text-h6">
           <q-icon name="visibility" class="q-mr-sm" />
@@ -199,177 +200,329 @@
         </div>
       </q-card-section>
 
-      <template v-if="selectedItemForView">
-        <q-card-section class="q-pt-md">
-          <!-- Item Header -->
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-8">
-              <div class="text-h6 text-primary">{{ selectedItemForView.name }}</div>
-              <div class="text-subtitle2 text-grey-7">
-                <q-chip color="grey-6" text-color="white" size="sm" square class="id-chip">
-                  #{{ selectedItemForView.id }}
+      <q-card-section class="q-pa-none modal-scroll-area">
+        <template v-if="selectedItemForView">
+          <div class="modal-content-padding">
+            <!-- Item Header -->
+            <div class="item-header">
+              <div class="item-title">{{ selectedItemForView.name }}</div>
+              <div class="item-chips">
+                <q-chip color="grey-6" text-color="white" size="md" square class="id-chip">
+                  <q-icon name="tag" class="q-mr-xs" size="xs" />
+                  ID: {{ selectedItemForView.id }}
                 </q-chip>
                 <q-chip v-if="'code' in selectedItemForView && selectedItemForView.code" color="blue-grey"
-                  text-color="white" size="sm" class="q-ml-sm">
+                  text-color="white" size="md">
+                  <q-icon name="qr_code" class="q-mr-xs" size="xs" />
                   {{ selectedItemForView.code }}
                 </q-chip>
                 <q-chip v-if="'part_no' in selectedItemForView && selectedItemForView.part_no" color="indigo"
-                  text-color="white" size="sm" class="q-ml-sm">
+                  text-color="white" size="md">
+                  <q-icon name="settings" class="q-mr-xs" size="xs" />
                   {{ selectedItemForView.part_no }}
+                </q-chip>
+                <q-chip v-if="'position' in selectedItemForView && selectedItemForView.position" color="purple"
+                  text-color="white" size="md">
+                  <q-icon name="place" class="q-mr-xs" size="xs" />
+                  {{ selectedItemForView.position }}
                 </q-chip>
               </div>
             </div>
-          </div>
 
-          <q-separator class="q-my-md" />
+            <!-- Main Content Grid -->
+            <div class="main-content-grid">
 
-          <!-- Item Details Grid -->
-          <div class="row q-col-gutter-md">
-            <!-- Pricing Information -->
-            <div class="col-12 col-md-6">
-              <div class="text-h6 q-mb-sm text-primary">
-                <q-icon name="attach_money" class="q-mr-sm" />
-                {{ t('warehouseItem.pricingInfo', 'Pricing Information') }}
-              </div>
-              <q-list dense bordered class="rounded-borders">
-                <q-item>
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.unitCost', 'Unit Cost')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-h6 text-positive">${{ parseFloat(selectedItemForView.unit_cost ||
-                      '0').toFixed(2) }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator />
-                <q-item v-if="'solo_unit_price' in selectedItemForView">
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.soloPrice', 'Solo Unit Price')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-h6 text-primary">${{
-                      parseFloat(selectedItemForView.solo_unit_price || '0').toFixed(2) }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator v-if="'solo_unit_price' in selectedItemForView" />
-                <q-item v-if="'bulk_unit_price' in selectedItemForView">
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.bulkPrice', 'Bulk Unit Price')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-h6 text-orange">${{ parseFloat(selectedItemForView.bulk_unit_price
-                      || '0').toFixed(2) }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="'unit_price' in selectedItemForView">
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.unitPrice', 'Unit Price')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-h6 text-primary">${{ parseFloat(selectedItemForView.unit_price ||
-                      '0').toFixed(2) }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
+              <!-- Pricing Information Card -->
+              <div class="content-card">
+                <q-card flat bordered class="h-full responsive-card">
+                  <q-card-section class="bg-positive text-white card-header">
+                    <div class="card-title">
+                      <q-icon name="attach_money" class="q-mr-sm" />
+                      {{ t('warehouseItem.pricingInfo', 'Pricing Information') }}
+                    </div>
+                  </q-card-section>
+                  <q-card-section>
+                    <div class="pricing-grid">
+                      <!-- Unit Cost -->
+                      <div class="pricing-item">
+                        <div class="pricing-label">
+                          <q-icon name="account_balance_wallet" color="positive" size="sm" />
+                          {{ t('warehouseItem.unitCost', 'Unit Cost') }}
+                        </div>
+                        <div class="pricing-value cost">
+                          ${{ parseFloat(selectedItemForView.unit_cost || '0').toFixed(2) }}
+                        </div>
+                        <div class="pricing-desc">{{ t('warehouseItem.costPerUnit', 'Cost per unit (wholesale)') }}
+                        </div>
+                      </div>
 
-            <!-- Inventory Information -->
-            <div class="col-12 col-md-6">
-              <div class="text-h6 q-mb-sm text-primary">
-                <q-icon name="inventory_2" class="q-mr-sm" />
-                {{ t('warehouseItem.inventoryInfo', 'Inventory Information') }}
-              </div>
-              <q-list dense bordered class="rounded-borders">
-                <q-item>
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.quantity', 'Total Quantity')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-subtitle1 text-weight-medium">
-                      <q-badge
-                        :color="(selectedItemForView.quantity || 0) > 100 ? 'positive' : (selectedItemForView.quantity || 0) > 50 ? 'warning' : 'negative'"
-                        :label="String(selectedItemForView.quantity || 0)" size="sm" class="quantity-badge-small" />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator v-if="'pieces' in selectedItemForView" />
-                <q-item v-if="'pieces' in selectedItemForView">
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.pieces', 'Pieces') }}</q-item-label>
-                    <q-item-label caption class="text-subtitle1 text-weight-medium">{{ selectedItemForView.pieces || 0
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator v-if="'reservations' in selectedItemForView" />
-                <q-item v-if="'reservations' in selectedItemForView">
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.reservations', 'Reserved Items')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-subtitle1 text-weight-medium">
-                      <q-badge color="info" :label="String(selectedItemForView.reservations || 0)" size="sm"
-                        class="reservations-badge-small" />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-separator v-if="'position' in selectedItemForView && selectedItemForView.position" />
-                <q-item v-if="'position' in selectedItemForView && selectedItemForView.position">
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ t('warehouseItem.position', 'Position')
-                    }}</q-item-label>
-                    <q-item-label caption class="text-subtitle1 text-weight-medium">{{ selectedItemForView.position
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
-          </div>
+                      <!-- Solo Unit Price -->
+                      <div class="pricing-item" v-if="'solo_unit_price' in selectedItemForView">
+                        <div class="pricing-label">
+                          <q-icon name="person" color="primary" size="sm" />
+                          {{ t('warehouseItem.soloPrice', 'Solo Unit Price') }}
+                        </div>
+                        <div class="pricing-value solo">
+                          ${{ parseFloat(selectedItemForView.solo_unit_price || '0').toFixed(2) }}
+                        </div>
+                        <div class="pricing-desc">{{ t('warehouseItem.singleUnitPrice', 'Price per single unit') }}
+                        </div>
+                      </div>
 
-          <!-- Package Information (only for regular items) -->
-          <div class="q-mt-md"
-            v-if="'packets' in selectedItemForView && (selectedItemForView.packets || selectedItemForView.packages)">
-            <div class="text-h6 q-mb-sm text-primary">
-              <q-icon name="inventory" class="q-mr-sm" />
-              {{ t('warehouseItem.packageInfo', 'Package Information') }}
-            </div>
-            <div class="row q-col-gutter-sm">
-              <div class="col-6" v-if="selectedItemForView.packets">
-                <q-card flat bordered>
-                  <q-card-section class="text-center">
-                    <div class="text-subtitle2 text-grey-6">{{ t('warehouseItem.packets', 'Packets') }}</div>
-                    <div class="text-h6 text-teal">{{ selectedItemForView.packets }}</div>
+                      <!-- Bulk Unit Price -->
+                      <div class="pricing-item" v-if="'bulk_unit_price' in selectedItemForView">
+                        <div class="pricing-label">
+                          <q-icon name="inventory" color="orange" size="sm" />
+                          {{ t('warehouseItem.bulkPrice', 'Bulk Unit Price') }}
+                        </div>
+                        <div class="pricing-value bulk">
+                          ${{ parseFloat(selectedItemForView.bulk_unit_price || '0').toFixed(2) }}
+                        </div>
+                        <div class="pricing-desc">{{ t('warehouseItem.bulkUnitPrice', 'Price per unit in bulk') }}</div>
+                      </div>
+
+                      <!-- Unit Price (for blum items) -->
+                      <div class="pricing-item" v-if="'unit_price' in selectedItemForView">
+                        <div class="pricing-label">
+                          <q-icon name="sell" color="secondary" size="sm" />
+                          {{ t('warehouseItem.unitPrice', 'Unit Price') }}
+                        </div>
+                        <div class="pricing-value unit">
+                          ${{ parseFloat(selectedItemForView.unit_price || '0').toFixed(2) }}
+                        </div>
+                        <div class="pricing-desc">{{ t('warehouseItem.standardPrice', 'Standard selling price') }}</div>
+                      </div>
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
-              <div class="col-6" v-if="selectedItemForView.packages">
-                <q-card flat bordered>
-                  <q-card-section class="text-center">
-                    <div class="text-subtitle2 text-grey-6">{{ t('warehouseItem.packages', 'Packages') }}</div>
-                    <div class="text-h6 text-teal">{{ selectedItemForView.packages }}</div>
+
+              <!-- Stock Overview Card -->
+              <div class="content-card">
+                <q-card flat bordered class="h-full responsive-card">
+                  <q-card-section class="bg-info text-white card-header">
+                    <div class="card-title">
+                      <q-icon name="inventory_2" class="q-mr-sm" />
+                      {{ t('warehouseItem.stockOverview', 'Stock Overview') }}
+                    </div>
+                  </q-card-section>
+                  <q-card-section>
+                    <div class="stock-overview">
+                      <!-- Total Quantity -->
+                      <div class="stock-metric-large">
+                        <div class="metric-icon">
+                          <q-icon name="inventory" size="2rem" color="primary" />
+                        </div>
+                        <div class="metric-content">
+                          <div class="metric-label">{{ t('warehouseItem.totalUnits', 'Total Units in Stock') }}</div>
+                          <div class="metric-value total">{{ (selectedItemForView.quantity || 0).toLocaleString() }}
+                          </div>
+                          <div class="metric-desc">{{ t('warehouseItem.totalUnitsDesc', 'Base unit quantity') }}</div>
+                        </div>
+                      </div>
+
+                      <!-- Reserved Units -->
+                      <div class="stock-metric" v-if="'reservations' in selectedItemForView">
+                        <div class="metric-row">
+                          <div class="metric-info">
+                            <q-icon name="bookmark" color="warning" size="sm" />
+                            <span>{{ t('warehouseItem.reservedUnits', 'Reserved Units') }}</span>
+                          </div>
+                          <q-badge color="warning" :label="String(selectedItemForView.reservations || 0)" />
+                        </div>
+                      </div>
+
+                      <!-- Available Units -->
+                      <div class="stock-metric">
+                        <div class="metric-row highlight">
+                          <div class="metric-info">
+                            <q-icon name="check_circle" color="positive" size="sm" />
+                            <span>{{ t('warehouseItem.availableUnits', 'Available for Sale') }}</span>
+                          </div>
+                          <q-badge color="positive"
+                            :label="String((selectedItemForView.quantity || 0) - ('reservations' in selectedItemForView ? selectedItemForView.reservations || 0 : 0))" />
+                        </div>
+                      </div>
+                    </div>
                   </q-card-section>
                 </q-card>
               </div>
             </div>
-          </div>
 
-          <!-- Stock Status Summary -->
-          <div class="q-mt-md">
-            <q-card flat bordered class="bg-grey-1">
-              <q-card-section>
-                <div class="row items-center">
-                  <div class="col">
-                    <div class="text-subtitle1 text-weight-medium">{{ t('warehouseItem.availability', 'Availability') }}
+            <!-- Package Configuration Section -->
+            <div class="section-spacing"
+              v-if="'package_units' in selectedItemForView || 'packet_units' in selectedItemForView">
+              <q-card flat bordered>
+                <q-card-section class="bg-teal text-white card-header">
+                  <div class="card-title">
+                    <q-icon name="inventory" class="q-mr-sm" />
+                    {{ t('warehouseItem.packageConfiguration', 'Package Configuration') }}
+                  </div>
+                  <div class="card-subtitle">
+                    {{ t('warehouseItem.packageDesc', 'How units are organized into packages and packets') }}
+                  </div>
+                </q-card-section>
+                <q-card-section>
+                  <div class="config-grid">
+                    <!-- Package Units Configuration -->
+                    <div class="config-item" v-if="'package_units' in selectedItemForView">
+                      <div class="config-header">
+                        <q-icon name="inventory" color="teal" size="lg" />
+                        <div>
+                          <div class="config-title">{{ t('warehouseItem.packageUnits', 'Package Units') }}</div>
+                          <div class="config-value">{{ selectedItemForView.package_units || 0 }}</div>
+                        </div>
+                      </div>
+                      <div class="config-desc">
+                        {{ t('warehouseItem.packageUnitsDesc', 'Units per package') }}
+                      </div>
+                    </div>
+
+                    <!-- Packet Units Configuration -->
+                    <div class="config-item" v-if="'packet_units' in selectedItemForView">
+                      <div class="config-header">
+                        <q-icon name="inventory_2" color="teal" size="lg" />
+                        <div>
+                          <div class="config-title">{{ t('warehouseItem.packetUnits', 'Packet Units') }}</div>
+                          <div class="config-value">{{ selectedItemForView.packet_units || 0 }}</div>
+                        </div>
+                      </div>
+                      <div class="config-desc">
+                        {{ t('warehouseItem.packetUnitsDesc', 'Units per packet') }}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="text-caption text-grey-6 q-mt-sm">
-                  {{ t('warehouseItem.availableForSale', 'Available for sale') }}:
-                  <strong>{{ (selectedItemForView.quantity || 0) - ('reservations' in selectedItemForView ?
-                    selectedItemForView.reservations || 0 : 0) }}</strong> {{ t('warehouseItem.units', 'units') }}
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-        </q-card-section>
+                </q-card-section>
+              </q-card>
+            </div>
 
-        <q-card-actions align="right" class="bg-white text-primary">
-          <q-btn :label="t('common.close', 'Close')" v-close-popup flat icon="close" />
-        </q-card-actions>
-      </template>
+            <!-- Current Package Breakdown -->
+            <div class="section-spacing"
+              v-if="'packages' in selectedItemForView || 'packets' in selectedItemForView || 'pieces' in selectedItemForView">
+              <q-card flat bordered>
+                <q-card-section class="bg-orange text-white card-header">
+                  <div class="card-title">
+                    <q-icon name="view_module" class="q-mr-sm" />
+                    {{ t('warehouseItem.currentBreakdown', 'Current Stock Breakdown') }}
+                  </div>
+                  <div class="card-subtitle">
+                    {{ t('warehouseItem.breakdownDesc', 'How your total units are currently organized') }}
+                  </div>
+                </q-card-section>
+                <q-card-section>
+                  <div class="breakdown-grid">
+                    <!-- Packages -->
+                    <div class="breakdown-item" v-if="'packages' in selectedItemForView">
+                      <div class="breakdown-icon">
+                        <q-icon name="inventory" size="2rem" color="orange" />
+                      </div>
+                      <div class="breakdown-content">
+                        <div class="breakdown-value">{{ selectedItemForView.packages || 0 }}</div>
+                        <div class="breakdown-label">{{ t('warehouseItem.completePackages', 'Complete Packages') }}
+                        </div>
+                        <!-- <div class="breakdown-calculation"
+                          v-if="'package_units' in selectedItemForView && selectedItemForView.package_units">
+                          {{ (selectedItemForView.package_units || 0) }} × {{ Number(selectedItemForView.packet_units) }} =
+                          {{ ((selectedItemForView.packages || 0) * Number(selectedItemForView.package_units ||
+                            0)).toLocaleString() }} {{ t('warehouseItem.units', 'units') }}
+                        </div> -->
+                      </div>
+                    </div>
+
+                    <!-- Packets -->
+                    <div class="breakdown-item" v-if="'packets' in selectedItemForView">
+                      <div class="breakdown-icon">
+                        <q-icon name="inventory_2" size="2rem" color="orange" />
+                      </div>
+                      <div class="breakdown-content">
+                        <div class="breakdown-value">{{ selectedItemForView.packets || 0 }}</div>
+                        <div class="breakdown-label">{{ t('warehouseItem.completePackets', 'Complete Packets') }}</div>
+                        <!-- <div class="breakdown-calculation"
+                          v-if="'packet_units' in selectedItemForView && selectedItemForView.packet_units">
+                          {{ (selectedItemForView.packets || 0) }} × {{ Number(selectedItemForView.packet_units) }} =
+                          {{ ((selectedItemForView.packets || 0) * Number(selectedItemForView.packet_units ||
+                            0)).toLocaleString() }} {{ t('warehouseItem.units', 'units') }}
+                        </div> -->
+                      </div>
+                    </div>
+
+                    <!-- Pieces (loose units) -->
+                    <div class="breakdown-item" v-if="'pieces' in selectedItemForView">
+                      <div class="breakdown-icon">
+                        <q-icon name="scatter_plot" size="2rem" color="orange" />
+                      </div>
+                      <div class="breakdown-content">
+                        <div class="breakdown-value">{{ selectedItemForView.pieces || 0 }}</div>
+                        <div class="breakdown-label">{{ t('warehouseItem.loosePieces', 'Loose Pieces') }}</div>
+                        <!-- <div class="breakdown-calculation">
+                          {{ t('warehouseItem.individualUnits', 'Individual units not in complete packages/packets') }}
+                        </div> -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Verification Formula -->
+                  <!-- <div class="verification-formula"
+                    v-if="'packages' in selectedItemForView && 'packets' in selectedItemForView && 'pieces' in selectedItemForView">
+                    <q-separator class="q-mb-md" />
+                    <div class="formula-header">
+                      <q-icon name="calculate" color="primary" />
+                      <span class="text-weight-medium">{{ t('warehouseItem.verification', 'Verification') }}</span>
+                    </div>
+                    <div class="formula-content">
+                      <div class="formula-line">
+                        <span class="formula-part packages">{{ selectedItemForView.packages || 0 }} packages × {{
+                          ('package_units' in selectedItemForView ? Number(selectedItemForView.package_units) : 0)
+                        }}</span>
+                        <span class="formula-operator">+</span>
+                        <span class="formula-part packets">{{ selectedItemForView.packets || 0 }} packets × {{
+                          ('packet_units' in selectedItemForView ? Number(selectedItemForView.packet_units) : 0)
+                        }}</span>
+                        <span class="formula-operator">+</span>
+                        <span class="formula-part pieces">{{ selectedItemForView.pieces || 0 }} pieces</span>
+                        <span class="formula-operator">=</span>
+                        <span class="formula-result">{{ selectedItemForView.quantity || 0 }} total units</span>
+                      </div>
+                    </div>
+                  </div> -->
+                </q-card-section>
+              </q-card>
+            </div>
+
+            <!-- Stock Status Summary -->
+            <div class="section-spacing">
+              <q-card flat bordered class="status-summary">
+                <q-card-section>
+                  <div class="status-summary-content">
+                    <div class="status-avatar">
+                      <q-avatar size="48px" :color="getStockStatusColor(selectedItemForView)" text-color="white">
+                        <q-icon :name="getStockStatusIcon(selectedItemForView)" />
+                      </q-avatar>
+                    </div>
+                    <div class="status-text">
+                      <div class="status-title">{{ getStockStatusText(selectedItemForView) }}</div>
+                      <div class="status-subtitle">
+                        {{ t('warehouseItem.lastUpdated', 'Stock levels as of now') }}
+                      </div>
+                    </div>
+                    <div class="status-badge"
+                      v-if="'reservations' in selectedItemForView && selectedItemForView.reservations">
+                      <q-chip color="warning" text-color="white" icon="bookmark">
+                        {{ selectedItemForView.reservations }} {{ t('warehouseItem.reserved', 'Reserved') }}
+                      </q-chip>
+                    </div>
+                  </div>
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
+        </template>
+      </q-card-section>
+
+      <q-card-actions align="right" class="modal-actions">
+        <q-btn :label="t('common.close', 'Close')" v-close-popup flat icon="close" color="primary" size="md"
+          class="close-btn" :class="{ 'mobile-close-btn': $q.screen.xs }" />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 
@@ -835,6 +988,31 @@ const blumItemColumns = [
     sortable: false,
   },
 ];
+
+// Helper functions for stock status
+function getStockStatusColor(item: AnyItem): string {
+  const quantity = item.quantity || 0;
+  if (quantity > 100) return 'positive';
+  if (quantity > 50) return 'warning';
+  if (quantity > 0) return 'orange';
+  return 'negative';
+}
+
+function getStockStatusIcon(item: AnyItem): string {
+  const quantity = item.quantity || 0;
+  if (quantity > 100) return 'check_circle';
+  if (quantity > 50) return 'warning';
+  if (quantity > 0) return 'error';
+  return 'cancel';
+}
+
+function getStockStatusText(item: AnyItem): string {
+  const quantity = item.quantity || 0;
+  if (quantity > 100) return t('warehouseItem.stockHigh', 'Stock Level: High');
+  if (quantity > 50) return t('warehouseItem.stockMedium', 'Stock Level: Medium');
+  if (quantity > 0) return t('warehouseItem.stockLow', 'Stock Level: Low');
+  return t('warehouseItem.stockOut', 'Out of Stock');
+}
 </script>
 
 <style lang="scss" scoped>
@@ -975,6 +1153,975 @@ const blumItemColumns = [
 }
 
 // Responsive design
+@media (max-width: 768px) {
+  .warehouse-items-container {
+    gap: 16px;
+  }
+
+  .filter-buttons {
+    width: 100%;
+
+    .filter-btn {
+      min-width: auto;
+      flex: 1;
+    }
+  }
+
+  .fixed-bottom-center {
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+// Enhanced Modal Styles - Item Details Modal
+.item-details-modal {
+  max-width: 95vw;
+  max-height: 95vh;
+  width: 1200px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  &.full-screen-mobile {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+.modal-scroll-area {
+  max-height: calc(95vh - 140px);
+  overflow-y: auto;
+}
+
+.modal-content-padding {
+  padding: 24px;
+}
+
+.item-header {
+  margin-bottom: 32px;
+}
+
+.item-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.item-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.id-chip {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.content-card {
+  min-height: 200px;
+}
+
+.responsive-card {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.section-spacing {
+  margin-bottom: 24px;
+}
+
+.card-header {
+  padding: 16px 20px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.status-summary-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.status-avatar {
+  flex-shrink: 0;
+}
+
+.status-text {
+  flex: 1;
+}
+
+.status-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.status-subtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.status-badge {
+  flex-shrink: 0;
+}
+
+.modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+
+  .close-btn {
+    min-width: 100px;
+
+    &.mobile-close-btn {
+      width: 100%;
+      min-height: 48px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+}
+
+.pricing-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pricing-item {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.pricing-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.pricing-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+
+  &.cost {
+    color: #10b981;
+  }
+
+  &.solo {
+    color: #3b82f6;
+  }
+
+  &.bulk {
+    color: #f59e0b;
+  }
+
+  &.unit {
+    color: #8b5cf6;
+  }
+}
+
+.pricing-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.stock-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stock-metric-large {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 12px;
+  border: 2px solid #3b82f6;
+}
+
+.metric-icon {
+  flex-shrink: 0;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+
+  &.total {
+    color: #1d4ed8;
+  }
+}
+
+.metric-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.stock-metric {
+  padding: 8px 0;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+
+  &.highlight {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+}
+
+.metric-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.config-item {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.config-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.config-title {
+  font-weight: 600;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.config-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0d9488;
+}
+
+.config-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(251, 146, 60, 0.05);
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  border-radius: 8px;
+}
+
+.breakdown-icon {
+  flex-shrink: 0;
+}
+
+.breakdown-content {
+  flex: 1;
+}
+
+.breakdown-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ea580c;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.breakdown-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.breakdown-calculation {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.3;
+}
+
+.verification-formula {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.formula-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #1d4ed8;
+}
+
+.formula-content {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.formula-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.formula-part {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+
+  &.packages {
+    background: rgba(16, 185, 129, 0.1);
+    color: #065f46;
+  }
+
+  &.packets {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1e3a8a;
+  }
+
+  &.pieces {
+    background: rgba(251, 146, 60, 0.1);
+    color: #9a3412;
+  }
+}
+
+.formula-operator {
+  font-weight: 600;
+  color: #374151;
+}
+
+.formula-result {
+  padding: 4px 8px;
+  background: rgba(16, 185, 129, 0.2);
+  color: #065f46;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.status-summary {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 2px solid #d1d5db;
+}
+
+// Additional utility classes for better responsiveness
+.h-full {
+  height: 100%;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+
+  .pricing-item,
+  .config-item,
+  .breakdown-item {
+    border-width: 2px;
+    border-color: currentColor;
+  }
+
+  .status-summary {
+    border-width: 3px;
+  }
+}
+
+// Print styles
+@media print {
+  .item-details-modal {
+    width: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    box-shadow: none !important;
+  }
+
+  .modal-actions {
+    display: none !important;
+  }
+
+  .card-header {
+    background: #f3f4f6 !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+// Focus management for better keyboard navigation
+.q-btn:focus,
+.q-chip:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+// Scrollbar styling for webkit browsers
+.modal-scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-scroll-area::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.modal-scroll-area::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.modal-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+// Mobile landscape orientation adjustments
+@media (max-width: 767px) and (orientation: landscape) {
+  .item-details-modal {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  .modal-scroll-area {
+    max-height: calc(100vh - 100px);
+  }
+
+  .modal-content-padding {
+    padding: 8px 16px;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .item-header {
+    margin-bottom: 12px;
+  }
+
+  .item-title {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .section-spacing {
+    margin-bottom: 8px;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .breakdown-item {
+    padding: 6px;
+  }
+
+  .stock-metric-large {
+    padding: 8px;
+    flex-direction: row;
+    text-align: left;
+  }
+}
+
+// Comprehensive Responsive Design
+
+// Large Desktop (1200px+)
+@media (min-width: 1200px) {
+  .item-details-modal {
+    width: 1200px;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .config-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Desktop (992px - 1199px)
+@media (max-width: 1199px) and (min-width: 992px) {
+  .item-details-modal {
+    width: 95vw;
+    max-width: 1000px;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+// Tablet (768px - 991px)
+@media (max-width: 991px) and (min-width: 768px) {
+  .item-details-modal {
+    width: 95vw;
+    max-width: 900px;
+  }
+
+  .modal-content-padding {
+    padding: 20px;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .item-title {
+    font-size: 1.6rem;
+  }
+
+  .item-chips {
+    justify-content: center;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stock-metric-large {
+    padding: 12px;
+  }
+
+  .status-summary-content {
+    gap: 12px;
+  }
+
+  .formula-line {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+// Mobile Large (576px - 767px)
+@media (max-width: 767px) and (min-width: 576px) {
+  .item-details-modal {
+    width: 98vw;
+    max-height: 98vh;
+  }
+
+  .modal-scroll-area {
+    max-height: calc(98vh - 120px);
+  }
+
+  .modal-content-padding {
+    padding: 16px;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .item-header {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .item-title {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+
+  .item-chips {
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .breakdown-item {
+    padding: 12px;
+  }
+
+  .breakdown-value {
+    font-size: 1.5rem;
+  }
+
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .config-item {
+    padding: 12px;
+  }
+
+  .stock-metric-large {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .metric-value {
+    font-size: 1.6rem;
+  }
+
+  .status-summary-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .formula-line {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .formula-part,
+  .formula-operator,
+  .formula-result {
+    margin: 2px 0;
+  }
+
+  .pricing-grid {
+    gap: 12px;
+  }
+
+  .pricing-item {
+    padding: 10px;
+  }
+
+  .pricing-value {
+    font-size: 1.2rem;
+  }
+
+  .verification-formula {
+    padding: 12px;
+  }
+
+  .section-spacing {
+    margin-bottom: 16px;
+  }
+}
+
+// Mobile Small (up to 575px)
+@media (max-width: 575px) {
+  .item-details-modal {
+    width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .modal-scroll-area {
+    max-height: calc(100vh - 110px);
+  }
+
+  .modal-content-padding {
+    padding: 12px;
+  }
+
+  .main-content-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .item-header {
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .item-title {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .item-chips {
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .item-chips .q-chip {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .breakdown-item {
+    padding: 8px;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .breakdown-icon {
+    align-self: center;
+  }
+
+  .breakdown-value {
+    font-size: 1.3rem;
+  }
+
+  .breakdown-label {
+    font-size: 0.85rem;
+  }
+
+  .breakdown-calculation {
+    font-size: 0.75rem;
+  }
+
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .config-item {
+    padding: 8px;
+    text-align: center;
+  }
+
+  .config-header {
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .config-value {
+    font-size: 1.2rem;
+  }
+
+  .stock-metric-large {
+    flex-direction: column;
+    text-align: center;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .metric-value {
+    font-size: 1.4rem;
+  }
+
+  .metric-label {
+    font-size: 0.8rem;
+  }
+
+  .status-summary-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .status-avatar {
+    align-self: center;
+  }
+
+  .status-title {
+    font-size: 1rem;
+  }
+
+  .status-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .formula-line {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .formula-part,
+  .formula-operator,
+  .formula-result {
+    margin: 1px 0;
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+
+  .pricing-grid {
+    gap: 8px;
+  }
+
+  .pricing-item {
+    padding: 8px;
+    text-align: center;
+  }
+
+  .pricing-label {
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+
+  .pricing-value {
+    font-size: 1.1rem;
+  }
+
+  .pricing-desc {
+    font-size: 0.75rem;
+  }
+
+  .verification-formula {
+    padding: 8px;
+  }
+
+  .formula-header {
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+
+  .section-spacing {
+    margin-bottom: 12px;
+  }
+
+  .modal-actions {
+    padding: 12px;
+  }
+
+  .warehouse-items-container {
+    gap: 12px;
+  }
+
+  .filter-buttons {
+    width: 100%;
+    flex-direction: column;
+    gap: 6px;
+
+    .filter-btn {
+      min-width: auto;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+  }
+
+  .fixed-bottom-center {
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+// Legacy responsive adjustments (keeping for compatibility)
 @media (max-width: 768px) {
   .warehouse-items-container {
     gap: 16px;
