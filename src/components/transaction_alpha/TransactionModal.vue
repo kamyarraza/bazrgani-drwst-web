@@ -29,6 +29,19 @@
 
         <!-- Main Content -->
         <div class="modal-content">
+          <!-- Cashbox Warning Banner -->
+          <div v-if="selectedBranchId && cashboxStore.cashbox && !cashboxStore.cashbox.is_opened"
+            class="cashbox-warning-banner">
+            <div class="warning-content">
+              <q-icon name="warning" size="24px" color="white" />
+              <div class="warning-text">
+                <div class="warning-title">{{ t('transactionAlpha.cashboxClosed') }}</div>
+                <div class="warning-message">{{ t('transactionAlpha.cashboxMustBeOpened') }}</div>
+              </div>
+              <!-- <q-btn flat dense round icon="close" color="white" size="sm" @click="() => { }" class="warning-close" /> -->
+            </div>
+          </div>
+
           <!-- Step 1: Basic Information -->
           <div class="content-section" :class="{ 'section-active': true }">
             <div class="section-header cute-section-header">
@@ -49,6 +62,17 @@
               </div>
               <div class="form-item" :style="isEmployee ? 'display:none' : ''">
                 <BranchSelector v-model="selectedBranchId" @select="handleSelectBranch" />
+                <!-- Cashbox Status Indicator -->
+                <div v-if="selectedBranchId && cashboxStore.cashbox" class="cashbox-status-indicator">
+                  <div v-if="cashboxStore.cashbox.is_opened" class="status-badge status-opened">
+                    <q-icon name="lock_open" size="xs" />
+                    <span>{{ t('transactionAlpha.cashboxOpened') }}</span>
+                  </div>
+                  <div v-else class="status-badge status-closed">
+                    <q-icon name="lock" size="xs" />
+                    <span>{{ t('transactionAlpha.cashboxClosed') }}</span>
+                  </div>
+                </div>
               </div>
               <div class="form-item">
                 <WarehouseSelector ref="warehouseSelectorRef" v-model="selectedWarehouseId" :branchId="selectedBranchId"
@@ -325,6 +349,7 @@ import { useItemTransactionStore } from 'src/stores/itemTransactionStore';
 import { useCustomerStore } from 'src/stores/customerStore';
 import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 import { useAuthStore } from 'src/stores/authStore';
+import { useCashboxStore } from 'src/stores/cashboxStore';
 import type { Ref } from 'vue';
 import { formatCurrency } from 'src/composables/useFormat';
 import { useI18n } from 'vue-i18n';
@@ -388,6 +413,7 @@ const customerDebt = ref(0);
 
 const exchangeRateStore = useExchangeRateStore();
 const authStore = useAuthStore();
+const cashboxStore = useCashboxStore();
 const isEmployee = computed(() => authStore.currentUser?.type === 'employee');
 
 onMounted(async () => {
@@ -416,14 +442,19 @@ watch(selectedWarehouseId, (warehouseId) => {
   }
 });
 
-// Watch for modal opening to refresh items
-watch(show, (isOpen) => {
+// Watch for modal opening to check cashbox status
+watch(show, async (isOpen) => {
   if (isOpen) {
     void nextTick(() => {
       if (itemSelectorRef.value && typeof itemSelectorRef.value.refreshItems === 'function') {
         itemSelectorRef.value.refreshItems();
       }
     });
+
+    // Check cashbox status when modal opens and branch is already selected
+    if (selectedBranchId.value) {
+      await checkCashboxStatus();
+    }
   }
 });
 
@@ -488,9 +519,16 @@ async function handleSelectCustomer(customer) {
   selectedCustomerId.value = customer ? customer.id : null;
 }
 
-function handleSelectBranch(branch) {
-  // For now, just log the selection
-  // You can add logic for next steps here
+async function handleSelectBranch(branch) {
+  // Check cashbox status for the selected branch
+  if (branch && branch.id) {
+    const cashboxOk = await checkCashboxStatus();
+    if (!cashboxOk) {
+      // Optionally, you could prevent branch selection or show additional warnings
+      // For now, we just show the notification and let the user proceed
+    }
+  }
+
   console.log('Selected branch:', branch);
 }
 
@@ -555,8 +593,33 @@ async function handleSubmit() {
     });
     return;
   }
+
+  // Final cashbox status check before proceeding with transaction
+  const cashboxOk = await checkCashboxStatus();
+  if (!cashboxOk) {
+    $q.notify({
+      type: 'negative',
+      message: '🚫 ' + t('transactionAlpha.cannotProcessTransaction'),
+      caption: t('transactionAlpha.cashboxMustBeOpened'),
+      timeout: 5000,
+      position: 'top',
+      avatar: '💼',
+      actions: [
+        { icon: 'close', color: 'white', round: true, size: 'sm' }
+      ]
+    });
+    return;
+  }
+
   submitting.value = true;
   try {
+    // Check cashbox status before proceeding
+    const cashboxStatus = await checkCashboxStatus();
+    if (!cashboxStatus) {
+      submitting.value = false;
+      return;
+    }
+
     // Prepare data for the new endpoints
     const transactionData: any = {
       branch_id: Number(selectedBranchId.value),
@@ -713,6 +776,63 @@ function getProgressPercentage() {
   if (hasSelectedItems.value) return 100;
   if (isFirstSectionComplete.value) return 66;
   return 33;
+}
+
+// Cashbox status checking
+async function checkCashboxStatus() {
+  if (!selectedBranchId.value) return true; // Skip check if no branch selected yet
+
+  try {
+    // Fetch cashbox data for the selected branch
+    const success = await cashboxStore.fetchCashbox(Number(selectedBranchId.value));
+
+    if (!success) {
+      $q.notify({
+        type: 'warning',
+        message: '⚠️ ' + t('transactionAlpha.unableToCheckCashboxStatus'),
+        caption: t('transactionAlpha.verifyBranchSelection'),
+        timeout: 4000,
+        position: 'top',
+        avatar: '💼',
+        actions: [
+          { icon: 'close', color: 'white', round: true, size: 'sm' }
+        ]
+      });
+      return false;
+    }
+
+    // Check if cashbox is opened
+    if (!cashboxStore.cashbox?.is_opened) {
+      $q.notify({
+        type: 'negative',
+        message: '🚫 ' + t('transactionAlpha.cashboxNotOpened'),
+        caption: t('transactionAlpha.openCashboxFirst'),
+        timeout: 6000,
+        position: 'top',
+        avatar: '💼',
+        actions: [
+          { icon: 'close', color: 'white', round: true, size: 'sm' }
+        ]
+      });
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Cashbox status check failed:', error);
+    $q.notify({
+      type: 'warning',
+      message: '⚠️ ' + t('transactionAlpha.cashboxStatusCheckFailed'),
+      caption: t('transactionAlpha.checkConnectionAndTryAgain'),
+      timeout: 4000,
+      position: 'top',
+      avatar: '💼',
+      actions: [
+        { icon: 'close', color: 'white', round: true, size: 'sm' }
+      ]
+    });
+    return false;
+  }
 }
 
 </script>
@@ -1170,6 +1290,59 @@ function getProgressPercentage() {
   margin-top: 16px;
 }
 
+/* Cashbox Status Indicator */
+.cashbox-status-indicator {
+  margin-top: 8px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.status-opened {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: white;
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+.status-closed {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  color: white;
+  animation: warningPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+
+  0%,
+  100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes warningPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+}
+
 /* Cute animations for various elements */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
@@ -1186,63 +1359,56 @@ function getProgressPercentage() {
   transform: translateY(-30px) scale(0.95);
 }
 
-/* Responsive enhancements */
-@media (max-width: 1024px) {
-  .professional-modal {
-    width: 98vw;
-    height: 95vh;
-    border-radius: 20px;
+/* Cashbox Warning Banner */
+.cashbox-warning-banner {
+  margin: -28px -28px 20px -28px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 16px 28px;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+  animation: slideDownWarning 0.5s ease-out;
+}
+
+@keyframes slideDownWarning {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .payment-grid {
-    grid-template-columns: 1fr;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-@media (max-width: 768px) {
-  .cute-header {
-    padding: 16px 20px;
-  }
-
-  .cute-title {
-    font-size: 1.1rem !important;
-  }
-
-  .modal-content {
-    padding: 24px;
-  }
-
-  .cute-buttons {
-    flex-direction: column-reverse;
-    gap: 12px;
-  }
-
-  .cute-submit {
-    width: 100%;
-  }
+.warning-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
 }
 
-@media (max-width: 480px) {
-  .professional-modal {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-  }
+.warning-text {
+  flex: 1;
+}
 
-  .cute-header {
-    padding: 14px 16px;
-  }
+.warning-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
 
-  .modal-content {
-    padding: 20px;
-  }
+.warning-message {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
 
-  .cute-summary-card {
-    padding: 20px;
-  }
+.warning-close {
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.warning-close:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 </style>
