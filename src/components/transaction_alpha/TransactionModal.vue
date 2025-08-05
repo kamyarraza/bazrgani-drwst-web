@@ -465,6 +465,14 @@ const usdIqdRate = computed(() => exchangeRateStore.activeRate?.usd_iqd_rate || 
 
 watch(selectedBranchId, () => {
   selectedWarehouseId.value = null;
+  // When branch changes, clear items for selling to prevent showing wrong warehouse items
+  if (props.transactionType === 'sell') {
+    void nextTick(() => {
+      if (itemSelectorRef.value && typeof itemSelectorRef.value.clearItems === 'function') {
+        itemSelectorRef.value.clearItems();
+      }
+    });
+  }
 });
 
 const itemSelectorRef = ref();
@@ -472,7 +480,29 @@ const customerSelectorRef = ref();
 const warehouseSelectorRef = ref();
 
 watch(selectedWarehouseId, (warehouseId) => {
-  if (props.transactionType === 'sell' && warehouseId && isFirstSectionComplete.value) {
+  if (props.transactionType === 'sell' && warehouseId) {
+    void nextTick(() => {
+      if (itemSelectorRef.value && typeof itemSelectorRef.value.fetchItemsForWarehouse === 'function') {
+        itemSelectorRef.value.fetchItemsForWarehouse();
+      }
+    });
+  }
+});
+
+// Watch for customer selection to trigger item loading for selling if warehouse is already selected
+watch(selectedCustomerId, (customerId) => {
+  if (props.transactionType === 'sell' && customerId && selectedWarehouseId.value) {
+    void nextTick(() => {
+      if (itemSelectorRef.value && typeof itemSelectorRef.value.fetchItemsForWarehouse === 'function') {
+        itemSelectorRef.value.fetchItemsForWarehouse();
+      }
+    });
+  }
+});
+
+// Watch for payment type selection to trigger item loading for selling if all other fields are ready
+watch(selectedPaymentType, (paymentType) => {
+  if (props.transactionType === 'sell' && paymentType && selectedCustomerId.value && selectedWarehouseId.value) {
     void nextTick(() => {
       if (itemSelectorRef.value && typeof itemSelectorRef.value.fetchItemsForWarehouse === 'function') {
         itemSelectorRef.value.fetchItemsForWarehouse();
@@ -486,7 +516,19 @@ watch(show, async (isOpen) => {
   if (isOpen) {
     void nextTick(() => {
       if (itemSelectorRef.value && typeof itemSelectorRef.value.refreshItems === 'function') {
-        itemSelectorRef.value.refreshItems();
+        // For selling, clear items first to avoid showing purchase items
+        if (props.transactionType === 'sell') {
+          // Clear items when opening sell modal to prevent showing purchase items
+          if (itemSelectorRef.value && typeof itemSelectorRef.value.clearItems === 'function') {
+            itemSelectorRef.value.clearItems();
+          }
+          // Only refresh if warehouse is selected
+          if (selectedWarehouseId.value) {
+            itemSelectorRef.value.refreshItems();
+          }
+        } else {
+          itemSelectorRef.value.refreshItems();
+        }
       }
     });
 

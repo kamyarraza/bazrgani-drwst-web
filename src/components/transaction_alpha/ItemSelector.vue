@@ -106,14 +106,33 @@ function onScroll(event: Event) {
 }
 
 watch(() => props.warehouseId, (warehouseId) => {
-  if (props.transactionType === 'sell' && warehouseId) {
-    void itemStore.fetchItemsByWarehouse(warehouseId, selectedCategoryId.value);
+  if (props.transactionType === 'sell') {
+    if (warehouseId) {
+      // Clear existing items first and then fetch warehouse-specific items
+      items.value = [];
+      void itemStore.fetchItemsByWarehouse(warehouseId, selectedCategoryId.value);
+    } else {
+      // Clear items when no warehouse is selected
+      items.value = [];
+    }
   }
 });
 
 // Watch for transaction type changes to refresh items
-watch(() => props.transactionType, () => {
-  refreshItems();
+watch(() => props.transactionType, (newType) => {
+  // Clear items when changing transaction type
+  items.value = [];
+  selectedItems.value = []; // Also clear selected items
+
+  if (newType === 'sell') {
+    // For sell, only load items if warehouse is already selected
+    if (props.warehouseId) {
+      void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
+    }
+  } else {
+    // For purchase, load items immediately
+    void loadInitialItems();
+  }
 });
 
 // Watch for category changes to refetch items
@@ -121,6 +140,8 @@ watch(selectedCategoryId, () => {
   if (props.transactionType === 'purchase') {
     void loadInitialItems();
   } else if (props.transactionType === 'sell' && props.warehouseId) {
+    // Clear existing items first and then fetch warehouse-specific items
+    items.value = [];
     void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
   }
 });
@@ -254,6 +275,7 @@ function selectAll() {
 
 function fetchItemsForWarehouse() {
   if (props.transactionType === 'sell' && props.warehouseId) {
+    items.value = []; // Clear existing items first
     void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
   } else if (props.transactionType === 'purchase') {
     void loadInitialItems();
@@ -263,6 +285,7 @@ function fetchItemsForWarehouse() {
 function refreshItems() {
   // Clear current items and reload to get updated quantities
   if (props.transactionType === 'sell' && props.warehouseId) {
+    items.value = []; // Clear existing items first
     void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
   } else if (props.transactionType === 'purchase') {
     void loadInitialItems();
@@ -277,7 +300,12 @@ function refreshAfterTransaction() {
   clearAll();
 }
 
-function formatTotalPrice(quantity: number, unitPrice: number): string {
+function clearItems() {
+  // Clear items in the store to prevent showing stale data
+  items.value = [];
+}
+
+function calculateSelectedPrice(unitPrice: number | string, quantity: number) {
   const qty = Number(quantity || 0);
   const price = Number(unitPrice || 0);
   const total = qty * price;
@@ -289,7 +317,8 @@ defineExpose({
   clearAll,
   selectAll,
   refreshItems,
-  refreshAfterTransaction
+  refreshAfterTransaction,
+  clearItems
 });
 </script>
 
@@ -388,7 +417,7 @@ defineExpose({
                     <div class="quantity-badge total-stock">
                       <q-icon name="apps" size="14px" />
                       <span>{{ t('transactionAlpha.total') }}: {{ item.quantity || 0 }} {{ t('transactionAlpha.pcs')
-                        }}</span>
+                      }}</span>
                     </div>
 
                     <!-- Stock Breakdown (if item has packaging structure) -->
@@ -409,7 +438,7 @@ defineExpose({
                       <div class="quantity-badge pieces">
                         <q-icon name="style" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
-                          }}</span>
+                        }}</span>
                       </div>
                     </template>
 
@@ -424,7 +453,7 @@ defineExpose({
                       <div class="quantity-badge pieces">
                         <q-icon name="style" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
-                          }}</span>
+                        }}</span>
                       </div>
                     </template>
 
@@ -439,7 +468,7 @@ defineExpose({
                       <div class="quantity-badge pieces">
                         <q-icon name="style" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.package_units || 1) }} {{ t('transactionAlpha.pcs')
-                          }}</span>
+                        }}</span>
                       </div>
                     </template>
                   </div>
@@ -550,7 +579,7 @@ defineExpose({
                         <div class="total-info">
                           <q-icon name="inventory" color="purple" size="12px" />
                           <span class="total-label">{{ selected.packages }} {{ t('transactionAlpha.pkg') }}</span>
-                          <span class="total-value">${{ formatTotalPrice(Number(selected.packages) *
+                          <span class="total-value">${{ calculateSelectedPrice(Number(selected.packages) *
                             Number(selected.item?.package_units || 0) * Number(selected.item?.packet_units || 0),
                             Number(selected.unit_cost || 0)) }}</span>
                         </div>
@@ -561,7 +590,7 @@ defineExpose({
                         <div class="total-info">
                           <q-icon name="inbox" color="orange" size="12px" />
                           <span class="total-label">{{ selected.packets }} {{ t('transactionAlpha.pkt') }}</span>
-                          <span class="total-value">${{ formatTotalPrice(Number(selected.packets) *
+                          <span class="total-value">${{ calculateSelectedPrice(Number(selected.packets) *
                             Number(selected.item?.packet_units || 0), Number(selected.unit_cost || 0)) }}</span>
                         </div>
                       </div>
@@ -571,7 +600,7 @@ defineExpose({
                         <div class="total-info">
                           <q-icon name="widgets" color="green" size="12px" />
                           <span class="total-label">{{ selected.quantity }} {{ t('transactionAlpha.pcs') }}</span>
-                          <span class="total-value">${{ formatTotalPrice(Number(selected.quantity),
+                          <span class="total-value">${{ calculateSelectedPrice(Number(selected.quantity),
                             Number(selected.unit_cost ||
                               0)) }}</span>
                         </div>
@@ -582,7 +611,7 @@ defineExpose({
                         <div class="total-info grand">
                           <q-icon name="paid" color="primary" size="14px" />
                           <span class="total-label grand">{{ t('transactionAlpha.total') }}</span>
-                          <span class="total-value grand">${{ formatTotalPrice(Number(selected.quantity),
+                          <span class="total-value grand">${{ calculateSelectedPrice(Number(selected.quantity),
                             Number(selected.unit_cost || 0)) }}</span>
                         </div>
                       </div>
