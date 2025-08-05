@@ -229,6 +229,29 @@ function clearAll() {
   selectedItems.value = [];
 }
 
+function selectAll() {
+  // Get all currently visible/filtered items that are not already selected
+  const itemsToSelect = filteredItems.value.filter(item => !selectedItemIds.value.has(item.id));
+
+  // Select each item using the same logic as selectItem function
+  itemsToSelect.forEach(item => {
+    // For sell transactions, prioritize solo price as default selling price
+    const defaultPrice = props.transactionType === 'sell'
+      ? (Number(item.solo_unit_price) || Number(item.unit_cost) || 0)
+      : (Number(item.unit_cost) || 0);
+
+    selectedItems.value.push({
+      item,
+      unit_cost: defaultPrice, // This will be the editable selling price
+      solo_unit_cost: Number(item.solo_unit_price) || 0, // Reference only
+      bulk_unit_cost: Number(item.bulk_unit_price) || 0, // Reference only
+      quantity: 1,
+      packages: 0,
+      packets: 0
+    });
+  });
+}
+
 function fetchItemsForWarehouse() {
   if (props.transactionType === 'sell' && props.warehouseId) {
     void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
@@ -264,6 +287,7 @@ function formatTotalPrice(quantity: number, unitPrice: number): string {
 defineExpose({
   fetchItemsForWarehouse,
   clearAll,
+  selectAll,
   refreshItems,
   refreshAfterTransaction
 });
@@ -309,6 +333,17 @@ defineExpose({
             <div class="section-badge">{{ filteredItems.length }} {{ t('transactionAlpha.items') }}</div>
           </div>
 
+          <!-- Select All Items Button - Only show when there are items to select -->
+          <div v-if="filteredItems.length > 0" class="select-all-container q-mb-md">
+            <q-btn @click="selectAll" size="md" class="cute-select-all-btn primary" color="primary" no-caps rounded>
+              <div class="btn-content">
+                <span class="btn-text">{{ t('transactionAlpha.selectAllItems') }} &nbsp; ✅</span>
+              </div>
+            </q-btn>
+          </div>
+
+
+
           <div v-if="loading && currentPage === 1" class="loading-state">
             <q-spinner color="primary" size="2em" />
             <p class="loading-text">{{ t('transactionAlpha.searchingItems') }}</p>
@@ -353,7 +388,7 @@ defineExpose({
                     <div class="quantity-badge total-stock">
                       <q-icon name="apps" size="14px" />
                       <span>{{ t('transactionAlpha.total') }}: {{ item.quantity || 0 }} {{ t('transactionAlpha.pcs')
-                      }}</span>
+                        }}</span>
                     </div>
 
                     <!-- Stock Breakdown (if item has packaging structure) -->
@@ -374,7 +409,7 @@ defineExpose({
                       <div class="quantity-badge pieces">
                         <q-icon name="style" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
-                        }}</span>
+                          }}</span>
                       </div>
                     </template>
 
@@ -389,7 +424,7 @@ defineExpose({
                       <div class="quantity-badge pieces">
                         <q-icon name="style" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
-                        }}</span>
+                          }}</span>
                       </div>
                     </template>
 
@@ -404,7 +439,7 @@ defineExpose({
                       <div class="quantity-badge pieces">
                         <q-icon name="style" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.package_units || 1) }} {{ t('transactionAlpha.pcs')
-                        }}</span>
+                          }}</span>
                       </div>
                     </template>
                   </div>
@@ -1450,6 +1485,125 @@ defineExpose({
 
   50% {
     opacity: 1;
+  }
+}
+
+/* Cute button container styles */
+.cute-clear-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Select All button styles */
+.cute-select-all-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  min-width: 180px;
+}
+
+.cute-select-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Clear All button styles */
+.cute-clear-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: white !important;
+  border-radius: 12px;
+  padding: 8px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.cute-clear-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Button content styling */
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+/* Responsive button layout */
+@media (max-width: 640px) {
+  .cute-clear-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cute-select-all-btn,
+  .cute-clear-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+/* Select All container styles */
+.select-all-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.select-all-container .cute-select-all-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  min-width: 180px;
+}
+
+.select-all-container .cute-select-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.select-all-container .btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.select-all-container .btn-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .select-all-container {
+    padding: 12px;
+  }
+
+  .select-all-container .cute-select-all-btn {
+    width: 100%;
+    max-width: 250px;
+    padding: 12px 20px;
   }
 }
 </style>

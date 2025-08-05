@@ -1648,6 +1648,7 @@ export default {
     bulkUnitCost: "تكلفة الوحدة بالجملة",
     bulkUnitPrice: "سعر الوحدة بالجملة",
     clearAll: "مسح الكل",
+    selectAllItems: "تحديد كل العناصر",
     selectBranch: "اختر الفرع",
     typeToSearchBranches: "اكتب للبحث عن الفروع",
     selectCustomer: "اختر العميل",

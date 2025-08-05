@@ -2446,6 +2446,7 @@ export default {
     bulkUnitCost: "نرخی کۆ",
     bulkUnitPrice: "نرخی کۆ",
     clearAll: "سڕینەوەی هەموو",
+    selectAllItems: "هەڵبژاردنی هەموو کاڵاکان",
     selectBranch: "هەڵبژاردنی لق",
     typeToSearchBranches: "جۆری لق بۆ گەڕان بنووسە",
     selectCustomer: "هەڵبژاردنی کڕیار",

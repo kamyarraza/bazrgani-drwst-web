@@ -2307,6 +2307,7 @@ export default {
     bulkUnitCost: "Bulk Unit Cost",
     bulkUnitPrice: "Bulk Unit Price",
     clearAll: "Clear All",
+    selectAllItems: "Select All Items",
     selectBranch: "Select Branch",
     typeToSearchBranches: "Type to search branches",
     selectCustomer: "Select Customer",
