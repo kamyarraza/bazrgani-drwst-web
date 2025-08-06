@@ -93,7 +93,9 @@ const singularizeMenuLabel = (label: string): string => {
     [t('sidebar.reports')]: t('sidebar.report'),
     [t('sidebar.warehouses')]: t('sidebar.warehouse'),
     [t('sidebar.purchases')]: t('sidebar.purchase'),
-    [t('sidebar.sells')]: t('sidebar.sell')
+    [t('sidebar.sells')]: t('sidebar.sell'),
+    [t('sidebar.expenses')]: t('sidebar.expense'),
+    [t('sidebar.expenseCategories')]: t('sidebar.expenseCategory')
   };
 
   // Return singular form if available, otherwise return original
@@ -227,9 +229,15 @@ const allNavigationSections = [
       { path: '/item-category-section', label: t('sidebar.categories'), icon: 'category', permission: 'item-category-section' },
       { path: '/offer-section', label: t('sidebar.offers'), icon: 'local_offer', permission: 'offer-section' },
       { path: '/transfer-request-section', label: t('sidebar.transferRequests'), icon: 'swap_horiz', permission: 'transfer-request-section' },
-
       { path: '/transaction-section', label: t('sidebar.transactions'), icon: 'receipt_long', permission: 'transaction-section' },
-
+    ]
+  },
+  {
+    title: t('sidebar.expenses'),
+    isOpen: false,
+    links: [
+      { path: '/expense-category-section', label: t('sidebar.expenseCategories'), icon: 'category', permission: 'expense-section' },
+      { path: '/expense-section', label: t('sidebar.expenses'), icon: 'receipt', permission: 'expense-section' },
     ]
   },
   {

@@ -1,7 +1,7 @@
-import { boot } from 'quasar/wrappers';
-import { useAuthStore } from 'src/stores/authStore';
-import { useMeStore } from 'src/stores/meStore';
-import { useProfileStore } from 'src/stores/profileStore';
+import { boot } from "quasar/wrappers";
+import { useAuthStore } from "src/stores/authStore";
+import { useMeStore } from "src/stores/meStore";
+import { useProfileStore } from "src/stores/profileStore";
 
 export default boot(async ({ router, store }) => {
   // Initialize auth store, meStore, and profileStore
@@ -34,46 +34,40 @@ export default boot(async ({ router, store }) => {
   // Define user type permissions
   const userTypePermissions: Record<string, string[]> = {
     admin: [
-      'admin-section',
-      'accountant-section',
-      'item-section',
-      'branch-section',
-      'item-category-section',
-      'employee-section',
-      'location-section',
-      'customer-section',
-      'item-transaction-section',
-       'transaction-section',
-       'offer-section',
-
-
-      'reports',
-      'profile',
-      'logs-section',
-      'blum-section'
+      "admin-section",
+      "accountant-section",
+      "item-section",
+      "branch-section",
+      "item-category-section",
+      "employee-section",
+      "location-section",
+      "customer-section",
+      "item-transaction-section",
+      "transaction-section",
+      "offer-section",
+      "expense-section",
+      "reports",
+      "profile",
+      "logs-section",
+      "blum-section",
     ],
-    accountant: [
-
-    ],
+    accountant: [],
     employee: [
-      'item-section',
-      'transfer-request-section',
-      'warehouse-transfer-section',
-     'branch-section',
-      'item-category-section',
-      'offer-section',
-      'location-section',
-      'item-transaction-section',
-      'transaction-section',
-      'profile',
-      'blum-section',
-        'customer-section',
+      "item-section",
+      "transfer-request-section",
+      "warehouse-transfer-section",
+      "branch-section",
+      "item-category-section",
+      "offer-section",
+      "location-section",
+      "item-transaction-section",
+      "transaction-section",
+      "expense-section",
+      "profile",
+      "blum-section",
+      "customer-section",
     ],
-    customer:[
-      'transaction-section',
-      'dashboard',
-       'offer-section',
-    ]
+    customer: ["transaction-section", "dashboard", "offer-section"],
   };
 
   // Helper function to check if user has permission to access a route
@@ -81,9 +75,15 @@ export default boot(async ({ router, store }) => {
     const permissions = userTypePermissions[userType] || [];
 
     // Check if the route path contains any of the allowed sections
-    return permissions.some(permission => {
-      if (permission === 'reports') {
-        return routePath.includes('/reports/');
+    return permissions.some((permission) => {
+      if (permission === "reports") {
+        return routePath.includes("/reports/");
+      }
+      if (permission === "expense-section") {
+        return (
+          routePath.includes("/expense-section") ||
+          routePath.includes("/expense-category-section")
+        );
       }
       return routePath.includes(permission);
     });
@@ -92,39 +92,43 @@ export default boot(async ({ router, store }) => {
   // Navigation guard
   router.beforeEach((to, from, next) => {
     // Allow access to maintenance page without authentication
-    if (to.path === '/maintenance') {
+    if (to.path === "/maintenance") {
       return next();
     }
 
     // Allow access to 404 page without authentication
-    if (to.path === '/404' || to.name === 'ErrorNotFound') {
+    if (to.path === "/404" || to.name === "ErrorNotFound") {
       return next();
     }
 
     // Allow access to catch-all routes (404 scenarios) without authentication
-    if (to.matched.length === 0 || to.matched.some(record => record.path === '/:catchAll(.*)*')) {
+    if (
+      to.matched.length === 0 ||
+      to.matched.some((record) => record.path === "/:catchAll(.*)*")
+    ) {
       return next();
     }
 
     // Check authentication - both token and user data should be present
-    const isAuthenticated = !!authStore.token && !!authStore.currentUser && authStore.loggedIn;
+    const isAuthenticated =
+      !!authStore.token && !!authStore.currentUser && authStore.loggedIn;
     const userType = authStore.currentUser?.type;
 
     // If not authenticated and trying to access protected route
-    if (!isAuthenticated && !to.path.startsWith('/auth/')) {
-      return next('/auth/login');
+    if (!isAuthenticated && !to.path.startsWith("/auth/")) {
+      return next("/auth/login");
     }
 
     // If authenticated and trying to access auth pages, redirect to dashboard
-    if (isAuthenticated && to.path.startsWith('/auth/')) {
+    if (isAuthenticated && to.path.startsWith("/auth/")) {
       // Use router navigation for smoother transition
-      return next('/');
+      return next("/");
     }
 
     // If authenticated, check user type permissions
     if (isAuthenticated && userType) {
       // Dashboard is always accessible for authenticated users
-      if (to.path === '/' || to.path === '') {
+      if (to.path === "/" || to.path === "") {
         return next();
       }
 
@@ -132,11 +136,11 @@ export default boot(async ({ router, store }) => {
       if (!hasPermission(userType, to.path)) {
         // Redirect to dashboard with error message
         return next({
-          path: '/',
+          path: "/",
           query: {
-            error: 'unauthorized',
-            message: `Access denied. ${userType} users cannot access this section.`
-          }
+            error: "unauthorized",
+            message: `Access denied. ${userType} users cannot access this section.`,
+          },
         });
       }
     }

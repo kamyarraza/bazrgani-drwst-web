@@ -58,7 +58,7 @@
                   </div>
                   <q-badge color="primary" class="q-ml-sm grid-badge" v-if="pagination">
                     {{ (pagination && pagination.per_page ? (pagination.current_page - 1) * pagination.per_page : 0) +
-                    props.rowIndex + 1 }}
+                      props.rowIndex + 1 }}
                   </q-badge>
                 </div>
                 <!-- Enhanced Actions Menu -->
@@ -136,53 +136,36 @@
           <!-- Index Icon -->
           <template v-else-if="col.name === 'index'">
             <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1
-              }}</span>
+            }}</span>
           </template>
 
           <!-- warehouses Column -->
           <template v-if="col.name === 'warehouses'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
-                <Qbutton
-                @click="() => $emit('handle-warehouses', props.row.id)"
-                is-flat
-                round
-                btn-label=""
-                btn-color="indigo"
-                >
+              <Qbutton @click="() => $emit('handle-warehouses', props.row.id)" is-flat round btn-label=""
+                btn-color="indigo">
                 <q-icon name="warehouse" />
-                </Qbutton>
+              </Qbutton>
             </slot>
           </template>
 
           <!-- cashbox Column -->
           <template v-if="col.name === 'cashbox'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
-                <Qbutton
-                @click="() => $emit('handle-cashbox', props.row.id)"
-                is-flat
-                round
-                btn-label=""
-                btn-color="green"
+              <Qbutton @click="() => $emit('handle-cashbox', props.row.id)" is-flat round btn-label="" btn-color="green"
                 :disable="isEmployee && userBranchId !== props.row.id"
-                :class="{ 'disabled-cashbox': isEmployee && userBranchId !== props.row.id }"
-                >
+                :class="{ 'disabled-cashbox': isEmployee && userBranchId !== props.row.id }">
                 <q-icon name="account_balance_wallet" />
-                </Qbutton>
+              </Qbutton>
             </slot>
           </template>
 
           <!-- items Column -->
           <template v-if="col.name === 'items'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
-                <Qbutton
-                @click="() => $emit('handle-items', props.row.id)"
-                is-flat
-                round
-                btn-label=""
-                btn-color="grey"
-                >
+              <Qbutton @click="() => $emit('handle-items', props.row.id)" is-flat round btn-label="" btn-color="grey">
                 <q-icon name="inventory" />
-                </Qbutton>
+              </Qbutton>
             </slot>
           </template>
 
@@ -190,20 +173,32 @@
           <template v-if="col.name === 'progress'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <div class="progress-container">
-                <q-linear-progress
-                  :value="col.value/100"
-                  color="primary"
-                  track-color="grey-3"
-                  rounded
-                  size="8px"
-                  class="progress-bar cute-wave-progress"
-                  animation-speed="800"
-                  stripe
-                />
+                <q-linear-progress :value="col.value / 100" color="primary" track-color="grey-3" rounded size="8px"
+                  class="progress-bar cute-wave-progress" animation-speed="800" stripe />
                 <span class="progress-label q-ml-sm">{{ col.value }}%</span>
               </div>
             </slot>
           </template>
+
+          <!-- Expended USD Column -->
+          <template v-if="col.name === 'expensed_usd'">
+            <span :class="{
+              'text-negative': col.value < 0,
+              'text-positive': col.value > 0
+            }">
+              ${{ Math.abs(Number(col.value || 0)).toFixed(2) }}
+            </span>
+          </template>
+
+          <!-- Expended IQD Column -->
+          <template v-else-if="col.name === 'expensed_iqd'">
+            <span :class="{
+              'text-negative': col.value < 0,
+              'text-positive': col.value > 0
+            }">
+              {{ Math.abs(Number(col.value || 0)).toLocaleString('en-IQ') }} IQD
+            </span>
+            </template>
 
           <!-- Actions Slot -->
           <template v-else-if="col.name === 'actions'">
