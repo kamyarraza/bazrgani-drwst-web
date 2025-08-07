@@ -140,7 +140,7 @@
           </template>
 
           <!-- warehouses Column -->
-          <template v-if="col.name === 'warehouses'">
+          <template v-else-if="col.name === 'warehouses'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <Qbutton @click="() => $emit('handle-warehouses', props.row.id)" is-flat round btn-label=""
                 btn-color="indigo">
@@ -150,7 +150,7 @@
           </template>
 
           <!-- cashbox Column -->
-          <template v-if="col.name === 'cashbox'">
+          <template v-else-if="col.name === 'cashbox'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <Qbutton @click="() => $emit('handle-cashbox', props.row.id)" is-flat round btn-label="" btn-color="green"
                 :disable="isEmployee && userBranchId !== props.row.id"
@@ -161,7 +161,7 @@
           </template>
 
           <!-- items Column -->
-          <template v-if="col.name === 'items'">
+          <template v-else-if="col.name === 'items'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <Qbutton @click="() => $emit('handle-items', props.row.id)" is-flat round btn-label="" btn-color="grey">
                 <q-icon name="inventory" />
@@ -170,7 +170,7 @@
           </template>
 
           <!-- progress Column -->
-          <template v-if="col.name === 'progress'">
+          <template v-else-if="col.name === 'progress'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <div class="progress-container">
                 <q-linear-progress :value="col.value / 100" color="primary" track-color="grey-3" rounded size="8px"
@@ -181,7 +181,7 @@
           </template>
 
           <!-- Expended USD Column -->
-          <template v-if="col.name === 'expensed_usd'">
+          <template v-else-if="col.name === 'expensed_usd'">
             <span :class="{
               'text-negative': col.value < 0,
               'text-positive': col.value > 0

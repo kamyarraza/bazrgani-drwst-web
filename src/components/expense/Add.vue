@@ -270,11 +270,18 @@ function close() {
 
 async function onSubmit() {
   try {
-    // Convert date to ISO string
+    // Convert date to ISO string and map field names for API
     const formData = {
       ...form.value,
-      paid_at: new Date(form.value.paid_at + 'T00:00:00').toISOString()
+      paid_at: new Date(form.value.paid_at + 'T00:00:00').toISOString(),
+      // Map form fields to API field names
+      iqd_price: form.value.expensed_iqd,
+      usd_price: form.value.expensed_usd
     };
+
+    // Remove the old field names from the payload
+    delete formData.expensed_iqd;
+    delete formData.expensed_usd;
 
     await expenseStore.createExpense(formData);
 
