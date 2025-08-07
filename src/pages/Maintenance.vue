@@ -85,7 +85,9 @@ const getApiBaseUrl = () => {
   // 1. https://dev-warehouse-api.bazrganidrwst.com/api
   // 2. https://warehouse-api.bazrganidrwst.com/api
   // 3. http://localhost:4000/api
-  return 'https://dev-warehouse-api.bazrganidrwst.com/api'
+  // return 'https://dev-warehouse-api.bazrganidrwst.com/api'
+  return 'https://warehouse-api.bazrganidrwst.com/api'
+  // return 'http://localhost:4000/api'
 }
 
 // Auto-check server status every 30 seconds
@@ -96,7 +98,7 @@ const startAutoStatusCheck = () => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-        const response = await fetch(`${getApiBaseUrl()}/health`, {
+        const response = await fetch(`${getApiBaseUrl()}/details`, {
           method: 'GET',
           signal: controller.signal
         });
@@ -106,7 +108,11 @@ const startAutoStatusCheck = () => {
         if (response.ok) {
           // Server is back online, clear flag and reload
           sessionStorage.removeItem('maintenance_mode');
-          location.reload();
+          // location.reload();
+          sessionStorage.removeItem('maintenance_mode');
+          void router.push('/')
+          console.log('Server is back online, redirecting to home');
+
         }
       } catch (_error) {
         // Server still down, continue waiting
@@ -135,7 +141,7 @@ const checkStatus = async () => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-    const response = await fetch(`${getApiBaseUrl()}/health`, {
+    const response = await fetch(`${getApiBaseUrl()}/details`, {
       method: 'GET',
       signal: controller.signal
     });
@@ -144,7 +150,8 @@ const checkStatus = async () => {
 
     if (response.ok) {
       // Server is back online, reload the page
-      location.reload();
+      // location.reload();
+      goHome();
     } else {
       // Still in maintenance, show message
       alert('Server is still under maintenance. Please try again later.');
