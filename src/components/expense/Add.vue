@@ -28,7 +28,7 @@
               </div>
 
               <div class="row q-gutter-sm">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-5">
                   <q-select v-model="form.category_id" :options="categoryOptions" option-value="value"
                     option-label="label" :label="t('expense.category')" :hint="t('expense.categoryHint')" lazy-rules
                     :rules="[
@@ -81,6 +81,18 @@
                   </q-input>
                 </div>
 
+                <div class="col-12 col-md-5">
+                  <q-input v-model.number="form.usd_return_amount" :label="t('expense.usdReturnAmount')"
+                    :hint="t('expense.usdReturnAmountHint')" type="number" step="0.01" min="0" outlined dense prefix="$"
+                    :rules="[
+                      val => val >= 0 || t('expense.amountPositive')
+                    ]" class="cute-input amount-input">
+                    <template v-slot:prepend>
+                      <q-icon name="assignment_return" color="teal" />
+                    </template>
+                  </q-input>
+                </div>
+
                 <div class="col-12 col-md-6">
                   <q-input v-model.number="form.iqd_price" :label="t('expense.iqdPrice')"
                     :hint="t('expense.iqdPriceHint')" type="number" step="1" min="0" outlined dense suffix="IQD" :rules="[
@@ -91,10 +103,8 @@
                     </template>
                   </q-input>
                 </div>
-              </div>
 
-              <div class="row q-gutter-sm">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-5">
                   <q-input v-model.number="form.iqd_return_amount" :label="t('expense.iqdReturnAmount')"
                     :hint="t('expense.iqdReturnAmountHint')" type="number" step="1" min="0" outlined dense suffix="IQD"
                     :rules="[
@@ -102,18 +112,6 @@
                     ]" class="cute-input amount-input">
                     <template v-slot:prepend>
                       <q-icon name="assignment_return" color="blue" />
-                    </template>
-                  </q-input>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <q-input v-model.number="form.usd_return_amount" :label="t('expense.usdReturnAmount')"
-                    :hint="t('expense.usdReturnAmountHint')" type="number" step="0.01" min="0" outlined dense prefix="$"
-                    :rules="[
-                      val => val >= 0 || t('expense.amountPositive')
-                    ]" class="cute-input amount-input">
-                    <template v-slot:prepend>
-                      <q-icon name="assignment_return" color="teal" />
                     </template>
                   </q-input>
                 </div>
@@ -140,7 +138,7 @@
                   </q-input>
                 </div>
 
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-5">
                   <q-input v-model="form.paid_at" :label="t('expense.paidAt')" :hint="t('expense.paidAtHint')"
                     type="date" lazy-rules :rules="[
                       val => val && val.length > 0 || t('expense.paidAtRequired')
@@ -154,6 +152,15 @@
 
               <div class="row q-gutter-sm">
                 <div class="col-12 col-md-6">
+                  <q-input v-model="form.reference_number" :label="t('expense.referenceNumber')"
+                    :hint="t('expense.referenceNumberHint')" outlined dense class="cute-input">
+                    <template v-slot:prepend>
+                      <q-icon name="confirmation_number" color="brown" />
+                    </template>
+                  </q-input>
+                </div>
+
+                <div class="col-12 col-md-5">
                   <q-select v-model="form.payment_method" :options="paymentMethodOptions"
                     :label="t('expense.paymentMethod')" :hint="t('expense.paymentMethodHint')" lazy-rules :rules="[
                       val => val && val.length > 0 || t('expense.paymentMethodRequired')
@@ -162,15 +169,6 @@
                       <q-icon name="credit_card" color="teal" />
                     </template>
                   </q-select>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <q-input v-model="form.reference_number" :label="t('expense.referenceNumber')"
-                    :hint="t('expense.referenceNumberHint')" outlined dense class="cute-input">
-                    <template v-slot:prepend>
-                      <q-icon name="confirmation_number" color="brown" />
-                    </template>
-                  </q-input>
                 </div>
               </div>
             </div>
@@ -725,8 +723,8 @@ onMounted(async () => {
 
 /* Focus styles for accessibility */
 .cute-input :deep(.q-field__control):focus-within {
-  outline: 2px solid #667eea;
-  outline-offset: 2px;
+  /* outline: 2px solid #667eea;*/
+  /* outline-offset: 2px;*/
 }
 
 .action-btn:focus {
