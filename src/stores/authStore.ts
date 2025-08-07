@@ -367,6 +367,10 @@ export const useAuthStore = defineStore('auth', () => {
         if (response?.status === 401) {
           // Token is invalid, logout
           await logout();
+        } else if (response?.status === 503) {
+          // Server is under maintenance, don't clear auth state
+          // Let the axios interceptor handle the redirect
+          return null;
         }
       }
       return null;

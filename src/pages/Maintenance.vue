@@ -92,14 +92,80 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
+let statusCheckInterval: NodeJS.Timeout | null = null
 
-const checkStatus = () => {
-  location.reload()
+// Auto-check server status every 30 seconds
+const startAutoStatusCheck = () => {
+  statusCheckInterval = setInterval(() => {
+    void (async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
+        const response = await fetch('https://dev-warehouse-api.bazrganidrwst.com/api/health', {
+          method: 'GET',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          // Server is back online, clear flag and reload
+          sessionStorage.removeItem('maintenance_mode');
+          location.reload();
+        }
+      } catch (_error) {
+        // Server still down, continue waiting
+      }
+    })();
+  }, 30000); // Check every 30 seconds
+}
+
+onMounted(() => {
+  startAutoStatusCheck();
+})
+
+onUnmounted(() => {
+  if (statusCheckInterval) {
+    clearInterval(statusCheckInterval);
+  }
+})
+
+const checkStatus = async () => {
+  try {
+    // Clear maintenance mode flag
+    sessionStorage.removeItem('maintenance_mode');
+    
+    // Try to check if server is back online with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch('https://dev-warehouse-api.bazrganidrwst.com/api/health', {
+      method: 'GET',
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      // Server is back online, reload the page
+      location.reload();
+    } else {
+      // Still in maintenance, show message
+      alert('Server is still under maintenance. Please try again later.');
+    }
+  } catch (_error) {
+    // Network error or server still down
+    alert('Server is still under maintenance. Please try again later.');
+  }
 }
 
 const goHome = () => {
+  // Clear maintenance mode flag when user manually tries to go home
+  sessionStorage.removeItem('maintenance_mode');
   void router.push('/')
 }
 

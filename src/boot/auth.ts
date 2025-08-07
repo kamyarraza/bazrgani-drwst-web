@@ -23,12 +23,21 @@ export default boot(async ({ router, store }) => {
         meStore.setUserData(userData);
         profileStore.setUserData(userData);
       }
-    } catch {
-      // Token is invalid, it will be cleared by fetchCurrentUser
-      // Also clear other stores on auth failure
-      meStore.resetMe();
-      profileStore.resetProfile();
-    }
+         } catch (error) {
+       // Check if it's a 503 error (maintenance mode)
+       if (error && typeof error === "object" && "response" in error) {
+         const response = error.response;
+         if (response?.status === 503) {
+           // Don't clear stores for maintenance mode, just let the axios interceptor handle the redirect
+           return;
+         }
+       }
+       
+       // Token is invalid, it will be cleared by fetchCurrentUser
+       // Also clear other stores on auth failure
+       meStore.resetMe();
+       profileStore.resetProfile();
+     }
   }
 
   // Define user type permissions
@@ -101,10 +110,16 @@ export default boot(async ({ router, store }) => {
       return next();
     }
 
-    // Allow access to catch-all routes (404 scenarios) without authentication
-    if (to.matched.length === 0 || to.matched.some(record => record.path === '/:catchAll(.*)*')) {
-      return next();
-    }
+         // Allow access to catch-all routes (404 scenarios) without authentication
+     if (to.matched.length === 0 || to.matched.some(record => record.path === '/:catchAll(.*)*')) {
+       return next();
+     }
+
+     // Check if we're in maintenance mode (503 error detected)
+     const isMaintenanceMode = sessionStorage.getItem('maintenance_mode') === 'true';
+     if (isMaintenanceMode && to.path !== '/maintenance') {
+       return next('/maintenance');
+     }
 
     // Check authentication - both token and user data should be present
     const isAuthenticated = !!authStore.token && !!authStore.currentUser && authStore.loggedIn;
