@@ -32,7 +32,7 @@ export default boot(async ({ router, store }) => {
            return;
          }
        }
-       
+
        // Token is invalid, it will be cleared by fetchCurrentUser
        // Also clear other stores on auth failure
        meStore.resetMe();
@@ -100,8 +100,11 @@ export default boot(async ({ router, store }) => {
 
   // Navigation guard
   router.beforeEach((to, from, next) => {
+    console.log('Router guard - checking route:', to.path);
+
     // Allow access to maintenance page without authentication
     if (to.path === '/maintenance') {
+      console.log('Allowing access to maintenance page');
       return next();
     }
 
@@ -115,11 +118,13 @@ export default boot(async ({ router, store }) => {
        return next();
      }
 
-     // Check if we're in maintenance mode (503 error detected)
-     const isMaintenanceMode = sessionStorage.getItem('maintenance_mode') === 'true';
-     if (isMaintenanceMode && to.path !== '/maintenance') {
-       return next('/maintenance');
-     }
+         // Check if we're in maintenance mode (503 error detected)
+    const isMaintenanceMode = sessionStorage.getItem('maintenance_mode') === 'true';
+    console.log('Maintenance mode check:', isMaintenanceMode, 'Current path:', to.path);
+    if (isMaintenanceMode && to.path !== '/maintenance') {
+      console.log('Redirecting to maintenance page from router guard');
+      return next('/maintenance');
+    }
 
     // Check authentication - both token and user data should be present
     const isAuthenticated = !!authStore.token && !!authStore.currentUser && authStore.loggedIn;

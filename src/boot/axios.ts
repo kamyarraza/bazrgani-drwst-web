@@ -14,9 +14,9 @@ declare module 'vue' {
 
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
-      // baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
+       baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
     //  baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
-     baseURL: 'http://localhost:4000/api',
+    //  baseURL: 'http://localhost:4000/api',
 
   withCredentials: true,
   timeout: 7000, // 10 seconds timeout for all requests mr kamyar you needed only this line
@@ -141,9 +141,39 @@ api.interceptors.response.use(
 
       // Handle maintenance mode (503 Service Unavailable)
       if (response.status === 503) {
-        // Redirect to maintenance page using window.location for immediate redirect
+        console.log('503 Error detected - redirecting to maintenance page');
+
+        // Clear any loading states that might prevent redirect
+        const authStore = useAuthStore();
+        authStore.loading = false;
+
+        // Set maintenance mode flag
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("maintenance_mode", "true");
+        }
+
+        // Force redirect immediately - use multiple methods to ensure it works
         if (typeof window !== 'undefined' && window.location.pathname !== '/maintenance') {
-          window.location.href = '/maintenance';
+          console.log('Forcing redirect to maintenance page');
+
+          // Method 1: Try window.location.replace first
+          try {
+            window.location.replace('/maintenance');
+          } catch (e) {
+            console.log('window.location.replace failed, trying href');
+            // Method 2: Fallback to href
+            window.location.href = '/maintenance';
+          }
+
+          // Method 3: Force reload after a short delay as backup
+          setTimeout(() => {
+            if (window.location.pathname !== '/maintenance') {
+              console.log('Forcing reload to maintenance');
+              window.location.href = '/maintenance';
+            }
+          }, 100);
+
+          return Promise.reject(new Error("Server is under maintenance. Redirecting..."));
         }
         message = 'Server is under maintenance. Please try again later.';
       }
