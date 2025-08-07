@@ -723,8 +723,13 @@ onMounted(async () => {
 
 /* Focus styles for accessibility */
 .cute-input :deep(.q-field__control):focus-within {
-  /* outline: 2px solid #667eea;*/
-  /* outline-offset: 2px;*/
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.action-btn:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
 }
 
 .action-btn:focus {

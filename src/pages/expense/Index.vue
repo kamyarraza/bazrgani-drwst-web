@@ -18,6 +18,22 @@
       :search-label="t('expense.searchLabel', 'Search by title, payee or reference number')"
       :reset-label="t('expense.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
 
+    <!-- Selected Branch Badge for Admin -->
+    <div v-if="me?.type === 'admin' && hasSelectedBranch && selectedBranch" class="q-mb-md">
+      <q-card flat class="bg-green-1 q-pa-md">
+        <div class="row items-center">
+          <q-icon name="business" color="green" class="q-mr-sm" />
+          <span class="text-body2">
+            {{ t('expense.viewingExpensesFor', 'Viewing expenses for') }}:
+            <q-chip color="green" text-color="white" icon="store" :label="selectedBranch.name" size="sm" />
+          </span>
+          <q-space />
+          <q-btn flat color="green" :label="t('expense.changeBranch', 'Change Branch')" @click="changeBranch" size="sm"
+            icon="swap_horiz" />
+        </div>
+      </q-card>
+    </div>
+
     <!-- Search Results Info -->
     <div v-if="isSearching" class="q-mb-md">
       <q-card flat class="bg-blue-1 q-pa-md">
@@ -35,13 +51,32 @@
       </q-card>
     </div>
 
+    <!-- Branch Selection Required Message for Admin -->
+    <div v-if="me?.type === 'admin' && !hasSelectedBranch" class="q-mb-md">
+      <q-card flat class="bg-orange-1 q-pa-md">
+        <div class="row items-center">
+          <q-icon name="info" color="orange" class="q-mr-sm" />
+          <span class="text-body2">
+            {{ t('expense.selectBranchFirst', 'Please select a branch first') }}
+          </span>
+          <q-space />
+          <q-btn color="orange" :label="t('expense.selectBranch', 'Select Branch')" @click="showBranchSelector = true"
+            size="sm" unelevated />
+        </div>
+      </q-card>
+    </div>
+
     <!-- Expenses Table -->
     <Qtable show-bottom :user-type="me?.type!" :allowed-types="['admin', 'employee']" :hasExpandableRows="false"
       @menu-action="handleAction" :columns="columns" :rows="filteredData" :loading="expenseStore.loading"
       :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange"
-      @top-right-action="() => showModal = !showModal" :top-right-title="t('expense.addNew')">
+      @top-right-action="handleAddExpense" :top-right-title="me?.type === 'employee' ? t('expense.addNew') : ''">
     </Qtable>
 
+    <!-- Branch Selector Modal for Admin (for viewing expenses) -->
+    <BranchSelector v-model="showBranchSelector" @branch-selected="onBranchSelectedForViewing" />
+
+    <!-- Add Expense Modal -->
     <Add v-model="showModal"></Add>
   </q-page>
 </template>
@@ -55,9 +90,11 @@ import Header from 'src/components/common/Header.vue';
 import Filter from 'src/components/common/Filter.vue';
 import Note from 'src/components/common/Note.vue';
 import Add from 'src/components/expense/Add.vue';
+import BranchSelector from 'src/components/expense/BranchSelector.vue';
 import { useExpenseStore } from 'src/stores/expenseStore';
 import { useMeStore } from 'src/stores/meStore';
 import type { Expense } from 'src/types/expense';
+import type { Branch } from 'src/types/branch';
 
 const { t } = useI18n();
 const expenseStore = useExpenseStore();
@@ -65,8 +102,12 @@ const meStore = useMeStore();
 
 // Reactive variables
 const showModal = ref(false);
+const showBranchSelector = ref(false);
+const selectedBranchId = ref<number | undefined>(undefined);
+const selectedBranch = ref<Branch | undefined>(undefined); // Store the full branch object
 const currentPage = ref(1);
 const searchTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const hasSelectedBranch = ref(false); // Track if admin has selected a branch for viewing
 
 // Get data from stores
 const { me } = storeToRefs(meStore);
@@ -159,7 +200,7 @@ function resetFilters() {
   };
 
   currentPage.value = 1;
-  void expenseStore.fetchExpenses(1);
+  void loadExpenses(1);
 }
 
 function clearSearch() {
@@ -174,20 +215,54 @@ function handleFilterChange() {
   searchTimeout.value = setTimeout(() => {
     currentPage.value = 1;
     if (filters.value.query.trim()) {
-      void expenseStore.searchExpenses(filters.value.query, 1);
+      void expenseStore.searchExpenses(filters.value.query, 1, selectedBranchId.value);
     } else {
-      void expenseStore.fetchExpenses(1);
+      void loadExpenses(1);
     }
   }, 500);
+}
+
+function handleAddExpense() {
+  // For users (employee) only, open expense modal directly
+  showModal.value = (me.value?.type === 'employee');
+}
+
+function onBranchSelectedForViewing(branch: Branch) {
+  selectedBranchId.value = branch.id!;
+  selectedBranch.value = branch; // Store the full branch object
+  hasSelectedBranch.value = true;
+  showBranchSelector.value = false;
+
+  // Load expenses for the selected branch
+  void loadExpenses(1);
+}
+
+function changeBranch() {
+  // Reset current selection and show branch selector
+  selectedBranchId.value = undefined;
+  selectedBranch.value = undefined;
+  hasSelectedBranch.value = false;
+  currentPage.value = 1;
+
+  // Clear current expenses data
+  expenseStore.expenses = [];
+
+  // Show branch selector
+  showBranchSelector.value = true;
 }
 
 function handlePageChange(page: number) {
   currentPage.value = page;
   if (isSearching.value) {
-    void expenseStore.searchExpenses(filters.value.query, page);
+    void expenseStore.searchExpenses(filters.value.query, page, selectedBranchId.value);
   } else {
-    void expenseStore.fetchExpenses(page);
+    void loadExpenses(page);
   }
+}
+
+// Helper method to load expenses with proper branch filtering
+function loadExpenses(page: number) {
+  void expenseStore.fetchExpenses(page, selectedBranchId.value);
 }
 
 function handleAction(action: string, expense: Expense) {
@@ -213,14 +288,22 @@ function updateNote(index: number, updatedNote: any) {
 // Watchers
 watch(showModal, (newVal) => {
   if (!newVal) {
-    void expenseStore.fetchExpenses(currentPage.value);
+    // Refresh expenses when modal closes
+    void loadExpenses(currentPage.value);
   }
 });
 
 // Lifecycle
 onMounted(async () => {
-  await expenseStore.fetchExpenses(1);
   await meStore.fetchMe();
+
+  // If admin, show branch selector first. If employee, load expenses directly
+  if (me.value?.type === 'admin') {
+    showBranchSelector.value = true;
+  } else {
+    // For employees, load expenses directly without branch filtering
+    void loadExpenses(1);
+  }
 });
 </script>
 

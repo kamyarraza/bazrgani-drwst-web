@@ -13,14 +13,24 @@ export const useExpenseStore = defineStore("expense", () => {
   const error = ref<string | null>(null);
   const pagination = ref<ExpensePagination | null>(null);
 
-  async function fetchExpenses(page: number = 1) {
+  async function fetchExpenses(page: number = 1, branchId?: number) {
     loading.value = true;
     error.value = null;
-    const parameter = page ? "page=" + page : "";
+    const parameters = new URLSearchParams();
+
+    if (page) {
+      parameters.append("page", page.toString());
+    }
+    parameters.append("paginate", "true");
+    parameters.append("relations", "category");
+
+    if (branchId) {
+      parameters.append("branch_id", branchId.toString());
+    }
 
     try {
       const { data } = await api.get<ApiResponse<Expense[]>>(
-        `${endPoints.expense.list}?${parameter}&paginate=true&relations=category`
+        `${endPoints.expense.list}?${parameters.toString()}`
       );
       expenses.value = data.data;
       pagination.value = data.pagination || null;
@@ -39,18 +49,29 @@ export const useExpenseStore = defineStore("expense", () => {
     }
   }
 
-  async function searchExpenses(searchQuery: string, page: number = 1) {
+  async function searchExpenses(
+    searchQuery: string,
+    page: number = 1,
+    branchId?: number
+  ) {
     loading.value = true;
     error.value = null;
-    const parameter = page ? "page=" + page : "";
+    const parameters = new URLSearchParams();
+
+    if (page) {
+      parameters.append("page", page.toString());
+    }
+    parameters.append("paginate", "true");
+    parameters.append("relations", "category");
+    parameters.append("search", encodeURIComponent(searchQuery));
+
+    if (branchId) {
+      parameters.append("branch_id", branchId.toString());
+    }
 
     try {
       const { data } = await api.get<ApiResponse<Expense[]>>(
-        `${
-          endPoints.expense.list
-        }?${parameter}&paginate=true&relations=category&search=${encodeURIComponent(
-          searchQuery
-        )}`
+        `${endPoints.expense.list}?${parameters.toString()}`
       );
       expenses.value = data.data;
       pagination.value = data.pagination || null;
