@@ -70,7 +70,7 @@
 
               <div class="row q-gutter-sm">
                 <div class="col-12 col-md-6">
-                  <q-input v-model.number="form.usd_price" :label="t('expense.usdPrice')"
+                  <q-input v-model.number="form.expensed_usd" :label="t('expense.usdPrice')"
                     :hint="t('expense.usdPriceHint')" type="number" step="0.01" min="0" outlined dense prefix="$"
                     :rules="[
                       val => val >= 0 || t('expense.amountPositive')
@@ -94,7 +94,7 @@
                 </div>
 
                 <div class="col-12 col-md-6">
-                  <q-input v-model.number="form.iqd_price" :label="t('expense.iqdPrice')"
+                  <q-input v-model.number="form.expensed_iqd" :label="t('expense.iqdPrice')"
                     :hint="t('expense.iqdPriceHint')" type="number" step="1" min="0" outlined dense suffix="IQD" :rules="[
                       val => val >= 0 || t('expense.amountPositive')
                     ]" class="cute-input amount-input">
@@ -253,8 +253,8 @@ const form = ref<Expense>({
   category_id: 0,
   title: '',
   description: '',
-  usd_price: 0,
-  iqd_price: 0,
+  expensed_usd: 0,
+  expensed_iqd: 0,
   iqd_return_amount: 0,
   usd_return_amount: 0,
   payee: '',
@@ -319,8 +319,8 @@ function onReset() {
     category_id: 0,
     title: '',
     description: '',
-    usd_price: 0,
-    iqd_price: 0,
+    expensed_usd: 0,
+    expensed_iqd: 0,
     iqd_return_amount: 0,
     usd_return_amount: 0,
     payee: '',

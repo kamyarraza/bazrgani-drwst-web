@@ -16,8 +16,8 @@ export interface Expense {
   };
   title: string;
   description?: string;
-  usd_price?: number;
-  iqd_price?: number;
+  expensed_usd?: number;
+  expensed_iqd?: number;
   iqd_return_amount?: number;
   usd_return_amount?: number;
   payee: string;

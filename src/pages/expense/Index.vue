@@ -68,8 +68,8 @@
 
     <!-- Expenses Table -->
     <Qtable show-bottom :user-type="me?.type!" :allowed-types="['admin', 'employee']" :hasExpandableRows="false"
-      @menu-action="handleAction" :columns="columns" :rows="filteredData" :loading="expenseStore.loading"
-      :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange"
+      @menu-action="handleAction" @view-action="handleViewAction" :columns="columns" :rows="filteredData"
+      :loading="expenseStore.loading" :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange"
       @top-right-action="handleAddExpense" :top-right-title="me?.type === 'employee' ? t('expense.addNew') : ''">
     </Qtable>
 
@@ -78,6 +78,9 @@
 
     <!-- Add Expense Modal -->
     <Add v-model="showModal"></Add>
+
+    <!-- View Expense Modal -->
+    <View v-if="selectedExpense" v-model="showViewModal" :expense="selectedExpense" @edit="handleEditExpense" />
   </q-page>
 </template>
 
@@ -90,6 +93,7 @@ import Header from 'src/components/common/Header.vue';
 import Filter from 'src/components/common/Filter.vue';
 import Note from 'src/components/common/Note.vue';
 import Add from 'src/components/expense/Add.vue';
+import View from 'src/components/expense/View.vue';
 import BranchSelector from 'src/components/expense/BranchSelector.vue';
 import { useExpenseStore } from 'src/stores/expenseStore';
 import { useMeStore } from 'src/stores/meStore';
@@ -102,6 +106,8 @@ const meStore = useMeStore();
 
 // Reactive variables
 const showModal = ref(false);
+const showViewModal = ref(false);
+const selectedExpense = ref<Expense | undefined>(undefined);
 const showBranchSelector = ref(false);
 const selectedBranchId = ref<number | undefined>(undefined);
 const selectedBranch = ref<Branch | undefined>(undefined); // Store the full branch object
@@ -166,12 +172,26 @@ const columns = computed(() => [
     // }
   },
   {
+    name: 'payee',
+    label: t('expense.payee'),
+    field: 'payee',
+    sortable: true,
+    align: 'left' as const
+  },
+  {
     name: 'paid_at',
     label: t('expense.paidAt'),
     field: 'paid_at',
     sortable: true,
     align: 'left' as const,
     // format: (val: unknown) => val ? new Date(val as string).toLocaleDateString() : ''
+  },
+  {
+    name: 'view_action',
+    label: t('expense.quickView', 'Quick View'),
+    field: 'view_action',
+    sortable: false,
+    align: 'center' as const
   },
 ]);
 
@@ -268,12 +288,25 @@ function loadExpenses(page: number) {
 function handleAction(action: string, expense: Expense) {
   switch (action) {
     case 'view':
-      console.log('View expense:', expense);
-      // Implement view logic here
+      selectedExpense.value = expense;
+      showViewModal.value = true;
       break;
     default:
       console.warn(`Unknown action: ${action}`);
   }
+}
+
+function handleViewAction(expense: Expense) {
+  selectedExpense.value = expense;
+  showViewModal.value = true;
+}
+
+function handleEditExpense(expense: Expense) {
+  // For now, we'll just close the view modal and open the add modal
+  // In the future, this could be enhanced to pass the expense data to an edit modal
+  selectedExpense.value = expense;
+  showViewModal.value = false;
+  showModal.value = true;
 }
 
 function removeNote(noteId: string) {
