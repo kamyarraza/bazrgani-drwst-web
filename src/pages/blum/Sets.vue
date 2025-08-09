@@ -1,60 +1,26 @@
 <template>
   <q-page class="q-pa-md">
     <!-- Header Card -->
-    <Header
-      title="Blum Sets"
-      subtitle="Manage and configure sets of Blum components"
-      icon="category"
-      icon-size="3rem"
-      icon-color="white"
-      :show-waves="true"
-      background-color="linear-gradient(135deg, #3949ab 0%, #1976d2 100%)"
-    />
+    <Header :title="t('blum.stitle')" :subtitle="t('blum.ssub')" icon="category" icon-size="3rem" icon-color="white"
+      :show-waves="true" background-color="linear-gradient(135deg, #3949ab 0%, #1976d2 100%)" />
 
     <!-- Filters Section -->
-    <Filter
-      v-model:filters="filters"
-      :filter-options="filterOptions"
-      :search-label="t('blum.searchSetLabel')"
-      :reset-label="t('blum.resetFilters')"
-      @filter-change="handleFilterChange"
-      @reset="resetFilters"
-    />
+    <Filter v-model:filters="filters" :filter-options="filterOptions" :search-label="t('blum.searchSetLabel')"
+      :reset-label="t('blum.resetFilters')" @filter-change="handleFilterChange" @reset="resetFilters" />
 
     <!-- Sets Table -->
-    <QtableB
-      show-bottom
-      :user-type="me?.type!"
-      :allowed-types="['admin', 'employee', 'accountant']"
-      :hasExpandableRows="false"
-      @menu-action="handleAction"
-      :columns="columns"
-      :rows="filteredData"
-      :loading="blumStore.blumSetsLoading"
-      :menuItems="menuItems"
-      :pagination="pagination"
-      @page-change="handlePageChange"
-      @top-right-action="() => showAddModal = true"
-      :top-right-title="t('blum.addNewSet')"
-    />
+    <QtableB show-bottom :user-type="me?.type!" :allowed-types="['admin', 'employee', 'accountant']"
+      :hasExpandableRows="false" @menu-action="handleAction" :columns="columns" :rows="filteredData"
+      :loading="blumStore.blumSetsLoading" :menuItems="menuItems" :pagination="pagination"
+      @page-change="handlePageChange" @top-right-action="() => showAddModal = true"
+      :top-right-title="t('blum.addNewSet')" />
 
     <!-- Modals -->
-    <AddSet
-      v-model="showAddModal"
-      @set-added="handleSetAdded"
-    />
+    <AddSet v-model="showAddModal" @set-added="handleSetAdded" />
 
-    <UpdateSet
-      v-model="showUpdateModal"
-      :set="selectedSet"
-      @set-updated="handleSetUpdated"
-    />
+    <UpdateSet v-model="showUpdateModal" :set="selectedSet" @set-updated="handleSetUpdated" />
 
-    <ViewSet
-      v-if="selectedSetId"
-      v-model="showViewModal"
-      :set-id="selectedSetId"
-    />
+    <ViewSet v-if="selectedSetId" v-model="showViewModal" :set-id="selectedSetId" />
   </q-page>
 </template>
 
@@ -97,7 +63,7 @@ const filterOptions = computed(() => []);
 const menuItems = [
   { label: t('blum.viewDetails'), icon: 'visibility', value: 'view' },
   { label: t('blum.update'), icon: 'edit', value: 'update' },
-  { label: t('common.delete'), icon: 'delete', value: 'delete' },
+  // { label: t('common.delete'), icon: 'delete', value: 'delete' },
 ];
 
 // Table columns
@@ -109,7 +75,7 @@ const columns = [
     align: 'left' as const,
     label: t('blum.setDescription'),
     field: 'description',
-    format: (val: unknown) => typeof val === 'string' && val ? (val.length > 50 ? val.substring(0, 50) + '...' : val) : '-',
+    format: (val: unknown) => typeof val === 'string' && val ? (val.length > 50 ? val.substring(0, 50) + t('common.ellipsis') : val) : t('common.notAvailable'),
     sortable: false
   },
   {

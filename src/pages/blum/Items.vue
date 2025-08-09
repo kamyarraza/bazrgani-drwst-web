@@ -1,67 +1,32 @@
 <template>
   <q-page class="q-pa-md">
     <!-- Header Card -->
-    <Header
-      title="blum.title"
-      subtitle="blum.sub"
-      icon="inventory_2"
-      icon-size="3rem"
-      icon-color="white"
-      :show-waves="true"
-      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-    />
+    <Header :title="t('blum.title')" :subtitle="t('blum.sub')" icon="inventory_2" icon-size="3rem" icon-color="white"
+      :show-waves="true" background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
 
     <!-- Filters Section -->
-    <Filter
-      v-model:filters="filters"
-      :filter-options="filterOptions"
-      :search-label="t('blum.searchItemLabel')"
-      :reset-label="t('blum.resetFilters')"
-      @filter-change="handleFilterChange"
-      @reset="resetFilters"
-    />
+    <Filter v-model:filters="filters" :filter-options="filterOptions" :search-label="t('blum.searchItemLabel')"
+      :reset-label="t('blum.resetFilters')" @filter-change="handleFilterChange" @reset="resetFilters" />
 
     <!-- Items Table -->
-    <QtableB
-      show-bottom
-      :user-type="me?.type!"
-      :allowed-types="['admin', 'employee', 'accountant']"
-      :hasExpandableRows="false"
-      @menu-action="handleAction"
-      :columns="columns"
-      :rows="filteredData"
-      :loading="blumStore.blumItemsLoading"
-      :menuItems="menuItems"
-      :pagination="pagination"
-      @page-change="handlePageChange"
-      @top-right-action="() => showAddModal = true"
-      :top-right-title="t('blum.addNewItem')"
-    />
+    <QtableB show-bottom :user-type="me?.type!" :allowed-types="['admin', 'employee', 'accountant']"
+      :hasExpandableRows="false" @menu-action="handleAction" :columns="columns" :rows="filteredData"
+      :loading="blumStore.blumItemsLoading" :menuItems="menuItems" :pagination="pagination"
+      @page-change="handlePageChange" @top-right-action="() => showAddModal = true"
+      :top-right-title="t('blum.addNewItem')" />
 
     <!-- Modals -->
-    <AddItem
-      v-model="showAddModal"
-      @item-added="handleItemAdded"
-    />
+    <AddItem v-model="showAddModal" @item-added="handleItemAdded" />
 
-    <UpdateItem
-      v-model="showUpdateModal"
-      :item="selectedItem"
-      @item-updated="handleItemUpdated"
-      @update:model-value="(value) => {
-        showUpdateModal = value;
-        if (!value) selectedItem = undefined;
-      }"
-    />
+    <UpdateItem v-model="showUpdateModal" :item="selectedItem" @item-updated="handleItemUpdated" @update:model-value="(value) => {
+      showUpdateModal = value;
+      if (!value) selectedItem = undefined;
+    }" />
 
-    <BlumItemDetailsModal
-      v-model="showDetailsModal"
-      :item-data="selectedItem || null"
-      @update:model-value="(value) => {
-        showDetailsModal = value;
-        if (!value) selectedItem = undefined;
-      }"
-    />
+    <BlumItemDetailsModal v-model="showDetailsModal" :item-data="selectedItem || null" @update:model-value="(value) => {
+      showDetailsModal = value;
+      if (!value) selectedItem = undefined;
+    }" />
   </q-page>
 </template>
 
