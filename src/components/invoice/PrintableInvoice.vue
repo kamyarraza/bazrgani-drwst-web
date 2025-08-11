@@ -62,6 +62,17 @@
                   <span class="value highlight">{{ invoiceNumber }}</span>
                 </div>
                 <div class="detail-row">
+                  <span class="label">{{ t('invoice.details.transactionType') }}:</span>
+                  <span class="value">
+                    {{ transaction?.type === 'purchase' ? t('invoice.types.purchase') : t('invoice.types.sale') }}
+                  </span>
+                </div>
+                <div class="detail-row" v-if="transaction?.warehouse?.name">
+                  <span class="label">{{ t('invoice.details.warehouse', "warehouse") }}</span>
+                  <span class="contact-info">{{ transaction?.warehouse?.name
+                  }}</span>
+                </div>
+                <div class="detail-row">
                   <span class="label">{{ t('invoice.details.date') }}:</span>
                   <span class="value">{{ formatDate(transaction?.created_at) }}</span>
                 </div>
@@ -91,28 +102,20 @@
                 <span class="card-title">{{ t('invoice.details.billingTo') }}</span>
               </div>
               <div class="details-container">
-                <div class="client-name">{{ transaction?.customer?.name || 'N/A' }}</div>
-                <div class="detail-row" v-if="(transaction?.customer as any)?.phone">
-                  <q-icon name="phone" size="14px" />
-                  <span class="contact-info">{{ (transaction?.customer as any)?.phone }}</span>
+                <div class="detail-row" v-if="(transaction?.customer as any)?.name">
+                  <q-icon name="person" size="14px" />
+                  <span class="contact-info">{{ (transaction?.customer as any)?.name }}</span>
                 </div>
                 <div class="detail-row" v-if="(transaction?.customer as any)?.fphone">
                   <q-icon name="phone_android" size="14px" />
                   <span class="contact-info">{{ (transaction?.customer as any)?.fphone }}</span>
                 </div>
-                <div class="detail-row" v-if="transaction?.warehouse?.name">
-                  <q-icon name="warehouse" size="14px" />
-                  <span class="contact-info">{{ t('invoice.details.warehouse') }}: {{ transaction?.warehouse?.name
-                    }}</span>
+                <div class="detail-row" v-if="(transaction?.customer as any)?.place">
+                  <q-icon name="place" size="14px" />
+                  <span class="contact-info">{{ (transaction?.customer as any)?.place }}</span>
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- Project/Transaction Type -->
-          <div class="project-name">
-            <strong>{{ t('invoice.details.transactionType') }}:</strong> {{ transaction?.type === 'purchase' ?
-              t('invoice.types.purchase') : t('invoice.types.sale') }}
           </div>
 
           <!-- Enhanced Items Table -->
@@ -161,29 +164,25 @@
                   <div v-if="(transaction as any)?.old_borrowed_price !== undefined" class="total-line">
                     <span class="total-label">{{ t('invoice.oldBorrowedPrice') }}</span>
                     <span class="total-amount">{{ formatCurrencyDisplay((transaction as any).old_borrowed_price)
-                      }}</span>
+                    }}</span>
                   </div>
                   <div v-if="(transaction as any)?.new_borrowed_price !== undefined" class="total-line">
                     <span class="total-label">{{ t('invoice.newBorrowedPrice') }}</span>
                     <span class="total-amount">{{ formatCurrencyDisplay((transaction as any).new_borrowed_price)
-                      }}</span>
-                  </div>
-                  <div v-if="transaction?.type === 'sell' && (transaction as any)?.discounted_rate > 0"
-                    class="total-line discount-line">
-                    <span class="total-label">{{ t('invoice.discount') }}</span>
-                    <span class="total-amount discount">{{ (transaction as any).discounted_rate }}%</span>
+                    }}</span>
                   </div>
                   <div class="total-line subtotal-line">
                     <span class="total-label">{{ t('invoice.subtotal') }}</span>
-                    <span class="total-amount">{{ formatCurrencyDisplay(subtotal) }}</span>
+                    <span class="total-amount" :class="{ 'with-discount': discountedRate > 0 }">{{
+                      formatCurrencyDisplay(subtotal) }}</span>
+                  </div>
+                  <div v-if="discountedRate > 0" class="total-line discount-line">
+                    <span class="total-label">{{ t('invoice.discount') }} ({{ discountedRate }}%)</span>
+                    <span class="total-amount discount">-{{ formatCurrencyDisplay(discountAmount) }}</span>
                   </div>
                   <div class="total-line grand-total-line">
                     <span class="total-label">{{ t('invoice.totalMoney') }}</span>
                     <span class="total-amount grand-total">{{ formatCurrencyDisplay(finalTotal) }}</span>
-                  </div>
-                  <div class="total-line balance-line" :class="{ 'balance-due': balanceAmount > 0 }">
-                    <span class="total-label">{{ t('invoice.amountLeftToPay') }}</span>
-                    <span class="total-amount balance">{{ formatCurrencyDisplay(balanceAmount) }}</span>
                   </div>
                 </div>
               </div>
@@ -230,7 +229,7 @@
                       </div>
                       <span class="payment-label">{{ t('invoice.unpaidAmount') }}</span>
                       <span class="payment-value unpaid">{{ formatCurrencyDisplay(transaction?.unpaid_price || 0)
-                      }}</span>
+                        }}</span>
                     </div>
                   </div>
 
@@ -243,7 +242,7 @@
                       </div>
                       <span class="payment-label">{{ t('transactionAlpha.iqdPrice') }}</span>
                       <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).iqd_price)
-                      }}</span>
+                        }}</span>
                     </div>
                     <div v-if="(transaction as any)?.usd_price" class="payment-row">
                       <div class="payment-icon">
@@ -251,7 +250,7 @@
                       </div>
                       <span class="payment-label">{{ t('transactionAlpha.usdPrice') }}</span>
                       <span class="payment-value amount">{{ formatCurrencyDisplay((transaction as any).usd_price)
-                      }}</span>
+                        }}</span>
                     </div>
                   </div>
 
@@ -428,19 +427,19 @@ const subtotal = computed(() => {
   return transactionItems.value.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
 });
 
-const finalTotal = computed(() => {
-  return props.transaction?.total_price || subtotal.value;
+const discountedRate = computed(() => {
+  return (props.transaction as any)?.discounted_rate || 0;
 });
 
-const balanceAmount = computed(() => {
-  if (!props.transaction) return 0;
-  // Use unpaid_price if available, otherwise calculate from total - paid
-  const unpaidPrice = (props.transaction as any)?.unpaid_price;
-  if (unpaidPrice !== undefined && unpaidPrice !== null) {
-    return unpaidPrice;
-  }
-  return finalTotal.value - (props.transaction.paid_price || 0);
+const discountAmount = computed(() => {
+  return (subtotal.value * discountedRate.value) / 100;
 });
+
+const finalTotal = computed(() => {
+  return (props.transaction as any)?.discounted_price || props.transaction?.total_price || (subtotal.value - discountAmount.value);
+});
+
+
 
 // Methods
 const formatDate = (dateString?: string, addDays = 0) => {
@@ -677,7 +676,7 @@ const formatCurrencyDisplay = (amount: any) => {
 
   .dynamic-content {
     flex: 1;
-    padding: 40px;
+    padding: 0 40px 40px 40px;
     position: relative;
     z-index: 1;
     overflow-y: auto;
@@ -909,8 +908,8 @@ const formatCurrencyDisplay = (amount: any) => {
   .detail-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
-    padding: 8px 0;
+    margin-bottom: 2px;
+    padding: 5px 20px 0 20px;
     border-bottom: 1px solid #e9ecef;
 
     &:last-child {
@@ -1141,10 +1140,6 @@ const formatCurrencyDisplay = (amount: any) => {
   color: #2A7B9B;
   font-size: 14px;
 
-  &.discount {
-    color: #e53e3e;
-  }
-
   &.grand-total {
     color: #2A7B9B;
     font-size: 16px;
@@ -1185,14 +1180,6 @@ const formatCurrencyDisplay = (amount: any) => {
       color: #e53e3e;
     }
   }
-}
-
-.discount-line {
-  background: rgba(229, 62, 62, 0.05);
-  border: 1px solid rgba(229, 62, 62, 0.2);
-  border-radius: 6px;
-  padding: 12px !important;
-  margin: 8px 0;
 }
 
 // Payment Section Styles
@@ -1410,243 +1397,26 @@ const formatCurrencyDisplay = (amount: any) => {
   /* Remove any margin */
 }
 
-// Print-specific adjustments
-/* Additional print styles for watermark and fine-tuning */
-@media print {
-  .watermark {
-    opacity: 0.08 !important;
-    /* Consistent with screen view */
-  }
+// Discount styling
+.discount-line {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px !important;
+  margin: 4px 0;
 
-  .watermark img {
-    width: 250px !important;
-    /* Smaller for print */
-    height: 250px !important;
-    /* No grayscale filter to maintain brand colors */
-  }
-
-  /* Override any conflicting dynamic content margins - use the printer-safe values */
-  .dynamic-content {
-    margin-top: 2.25in !important;
-    /* Printer-safe space for header (increased slightly) */
-    margin-bottom: 1.75in !important;
-    /* Printer-safe space for footer (increased slightly) */
-    padding: 0.3in !important;
-    /* Internal padding within safe area */
-  }
-
-  /* Static header and footer print refinements */
-  .static-header .header {
-    margin: 0 !important;
-    padding: 15px 20px !important;
-    /* Consistent padding */
-  }
-
-  .static-footer .footer {
-    margin: 0 !important;
-    padding: 15px 20px !important;
-    /* Consistent padding */
-    width: 100% !important;
-  }
-
-  .static-footer .signature-section-bottom {
-    padding: 10px 20px !important;
-    /* Consistent padding */
-  }
-
-  /* Table cell optimization for print */
-  .items-table th,
-  .items-table td {
-    padding: 6px 4px !important;
-    font-size: 11px !important;
-    /* Ensure text fits well */
-  }
-
-  /* Details section print styling */
-  .details-section {
-    background: #f8f9fa !important;
-    border: 1px solid #e9ecef !important;
-    margin-bottom: 20px !important;
-    padding: 15px !important;
-  }
-
-  .section-header {
-    font-size: 10px !important;
-    border-bottom-width: 1px !important;
-    margin-bottom: 10px !important;
-    padding-bottom: 5px !important;
-  }
-
-  .details-container .detail-row {
-    margin-bottom: 8px !important;
-    padding: 5px 0 !important;
-  }
-
-  // Content spacer for print
-  .content-spacer {
-    height: 40px !important; // Smaller for print with static layout
-  }
-
-  // Ensure text is crisp in print
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  // Fix brand logo size for print
-  .brand-logo {
-    width: 50px !important;
-    height: 50px !important;
-  }
-
-  // Optimize table for print
-  .items-table {
-    font-size: 12px !important;
-    margin-bottom: 20px !important;
-  }
-
-  // Additional print spacing adjustments
-  .details-section {
-    margin-bottom: 15px !important;
-  }
-
-  .project-name {
-    margin-bottom: 15px !important;
-  }
-
-  .bottom-section {
-    margin-bottom: 15px !important;
-  }
-
-  // Typography adjustments for print
-  .brand-name {
-    font-size: 36px !important;
-  }
-
-  .company-name {
-    font-size: 16px !important;
-  }
-
-  .invoice-title {
-    font-size: 24px !important;
+  .total-amount.discount {
+    color: #ef4444;
+    font-weight: 600;
   }
 }
 
-// Responsive design for mobile and tablet
-@media screen and (max-width: 768px) {
-  .invoice-container {
-    margin: 10px auto 0 auto;
-    /* Keep auto margins for centering */
-    padding: 0;
-    /* Remove padding */
-  }
-
-  .dynamic-content {
-    padding: 20px;
-    /* Add padding to content only */
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 20px;
-  }
-
-  .invoice-title {
-    font-size: 28px;
-  }
-
-  .details-section {
-    flex-direction: column;
-    gap: 20px;
-    padding: 15px;
-  }
-
-  .section-header {
-    font-size: 11px;
-    margin-bottom: 10px;
-  }
-
-  .details-container .detail-row {
-    margin-bottom: 10px;
-    padding: 6px 0;
-  }
-
-  .details-container .detail-row .label {
-    min-width: 100px;
-    font-size: 13px;
-  }
-
-  .details-container .detail-row .value {
-    font-size: 13px;
-  }
-
-  .invoice-details {
-    text-align: left;
-  }
-
-  .bottom-section {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .left-section {
-    padding-right: 0;
-  }
-
-  .totals-section {
-    text-align: left;
-  }
-
-  .footer-main {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
-
-  .footer-left,
-  .footer-right {
-    align-items: center;
-  }
-
-  .watermark img {
-    width: 250px;
-    height: 250px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .invoice-container {
-    padding: 0;
-    /* Remove padding */
-  }
-
-  .dynamic-content {
-    padding: 15px;
-    /* Add padding to content only */
-  }
-
-  .brand-name {
-    font-size: 18px;
-  }
-
-  .invoice-title {
-    font-size: 24px;
-  }
-
-  .items-table {
-    font-size: 12px;
-  }
-
-  .items-table th,
-  .items-table td {
-    padding: 8px 4px;
-  }
-
-  .watermark img {
-    width: 200px;
-    height: 200px;
-  }
+// Overline effect for discounted prices
+.total-amount.with-discount {
+  text-decoration: line-through;
+  text-decoration-color: #ef4444;
+  text-decoration-thickness: 2px;
+  opacity: 0.7;
+  position: relative;
 }
 </style>

@@ -135,7 +135,7 @@
                       {{ t('transactionAlpha.usdIqd') }}
                     </div>
                     <div class="summary-value">
-                      {{ usdIqdRate }} <span class="currency">IQD</span>
+                      {{ formatCurrency(usdIqdRate, " IQD") }}
                     </div>
                   </div>
 
@@ -154,8 +154,10 @@
                         <q-icon name="account_balance_wallet" color="primary" size="16px" />
                         {{ t('transactionAlpha.weOweSupplier') }}
                       </div>
-                      <div class="summary-value debt">
-                        {{ formatCurrency(supplierDebt) }}
+                      <div class="summary-value">
+                        <div class="price-badge debt-badge">
+                          {{ formatCurrency(supplierDebt) }}
+                        </div>
                       </div>
                     </div>
                     <div class="summary-row">
@@ -163,8 +165,21 @@
                         <q-icon name="shopping_cart" color="primary" size="16px" />
                         {{ t('transactionAlpha.totalPriceOfSelectedItems') }}
                       </div>
-                      <div class="summary-value total">
-                        {{ formatCurrency(totalSelectedItemsPrice) }}
+                      <div class="summary-value">
+                        <div class="price-badge total-badge">
+                          💰 {{ formatCurrency(totalSelectedItemsPrice) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="shopping_cart" color="primary" size="16px" />
+                        {{ t('transactionAlpha.totalPriceOfSelectedItems') }}
+                      </div>
+                      <div class="summary-value">
+                        <div class="price-badge iqd-badge">
+                          🪙 {{ formatCurrency(totalSelectedItemsPrice * usdIqdRate, ' IQD') }}
+                        </div>
                       </div>
                     </div>
                     <div v-if="selectedPaymentType === 'borrow'" class="summary-row highlight">
@@ -172,8 +187,10 @@
                         <q-icon name="trending_up" color="warning" size="16px" />
                         {{ t('transactionAlpha.newTotalOwed') }}
                       </div>
-                      <div class="summary-value warning">
-                        {{ formatCurrency(newTotalOwed) }}
+                      <div class="summary-value">
+                        <div class="price-badge warning-badge">
+                          ⚠️ {{ formatCurrency(newTotalOwed) }}
+                        </div>
                       </div>
                     </div>
                   </template>
@@ -193,8 +210,10 @@
                         <q-icon name="account_balance_wallet" color="primary" size="16px" />
                         {{ t('transactionAlpha.customerOwesUs') }}
                       </div>
-                      <div class="summary-value debt">
-                        {{ formatCurrency(customerDebt) }}
+                      <div class="summary-value">
+                        <div class="price-badge debt-badge">
+                          {{ formatCurrency(customerDebt) }}
+                        </div>
                       </div>
                     </div>
                     <div class="summary-row">
@@ -203,7 +222,9 @@
                         {{ t('transactionAlpha.totalPriceBeforeDiscount') }}
                       </div>
                       <div class="summary-value">
-                        {{ formatCurrency(totalSelectedItemsPrice) }}
+                        <div class="price-badge total-badge">
+                          💰 {{ formatCurrency(totalSelectedItemsPrice) }}
+                        </div>
                       </div>
                     </div>
                     <div class="summary-row discount-row">
@@ -211,9 +232,28 @@
                         <q-icon name="percent" color="primary" size="16px" />
                         {{ t('transactionAlpha.discountPercent') }}
                       </div>
-                      <div class="summary-input">
-                        <q-input v-model.number="discountedRate" type="number" min="0" max="100" dense outlined
-                          class="discount-input" />
+                      <div class="summary-value">
+                        <div class="discount-input-wrapper">
+                          <q-input
+                            v-model.number="discountedRate"
+                            type="number"
+                            min="0"
+                            max="100"
+                            dense
+                            outlined
+                            class="discount-input cute-discount-input"
+                            :placeholder="t('transactionAlpha.enterDiscount')"
+                            :rules="[
+                              val => val >= 0 || t('transactionAlpha.discountMustBePositive'),
+                              val => val <= 100 || t('transactionAlpha.discountMaximum100')
+                            ]"
+                            bg-color="grey-4"
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="percent" color="primary" size="16px" />
+                            </template>
+                          </q-input>
+                        </div>
                       </div>
                     </div>
                     <div class="summary-row">
@@ -221,8 +261,10 @@
                         <q-icon name="attach_money" color="primary" size="16px" />
                         {{ t('transactionAlpha.totalPriceAfterDiscount') }}
                       </div>
-                      <div class="summary-value total">
-                        {{ formatCurrency(totalAfterDiscount) }}
+                      <div class="summary-value">
+                        <div class="price-badge total-after-discount-badge">
+                          🎯 {{ formatCurrency(totalAfterDiscount) }}
+                        </div>
                       </div>
                     </div>
                     <div v-if="selectedPaymentType === 'borrow'" class="summary-row highlight">
@@ -230,8 +272,21 @@
                         <q-icon name="trending_up" color="warning" size="16px" />
                         {{ t('transactionAlpha.newTotalOwed') }}
                       </div>
-                      <div class="summary-value warning">
-                        {{ formatCurrency(newCustomerTotalOwed) }}
+                      <div class="summary-value">
+                        <div class="price-badge warning-badge">
+                          ⚠️ {{ formatCurrency(newCustomerTotalOwed) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="summary-row">
+                      <div class="summary-label">
+                        <q-icon name="shopping_cart" color="primary" size="16px" />
+                        {{ t('transactionAlpha.totalPriceOfSelectedItems') }}
+                      </div>
+                      <div class="summary-value">
+                        <div class="price-badge iqd-badge">
+                          🪙 {{ formatCurrency(totalAfterDiscount * usdIqdRate, ' IQD') }}
+                        </div>
                       </div>
                     </div>
                   </template>
@@ -578,11 +633,11 @@ const totalAfterDiscount = computed(() => {
 
 const newCustomerTotalOwed = computed(() => {
   if (!selectedCustomer.value) return totalSelectedItemsPrice.value;
-  return customerDebt.value + totalSelectedItemsPrice.value;
+  return customerDebt.value + totalAfterDiscount.value;
 });
 const newTotalOwed = computed(() => {
   if (!selectedSupplier.value) return totalSelectedItemsPrice.value;
-  return supplierDebt.value + totalSelectedItemsPrice.value;
+  return supplierDebt.value + totalAfterDiscount.value;
 });
 
 async function handleSelectCustomer(customer) {
@@ -1598,5 +1653,81 @@ async function checkCashboxStatus() {
 
 .security-icon {
   color: #10b981;
+}
+
+/* Price Badge Styles */
+.price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.price-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.debt-badge {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.total-badge {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: totalPulse 3s ease-in-out infinite;
+}
+
+.iqd-badge {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.total-after-discount-badge {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: successPulse 2.5s ease-in-out infinite;
+}
+
+.warning-badge {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: warningPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes totalPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(59, 130, 246, 0.3);
+  }
+}
+
+@keyframes successPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(5, 150, 105, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(5, 150, 105, 0.3);
+  }
 }
 </style>
