@@ -234,21 +234,12 @@
                       </div>
                       <div class="summary-value">
                         <div class="discount-input-wrapper">
-                          <q-input
-                            v-model.number="discountedRate"
-                            type="number"
-                            min="0"
-                            max="100"
-                            dense
-                            outlined
+                          <q-input v-model.number="discountedRate" type="number" min="0" max="100" dense outlined
                             class="discount-input cute-discount-input"
-                            :placeholder="t('transactionAlpha.enterDiscount')"
-                            :rules="[
+                            :placeholder="t('transactionAlpha.enterDiscount')" :rules="[
                               val => val >= 0 || t('transactionAlpha.discountMustBePositive'),
                               val => val <= 100 || t('transactionAlpha.discountMaximum100')
-                            ]"
-                            bg-color="grey-4"
-                          >
+                            ]" bg-color="grey-4">
                             <template v-slot:prepend>
                               <q-icon name="percent" color="primary" size="16px" />
                             </template>
@@ -389,10 +380,6 @@
     </div>
   </q-dialog>
 
-  <!-- Invoice Modal -->
-  <PrintableInvoice v-model="showInvoiceModal" :transaction="createdTransaction"
-    @transaction-updated="handleTransactionUpdated" @close="closeInvoiceModal" />
-
   <!-- Open Cashbox Password Confirmation Dialog -->
   <q-dialog v-model="showOpenDialog" persistent>
     <q-card class="password-dialog">
@@ -448,8 +435,8 @@ import type { Ref } from 'vue';
 import { formatCurrency } from 'src/composables/useFormat';
 import { useI18n } from 'vue-i18n';
 import type { Customer } from 'src/types/customer';
-import PrintableInvoice from 'src/components/invoice/PrintableInvoice.vue';
 import type { List } from 'src/types/item_transaction';
+import { useRouter } from 'vue-router';
 const { t } = useI18n();
 
 interface SelectedItem {
@@ -508,6 +495,7 @@ const customerDebt = ref(0);
 const exchangeRateStore = useExchangeRateStore();
 const authStore = useAuthStore();
 const cashboxStore = useCashboxStore();
+const router = useRouter();
 const isEmployee = computed(() => authStore.currentUser?.type === 'employee');
 
 onMounted(async () => {
@@ -598,8 +586,6 @@ const $q = useQuasar();
 const itemTransactionStore = useItemTransactionStore();
 const submitting = ref(false);
 
-// Invoice modal state
-const showInvoiceModal = ref(false);
 const createdTransaction = ref<List | null>(null);
 
 // Cashbox opening state
@@ -691,10 +677,6 @@ function clearModalData() {
   usdPrice.value = 0;
   iqdReturnAmount.value = 0;
   usdReturnAmount.value = 0;
-
-  // Don't reset invoice modal state here - let it be handled by closeInvoiceModal
-  // showInvoiceModal.value = false;
-  // createdTransaction.value = null;
 
   // Reset child selectors if possible
   void nextTick(() => {
@@ -834,7 +816,9 @@ async function handleSubmit() {
       };
 
       createdTransaction.value = transformedTransaction;
-      showInvoiceModal.value = true;
+
+      // Navigate to the invoice page instead of opening modal
+      await router.push(`/invoice/${transformedTransaction.id}`);
 
       // Emit success event to notify parent component for list refresh
       emit('success', transformedTransaction);
@@ -884,19 +868,6 @@ async function handleSubmit() {
 function close() {
   void clearModalData();
   show.value = false;
-}
-
-function handleTransactionUpdated(transaction: List) {
-  // Handle any updates to the transaction if needed
-  console.log('Transaction updated:', transaction);
-}
-
-function closeInvoiceModal() {
-  showInvoiceModal.value = false;
-  createdTransaction.value = null;
-
-  // Clear the main modal data after invoice is closed
-  void clearModalData();
 }
 
 // Cashbox opening functions

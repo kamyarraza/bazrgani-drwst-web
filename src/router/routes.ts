@@ -70,6 +70,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import("src/pages/transaction/index.vue"),
       },
       {
+        path: "invoice/:id",
+        component: () => import("src/pages/invoice/PrintableInvoice.vue"),
+        name: "printable-invoice",
+      },
+      {
         path: "reports/branches",
         component: () => import("src/pages/report/Branches.vue"),
       },

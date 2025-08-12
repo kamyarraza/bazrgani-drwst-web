@@ -150,8 +150,7 @@
       @success="handlePaymentSuccess" />
 
     <!-- Transaction Invoice Modal -->
-    <PrintableInvoice v-model="showInvoiceModal" :transaction="selectedTransaction"
-      @transaction-updated="handleTransactionUpdated" />
+    <!-- Removed PrintableInvoice modal component as it's now a separate page -->
 
     <!-- Refund Transaction Modal -->
     <RefundTransaction v-model="showRefundModal" :transaction-data="selectedRefundTransaction"
@@ -174,7 +173,6 @@ import type { List } from 'src/types/item_transaction'
 import { useRouter } from 'vue-router'
 import PaySupplier from 'src/components/transaction/PaySupplier.vue'
 import ReceiveFromCustomer from 'src/components/transaction/ReceiveFromCustomer.vue'
-import PrintableInvoice from 'src/components/invoice/PrintableInvoice.vue'
 import RefundTransaction from 'src/components/transaction/RefundTransaction.vue'
 import RefundDetailsModal from 'src/components/transaction/RefundDetailsModal.vue'
 import TransactionModal from 'src/components/transaction_alpha/TransactionModal.vue'
@@ -199,7 +197,6 @@ const transactionType = ref<'purchase' | 'sell'>('purchase')
 const showAddModal = ref(false)
 const showPaySupplierModal = ref(false)
 const showReceiveCustomerModal = ref(false)
-const showInvoiceModal = ref(false)
 const showRefundModal = ref(false)
 const showRefundDetailsModal = ref(false)
 
@@ -212,9 +209,6 @@ const selectedTransactionData = ref<{
   paid_price?: number;
   unpaid_price?: number;
 } | null>(null)
-
-// Selected transaction for invoice
-const selectedTransaction = ref<List | null>(null)
 
 // Selected transaction for refund
 const selectedRefundTransaction = ref<List | null>(null)
@@ -414,16 +408,8 @@ const columns = computed(() => {
 // methods
 const handleAction = async (payload: { item: MenuItem; rowId: string | number }) => {
   if (payload.item.value === 'view_invoice') {
-    // Fetch single transaction and show invoice modal
-    try {
-      const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
-      if (transactionData) {
-        selectedTransaction.value = transactionData
-        showInvoiceModal.value = true
-      }
-    } catch {
-      // Failed to fetch transaction
-    }
+    // Navigate to the invoice page
+    await router.push(`/invoice/${payload.rowId}`)
   } else if (payload.item.value === 'buy_sell') {
     // Navigate to item_transaction/index
     await router.push('/item-transaction-section')
@@ -592,12 +578,6 @@ watch(showReceiveCustomerModal, (isOpen) => {
   }
 });
 
-watch(showInvoiceModal, (isOpen) => {
-  if (!isOpen) {
-    selectedTransaction.value = null;
-  }
-});
-
 watch(showRefundModal, (isOpen) => {
   if (!isOpen) {
     selectedRefundTransaction.value = null;
@@ -639,12 +619,6 @@ const handleTypeChange = async (newType: 'purchase' | 'sell') => {
 const handleTransactionAdded = async () => {
   await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
 };
-
-// Handle transaction update from currency change
-const handleTransactionUpdated = (updatedTransaction: List) => {
-  // Update the selected transaction with the new data from the API
-  selectedTransaction.value = updatedTransaction;
-}
 
 // Print prevention function
 const handlePrintShortcut = (event: KeyboardEvent) => {

@@ -152,19 +152,18 @@ export const useAuthStore = defineStore('auth', () => {
       // setupSessionManagement();
 
       // Show success notification
-      showNotify({
-        type: 'positive',
-        message: data?.message || 'Login successful',
-        position: 'top',
-        duration: 3000,
-      })
+      // showNotify({
+      //   type: 'positive',
+      //   message: data?.message || 'Login successful',
+      //   position: 'top',
+      //   duration: 3000,
+      // })
        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
 
-
       showNotify({
         type: 'negative',
-        message: err || 'Login failed',
+        message: 'Login failed',
         position: 'top',
         duration: 3000,
 

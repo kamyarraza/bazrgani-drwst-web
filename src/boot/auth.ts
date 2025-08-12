@@ -94,6 +94,12 @@ export default boot(async ({ router, store }) => {
           routePath.includes("/expense-category-section")
         );
       }
+      if (permission === "transaction-section") {
+        return (
+          routePath.includes("transaction-section") ||
+          routePath.includes("/invoice/") // Allow access to invoice pages for transaction users
+        );
+      }
       return routePath.includes(permission);
     });
   }
