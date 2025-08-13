@@ -73,9 +73,9 @@ export const endPoints = {
     freeding: (transactionId: string) =>
       `/transactions/freeding/${transactionId}`,
     paySupplier: (transactionId: string) =>
-      `/transactions/${transactionId}/payment/pay/supplier`,
+      `/transactions/${transactionId}/payment/pay/supplier/normal`,
     receiveCustomer: (transactionId: string) =>
-      `/transactions/${transactionId}/payment/receive/customer`,
+      `/transactions/${transactionId}/payment/receive/customer/normal`,
     refund: "/transactions/refund/items",
   },
 
