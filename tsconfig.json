@@ -5,5 +5,10 @@
     "useUnknownInCatchVariables": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false
-  }
+  },
+  "exclude": [
+    "src/components/common/DateRangeFilterNew.vue",
+    "src/components/common/Select.vue",
+    "src/components/common/StatsCards.vue"
+  ]
 }

@@ -14,7 +14,7 @@ declare module "vue" {
 
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
-  // baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
+  //  baseURL: 'https://dev-warehouse-api.bazrganidrwst.com/api',
   //  baseURL: 'https://warehouse-api.bazrganidrwst.com/api',
    baseURL: 'http://localhost:4000/api',
 
@@ -147,7 +147,7 @@ api.interceptors.response.use(
           );
         }
         // If already refreshing, queue the request
-        return new Promise((resolve, _reject) => {
+        return new Promise((resolve) => {
           refreshSubscribers.push(() => {
             // After refresh, retry original request
             resolve(api(error.config));
@@ -175,8 +175,7 @@ api.interceptors.response.use(
           // Method 1: Try window.location.replace first
           try {
             window.location.replace('/maintenance');
-          } catch (e) {
-            console.log('window.location.replace failed, trying href');
+          } catch {
             // Method 2: Fallback to href
             window.location.href = '/maintenance';
           }
