@@ -194,10 +194,11 @@ export default {
     rememberMe: "Remember Me",
     noAccount: "Don't have an account?",
     contactAdmin: "Contact Admin",
+    loginFailed: "Login failed",
     passwordResetTitle: "Password Reset Request",
     passwordResetSubtitle: "Need help with your password?",
     passwordResetMessage:
-      "For security reasons, only administrators can reset user passwords. Please contact your system administrator using the information below to request a password reset.",
+      "For security reasonser passwords. Please contact your system administrator using the information below to request a password reset.",
     contactAdminTitle: "Contact Administrator",
     contactAdminSubtitle: "Need an account or assistance?",
     contactAdminMessage:
@@ -2336,6 +2337,7 @@ export default {
       generatedOn: "Generated on",
       exchangeRateInfo: "Exchange Rate: 1 USD = {rate} IQD",
       copyright: "Bazrgani Drwst Company. All rights reserved 2025 ©",
+      phone: "phone"
     },
     actions: {
       loading: "Loading transaction data...",

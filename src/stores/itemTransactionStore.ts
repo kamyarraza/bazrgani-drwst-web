@@ -109,7 +109,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     try {
       loading.value = true;
       const response = await api.get<ApiResponse<List>>(
-        `${endPoints.transaction.one(transactionId.toString())}?relations=customer,warehouse,items&currency=${currency}`
+        `${endPoints.transaction.one(transactionId.toString())}?relations=customer,warehouse,payment,items&currency=${currency}`
       );
 
       if (response.data.status === 'success') {

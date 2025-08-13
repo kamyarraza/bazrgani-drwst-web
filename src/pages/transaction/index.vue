@@ -191,7 +191,7 @@ const router = useRouter()
 const data = computed<List[]>(() => transactionStore.list)
 const pagination = computed(() => transactionStore.pagination)
 const currentPage = ref(1)
-const transactionType = ref<'purchase' | 'sell'>('purchase')
+const transactionType = ref<'purchase' | 'sell'>('sell')
 
 // Modal states
 const showAddModal = ref(false)
