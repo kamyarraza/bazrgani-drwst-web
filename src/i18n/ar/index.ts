@@ -398,13 +398,13 @@ export default {
     logout: "تسجيل الخروج",
     logoutDescription: "تسجيل الخروج من حسابك",
     noAccount: "ليس لديك حساب؟",
+    loginFailed: "تسجيل الدخول فشل",
     contactAdmin: "اتصل بالمدير",
     passwordResetTitle: "طلب إعادة تعيين كلمة المرور",
     passwordResetSubtitle: "تحتاج مساعدة مع كلمة المرور؟",
     passwordResetMessage:
       "لأسباب أمنية، يمكن للمديرين فقط إعادة تعيين كلمات مرور المستخدمين. يرجى الاتصال بمدير النظام باستخدام المعلومات أدناه لطلب إعادة تعيين كلمة المرور.",
-    contactAdminTitle: "اتصل بالمدير",
-    contactAdminSubtitle: "تحتاج حساب أو مساعدة؟",
+    contactAdminTitle: "اتصل بالج حساب أو مساعدة؟",
     contactAdminMessage:
       "لإنشاء حساب جديد أو الحصول على مساعدة مع حسابك الحالي، يرجى الاتصال بمديري النظام باستخدام معلومات الاتصال أدناه.",
     adminContactInfo: "معلومات الاتصال بالمدير",
@@ -1456,6 +1456,7 @@ export default {
       generatedOn: "تم إنشاؤها في",
       exchangeRateInfo: "سعر الصرف: 1 دولار = {rate} دينار",
       copyright: "شركة بازرگانی درووست. جميع الحقوق محفوظة 2025 ©",
+      phone: ""
     },
     actions: {
       loading: "جاري تحميل بيانات المعاملة...",

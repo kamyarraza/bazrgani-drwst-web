@@ -124,9 +124,9 @@ export default {
     forgotPassword: "وشەی نهێنیت لەبیر چووە؟",
     rememberMe: "منت لەبیربێت",
     logout: "دەرچوون",
+    loginFailed: "چوونەژوورەوە سەرکەوتوو نەبوو",
     logoutDescription: "دەرچوون لە هەژمارەکەت",
-    passwordResetTitle: "داواکردنی گۆڕینی وشەی نهێنی",
-    passwordResetSubtitle: "یارمەتیت پێویستە بۆ وشەی نهێنیەکەت؟",
+    passwordResetTitle: "داواe: \"یارمەتیت پێویستە بۆ وشەی نهێنیەکەت؟\"",
     passwordResetMessage:
       "بۆ هۆکارەکانی ئاسایش، تەنها بەڕێوەبەران دەتوانن وشەی نهێنی بەکارهێنەران بگۆڕن. تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکە بە بەکارهێنانی زانیاریەکانی خوارەوە بۆ داواکردنی گۆڕینی وشەی نهێنی.",
     contactAdminTitle: "پەیوەندیکردن بە بەڕێوەبەر",
@@ -1772,6 +1772,15 @@ export default {
       cashPayment: "پارەدانی نەقدی",
       creditBorrow: "قەرز/خەرجی",
       notSpecified: "دیاری نەکراوە",
+
+      totalPrice: "کۆی نرخ",
+      discountRate: "ڕێژەی داشکاندن",
+      discountedPrice: "نرخی داشکێندراو",
+      newBorrowedPrice: "نرخی قەرزی نوێ",
+      usdIn: "دۆلاری وەرگیراو",
+      iqdIn: "دیناری وەرگیراو",
+      usdOut: "باقی دۆلار",
+      iqdOut: "باقی دینار"
     },
     items: {
       title: "کاڵاکان",
@@ -1808,6 +1817,7 @@ export default {
       generatedOn: "دروستکراوە لە",
       exchangeRateInfo: "نرخی ئاڵووگۆڕ: ١ دۆلار = {rate} دینار",
       copyright: "کۆمپانیای بازرگانی درووست. هەموو مافەکان پارێزراون ٢٠٢٥ ©",
+      phone: "موبایل"
     },
     actions: {
       loading: "بارکردنی داتای مامەڵە...",
