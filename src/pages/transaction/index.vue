@@ -150,7 +150,7 @@
       @success="handlePaymentSuccess" />
 
     <!-- Transaction Invoice Modal -->
-    <!-- Removed PrintableInvoice modal component as it's now a separate page -->
+    <PrintableInvoice v-model="showInvoiceModal" :transaction="selectedInvoiceTransaction" />
 
     <!-- Refund Transaction Modal -->
     <RefundTransaction v-model="showRefundModal" :transaction-data="selectedRefundTransaction"
@@ -171,6 +171,7 @@ import { useI18n } from 'vue-i18n'
 import Note from 'src/components/common/Note.vue'
 import type { List } from 'src/types/item_transaction'
 import { useRouter } from 'vue-router'
+import PrintableInvoice from 'src/components/invoice/PrintableInvoice.vue'
 import PaySupplier from 'src/components/transaction/PaySupplier.vue'
 import ReceiveFromCustomer from 'src/components/transaction/ReceiveFromCustomer.vue'
 import RefundTransaction from 'src/components/transaction/RefundTransaction.vue'
@@ -199,6 +200,7 @@ const showPaySupplierModal = ref(false)
 const showReceiveCustomerModal = ref(false)
 const showRefundModal = ref(false)
 const showRefundDetailsModal = ref(false)
+const showInvoiceModal = ref(false)
 
 // Selected transaction data for modals
 const selectedTransactionData = ref<{
@@ -226,6 +228,9 @@ const selectedRefundDetails = ref<{
   usd_iqd_rate: number;
   created_at: string;
 } | null>(null)
+
+// Selected transaction for invoice modal
+const selectedInvoiceTransaction = ref<List | null>(null)
 
 // Filter states
 const filters = ref({
@@ -408,8 +413,15 @@ const columns = computed(() => {
 // methods
 const handleAction = async (payload: { item: MenuItem; rowId: string | number }) => {
   if (payload.item.value === 'view_invoice') {
-    // Navigate to the invoice page
-    await router.push(`/invoice/${payload.rowId}`)
+    try {
+      const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
+      if (transactionData) {
+        selectedInvoiceTransaction.value = transactionData
+        showInvoiceModal.value = true
+      }
+    } catch {
+      // ignore
+    }
   } else if (payload.item.value === 'buy_sell') {
     // Navigate to item_transaction/index
     await router.push('/item-transaction-section')
@@ -593,6 +605,12 @@ watch(showRefundDetailsModal, (isOpen) => {
 watch(showRefundModal, (isOpen) => {
   if (!isOpen) {
     selectedTransactionData.value = null;
+  }
+});
+
+watch(showInvoiceModal, (isOpen) => {
+  if (!isOpen) {
+    selectedInvoiceTransaction.value = null
   }
 });
 

@@ -817,8 +817,8 @@ async function handleSubmit() {
 
       createdTransaction.value = transformedTransaction;
 
-      // Navigate to the invoice page instead of opening modal
-      await router.push(`/invoice/${transformedTransaction.id}`);
+      // Open invoice inside parent via emitted event
+      emit('success');
 
       // Emit success event to notify parent component for list refresh
       emit('success', transformedTransaction);
