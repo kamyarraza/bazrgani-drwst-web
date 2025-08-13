@@ -12,6 +12,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const error = ref<string | null>(null);
   const lastUpdated = ref<Date | null>(null);
 
+  // Prevent overlapping fetches
+  const isFetching = ref(false);
+
   // Computed getters for easy access to specific dashboard sections
   const counters = computed(() => dashboardData.value?.counters || null);
   const branches = computed(() => dashboardData.value?.branches || {});
@@ -21,38 +24,37 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   // Computed for formatted exchange rates (for charts)
   const exchangeRatesArray = computed(() => {
-    if (!exchangeRates.value) return [];
+    if (!exchangeRates.value) return [] as Array<{ date: string; rate: number; label: string; value: number }>;
 
     return Object.entries(exchangeRates.value)
       .map(([date, rate]) => ({
         date,
-        rate,
+        rate: Number(rate as unknown as number),
         label: formatDateForChart(date),
-        value: rate
+        value: Number(rate as unknown as number)
       }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort by date ascending (oldest first)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   });
 
   // Computed for branches array (for top performers)
   const branchesArray = computed(() => {
-    if (!branches.value) return [];
+    if (!branches.value) return [] as Array<any>;
 
-    return Object.entries(branches.value).map(([name, branchData]) => ({
+    return Object.entries(branches.value).map(([name, branchData]: [string, any]) => ({
       id: branchData.id,
       name,
       capacity: branchData.capacity,
       warehouses: branchData.warehouses,
       users: branchData.users,
-      // Calculate a performance score based on available data
       performance: (branchData.capacity * 0.4) + (branchData.warehouses * 0.3) + (branchData.users * 0.3)
     })).sort((a, b) => b.performance - a.performance);
   });
 
   // Computed for activity logs array (for recent activities)
   const activityLogsArray = computed(() => {
-    if (!activityLogs.value) return [];
+    if (!activityLogs.value) return [] as Array<any>;
 
-    return Object.entries(activityLogs.value).map(([id, log]) => ({
+    return Object.entries(activityLogs.value).map(([id, log]: [string, any]) => ({
       id,
       title: log.title,
       user: log.user,
@@ -64,40 +66,22 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   // Computed for users breakdown
   const usersBreakdown = computed(() => {
-    if (!counters.value) return [];
+    if (!counters.value) return [] as Array<any>;
 
     const userCounts = counters.value.users;
 
     return [
-      {
-        type: 'accountants',
-        count: userCounts.accountants,
-        icon: 'account_balance',
-        color: 'primary'
-      },
-      {
-        type: 'admins',
-        count: userCounts.admins,
-        icon: 'admin_panel_settings',
-        color: 'secondary'
-      },
-      {
-        type: 'customers',
-        count: userCounts.customers,
-        icon: 'person',
-        color: 'accent'
-      },
-      {
-        type: 'employees',
-        count: userCounts.employees,
-        icon: 'work',
-        color: 'positive'
-      }
+      { type: 'accountants', count: userCounts.accountants, icon: 'account_balance', color: 'primary' },
+      { type: 'admins', count: userCounts.admins, icon: 'admin_panel_settings', color: 'secondary' },
+      { type: 'customers', count: userCounts.customers, icon: 'person', color: 'accent' },
+      { type: 'employees', count: userCounts.employees, icon: 'work', color: 'positive' }
     ];
   });
 
   // Actions
   async function fetchDashboard() {
+    if (isFetching.value) return true; // avoid parallel calls
+    isFetching.value = true;
     loading.value = true;
     error.value = null;
 
@@ -107,25 +91,20 @@ export const useDashboardStore = defineStore('dashboard', () => {
       if (data.status === 'success') {
         dashboardData.value = data.data;
         lastUpdated.value = new Date();
+        return true;
       } else {
         throw new Error(data.message || 'Failed to fetch dashboard data');
       }
-
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch dashboard data';
       error.value = errorMessage;
 
-      showNotify({
-        type: 'negative',
-        message: error.value,
-        position: 'top',
-        duration: 3000,
-      });
-
+      showNotify({ type: 'negative', message: error.value, position: 'top', duration: 3000 });
       console.error('Dashboard fetch error:', err);
       return false;
     } finally {
       loading.value = false;
+      isFetching.value = false;
     }
   }
 
@@ -154,13 +133,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   // Auto-refresh functionality
-  let refreshInterval: NodeJS.Timeout | null = null;
+  let refreshInterval: ReturnType<typeof setInterval> | null = null;
 
-  function startAutoRefresh(_intervalMinutes: number = 5) {
+  function startAutoRefresh(intervalMinutes: number = 1) {
     stopAutoRefresh();
-    // refreshInterval = setInterval(() => {
-    //   await   fetchDashboard();
-    // }, intervalMinutes * 60 * 1000);
+    const ms = Math.max(1, intervalMinutes) * 60 * 1000;
+    refreshInterval = setInterval(() => {
+      void fetchDashboard();
+    }, ms);
   }
 
   function stopAutoRefresh() {
@@ -194,9 +174,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     startAutoRefresh,
     stopAutoRefresh,
 
-    // Helpers
-    formatCurrency,
-    formatDateForChart,
-    calculateTrend
+    // Internal flags (optional for debugging)
+    isFetching
   };
 });
