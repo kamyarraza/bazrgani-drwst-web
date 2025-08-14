@@ -31,6 +31,9 @@
 
     <!-- New User Account Modal -->
     <NewUserComponent v-model="showNewUserModal" :userData="newUserData" />
+
+    <!-- Borrow Modal -->
+    <BorrowModal v-model="showBorrowModal" :customer="customerToBorrow" />
   </q-page>
 </template>
 
@@ -41,6 +44,7 @@ import Add from 'src/components/customer/Add.vue'
 import Update from 'src/components/customer/Update.vue'
 import CustomerDetails from 'src/components/customer/CustomerDetails.vue'
 import NewUserComponent from 'src/components/customer/NewUserComponent.vue'
+import BorrowModal from 'src/components/customer/BorrowModal.vue'
 import { useCustomerStore } from 'src/stores/customerStore'
 import { ref, computed, onMounted, reactive } from 'vue'
 import type { MenuItem } from 'src/types'
@@ -78,6 +82,10 @@ const newUserData = ref<{
   customer: Customer;
 } | null>(null)
 
+// Borrow modal state
+const showBorrowModal = ref(false)
+const customerToBorrow = ref<Customer | null>(null)
+
 // Filter states
 const filters = ref<FilterState>({
   search: '',
@@ -102,6 +110,7 @@ const menuItems = [
   { label: t('customer.update'), icon: 'edit', value: 'update' },
   { label: t('customer.viewDetails'), icon: 'visibility', value: 'view' },
   { label: t('customer.createAccount'), icon: 'person_add', value: 'createAccount' },
+  { label: t('customer.borrow.title'), icon: 'account_balance_wallet', value: 'borrow' },
 ]
 
 // Filtered data based on search and filters
@@ -205,6 +214,9 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
       showDetailsModal.value = true
     } else if (payload.item.value === 'createAccount') {
       await handleCreateAccount(payload.rowId.toString())
+    } else if (payload.item.value === 'borrow') {
+      customerToBorrow.value = customer
+      showBorrowModal.value = true
     }
   } catch (error) {
     console.error(t('customer.fetchError'), error)

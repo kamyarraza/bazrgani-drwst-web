@@ -240,6 +240,66 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   }
 
+  async function createBorrow(customerId: number, borrowData: { borrowed_usd: number }) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data } = await api.post<ApiResponse<any>>(
+        endPoints.customer.borrow(customerId.toString()),
+        borrowData
+      );
+
+      // Refresh customer data to update borrow amounts
+      await fetchCustomers();
+
+      showNotify({
+        type: 'positive',
+        message: data?.message || 'Borrow created successfully',
+        position: 'top',
+        duration: 3000,
+      });
+      return true;
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response) {
+        // Handle validation errors
+        const responseData = err.response.data as { message?: string, errors?: Record<string, string[]> };
+        let errorMessage = responseData.message || 'Failed to create borrow';
+
+        // Display specific validation errors if available
+        if (responseData.errors) {
+          const errorMessages = Object.values(responseData.errors)
+            .map(messages => messages[0])
+            .join(', ');
+
+          if (errorMessages) {
+            errorMessage = errorMessages;
+          }
+        }
+
+        error.value = errorMessage;
+        showNotify({
+          type: 'negative',
+          message: error.value,
+          position: 'top',
+          duration: 3000,
+        });
+      } else {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to create borrow';
+        error.value = errorMessage;
+        showNotify({
+          type: 'negative',
+          message: error.value,
+          position: 'top',
+          duration: 3000,
+        });
+      }
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     customers,
     currentCustomer,
@@ -251,6 +311,7 @@ export const useCustomerStore = defineStore('customer', () => {
     getCustomerDetails,
     updateCustomer,
     createCustomerAccount,
-    searchCustomers
+    searchCustomers,
+    createBorrow
   };
 });

@@ -747,6 +747,36 @@ export default {
     searchingCustomers: "گەڕان بەدوای کڕیاران...",
     searchResults: "ئەنجامەکانی گەڕان",
     tryDifferentSearch: "گەڕانێکی جیاواز تاقی بکەرەوە",
+
+    // Borrow Modal
+    borrow: {
+      title: "دروستکردنی قەرزی کڕیار",
+      subtitle: "زیادکردنی بڕێک قەرز بۆ ئەم کڕیارە",
+      amountLabel: "بڕی قەرز (دۆلاری ئەمریکی)",
+      amountPlaceholder: "بڕەکە بە دۆلاری ئەمریکی بنووسە",
+      amountRequired: "بڕی قەرز پێویستە",
+      amountMustBePositive: "بڕەکە دەبێت لە 0 زیاتر بێت",
+      noteLabel: "تێبینی (ئارەزوومەندانە)",
+      notePlaceholder: "تێبینییەک دەربارەی ئەم قەرزە زیاد بکە...",
+      summary: "پوختەی قەرز",
+      borrowAmount: "بڕی قەرز",
+      newBorrowAmount: "بڕی قەرزی نوێ",
+      previousBorrowAmount: "قەرزی پێشوو",
+      totalBorrowAmount: "کۆی گشتی قەرز",
+      customer: "کڕیار",
+      createBorrow: "دروستکردنی قەرز",
+      previousAmount: "بڕی قەرزی پێشوو",
+      hasDebt: "قەرزی پێشتری هەیە",
+      noDebt: "هیچ قەرزێکی نییە",
+      success: {
+        title: "قەرز بە سەرکەوتوویی دروست کرا!",
+        message: "قەرزێکی ${amount} بۆ کڕیاری {customer} زیاد کرا"
+      },
+      error: {
+        title: "شکستی دروستکردنی قەرز",
+        message: "تکایە دووبارە هەوڵ بدەرەوە یان پەیوەندی بە پشتگیری بکە"
+      }
+    }
   },
   common: {
     details: "وردەکاریەکان",

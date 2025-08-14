@@ -51,6 +51,7 @@ export const endPoints = {
     details: (id: string) => `/customers/${id}`,
     update: (id: string) => `/customers/${id}`,
     createAccount: (id: string) => `/customers/${id}/create-account`,
+    borrow: (id: string) => `/customers/${id}/borrowing`,
   },
   // Using locations instead of location for consistency
   // location endpoint removed as it's duplicated by the more complete locations endpoint
