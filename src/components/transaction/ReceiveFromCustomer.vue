@@ -202,7 +202,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits<{
   'update:modelValue': [value: boolean];
-  'success': [];
+  'success': [payload?: any];
 }>();
 
 // Store
@@ -387,7 +387,7 @@ const handleSubmit = async () => {
       note: form.value.note || ''
     };
 
-    await store.receiveFromCustomer(transactionId.toString(), paymentData);
+    const resp = await store.receiveFromCustomer(transactionId.toString(), paymentData);
 
     $q.notify({
       type: 'positive',
@@ -395,7 +395,7 @@ const handleSubmit = async () => {
       position: 'top'
     });
 
-    emit('success');
+    emit('success', resp?.data ?? null);
     close();
   } catch (error) {
     console.error('Payment receiving failed:', error);
