@@ -18,7 +18,7 @@
 
     <!-- Customer Table with Enhanced UI -->
     <QtableB show-bottom :hasExpandableRows="true" @menu-action="handleAction" :columns="columns" :rows="filteredData"
-      :loading="customerStore.loading" :menuItems="menuItems" @top-right-action="() => showModal = !showModal"
+      :loading="customerStore.loading" :menuItems="getMenuItems" @top-right-action="() => showModal = !showModal"
       :top-right-title="t('customer.addNew')" :pagination="pagination" @page-change="handlePageChange">
     </QtableB>
 
@@ -34,6 +34,9 @@
 
     <!-- Borrow Modal -->
     <BorrowModal v-model="showBorrowModal" :customer="customerToBorrow" />
+
+    <!-- Bulk Payment Modal -->
+    <BulkPaymentModal v-model="showBulkPaymentModal" :customer="customerForBulkPayment" />
   </q-page>
 </template>
 
@@ -45,6 +48,7 @@ import Update from 'src/components/customer/Update.vue'
 import CustomerDetails from 'src/components/customer/CustomerDetails.vue'
 import NewUserComponent from 'src/components/customer/NewUserComponent.vue'
 import BorrowModal from 'src/components/customer/BorrowModal.vue'
+import BulkPaymentModal from 'src/components/customer/BulkPaymentModal.vue'
 import { useCustomerStore } from 'src/stores/customerStore'
 import { ref, computed, onMounted, reactive } from 'vue'
 import type { MenuItem } from 'src/types'
@@ -52,7 +56,7 @@ import type { Customer } from 'src/types/customer'
 import { useI18n } from 'vue-i18n'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 import Note from 'src/components/common/Note.vue'
-import { date } from 'quasar'
+import { formatCurrency } from 'src/composables/useFormat'
 
 // declaration
 const customerStore = useCustomerStore()
@@ -86,6 +90,10 @@ const newUserData = ref<{
 const showBorrowModal = ref(false)
 const customerToBorrow = ref<Customer | null>(null)
 
+// Bulk payment modal state
+const showBulkPaymentModal = ref(false)
+const customerForBulkPayment = ref<Customer | null>(null)
+
 // Filter states
 const filters = ref<FilterState>({
   search: '',
@@ -105,13 +113,27 @@ const filterOptions = computed(() => [
   }
 ])
 
-// Menu items for row actions
-const menuItems = [
-  { label: t('customer.update'), icon: 'edit', value: 'update' },
-  { label: t('customer.viewDetails'), icon: 'visibility', value: 'view' },
-  { label: t('customer.createAccount'), icon: 'person_add', value: 'createAccount' },
-  { label: t('customer.borrow.title'), icon: 'account_balance_wallet', value: 'borrow' },
-]
+// Menu items for row actions - function to generate menu items based on customer
+const getMenuItems = (customer: Customer) => {
+  const baseItems = [
+    { label: t('customer.update'), icon: 'edit', value: 'update' },
+    { label: t('customer.viewDetails'), icon: 'visibility', value: 'view' },
+    { label: t('customer.createAccount'), icon: 'person_add', value: 'createAccount' },
+  ]
+
+  // Only show borrow option if customer hasn't borrowed before
+  // (borrow can only be created once per customer - checked via has_borrowed_price flag)
+  if (!customer.has_borrowed_price) {
+    baseItems.push({ label: t('customer.borrow.title'), icon: 'account_balance_wallet', value: 'borrow' })
+  }
+
+  // Only show bulk payment if customer has a borrow amount > 0
+  if (customer.purchase_borrow && customer.purchase_borrow > 0) {
+    baseItems.push({ label: t('payment.bulkPayment.title'), icon: 'payment', value: 'bulkPayment' })
+  }
+
+  return baseItems
+}
 
 // Filtered data based on search and filters
 const filteredData = computed(() => {
@@ -145,7 +167,7 @@ const columns = [{
   name: 'fname',
   label: t('customer.columns.name'),
   align: "left" as const,
-  field: 'fname',
+  field: 'name',
   sortable: true
 },
 {
@@ -154,6 +176,22 @@ const columns = [{
   align: "center" as const,
   field: 'type',
   sortable: true
+},
+{
+  name: 'purchase_borrow',
+  label: t('customer.columns.purchaseBorrow'),
+  align: "center" as const,
+  field: 'purchase_borrow',
+  sortable: true,
+  format: (val: any) => formatCurrency(val)
+},
+{
+  name: 'sell_borrow',
+  label: t('customer.columns.sellBorrow'),
+  align: "center" as const,
+  field: 'sell_borrow',
+  sortable: true,
+  format: (val: any) => formatCurrency(val)
 },
 {
   name: 'phone',
@@ -170,19 +208,10 @@ const columns = [{
   sortable: false
 },
 {
-  name: 'location',
-  label: t('customer.columns.location'),
-  align: "left" as const,
-  field: (row: Record<string, unknown>) => (row.location as { name?: string })?.name || 'N/A',
-  sortable: false
-},
-{
   name: 'created_at',
   label: t('customer.columns.createdAt'),
   align: "center" as const,
   field: 'created_at',
-  format: (val: unknown, _row: Record<string, unknown>) =>
-    date.formatDate(val as string, 'dddd, MMMM D, YYYY • h:mm A'),
 
   sortable: true
 },
@@ -217,6 +246,9 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
     } else if (payload.item.value === 'borrow') {
       customerToBorrow.value = customer
       showBorrowModal.value = true
+    } else if (payload.item.value === 'bulkPayment') {
+      customerForBulkPayment.value = customer
+      showBulkPaymentModal.value = true
     }
   } catch (error) {
     console.error(t('customer.fetchError'), error)

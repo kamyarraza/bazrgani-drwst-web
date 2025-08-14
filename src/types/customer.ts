@@ -21,6 +21,7 @@ export interface Customer {
   created_at: string; // ISO date string
   sell_borrow?: number; // Amount owed to supplier
   purchase_borrow?: number; // Amount customer owes us
+  has_borrowed_price?: boolean; // Flag indicating if customer has ever borrowed
 }
 export interface CustomerPayload {
   fname: string;

@@ -300,6 +300,73 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   }
 
+  async function bulkPaymentReceive(customerId: number, paymentData: { 
+    customer_id: number; 
+    iqd_price: number; 
+    usd_price: number; 
+    iqd_return_amount: number; 
+    usd_return_amount: number; 
+    note: string 
+  }) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data } = await api.post<ApiResponse<any>>(
+        endPoints.customer.bulkPaymentReceive(customerId.toString()),
+        paymentData
+      );
+
+      // Refresh customer data to update payment status
+      await fetchCustomers();
+
+      showNotify({
+        type: 'positive',
+        message: data?.message || 'Bulk payment processed successfully',
+        position: 'top',
+        duration: 3000,
+      });
+      return true;
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response) {
+        // Handle validation errors
+        const responseData = err.response.data as { message?: string, errors?: Record<string, string[]> };
+        let errorMessage = responseData.message || 'Failed to process bulk payment';
+
+        // Display specific validation errors if available
+        if (responseData.errors) {
+          const errorMessages = Object.values(responseData.errors)
+            .map(messages => messages[0])
+            .join(', ');
+
+          if (errorMessages) {
+            errorMessage = errorMessages;
+          }
+        }
+
+        error.value = errorMessage;
+        showNotify({
+          type: 'negative',
+          message: error.value,
+          position: 'top',
+          duration: 3000,
+        });
+      } else {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to process bulk payment';
+        error.value = errorMessage;
+        showNotify({
+          type: 'negative',
+          message: error.value,
+          position: 'top',
+          duration: 3000,
+        });
+      }
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     customers,
     currentCustomer,
@@ -312,6 +379,7 @@ export const useCustomerStore = defineStore('customer', () => {
     updateCustomer,
     createCustomerAccount,
     searchCustomers,
-    createBorrow
+    createBorrow,
+    bulkPaymentReceive
   };
 });
