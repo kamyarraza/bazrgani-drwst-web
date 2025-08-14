@@ -279,7 +279,7 @@ const menuItems = computed(() => {
 
     // Show context-specific payment actions only when payment_type is exactly 'Borrow' or Kurdish 'نەقد'
     const paymentTypeExact = (row as any).payment_type
-    if (paymentTypeExact === 'Borrow' || paymentTypeExact === 'نەقد') {
+    if (paymentTypeExact === 'Borrow' || paymentTypeExact === 'قەرز') {
       if (transactionType.value === 'purchase') {
         baseItems.push({
           label: 'Pay Supplier',
@@ -325,13 +325,13 @@ function handleSearchChange(_searchValue: string | number | null) {
 
 const columns = computed(() => {
   const baseColumns = [
-    {
-      name: 'warehouse',
-      label: t('transaction.columns.warehouse'),
-      align: "left" as const,
-      field: (row: any) => row.warehouse?.name || 'N/A',
-      sortable: true
-    },
+    // {
+    //   name: 'warehouse',
+    //   label: t('transaction.columns.warehouse'),
+    //   align: "left" as const,
+    //   field: (row: any) => row.warehouse?.name || 'N/A',
+    //   sortable: true
+    // },
     {
       name: 'customer',
       label: transactionType.value === 'purchase' ? t('customer.supplier') : t('transaction.columns.customer'),
@@ -360,13 +360,13 @@ const columns = computed(() => {
       field: (row: any) => formatCurrency(Number(row.total_price)),
       sortable: true
     },
-    {
-      name: 'paid_price',
-      label: t('transaction.columns.paidPrice'),
-      align: "center" as const,
-      field: (row: any) => formatCurrency(Number(row.paid_price)),
-      sortable: true
-    },
+    // {
+    //   name: 'paid_price',
+    //   label: t('transaction.columns.paidPrice'),
+    //   align: "center" as const,
+    //   field: (row: any) => formatCurrency(Number(row.paid_price)),
+    //   sortable: true
+    // },
     {
       name: 'remaining_price',
       label: t('transaction.columns.remainingPrice'),

@@ -2,7 +2,8 @@
   <q-dialog v-model="internalModel" @hide="close" maximized>
     <q-card>
       <q-card-actions class="no-print sticky-actions" align="center">
-        <q-btn @click="printInvoice" :label="t('invoice.actions.printInvoice')" icon="print" color="primary" unelevated no-caps />
+        <q-btn @click="printInvoice" :label="t('invoice.actions.printInvoice')" icon="print" color="primary" unelevated
+          no-caps />
         <q-btn @click="close" :label="t('invoice.actions.close')" color="grey-6" flat no-caps />
       </q-card-actions>
 
@@ -12,7 +13,8 @@
         </div>
 
         <q-card>
-          <q-card-section style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh;">
+          <q-card-section
+            style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh;">
             <div class="invoice-header">
               <div class="header-left">
                 <img :src="brandLogo" alt="Brand Logo" class="brand-logo" />
@@ -25,6 +27,10 @@
               <div class="header-right">
                 <div class="invoice-meta">
                   <div class="meta-item" dir="ltr">
+                    <span class="meta-label">💳</span>
+                    <span class="meta-value">{{ (transaction as any)?.payment_id }}</span>
+                  </div>
+                  <div class="meta-item" dir="ltr">
                     <span class="meta-label">🧾</span>
                     <span class="meta-value">{{ transaction?.transaction_id }}</span>
                   </div>
@@ -36,64 +42,124 @@
               </div>
             </div>
 
-            <div class="transaction-info">
-              <div class="info-item">
-                <small class="label">{{ t('itemTransaction.transactionType') }}</small>
-                <span class="value">{{ (transaction?.payment_type === 'borrow') ? t('transaction.types.borrow') : (transaction?.payment_type || '—') }}</span>
+            <h5 style="text-align: center;">{{ t('report.columns.payment') }}</h5>
+
+            <div class="info-cards-container">
+              <!-- Financial Information Card -->
+              <div class="info-card">
+                <div class="card-header">
+                  <h3 class="card-title">💰 {{ t('expense.paymentInformation') }}</h3>
+                </div>
+                <div class="card-content">
+                  <!-- Prices -->
+                  <div class="info-row">
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.totalPrice') }}</small>
+                      <span class="value text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0)
+                        }}</span>
+                    </div>
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.discountRate') }}</small>
+                      <span class="value">{{ (transaction as any)?.discounted_rate ? (transaction as
+                        any).discounted_rate + '%' : '—' }}</span>
+                    </div>
+                  </div>
+                  <div class="info-row">
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.discountedPrice') }}</small>
+                      <span class="value">{{ formatCurrency((transaction as any)?.discounted_price ?? 0) }}</span>
+                    </div>
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.paid') }}</small>
+                      <span class="value text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</span>
+                    </div>
+                  </div>
+                  <div class="info-row">
+                    <div class="info-item unpaid-highlight">
+                      <small class="label">{{ t('invoice.payment.unpaid') }}</small>
+                      <span class="value text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0)
+                      }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Fully Paid Badge -->
+                  <div class="info-row" v-if="(transaction as any)?.is_fully_paid !== undefined">
+                    <div class="info-item">
+                      <span class="badge px-3 py-1"
+                        :class="(transaction as any).is_fully_paid ? 'bg-success' : 'bg-warning'">
+                        {{ (transaction as any).is_fully_paid ? t('invoice.payment.fullyPaid') :
+                          t('invoice.payment.notFullyPaid') }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Payment Details Section -->
+                  <div class="payment-details">
+                    <h5 class="details-title">📊 {{ t('expense.paymentInformation') }}</h5>
+
+                    <div class="info-row" v-for="payment in ((transaction as any)?.payment || [])"
+                      :key="payment.currency + payment.direction">
+                      <div class="info-item">
+                        <small class="label">
+                          <!-- Dynamic Label -->
+                          <template v-if="payment.currency === 'usd' && payment.direction === 'in'">
+                            {{ t('invoice.payment.usdIn') }}
+                          </template>
+                          <template v-else-if="payment.currency === 'usd' && payment.direction === 'out'">
+                            {{ t('invoice.payment.usdOut') }}
+                          </template>
+                          <template v-else-if="payment.currency === 'iqd' && payment.direction === 'in'">
+                            {{ t('invoice.payment.iqdIn') }}
+                          </template>
+                          <template v-else-if="payment.currency === 'iqd' && payment.direction === 'out'">
+                            {{ t('invoice.payment.iqdOut') }}
+                          </template>
+                        </small>
+
+                        <!-- Payment Value -->
+                        <span class="value fw-bold"
+                          :class="payment.direction === 'out' ? 'text-danger' : 'text-success'">
+                          {{ formatCurrency(payment.amount, ' ' + payment.currency.toUpperCase()) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Exchange Rate -->
+                    <div class="info-row mt-2">
+                      <div class="info-item">
+                        <small class="label">{{ t('exchange.rate') }}</small>
+                        <span class="value">
+                          {{ formatCurrency((transaction as any)?.exchange_rate?.usd_iqd_rate ?? 0, ' IQD') }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </div>
-              <div class="info-item">
-                <small class="label">{{ t('transaction.paymentType') }}</small>
-                <span class="value">{{ transaction?.payment_type || '—' }}</span>
-              </div>
-              <div class="info-item">
-                <small class="label">{{ t('invoice.payment.totalPrice') }}</small>
-                <span class="value">{{ formatCurrency(transaction?.total_price ?? 0) }}</span>
-              </div>
-              <div class="info-item">
-                <small class="label">{{ t('invoice.payment.paid') }}</small>
-                <span class="value">{{ formatCurrency(transaction?.paid_price ?? 0) }}</span>
-              </div>
-              <div class="info-item">
-                <small class="label">{{ t('invoice.payment.remaining') }}</small>
-                <span class="value">{{ formatCurrency(transaction?.remaining ?? 0) }}</span>
-              </div>
-              <div class="info-item" v-if="exchangeRate">
-                <small class="label">{{ t('exchange.rate') }}</small>
-                <span class="value">{{ formatCurrency(exchangeRate?.usd_iqd_rate ?? 0, ' IQD') }} | EUR/USD: {{ exchangeRate?.eur_usd_rate ?? '' }}</span>
-              </div>
-              <div class="info-item">
-                <small class="label">{{ t('customer.customer') }}</small>
-                <span class="value">{{ customerName }}</span>
-              </div>
-              <div class="info-item">
-                <small class="label">{{ t('customer.columns.phone') }}</small>
-                <span class="value">{{ customerPhone }}</span>
+
+              <!-- Customer Information Card -->
+              <div class="info-card">
+                <div class="card-header">
+                  <h3 class="card-title">👤 {{ t('customer.customerInfo') }}</h3>
+                </div>
+                <div class="card-content">
+                  <div class="info-row">
+                    <div class="info-item">
+                      <small class="label">{{ t('customer.customer') }}</small>
+                      <span class="value">{{ customerName }}</span>
+                    </div>
+                    <div class="info-item">
+                      <small class="label">{{ t('customer.columns.phone') }}</small>
+                      <span class="value">{{ customerPhone }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="price-summary">
-              <template v-if="payment">
-                <div class="payment-title">{{ t('invoice.payment.title') }}</div>
-                <div class="payment-grid">
-                  <div class="payment-box success">
-                    <small>{{ t('invoice.payment.usdIn') }}</small>
-                    <b>{{ formatCurrency(payment?.total_usd_in ?? 0, ' USD') }}</b>
-                  </div>
-                  <div class="payment-box success">
-                    <small>{{ t('invoice.payment.iqdIn') }}</small>
-                    <b>{{ formatCurrency(payment?.total_iqd_in ?? 0, ' IQD') }}</b>
-                  </div>
-                  <div class="payment-box out">
-                    <small>{{ t('invoice.payment.usdOut') }}</small>
-                    <b>{{ formatCurrency(payment?.total_usd_out ?? 0, ' USD') }}</b>
-                  </div>
-                  <div class="payment-box out">
-                    <small>{{ t('invoice.payment.iqdOut') }}</small>
-                    <b>{{ formatCurrency(payment?.total_iqd_out ?? 0, ' IQD') }}</b>
-                  </div>
-                </div>
-              </template>
-            </div>
+
+
           </q-card-section>
         </q-card>
       </div>
@@ -162,8 +228,18 @@ const customerName = computed(() => {
 const customerPhone = computed(() => {
   const c = customer.value
   if (!c) return '—'
-  return c.phone || '—'
+  return c.fphone || '—'
 })
+
+const getPaymentValue = (payment, currency, direction) => {
+  let amount = 0;
+  payment.forEach(element => {
+    if (element.currency === currency && element.direction === direction) {
+      amount = element.value.amount
+    }
+  });
+  return amount
+}
 
 const printInvoice = () => {
   printJS({ printable: 'payment-invoice-container', type: 'html', targetStyles: ['*'] })
@@ -176,38 +252,308 @@ const close = () => {
 
 <style lang="scss" scoped>
 @media print {
-  @page { size: A4; margin: 0.5in 0.4in !important; }
-  .no-print { display: none !important; }
+  @page {
+    size: A4;
+    margin: 0.5in 0.4in !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }
 
-#payment-invoice-container { width: 100%; max-width: 800px; position: relative; }
-.q-card { box-shadow: none !important; }
-.invoice-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 3px solid #4CAF50; background-color: #f9fdf9; border-radius: 8px; }
-.header-left { display: flex; align-items: center; }
-.brand-logo { height: 60px; width: auto; margin-right: 15px; }
-.company-info { display: flex; flex-direction: column; }
-.company-name { font-size: 1.6rem; margin: 0; height: 70px; color: #333; font-weight: 700; }
-.company-tagline { font-size: 0.9rem; color: #777; margin-top: 2px; }
-.header-right { text-align: right; }
-.invoice-meta { font-size: 0.95rem; }
-.meta-item { width: 200px; margin-bottom: 4px; }
-.meta-label { font-weight: bold; color: #555; }
-.meta-value { margin-left: 5px; color: #333; font-weight: 700; }
-.transaction-info { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; margin-bottom: 12px; background: #e5e5e5; border-radius: 8px; border: 1px solid #e0e0e0; }
-.transaction-info .info-item { flex: 1 1 150px; background: white; border-radius: 6px; padding: 6px 10px; box-shadow: 3px 3px 2px rgba(25, 25, 25, 0.1); border: 1px solid #e0e0e0; }
-.transaction-info .label { display: block; font-size: 11px; color: #666; margin-bottom: 2px; text-transform: uppercase; }
-.transaction-info .value { font-weight: bold; font-size: 13px; color: #333; white-space: nowrap; }
-.price-summary { margin-top: 1.5rem; padding: 1rem; border-top: 2px dashed #ccc; font-size: 14px; page-break-inside: avoid; display: flex; flex-direction: column; gap: 6px; }
-.payment-title { margin-top: 1rem; font-weight: bold; text-decoration: underline; }
-.payment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 0.5rem; }
-.payment-box { padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; background-color: #fdfdfd; text-align: center; }
-.payment-box.success { background-color: #dff0d8; color: #28a745; }
-.payment-box.out { background-color: #f2dede; color: #c9302c; }
+#payment-invoice-container {
+  width: 100%;
+  max-width: 800px;
+  position: relative;
+}
 
-.watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999; opacity: 0.08; pointer-events: none; }
-.watermark img { width: 500px; height: 500px; object-fit: contain; }
+.q-card {
+  box-shadow: none !important;
+}
 
-.sticky-actions { position: sticky; top: 0; z-index: 1000; background: white; border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 3px solid #4CAF50;
+  background-color: #f9fdf9;
+  border-radius: 8px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 60px;
+  width: auto;
+  margin-right: 15px;
+}
+
+.company-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.company-name {
+  font-size: 1.6rem;
+  margin: 0;
+  height: 70px;
+  color: #333;
+  font-weight: 700;
+}
+
+.company-tagline {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 2px;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.invoice-meta {
+  font-size: 0.95rem;
+}
+
+.meta-item {
+  width: 200px;
+  margin-bottom: 4px;
+}
+
+.meta-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.meta-value {
+  margin-left: 5px;
+  color: #333;
+  font-weight: 700;
+}
+
+.transaction-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 12px;
+  background: #e5e5e5;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.transaction-info .info-item {
+  flex: 1 1 150px;
+  background: white;
+  border-radius: 6px;
+  padding: 6px 10px;
+  box-shadow: 3px 3px 2px rgba(25, 25, 25, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.transaction-info .label {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.transaction-info .value {
+  font-weight: bold;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.price-summary {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-top: 2px dashed #ccc;
+  font-size: 14px;
+  page-break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payment-title {
+  margin-top: 1rem;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-top: 0.5rem;
+}
+
+.payment-box {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fdfdfd;
+  text-align: center;
+}
+
+.payment-box.success {
+  background-color: #dff0d8;
+  color: #28a745;
+}
+
+.payment-box.out {
+  background-color: #f2dede;
+  color: #c9302c;
+}
+
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.watermark img {
+  width: 500px;
+  height: 500px;
+  object-fit: contain;
+}
+
+.sticky-actions {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  flex: 1;
+  min-width: 280px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  page-break-inside: avoid;
+  /* Prevent breaking in print */
+}
+
+.card-header {
+  background: #f9f9f9;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eee;
+  border-radius: 12px 12px 0 0;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.card-content {
+  padding: 1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.info-item {
+  flex: 1;
+}
+
+.label {
+  font-size: 0.78rem;
+  color: #6c757d;
+  display: block;
+}
+
+.value {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.text-primary {
+  color: #007bff !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.badge {
+  font-size: 0.8rem;
+  border-radius: 50px;
+}
+
+.payment-details {
+  margin-top: 1rem;
+  border-top: 1px dashed #ddd;
+  padding-top: 0.8rem;
+}
+
+.details-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: #495057;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+}
+
+.info-item {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: 0.78rem;
+  color: #6c757d;
+}
+
+.value {
+  font-size: 0.9rem;
+}
+
+.text-success { color: #28a745 !important; }
+.text-danger  { color: #dc3545 !important; }
+
+/* Print-friendly adjustments */
+@media print {
+  .text-success, .text-danger {
+    color: #000 !important;
+    font-weight: bold;
+  }
+}
+
 </style>
-
-
