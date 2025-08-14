@@ -816,6 +816,36 @@ export default {
     searchingCustomers: "Searching customers...",
     searchingSuppliers: "Searching suppliers...",
     tryDifferentSearch: "Try a different search term",
+
+    // Borrow Modal
+    borrow: {
+      title: "Create Customer Borrow",
+      subtitle: "Add a borrow amount for this customer",
+      amountLabel: "Borrow Amount (USD)",
+      amountPlaceholder: "Enter amount in USD",
+      amountRequired: "Borrow amount is required",
+      amountMustBePositive: "Amount must be greater than 0",
+      noteLabel: "Note (Optional)",
+      notePlaceholder: "Add a note about this borrow...",
+      summary: "Borrow Summary",
+      borrowAmount: "Borrow Amount",
+      newBorrowAmount: "New Borrow Amount",
+      previousBorrowAmount: "Previous Borrowed",
+      totalBorrowAmount: "Total Borrowed Amount",
+      customer: "Customer",
+      createBorrow: "Create Borrow",
+      previousAmount: "Previous Borrowed Amount",
+      hasDebt: "Has Outstanding Debt",
+      noDebt: "No Outstanding Debt",
+      success: {
+        title: "Borrow Created Successfully!",
+        message: "Added ${amount} borrow for {customer}"
+      },
+      error: {
+        title: "Failed to Create Borrow",
+        message: "Please try again or contact support"
+      }
+    }
   },
   common: {
     id: "Id",

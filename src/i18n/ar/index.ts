@@ -1210,6 +1210,36 @@ export default {
     searchingCustomers: "البحث عن العملاء...",
     searchResults: "نتائج البحث",
     tryDifferentSearch: "جرب بحثاً مختلفاً",
+
+    // Borrow Modal
+    borrow: {
+      title: "إنشاء دين للعميل",
+      subtitle: "إضافة مبلغ دين لهذا العميل",
+      amountLabel: "مبلغ الدين (دولار أمريكي)",
+      amountPlaceholder: "أدخل المبلغ بالدولار الأمريكي",
+      amountRequired: "مبلغ الدين مطلوب",
+      amountMustBePositive: "يجب أن يكون المبلغ أكبر من 0",
+      noteLabel: "ملاحظة (اختياري)",
+      notePlaceholder: "أضف ملاحظة حول هذا الدين...",
+      summary: "ملخص الدين",
+      borrowAmount: "مبلغ الدين",
+      newBorrowAmount: "مبلغ الدين الجديد",
+      previousBorrowAmount: "الدين السابق",
+      totalBorrowAmount: "إجمالي مبلغ الدين",
+      customer: "العميل",
+      createBorrow: "إنشاء دين",
+      previousAmount: "المبلغ المستدان سابقاً",
+      hasDebt: "لديه دين متبقي",
+      noDebt: "لا يوجد دين متبقي",
+      success: {
+        title: "تم إنشاء الدين بنجاح!",
+        message: "تم إضافة دين بقيمة ${amount} للعميل {customer}"
+      },
+      error: {
+        title: "فشل في إنشاء الدين",
+        message: "يرجى المحاولة مرة أخرى أو الاتصال بالدعم"
+      }
+    }
   },
   common: {
     edit: "تعديل",
