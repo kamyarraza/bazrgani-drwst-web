@@ -151,6 +151,7 @@
 
     <!-- Transaction Invoice Modal -->
     <PrintableInvoice v-model="showInvoiceModal" :transaction="selectedInvoiceTransaction" />
+    <PaymentInvoice v-model="showPaymentInvoiceModal" :payload="paymentInvoicePayload" />
 
     <!-- Refund Transaction Modal -->
     <RefundTransaction v-model="showRefundModal" :transaction-data="selectedRefundTransaction"
@@ -172,6 +173,7 @@ import Note from 'src/components/common/Note.vue'
 import type { List } from 'src/types/item_transaction'
 import { useRouter } from 'vue-router'
 import PrintableInvoice from 'src/components/invoice/PrintableInvoice.vue'
+import PaymentInvoice from 'src/components/invoice/PaymentInvoice.vue'
 import PaySupplier from 'src/components/transaction/PaySupplier.vue'
 import ReceiveFromCustomer from 'src/components/transaction/ReceiveFromCustomer.vue'
 import RefundTransaction from 'src/components/transaction/RefundTransaction.vue'
@@ -201,6 +203,7 @@ const showReceiveCustomerModal = ref(false)
 const showRefundModal = ref(false)
 const showRefundDetailsModal = ref(false)
 const showInvoiceModal = ref(false)
+const showPaymentInvoiceModal = ref(false)
 
 // Selected transaction data for modals
 const selectedTransactionData = ref<{
@@ -231,6 +234,8 @@ const selectedRefundDetails = ref<{
 
 // Selected transaction for invoice modal
 const selectedInvoiceTransaction = ref<List | null>(null)
+// Match PaymentInvoice expected type shape loosely
+const paymentInvoicePayload = ref<{ [key: string]: any } | null>(null)
 
 // Filter states
 const filters = ref({
@@ -272,23 +277,17 @@ const menuItems = computed(() => {
       }
     }
 
-    // Add payment options based on current transaction type and payment status
-    if (transactionType.value === 'purchase' && user?.type !== 'admin') {
-      // Only show "Pay Supplier" if there's an unpaid amount
-      const unpaidAmount = row.unpaid_price ?? (row.total_price - row.paid_price);
-      if (unpaidAmount > 0) {
+    // Show payment options only for Borrow transactions
+    if ((row as any).payment_type === 'Borrow') {
+      if (transactionType.value === 'purchase') {
         baseItems.push({
-          label: t('transaction.paySupplier'),
+          label: 'Pay Supplier',
           icon: 'payment',
           value: 'pay_supplier'
         });
-      }
-    } else if (transactionType.value === 'sell' && user?.type !== 'admin') {
-      // Only show "Receive from Customer" if there's an unpaid amount
-      const unpaidAmount = row.unpaid_price ?? (row.total_price - row.paid_price);
-      if (unpaidAmount > 0) {
+      } else if (transactionType.value === 'sell') {
         baseItems.push({
-          label: t('transaction.receiveFromCustomer'),
+          label: 'Receive from Customer',
           icon: 'account_balance_wallet',
           value: 'receive_customer'
         });
@@ -537,12 +536,18 @@ function removeNote(id: number) {
 }
 
 // Handle payment success - refresh data
-const handlePaymentSuccess = async () => {
+const handlePaymentSuccess = async (payload?: any) => {
   // Refresh transaction list after successful payment
   await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
 
   // Reset selected transaction data
   selectedTransactionData.value = null;
+
+  // If API returned payload, show payment invoice modal
+  if (payload) {
+    paymentInvoicePayload.value = payload;
+    showPaymentInvoiceModal.value = true;
+  }
 }
 
 // Handle refund success - refresh data
