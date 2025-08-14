@@ -1455,7 +1455,7 @@ export default {
       accountManager: "مدير الحساب",
       generatedOn: "تم إنشاؤها في",
       exchangeRateInfo: "سعر الصرف: 1 دولار = {rate} دينار",
-      copyright: "شركة بازرگانی درووست. جميع الحقوق محفوظة 2025 ©",
+      copyright: "جميع الحقوق محفوظة 2025 ©",
       phone: ""
     },
     actions: {

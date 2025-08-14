@@ -4,7 +4,8 @@
       <!-- Action Buttons (hidden in print) -->
       <q-card-actions class="no-print sticky-actions" align="center">
         <!-- currency switch removed for now -->
-        <q-btn @click="printInvoice" :label="t('invoice.actions.printInvoice')" icon="print" color="primary" unelevated no-caps />
+        <q-btn @click="printInvoice" :label="t('invoice.actions.printInvoice')" icon="print" color="primary" unelevated
+          no-caps />
         <q-btn @click="close" :label="t('invoice.actions.close')" color="grey-6" flat no-caps />
       </q-card-actions>
 
@@ -123,19 +124,15 @@
 
             <!-- Footer Section -->
             <div class="invoice-footer">
-              <div class="footer-container">
-                <div class="footer-left">
-                  <p class="thank-you">{{ t('invoice.footer.thankYou') }}</p>
-                </div>
-                <div class="footer-right">
-                  <p class="contact-info">
-                    <span class="phone">{{ t('invoice.footer.phone') }}: <span dir="ltr">{{ (me as any)?.phone }}</span></span>
-                  </p>
-                </div>
-              </div>
-              <div class="footer-bottom">
-                <p class="copyright">{{ t('invoice.footer.copyright') }}</p>
-              </div>
+              <table>
+                <tr>
+                  <td><b>{{ t('invoice.footer.thankYou') }}</b></td>
+                  <td><em>{{ t('invoice.footer.copyright') }}</em></td>
+                  <td style="text-align: left;">
+                      <span>{{ t('invoice.footer.phone') }}: <span dir="ltr">{{ (me as any)?.phone || '.........................................' }}</span></span>
+                  </td>
+                </tr>
+              </table>
             </div>
 
           </q-card-section>
@@ -289,7 +286,6 @@ const close = () => {
 #invoice-container {
   width: 100%;
   max-width: 800px;
-  margin: 0 auto;
   position: relative;
 }
 
@@ -492,88 +488,17 @@ const close = () => {
 
 .invoice-footer {
   margin-top: 30px;
-  padding: 15px 20px;
+  padding-top: 15px;
   border-top: 2px solid #4CAF50;
-  font-size: 0.85rem;
+  font-size: 0.65rem !important;
   color: #333;
   width: 100%;
   box-sizing: border-box;
+}
 
-  .footer-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
-
-  .footer-left,
-  .footer-right {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .footer-left .thank-you {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #222;
-  }
-
-  .footer-right .contact-info {
-    font-size: 0.85rem;
-    color: #444;
-
-    .phone {
-      font-weight: 500;
-    }
-  }
-
-  .footer-bottom {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #555;
-    margin-top: 5px;
-  }
-
-  /* Print Styles */
-  @media print {
-    border-top: 2px solid #000 !important;
-    color: #000 !important;
-
-    .footer-left .thank-you,
-    .footer-right .contact-info,
-    .footer-bottom p {
-      color: #000 !important;
-    }
-
-    .footer-container {
-      flex-wrap: nowrap !important;
-      /* keep left/right on same line */
-      justify-content: space-between !important;
-    }
-
-    .footer-left,
-    .footer-right {
-      flex: 0 0 auto !important;
-      /* prevent shrinking */
-      min-width: 40% !important;
-      /* ensure enough space */
-    }
-
-    .footer-left p,
-    .footer-right p {
-      white-space: nowrap !important;
-      /* prevent line break */
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    .footer-bottom p {
-      text-align: center !important;
-      white-space: normal !important;
-      /* allow wrap if really long */
-    }
-  }
+.invoice-footer table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .watermark {
@@ -602,8 +527,6 @@ const close = () => {
   top: 0;
   z-index: 1000;
   background: white;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 </style>
-
-

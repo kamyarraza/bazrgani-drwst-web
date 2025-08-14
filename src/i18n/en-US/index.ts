@@ -2336,7 +2336,7 @@ export default {
       accountManager: "Account Manager",
       generatedOn: "Generated on",
       exchangeRateInfo: "Exchange Rate: 1 USD = {rate} IQD",
-      copyright: "Bazrgani Drwst Company. All rights reserved 2025 ©",
+      copyright: "All rights reserved 2025 ©",
       phone: "phone"
     },
     actions: {

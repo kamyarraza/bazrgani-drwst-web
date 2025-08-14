@@ -1816,7 +1816,7 @@ export default {
       accountManager: "بەڕێوەبەری هەژمار",
       generatedOn: "دروستکراوە لە",
       exchangeRateInfo: "نرخی ئاڵووگۆڕ: ١ دۆلار = {rate} دینار",
-      copyright: "کۆمپانیای بازرگانی درووست. هەموو مافەکان پارێزراون ٢٠٢٥ ©",
+      copyright: "هەموو مافەکان پارێزراون ٢٠٢٥ ©",
       phone: "موبایل"
     },
     actions: {
