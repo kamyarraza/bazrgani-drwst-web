@@ -277,8 +277,9 @@ const menuItems = computed(() => {
       }
     }
 
-    // Show payment options only for Borrow transactions
-    if ((row as any).payment_type === 'Borrow') {
+    // Show context-specific payment actions only when payment_type is exactly 'Borrow' or Kurdish 'نەقد'
+    const paymentTypeExact = (row as any).payment_type
+    if (paymentTypeExact === 'Borrow' || paymentTypeExact === 'نەقد') {
       if (transactionType.value === 'purchase') {
         baseItems.push({
           label: 'Pay Supplier',

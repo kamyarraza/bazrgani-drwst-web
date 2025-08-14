@@ -143,10 +143,15 @@ const internalModel = computed({
   set: (val: boolean) => emit('update:modelValue', val)
 })
 
-const transaction = computed<PaymentPayloadTransaction | undefined>(() => props.payload?.data || props.payload?.transaction)
-const customer = computed(() => props.payload?.customer)
-const payment = computed(() => props.payload?.payment)
-const exchangeRate = computed(() => props.payload?.exchange_rate)
+// Normalize various payload shapes to support:
+// 1) ApiResponse { status, message, data: { transaction, customer, payment, exchange_rate } }
+// 2) Direct object     { transaction, customer, payment, exchange_rate }
+// 3) Fallbacks          { data: PaymentPayloadTransaction }
+const root = computed<any>(() => (props.payload as any)?.data ? (props.payload as any).data : props.payload)
+const transaction = computed<PaymentPayloadTransaction | undefined>(() => (root.value?.transaction) || (root.value?.data) || root.value)
+const customer = computed(() => root.value?.customer)
+const payment = computed(() => root.value?.payment)
+const exchangeRate = computed(() => root.value?.exchange_rate)
 
 const customerName = computed(() => {
   const c = customer.value
