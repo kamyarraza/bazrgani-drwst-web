@@ -36,7 +36,11 @@
     <BorrowModal v-model="showBorrowModal" :customer="customerToBorrow" />
 
     <!-- Bulk Payment Modal -->
-    <BulkPaymentModal v-model="showBulkPaymentModal" :customer="customerForBulkPayment" />
+    <BulkPaymentModal v-model="showBulkPaymentModal" :customer="customerForBulkPayment"
+      @success="handleBulkPaymentSuccess" />
+
+    <!-- Payment Invoice Modal -->
+    <PaymentInvoice v-model="showPaymentInvoiceModal" :payload="paymentInvoicePayload" />
   </q-page>
 </template>
 
@@ -49,6 +53,7 @@ import CustomerDetails from 'src/components/customer/CustomerDetails.vue'
 import NewUserComponent from 'src/components/customer/NewUserComponent.vue'
 import BorrowModal from 'src/components/customer/BorrowModal.vue'
 import BulkPaymentModal from 'src/components/customer/BulkPaymentModal.vue'
+import PaymentInvoice from 'src/components/customer/PaymentInvoice.vue'
 import { useCustomerStore } from 'src/stores/customerStore'
 import { ref, computed, onMounted, reactive } from 'vue'
 import type { MenuItem } from 'src/types'
@@ -85,6 +90,11 @@ const newUserData = ref<{
   };
   customer: Customer;
 } | null>(null)
+
+const showPaymentInvoiceModal = ref(false)
+
+// Match PaymentInvoice expected type shape loosely
+const paymentInvoicePayload = ref<{ [key: string]: any } | null>(null)
 
 // Borrow modal state
 const showBorrowModal = ref(false)
@@ -263,6 +273,63 @@ async function handleCreateAccount(customerId: string) {
     // Attach password to user for NewUserComponent
     newUserData.value = { user: { ...user, password }, customer }
     showNewUserModal.value = true
+  }
+}
+
+function handleBulkPaymentSuccess(payloadData: any) {
+  console.log('Bulk payment success handler called with:', payloadData)
+  if (payloadData && payloadData.data) {
+    // Extract payment amounts from the response
+    let total_usd_in = 0, total_iqd_in = 0, total_usd_out = 0, total_iqd_out = 0
+
+    // Handle payment array structure
+    if (Array.isArray(payloadData.data.payment)) {
+      payloadData.data.payment.forEach((p: any) => {
+        if (p.currency === 'usd' && p.direction === 'in') {
+          total_usd_in = p.value?.amount || p.amount || 0
+        } else if (p.currency === 'iqd' && p.direction === 'in') {
+          total_iqd_in = p.value?.amount || p.amount || 0
+        } else if (p.currency === 'usd' && p.direction === 'out') {
+          total_usd_out = p.value?.amount || p.amount || 0
+        } else if (p.currency === 'iqd' && p.direction === 'out') {
+          total_iqd_out = p.value?.amount || p.amount || 0
+        }
+      })
+    }
+
+    // Use the direct paid amounts from the API if available
+    const usdPaid = payloadData.data.paid_usd || total_usd_in
+    const remainingBorrowed = payloadData.data.remaining_borrowed_price || 0
+
+    // Restructure the response data to match PaymentInvoice expected format
+    const structuredPayload = {
+      transaction: {
+        payment_id: payloadData.data.payment_id,
+        created_at: payloadData.data.created_at,
+        paid_transactions: payloadData.data.paid_transactions,
+        transaction_date: payloadData.data.transaction_date,
+        paid_price: usdPaid,
+        remained_borrowed_price: payloadData.data.remained_borrowed_price,
+        total_price: usdPaid + remainingBorrowed,
+        payment: payloadData.data.payment, // Keep original payment array
+        exchange_rate: payloadData.data.exchange_rate
+      },
+      customer: payloadData.data.customer,
+      payment: {
+        total_usd_in: total_usd_in,
+        total_iqd_in: total_iqd_in,
+        total_usd_out: total_usd_out,
+        total_iqd_out: total_iqd_out,
+        created_at: payloadData.data.created_at
+      },
+      exchange_rate: payloadData.data.exchange_rate
+    }
+
+    paymentInvoicePayload.value = structuredPayload
+    showPaymentInvoiceModal.value = true
+    console.log('Structured payload:', structuredPayload)
+  } else {
+    console.log('No payload data received')
   }
 }
 

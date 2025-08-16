@@ -34,7 +34,7 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">{{ t('payment.bulkPayment.customerType') }}:</span>
-                            <span class="info-value">{{ t(`customer.${props.customer.type}`) }}</span>
+                            <span class="info-value">{{ t(`customer.customer`) }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">{{ t('payment.bulkPayment.outstandingDebt') }}:</span>
@@ -104,8 +104,8 @@
                                     <q-icon name="keyboard_return" color="warning" size="16px" />
                                     {{ t('payment.bulkPayment.iqdReturnLabel') }}
                                 </label>
-                                <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="250" outlined
-                                    dense suffix="IQD" :placeholder="t('payment.bulkPayment.enterIqdReturn')"
+                                <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="250"
+                                    outlined dense suffix="IQD" :placeholder="t('payment.bulkPayment.enterIqdReturn')"
                                     class="form-input return-input" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="keyboard_return" color="warning" />
@@ -120,7 +120,7 @@
                                 </label>
                                 <q-input v-model.number="form.usd_return_amount" type="number" min="0" step="0.01"
                                     outlined dense suffix="USD" :placeholder="t('payment.bulkPayment.enterUsdReturn')"
-                                    class="form-input return-input">
+                                    class="form-input return-input" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="keyboard_return" color="warning" />
                                     </template>
@@ -191,7 +191,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits<{
     'update:modelValue': [value: boolean];
-    'success': [];
+    'success': [payload?: any];
 }>();
 
 // Store
@@ -344,16 +344,28 @@ const handleSubmit = async () => {
             note: form.value.note || ''
         };
 
-        await customerStore.bulkPaymentReceive(props.customer.id, paymentData);
+        const response = await customerStore.bulkPaymentReceive(props.customer.id, paymentData);
+        console.log('BulkPaymentModal - API Response:', response);
 
-        $q.notify({
-            type: 'positive',
-            message: t('payment.bulkPayment.success.paymentSuccessful'),
-            position: 'top'
-        });
+        // Only emit success if we have a valid response (not false)
+        if (response && typeof response === 'object') {
+            $q.notify({
+                type: 'positive',
+                message: t('payment.bulkPayment.success.paymentSuccessful'),
+                position: 'top'
+            });
 
-        emit('success');
-        close();
+            console.log('BulkPaymentModal - Emitting success with:', response);
+            emit('success', response);
+            close();
+        } else {
+            // If response is false, it means there was an error
+            $q.notify({
+                type: 'negative',
+                message: t('payment.bulkPayment.errors.paymentFailed'),
+                position: 'top'
+            });
+        }
     } catch (error) {
         console.error('Error processing bulk payment:', error);
         $q.notify({

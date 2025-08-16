@@ -882,6 +882,7 @@ export default {
     typeFilter: "فلتەر بە جۆری مامەڵە",
     paymentType: "شێوازی پارەدان",
     paymentFilter: "فلتەر بە جۆری پارەدان",
+    count: "کۆی مامەڵەکان",
 
     columns: {
       id: "ژمارە",

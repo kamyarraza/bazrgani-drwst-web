@@ -8,12 +8,10 @@
       </q-card-actions>
 
       <div id="payment-invoice-container">
-        <!-- Watermark -->
         <div class="watermark">
           <img :src="brandLogo" alt="Brand Watermark" />
         </div>
 
-        <!-- Invoice Content -->
         <q-card>
           <q-card-section
             style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh;">
@@ -30,12 +28,8 @@
                 <div class="invoice-meta">
                   <div class="meta-item" dir="ltr">
                     <span class="meta-label">💳</span>
-                    <span class="meta-value">{{ (transaction as any)?.payment_id }}</span>
+                    <span class="meta-value">{{ transaction?.payment_id || (transaction as any)?.payment_id }}</span>
                   </div>
-                  <!-- <div class="meta-item" dir="ltr">
-                    <span class="meta-label">🧾</span>
-                    <span class="meta-value">{{ transaction?.transaction_id }}</span>
-                  </div> -->
                   <div class="meta-item" dir="ltr">
                     <span class="meta-label">🗓️</span>
                     <span class="meta-value">{{ transaction?.created_at || payment?.created_at }}</span>
@@ -51,41 +45,28 @@
               <!-- Financial Information Card -->
               <div class="info-card">
                 <div class="card-header">
-                  <!-- <h3 class="card-title">💰 {{ t('expense.paymentInformation') }}</h3> -->
                   <h3 class="card-title">🧾 {{ t('invoice.information') }}</h3>
                 </div>
                 <div class="card-content">
+
                   <!-- Invoice Information -->
                   <table>
                     <tbody>
                       <tr>
-                        <td colspan="2">{{ t('invoice.no') }}</td>
-                        <td class=" fw-bold">{{ transaction?.transaction_id }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.details.date') }}</td>
-                        <td class=" fw-bold">{{ (transaction as any)?.transaction_date || '-' }}</td>
-                      </tr>
-                      <tr>
                         <td colspan="2">{{ t('invoice.payment.totalPrice') }}</td>
-                        <td class=" text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0) }}</td>
+                        <td class="text-primary fw-bold">{{ formatCurrency((transaction as any)?.paid_price) }}</td>
                       </tr>
                       <tr>
-                        <td colspan="2">{{ t('invoice.payment.discountRate') }}</td>
-                        <td class="">{{ (transaction as any)?.discounted_rate ? (transaction as any).discounted_rate +
-                          '%' : '—' }}</td>
+                        <td colspan="2">{{ t('transaction.count') }}</td>
+                        <td class=" fw-bold">{{ (transaction as any)?.paid_transactions }}</td>
                       </tr>
                       <tr>
-                        <td colspan="2">{{ t('invoice.payment.discountedPrice') }}</td>
-                        <td class="">{{ formatCurrency((transaction as any)?.discounted_price ?? 0) }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.paidAmount') }}</td>
-                        <td class=" text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</td>
+                        <td colspan="2">{{ t('transaction.date') }}</td>
+                        <td class="fw-bold">{{ transaction?.created_at }}</td>
                       </tr>
                       <tr>
                         <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
-                        <td class=" text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0) }}
+                        <td class=" text-danger fw-bold">{{ formatCurrency(transaction?.remained_borrowed_price ?? 0) }}
                         </td>
                       </tr>
                       <tr>
@@ -214,9 +195,8 @@
                   </table>
                 </div>
               </div>
+
             </div>
-
-
 
           </q-card-section>
         </q-card>
@@ -238,12 +218,17 @@ const { t } = useI18n()
 
 interface PaymentPayloadTransaction {
   id?: number | string
-  transaction_id?: number | string
+  paid_transactions?: number | string
+  remained_borrowed_price?: number
+  payment_id?: number | string
   payment_type?: string
   total_price?: number
   paid_price?: number
+  unpaid_price?: number
   remaining?: number
   created_at?: string
+  payment?: any[] // Array of payment objects
+  exchange_rate?: { usd_iqd_rate?: number; eur_usd_rate?: number }
 }
 
 interface PaymentPayload {

@@ -126,6 +126,7 @@ export default {
     typeFilter: "تصفية حسب نوع المعاملة",
     paymentFilter: "تصفية حسب نوع الدفع",
     paymentType: "نوع الدفع",
+    count: "عدد المعاملات",
 
     columns: {
       id: "المعرف",

@@ -326,7 +326,13 @@ export const useCustomerStore = defineStore('customer', () => {
         position: 'top',
         duration: 3000,
       });
-      return true;
+
+      // Return the full response data for the payment invoice if successful
+      if (data.status === 'success') {
+        return data;
+      }
+      
+      return false;
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response) {
         // Handle validation errors

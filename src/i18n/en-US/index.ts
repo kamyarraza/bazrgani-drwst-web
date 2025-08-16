@@ -1151,6 +1151,7 @@ export default {
     customer: "Customer",
     totalPrice: "Total Price",
     type: "Type",
+    count: "Transactions Count",
     columns: {
       id: "ID",
       type: "Type",
