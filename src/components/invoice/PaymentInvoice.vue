@@ -8,12 +8,10 @@
       </q-card-actions>
 
       <div id="payment-invoice-container">
-        <!-- Watermark -->
         <div class="watermark">
           <img :src="brandLogo" alt="Brand Watermark" />
         </div>
 
-        <!-- Invoice Content -->
         <q-card>
           <q-card-section
             style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh;">
@@ -26,87 +24,107 @@
                 </div>
               </div>
 
-              <div class="header-right">
+                <div class="header-right">
                 <div class="invoice-meta">
                   <div class="meta-item" dir="ltr">
-                    <span class="meta-label">💳</span>
-                    <span class="meta-value">{{ (transaction as any)?.payment_id }}</span>
+                  <span class="meta-label">💳</span>
+                  <span class="meta-value">{{ (transaction as any)?.payment_id }}</span>
                   </div>
-                  <!-- <div class="meta-item" dir="ltr">
-                    <span class="meta-label">🧾</span>
-                    <span class="meta-value">{{ transaction?.transaction_id }}</span>
-                  </div> -->
                   <div class="meta-item" dir="ltr">
-                    <span class="meta-label">🗓️</span>
-                    <span class="meta-value">{{ transaction?.created_at || payment?.created_at }}</span>
+                  <span class="meta-label">🧾</span>
+                  <span class="meta-value">{{ transaction?.transaction_id }}</span>
+                  </div>
+                  <div class="meta-item" dir="ltr">
+                  <span class="meta-label">🗓️</span>
+                  <span class="meta-value">{{ transaction?.created_at || payment?.created_at }}</span>
                   </div>
                 </div>
-              </div>
+                </div>
             </div>
 
-            <!-- Title -->
-            <p class="payment-title-main" style="color: red; font-size: 22pt;">{{ t('report.columns.payment') }}</p>
+            <h5 style="text-align: center;">{{ t('report.columns.payment') }}</h5>
 
             <div class="info-cards-container">
               <!-- Financial Information Card -->
               <div class="info-card">
                 <div class="card-header">
-                  <!-- <h3 class="card-title">💰 {{ t('expense.paymentInformation') }}</h3> -->
-                  <h3 class="card-title">🧾 {{ t('invoice.information') }}</h3>
+                  <h3 class="card-title">💰 {{ t('expense.paymentInformation') }}</h3>
                 </div>
                 <div class="card-content">
-                  <!-- Invoice Information -->
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.no') }}</td>
-                        <td class=" fw-bold">{{ transaction?.transaction_id }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.details.date') }}</td>
-                        <td class=" fw-bold">{{ (transaction as any)?.transaction_date || '-' }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.payment.totalPrice') }}</td>
-                        <td class=" text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0) }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.payment.discountRate') }}</td>
-                        <td class="">{{ (transaction as any)?.discounted_rate ? (transaction as any).discounted_rate +
-                          '%' : '—' }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.payment.discountedPrice') }}</td>
-                        <td class="">{{ formatCurrency((transaction as any)?.discounted_price ?? 0) }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.paidAmount') }}</td>
-                        <td class=" text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
-                        <td class=" text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span style="padding: 0 2rem;"></span></td>
-                        <td><span style="padding: 0 2rem;"></span></td>
-                        <td><span style="padding: 0 2rem;"></span></td>
-                      </tr>
+                  <!-- Prices -->
+                  <div class="info-row">
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.totalPrice') }}</small>
+                      <span class="value text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0) }}</span>
+                    </div>
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.discountRate') }}</small>
+                      <span class="value">{{ (transaction as any)?.discounted_rate ? (transaction as any).discounted_rate + '%' : '—' }}</span>
+                    </div>
+                  </div>
+                  <div class="info-row">
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.discountedPrice') }}</small>
+                      <span class="value">{{ formatCurrency((transaction as any)?.discounted_price ?? 0) }}</span>
+                    </div>
+                    <div class="info-item">
+                      <small class="label">{{ t('invoice.payment.paid') }}</small>
+                      <span class="value text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</span>
+                    </div>
+                  </div>
+                  <div class="info-row">
+                    <div class="info-item unpaid-highlight">
+                      <small class="label">{{ t('invoice.payment.unpaid') }}</small>
+                      <span class="value text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0)
+                        }}</span>
+                    </div>
+                  </div>
 
-                      <!-- Fully Paid Badge -->
-                      <tr v-if="(transaction as any)?.is_fully_paid">
-                        <td colspan="3">
-                          <div class="text-center">
-                            <span class="cute-badge">
-                              ✅ fully paid
-                            </span>
-                          </div>
+                  <!-- Fully Paid Badge -->
+                  <div class="info-row" v-if="(transaction as any)?.is_fully_paid !== undefined">
+                    <div class="info-item">
+                      <span class="badge px-3 py-1" :class="(transaction as any).is_fully_paid ? 'bg-success' : 'bg-warning'">
+                        {{ (transaction as any).is_fully_paid ? t('invoice.payment.fullyPaid') :
+                          t('invoice.payment.notFullyPaid') }}
+                      </span>
+                    </div>
+                  </div>
 
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <!-- Payment Details Section -->
+                  <div class="payment-details">
+                    <h5 class="details-title">📊 {{ t('invoice.payment.details') }}</h5>
+                    <div class="info-row">
+                      <div class="info-item">
+                        <small class="label">{{ t('invoice.payment.usdPrice') }}</small>
+                        <span class="value">{{ formatCurrency(getPaymentValue((transaction as any)?.payment, 'usd', 'in'), ' USD') }}</span>
+                      </div>
+                      <div class="info-item">
+                        <small class="label">{{ t('invoice.payment.usdReturnPrice') }}</small>
+                        <span class="value">{{ formatCurrency(getPaymentValue((transaction as any)?.payment, 'usd', 'out'), ' USD') }}</span>
+                      </div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-item">
+                        <small class="label">{{ t('invoice.payment.iqdPrice') }}</small>
+                        <span class="value">{{ formatCurrency(getPaymentValue((transaction as any)?.payment, 'iqd', 'in'), ' IQD') }}</span>
+                      </div>
+                      <div class="info-item">
+                        <small class="label">{{ t('invoice.payment.iqdReturnPrice') }}</small>
+                        <span class="value">{{ formatCurrency(getPaymentValue((transaction as any)?.payment, 'iqd', 'out'), ' IQD') }}</span>
+                      </div>
+                    </div>
+                    <div class="info-row">
+                      <div class="info-item">
+                        <small class="label">{{ t('exchange.rate') }}</small>
+                        <span class="value">
+                          {{ formatCurrency(exchangeRate?.usd_iqd_rate ?? (transaction as any)?.exchange_rate?.usd_iqd ?? 0, ' IQD') }}
+                          <template v-if="exchangeRate?.eur_usd_rate ?? (transaction as any)?.exchange_rate?.eur_usd">
+                            | EUR/USD: {{ exchangeRate?.eur_usd_rate ?? (transaction as any).exchange_rate.eur_usd }}
+                          </template>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -116,102 +134,16 @@
                   <h3 class="card-title">👤 {{ t('customer.customerInfo') }}</h3>
                 </div>
                 <div class="card-content">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>{{ t('customer.columns.id') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerId }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.customer') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerName }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.phone') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerPhone }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.place') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerPlace }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.createdAt') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerCreatedAt }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.purchaseBorrow') }}</td>
-                        <td colspan="2" class="fw-bold text-danger">{{ formatCurrency(customerPurchaseBorrow) }}</td>
-                      </tr>
-                      <tr>
-                        <td><span style="padding: 0 4rem;"></span></td>
-                        <td><span style="padding: 0 4rem;"></span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Payment Details Section -->
-              <div class="info-card">
-                <div class="card-header">
-                  <h5 class="details-title">📊 {{ t('expense.paymentInformation') }}</h5>
-                </div>
-                <div class="card-content payment-details">
-
-                  <table style="width: 100%;" class="table-prices">
-                    <tbody>
-                      <!-- Grouped by currency -->
-                      <tr v-for="currency in ['usd', 'iqd']" :key="currency">
-                        <td>
-                          <!-- Currency Label -->
-                          <span v-if="currency === 'usd'">{{ t('invoice.payment.usdIn') }}</span>
-                          <span v-else>{{ t('invoice.payment.iqdIn') }}</span>
-                        </td>
-
-                        <!-- In Amount -->
-                        <td class="fw-bold text-success">
-                          {{
-                            formatCurrency(
-                              ((transaction as any)?.payment || [])
-                                .find(p => p.currency === currency && p.direction === 'in')?.amount || 0,
-                          ' ' + currency.toUpperCase()
-                          )
-                          }}
-                        </td>
-
-                        <td>
-                          <!-- Currency Label -->
-                          <span v-if="currency === 'usd'">{{ t('invoice.payment.usdOut') }}</span>
-                          <span v-else>{{ t('invoice.payment.iqdOut') }}</span>
-                        </td>
-
-                        <!-- Out Amount -->
-                        <td class="fw-bold text-danger">
-                          {{
-                            formatCurrency(
-                              ((transaction as any)?.payment || [])
-                                .find(p => p.currency === currency && p.direction === 'out')?.amount || 0,
-                          ' ' + currency.toUpperCase()
-                          )
-                          }}
-                        </td>
-                      </tr>
-
-
-                      <!-- Exchange Rate -->
-                      <tr>
-                        <td>{{ t('exchange.rate') }}</td>
-                        <td class="">
-                          {{ formatCurrency((transaction as any)?.exchange_rate?.usd_iqd_rate ?? 0, ' IQD') }}
-                        </td>
-                      </tr>
-
-                      <!-- Spacer row -->
-                      <tr>
-                        <td colspan="4"><span style="padding: 0 2rem;"></span></td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div class="info-row">
+                    <div class="info-item">
+                      <small class="label">{{ t('customer.customer') }}</small>
+                      <span class="value">{{ customerName }}</span>
+                    </div>
+                    <div class="info-item">
+                      <small class="label">{{ t('customer.columns.phone') }}</small>
+                      <span class="value">{{ customerPhone }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -277,12 +209,6 @@ const customer = computed(() => root.value?.customer)
 const payment = computed(() => root.value?.payment)
 const exchangeRate = computed(() => root.value?.exchange_rate)
 
-const customerId = computed(() => {
-  const c = customer.value
-  if (!c) return '—'
-  return c.id || '—'
-})
-
 const customerName = computed(() => {
   const c = customer.value
   if (!c) return '—'
@@ -292,35 +218,49 @@ const customerName = computed(() => {
 const customerPhone = computed(() => {
   const c = customer.value
   if (!c) return '—'
-  return c.fphone || '—'
+  return c.phone || '—'
 })
 
-const customerPlace = computed(() => {
-  const c = customer.value
-  if (!c) return '—'
-  return c.place || '—'
-})
-
-const customerPurchaseBorrow = computed(() => {
-  const c = customer.value
-  if (!c) return '—'
-  return c.purchase_borrow || '—'
-})
-
-const customerCreatedAt = computed(() => {
-  const c = customer.value
-  if (!c) return '—'
-  return c.created_at || '—'
-})
-
-const getPaymentValue = (payment, currency, direction) => {
-  let amount = 0;
-  payment.forEach(element => {
-    if (element.currency === currency && element.direction === direction) {
-      amount = element.value.amount
+const getPaymentValue = (payment: any, currency: string, direction: string): number => {
+  // Handle null/undefined payment
+  if (!payment) return 0;
+  
+  // Handle different payment data structures
+  if (Array.isArray(payment)) {
+    // If payment is an array, iterate through it
+    let amount = 0;
+    payment.forEach(element => {
+      if (element && element.currency === currency && element.direction === direction) {
+        amount = element.value?.amount || 0;
+      }
+    });
+    return amount;
+  }
+  
+  // Handle object-based payment structure (fallback for different API responses)
+  if (typeof payment === 'object') {
+    // Try direct property access patterns
+    const key = `${direction}_${currency}`;
+    if (payment[key] !== undefined) {
+      return payment[key] || 0;
     }
-  });
-  return amount
+    
+    // Try common property patterns
+    if (currency === 'usd' && direction === 'in' && payment.total_usd_in !== undefined) {
+      return payment.total_usd_in || 0;
+    }
+    if (currency === 'usd' && direction === 'out' && payment.total_usd_out !== undefined) {
+      return payment.total_usd_out || 0;
+    }
+    if (currency === 'iqd' && direction === 'in' && payment.total_iqd_in !== undefined) {
+      return payment.total_iqd_in || 0;
+    }
+    if (currency === 'iqd' && direction === 'out' && payment.total_iqd_out !== undefined) {
+      return payment.total_iqd_out || 0;
+    }
+  }
+  
+  return 0;
 }
 
 const printInvoice = () => {
@@ -333,37 +273,14 @@ const close = () => {
 </script>
 
 <style lang="scss" scoped>
-@page {
-  size: A4 portrait;
-  margin: 10mm;
-  /* adjust to your printer’s minimum margin */
-}
-
 @media print {
-  body {
-    zoom: 1 !important;
-    /* prevent Chrome auto-shrink */
+  @page {
+    size: A4;
+    margin: 0.5in 0.4in !important;
   }
 
   .no-print {
     display: none !important;
-  }
-
-  .text-success,
-  .text-danger {
-    color: #000 !important;
-    font-weight: bold;
-  }
-
-  .payment-title-main {
-    font-size: 20px !important;
-    text-align: center !important;
-    margin: 1px 0 !important;
-    font-weight: 600 !important;
-  }
-
-  ::v-deep(.payment-title-main) {
-    font-size: 30px !important;
   }
 }
 
@@ -629,73 +546,23 @@ const close = () => {
   color: #495057;
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.2rem 0;
-}
+/* Print-friendly adjustments */
+@media print {
+  .info-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
 
-.info-item {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-}
+  .card-header {
+    background: #fff;
+    border-bottom: 1px solid #000;
+  }
 
-.label {
-  font-size: 0.78rem;
-  color: #6c757d;
-}
-
-.value {
-  font-size: 0.9rem;
-}
-
-.text-success {
-  color: #28a745 !important;
-}
-
-.text-danger {
-  color: #dc3545 !important;
-}
-
-.payment-title-main {
-  text-align: center;
-  font-size: 2rem;
-  margin: 1rem 0;
-  font-weight: 600;
-  color: #333;
-}
-
-.cute-badge {
-  display: inline-block;
-  width: 200px;
-  padding: 0.35rem 0.9rem;
-  background: linear-gradient(135deg, #4caf50, #81c784);
-  color: white;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: 999px;
-  /* pill shape */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  letter-spacing: 0.3px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.cute-badge:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.table-prices {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.table-prices td {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+  .text-primary,
+  .text-success,
+  .text-danger {
+    color: #000 !important;
+    /* Avoid color loss in print */
+  }
 }
 </style>

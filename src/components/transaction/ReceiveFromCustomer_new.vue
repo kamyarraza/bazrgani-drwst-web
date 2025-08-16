@@ -74,7 +74,7 @@
                                     <q-icon name="currency_exchange" color="primary" size="16px" />
                                     {{ t('payment.receiveFromCustomer.iqdAmountLabel') }}
                                 </label>
-                                <q-input v-model.number="form.iqd_price" type="number" min="0" step="1" outlined dense
+                                <q-input v-model.number="form.iqd_price" type="number" min="0" step="250" outlined dense
                                     suffix="IQD" :placeholder="t('payment.receiveFromCustomer.enterIqdAmount')"
                                     class="form-input payment-input" @input="onIqdAmountChange">
                                     <template v-slot:prepend>
@@ -102,9 +102,9 @@
                                     <q-icon name="keyboard_return" color="warning" size="16px" />
                                     {{ t('payment.receiveFromCustomer.iqdReturnLabel') }}
                                 </label>
-                                <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="1" outlined
+                                <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="250" outlined
                                     dense suffix="IQD" :placeholder="t('payment.receiveFromCustomer.enterIqdReturn')"
-                                    class="form-input payment-input">
+                                    class="form-input payment-input" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="keyboard_return" color="warning" />
                                     </template>

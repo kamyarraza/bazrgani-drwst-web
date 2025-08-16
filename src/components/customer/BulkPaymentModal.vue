@@ -76,9 +76,9 @@
                                     <q-icon name="currency_exchange" color="primary" size="16px" />
                                     {{ t('payment.bulkPayment.iqdAmountLabel') }}
                                 </label>
-                                <q-input v-model.number="form.iqd_price" type="number" min="0" step="1" outlined dense
+                                <q-input v-model.number="form.iqd_price" type="number" min="0" step="250" outlined dense
                                     suffix="IQD" :placeholder="t('payment.bulkPayment.enterIqdAmount')"
-                                    class="form-input payment-input" @input="onIqdAmountChange">
+                                    class="form-input payment-input" @input="onIqdAmountChange" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="currency_exchange" color="primary" />
                                     </template>
@@ -92,7 +92,7 @@
                                 </label>
                                 <q-input v-model.number="form.usd_price" type="number" min="0" step="0.01" outlined
                                     dense suffix="USD" :placeholder="t('payment.bulkPayment.enterUsdAmount')"
-                                    class="form-input payment-input" @input="onUsdAmountChange">
+                                    class="form-input payment-input" @input="onUsdAmountChange" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="attach_money" color="primary" />
                                     </template>
@@ -104,9 +104,9 @@
                                     <q-icon name="keyboard_return" color="warning" size="16px" />
                                     {{ t('payment.bulkPayment.iqdReturnLabel') }}
                                 </label>
-                                <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="1" outlined
+                                <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="250" outlined
                                     dense suffix="IQD" :placeholder="t('payment.bulkPayment.enterIqdReturn')"
-                                    class="form-input return-input">
+                                    class="form-input return-input" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="keyboard_return" color="warning" />
                                     </template>

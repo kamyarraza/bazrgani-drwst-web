@@ -95,9 +95,9 @@
 
                 <div class="col-12 col-md-6">
                   <q-input v-model.number="form.expensed_iqd" :label="t('expense.iqdPrice')"
-                    :hint="t('expense.iqdPriceHint')" type="number" step="1" min="0" outlined dense suffix="IQD" :rules="[
+                    :hint="t('expense.iqdPriceHint')" type="number" step="250" min="0" outlined dense suffix="IQD" :rules="[
                       val => val >= 0 || t('expense.amountPositive')
-                    ]" class="cute-input amount-input">
+                    ]" class="cute-input amount-input" @wheel.prevent>
                     <template v-slot:prepend>
                       <q-icon name="currency_exchange" color="orange" />
                     </template>
@@ -106,10 +106,10 @@
 
                 <div class="col-12 col-md-5">
                   <q-input v-model.number="form.iqd_return_amount" :label="t('expense.iqdReturnAmount')"
-                    :hint="t('expense.iqdReturnAmountHint')" type="number" step="1" min="0" outlined dense suffix="IQD"
+                    :hint="t('expense.iqdReturnAmountHint')" type="number" step="250" min="0" outlined dense suffix="IQD"
                     :rules="[
                       val => val >= 0 || t('expense.amountPositive')
-                    ]" class="cute-input amount-input">
+                    ]" class="cute-input amount-input" @wheel.prevent>
                     <template v-slot:prepend>
                       <q-icon name="assignment_return" color="blue" />
                     </template>
@@ -131,7 +131,7 @@
                     :rules="[
                       val => val && val.length > 0 || t('expense.payeeRequired'),
                       val => val && val.length <= 100 || t('expense.payeeTooLong')
-                    ]" outlined dense class="cute-input">
+                    ]" outlined dense class="cute-input" @wheel.prevent>
                     <template v-slot:prepend>
                       <q-icon name="person" color="purple" />
                     </template>
@@ -153,7 +153,7 @@
               <div class="row q-gutter-sm">
                 <div class="col-12 col-md-6">
                   <q-input v-model="form.reference_number" :label="t('expense.referenceNumber')"
-                    :hint="t('expense.referenceNumberHint')" outlined dense class="cute-input">
+                    :hint="t('expense.referenceNumberHint')" outlined dense class="cute-input" @wheel.prevent>
                     <template v-slot:prepend>
                       <q-icon name="confirmation_number" color="brown" />
                     </template>
