@@ -2177,6 +2177,8 @@ export default {
     },
   },
   invoice: {
+    information: "Invoice Information",
+    no: "No.",
     oldBorrowedPrice: "Old Borrowed Price",
     newBorrowedPrice: "New Borrowed Price",
     discount: "Discount",

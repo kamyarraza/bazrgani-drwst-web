@@ -1750,6 +1750,8 @@ export default {
     },
   },
   invoice: {
+    information: "زانیاری پسوڵە",
+    no: "ژمارە",
     oldBorrowedPrice: "نرخی قەرزی کۆن",
     newBorrowedPrice: "نرخی قەرزی نوێ",
     discount: "داشکاندن",

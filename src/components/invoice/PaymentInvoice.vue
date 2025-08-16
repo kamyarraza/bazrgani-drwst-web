@@ -8,10 +8,12 @@
       </q-card-actions>
 
       <div id="payment-invoice-container">
+        <!-- Watermark -->
         <div class="watermark">
           <img :src="brandLogo" alt="Brand Watermark" />
         </div>
 
+        <!-- Invoice Content -->
         <q-card>
           <q-card-section
             style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh;">
@@ -30,10 +32,10 @@
                     <span class="meta-label">💳</span>
                     <span class="meta-value">{{ (transaction as any)?.payment_id }}</span>
                   </div>
-                  <div class="meta-item" dir="ltr">
+                  <!-- <div class="meta-item" dir="ltr">
                     <span class="meta-label">🧾</span>
                     <span class="meta-value">{{ transaction?.transaction_id }}</span>
-                  </div>
+                  </div> -->
                   <div class="meta-item" dir="ltr">
                     <span class="meta-label">🗓️</span>
                     <span class="meta-value">{{ transaction?.created_at || payment?.created_at }}</span>
@@ -42,99 +44,69 @@
               </div>
             </div>
 
-            <h5 style="text-align: center;">{{ t('report.columns.payment') }}</h5>
+            <!-- Title -->
+            <p class="payment-title-main" style="color: red; font-size: 22pt;">{{ t('report.columns.payment') }}</p>
 
             <div class="info-cards-container">
               <!-- Financial Information Card -->
               <div class="info-card">
                 <div class="card-header">
-                  <h3 class="card-title">💰 {{ t('expense.paymentInformation') }}</h3>
+                  <!-- <h3 class="card-title">💰 {{ t('expense.paymentInformation') }}</h3> -->
+                  <h3 class="card-title">🧾 {{ t('invoice.information') }}</h3>
                 </div>
                 <div class="card-content">
-                  <!-- Prices -->
-                  <div class="info-row">
-                    <div class="info-item">
-                      <small class="label">{{ t('invoice.payment.totalPrice') }}</small>
-                      <span class="value text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0)
-                        }}</span>
-                    </div>
-                    <div class="info-item">
-                      <small class="label">{{ t('invoice.payment.discountRate') }}</small>
-                      <span class="value">{{ (transaction as any)?.discounted_rate ? (transaction as
-                        any).discounted_rate + '%' : '—' }}</span>
-                    </div>
-                  </div>
-                  <div class="info-row">
-                    <div class="info-item">
-                      <small class="label">{{ t('invoice.payment.discountedPrice') }}</small>
-                      <span class="value">{{ formatCurrency((transaction as any)?.discounted_price ?? 0) }}</span>
-                    </div>
-                    <div class="info-item">
-                      <small class="label">{{ t('invoice.payment.paid') }}</small>
-                      <span class="value text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</span>
-                    </div>
-                  </div>
-                  <div class="info-row">
-                    <div class="info-item unpaid-highlight">
-                      <small class="label">{{ t('invoice.payment.unpaid') }}</small>
-                      <span class="value text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0)
-                      }}</span>
-                    </div>
-                  </div>
+                  <!-- Invoice Information -->
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.no') }}</td>
+                        <td class=" fw-bold">{{ transaction?.transaction_id }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.details.date') }}</td>
+                        <td class=" fw-bold">{{ (transaction as any)?.transaction_date || '-' }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.payment.totalPrice') }}</td>
+                        <td class=" text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0) }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.payment.discountRate') }}</td>
+                        <td class="">{{ (transaction as any)?.discounted_rate ? (transaction as any).discounted_rate +
+                          '%' : '—' }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.payment.discountedPrice') }}</td>
+                        <td class="">{{ formatCurrency((transaction as any)?.discounted_price ?? 0) }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.paidAmount') }}</td>
+                        <td class=" text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
+                        <td class=" text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0) }}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><span style="padding: 0 2rem;"></span></td>
+                        <td><span style="padding: 0 2rem;"></span></td>
+                        <td><span style="padding: 0 2rem;"></span></td>
+                      </tr>
 
-                  <!-- Fully Paid Badge -->
-                  <div class="info-row" v-if="(transaction as any)?.is_fully_paid !== undefined">
-                    <div class="info-item">
-                      <span class="badge px-3 py-1"
-                        :class="(transaction as any).is_fully_paid ? 'bg-success' : 'bg-warning'">
-                        {{ (transaction as any).is_fully_paid ? t('invoice.payment.fullyPaid') :
-                          t('invoice.payment.notFullyPaid') }}
-                      </span>
-                    </div>
-                  </div>
+                      <!-- Fully Paid Badge -->
+                      <tr v-if="(transaction as any)?.is_fully_paid">
+                        <td colspan="3">
+                          <div class="text-center">
+                            <span class="cute-badge">
+                              ✅ fully paid
+                            </span>
+                          </div>
 
-                  <!-- Payment Details Section -->
-                  <div class="payment-details">
-                    <h5 class="details-title">📊 {{ t('expense.paymentInformation') }}</h5>
-
-                    <div class="info-row" v-for="payment in ((transaction as any)?.payment || [])"
-                      :key="payment.currency + payment.direction">
-                      <div class="info-item">
-                        <small class="label">
-                          <!-- Dynamic Label -->
-                          <template v-if="payment.currency === 'usd' && payment.direction === 'in'">
-                            {{ t('invoice.payment.usdIn') }}
-                          </template>
-                          <template v-else-if="payment.currency === 'usd' && payment.direction === 'out'">
-                            {{ t('invoice.payment.usdOut') }}
-                          </template>
-                          <template v-else-if="payment.currency === 'iqd' && payment.direction === 'in'">
-                            {{ t('invoice.payment.iqdIn') }}
-                          </template>
-                          <template v-else-if="payment.currency === 'iqd' && payment.direction === 'out'">
-                            {{ t('invoice.payment.iqdOut') }}
-                          </template>
-                        </small>
-
-                        <!-- Payment Value -->
-                        <span class="value fw-bold"
-                          :class="payment.direction === 'out' ? 'text-danger' : 'text-success'">
-                          {{ formatCurrency(payment.amount, ' ' + payment.currency.toUpperCase()) }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <!-- Exchange Rate -->
-                    <div class="info-row mt-2">
-                      <div class="info-item">
-                        <small class="label">{{ t('exchange.rate') }}</small>
-                        <span class="value">
-                          {{ formatCurrency((transaction as any)?.exchange_rate?.usd_iqd_rate ?? 0, ' IQD') }}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
@@ -144,16 +116,102 @@
                   <h3 class="card-title">👤 {{ t('customer.customerInfo') }}</h3>
                 </div>
                 <div class="card-content">
-                  <div class="info-row">
-                    <div class="info-item">
-                      <small class="label">{{ t('customer.customer') }}</small>
-                      <span class="value">{{ customerName }}</span>
-                    </div>
-                    <div class="info-item">
-                      <small class="label">{{ t('customer.columns.phone') }}</small>
-                      <span class="value">{{ customerPhone }}</span>
-                    </div>
-                  </div>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>{{ t('customer.columns.id') }}</td>
+                        <td colspan="2" class="fw-bold">{{ customerId }}</td>
+                      </tr>
+                      <tr>
+                        <td>{{ t('customer.customer') }}</td>
+                        <td colspan="2" class="fw-bold">{{ customerName }}</td>
+                      </tr>
+                      <tr>
+                        <td>{{ t('customer.columns.phone') }}</td>
+                        <td colspan="2" class="fw-bold">{{ customerPhone }}</td>
+                      </tr>
+                      <tr>
+                        <td>{{ t('customer.columns.place') }}</td>
+                        <td colspan="2" class="fw-bold">{{ customerPlace }}</td>
+                      </tr>
+                      <tr>
+                        <td>{{ t('customer.columns.createdAt') }}</td>
+                        <td colspan="2" class="fw-bold">{{ customerCreatedAt }}</td>
+                      </tr>
+                      <tr>
+                        <td>{{ t('customer.columns.purchaseBorrow') }}</td>
+                        <td colspan="2" class="fw-bold text-danger">{{ formatCurrency(customerPurchaseBorrow) }}</td>
+                      </tr>
+                      <tr>
+                        <td><span style="padding: 0 4rem;"></span></td>
+                        <td><span style="padding: 0 4rem;"></span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Payment Details Section -->
+              <div class="info-card">
+                <div class="card-header">
+                  <h5 class="details-title">📊 {{ t('expense.paymentInformation') }}</h5>
+                </div>
+                <div class="card-content payment-details">
+
+                  <table style="width: 100%;" class="table-prices">
+                    <tbody>
+                      <!-- Grouped by currency -->
+                      <tr v-for="currency in ['usd', 'iqd']" :key="currency">
+                        <td>
+                          <!-- Currency Label -->
+                          <span v-if="currency === 'usd'">{{ t('invoice.payment.usdIn') }}</span>
+                          <span v-else>{{ t('invoice.payment.iqdIn') }}</span>
+                        </td>
+
+                        <!-- In Amount -->
+                        <td class="fw-bold text-success">
+                          {{
+                            formatCurrency(
+                              ((transaction as any)?.payment || [])
+                                .find(p => p.currency === currency && p.direction === 'in')?.amount || 0,
+                          ' ' + currency.toUpperCase()
+                          )
+                          }}
+                        </td>
+
+                        <td>
+                          <!-- Currency Label -->
+                          <span v-if="currency === 'usd'">{{ t('invoice.payment.usdOut') }}</span>
+                          <span v-else>{{ t('invoice.payment.iqdOut') }}</span>
+                        </td>
+
+                        <!-- Out Amount -->
+                        <td class="fw-bold text-danger">
+                          {{
+                            formatCurrency(
+                              ((transaction as any)?.payment || [])
+                                .find(p => p.currency === currency && p.direction === 'out')?.amount || 0,
+                          ' ' + currency.toUpperCase()
+                          )
+                          }}
+                        </td>
+                      </tr>
+
+
+                      <!-- Exchange Rate -->
+                      <tr>
+                        <td>{{ t('exchange.rate') }}</td>
+                        <td class="">
+                          {{ formatCurrency((transaction as any)?.exchange_rate?.usd_iqd_rate ?? 0, ' IQD') }}
+                        </td>
+                      </tr>
+
+                      <!-- Spacer row -->
+                      <tr>
+                        <td colspan="4"><span style="padding: 0 2rem;"></span></td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -219,6 +277,12 @@ const customer = computed(() => root.value?.customer)
 const payment = computed(() => root.value?.payment)
 const exchangeRate = computed(() => root.value?.exchange_rate)
 
+const customerId = computed(() => {
+  const c = customer.value
+  if (!c) return '—'
+  return c.id || '—'
+})
+
 const customerName = computed(() => {
   const c = customer.value
   if (!c) return '—'
@@ -229,6 +293,24 @@ const customerPhone = computed(() => {
   const c = customer.value
   if (!c) return '—'
   return c.fphone || '—'
+})
+
+const customerPlace = computed(() => {
+  const c = customer.value
+  if (!c) return '—'
+  return c.place || '—'
+})
+
+const customerPurchaseBorrow = computed(() => {
+  const c = customer.value
+  if (!c) return '—'
+  return c.purchase_borrow || '—'
+})
+
+const customerCreatedAt = computed(() => {
+  const c = customer.value
+  if (!c) return '—'
+  return c.created_at || '—'
 })
 
 const getPaymentValue = (payment, currency, direction) => {
@@ -251,14 +333,37 @@ const close = () => {
 </script>
 
 <style lang="scss" scoped>
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+  /* adjust to your printer’s minimum margin */
+}
+
 @media print {
-  @page {
-    size: A4;
-    margin: 0.5in 0.4in !important;
+  body {
+    zoom: 1 !important;
+    /* prevent Chrome auto-shrink */
   }
 
   .no-print {
     display: none !important;
+  }
+
+  .text-success,
+  .text-danger {
+    color: #000 !important;
+    font-weight: bold;
+  }
+
+  .payment-title-main {
+    font-size: 20px !important;
+    text-align: center !important;
+    margin: 1px 0 !important;
+    font-weight: 600 !important;
+  }
+
+  ::v-deep(.payment-title-main) {
+    font-size: 30px !important;
   }
 }
 
@@ -545,15 +650,52 @@ const close = () => {
   font-size: 0.9rem;
 }
 
-.text-success { color: #28a745 !important; }
-.text-danger  { color: #dc3545 !important; }
-
-/* Print-friendly adjustments */
-@media print {
-  .text-success, .text-danger {
-    color: #000 !important;
-    font-weight: bold;
-  }
+.text-success {
+  color: #28a745 !important;
 }
 
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.payment-title-main {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1rem 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.cute-badge {
+  display: inline-block;
+  width: 200px;
+  padding: 0.35rem 0.9rem;
+  background: linear-gradient(135deg, #4caf50, #81c784);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+  /* pill shape */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  letter-spacing: 0.3px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cute-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.table-prices {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.table-prices td {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+}
 </style>

@@ -1304,6 +1304,8 @@ export default {
     ellipsis: "...",
   },
   invoice: {
+    information: "معلومات الفاتورة",
+    no: "رقم",
     oldBorrowedPrice: "السعر المُقترض القديم",
     newBorrowedPrice: "السعر المُقترض الجديد",
     discount: "الخصم",
