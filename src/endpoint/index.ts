@@ -96,6 +96,7 @@ export const endPoints = {
     update: (branchId: string | number) => `/branches/${branchId}`,
     toggleActive: (branchId: string | number) =>
       `/branches/toggle-active/${branchId}`,
+    report: (branchId: string | number) => `/branches/warehouses/items/${branchId}`,
   },
   warehouse: {
     list: "/warehouses?relations=items",

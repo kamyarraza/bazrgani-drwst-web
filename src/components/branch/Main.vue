@@ -8,7 +8,7 @@
       :loading="branchStore.loading" row-key="id" class="branch-table" @menu-action="handleAction"
       :top-right-title="t('branch.addNew', 'Add Branch')" :top-right-icon="'add_business'"
       @top-right-action="$emit('add-branch')" @handle-cashbox="ViewCashbox" @handle-warehouses="handleViewWarehouses"
-      :top-right-secondary-title="employeeCashboxTitle"
+      @handle-report="handleViewReport" :top-right-secondary-title="employeeCashboxTitle"
       @top-right-secondary-action="isEmployee ? handleViewCashbox : undefined"
       :top-right-secondary-icon="employeeCashboxIcon" :pagination="pagination" @page-change="handlePageChange" flat
       bordered :user-type="userType" :allowed-types="['admin']" :user-branch-id="userBranchId">
@@ -24,7 +24,7 @@ import Filter from 'src/components/common/Filter.vue';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
 
-const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch', 'view-cashbox']);
+const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch', 'view-cashbox', 'view-report']);
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
@@ -86,6 +86,15 @@ const menuItems = computed(() => {
         value: 'viewCashbox',
       }
     ];
+
+    // Only admins can view reports
+    if (isAdmin.value) {
+      baseItems.push({
+        label: t('branch.viewReport', 'View Report'),
+        icon: 'analytics',
+        value: 'viewReport',
+      });
+    }
 
     // Only admins can edit and toggle active status
     if (isAdmin.value) {
@@ -183,6 +192,14 @@ const columns = [
     sortable: false,
   },
   {
+    name: 'report',
+    required: true,
+    label: t('branch.report', 'Report'),
+    align: 'center' as const,
+    field: 'report',
+    sortable: false,
+  },
+  {
     name: 'actions',
     required: true,
     label: t('common.actions', 'Actions'),
@@ -193,6 +210,10 @@ const columns = [
 ].filter(col => {
   // Only show actions column for admins
   if (col.name === 'actions') {
+    return isAdmin.value;
+  }
+  // Only show report column for admins
+  if (col.name === 'report') {
     return isAdmin.value;
   }
   return true;
@@ -289,6 +310,14 @@ function handleViewWarehouses(branchId: number) {
   }
 }
 
+// Handle view report button click
+function handleViewReport(branchId: number) {
+  const branch = branches.value.find(b => b.id === branchId);
+  if (branch) {
+    emit('view-report', branch);
+  }
+}
+
 // Handle menu actions from Qtable
 function handleAction(payload: { item: { value: string }, rowId: number }) {
   const branch = branches.value.find(b => b.id === payload.rowId);
@@ -307,6 +336,14 @@ function handleAction(payload: { item: { value: string }, rowId: number }) {
     }
   }
 
+  // Security check for report access - only admins
+  if (payload.item.value === 'viewReport') {
+    if (!isAdmin.value) {
+      console.warn('Non-admin user attempted to access branch report');
+      return;
+    }
+  }
+
   if (payload.item.value === 'edit') {
     emit('edit-branch', branch);
   } else if (payload.item.value === 'toggleActive') {
@@ -315,6 +352,8 @@ function handleAction(payload: { item: { value: string }, rowId: number }) {
     emit('view-warehouses', branch);
   } else if (payload.item.value === 'viewCashbox') {
     emit('view-cashbox', branch);
+  } else if (payload.item.value === 'viewReport') {
+    emit('view-report', branch);
   }
 }
 </script>

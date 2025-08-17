@@ -6,46 +6,29 @@
 
   <!-- Show table when not loading -->
   <q-table v-else :rows-per-page-options="[paginationNumber]" class="beautiful-table"
-    :class="{ 'grid-mode': isGridMode }" :columns="(internalColumns as any)" :rows="rows" :loading="false" :grid="isGridMode"
-    :grid-header="isGridMode" :hide-header="isGridMode" separator="horizontal" hide-pagination flat bordered dense>
+    :class="{ 'grid-mode': isGridMode }" :columns="(internalColumns as any)" :rows="rows" :loading="false"
+    :grid="isGridMode" :grid-header="isGridMode" :hide-header="isGridMode" separator="horizontal" hide-pagination flat
+    bordered dense>
 
     <!-- Top Right Buttons -->
     <template #top-right>
-      <TableHeader
-        :top-right="!!topRight"
-        :top-right-title="topRightTitle || ''"
-        :top-right-icon="topRightIcon || ''"
+      <TableHeader :top-right="!!topRight" :top-right-title="topRightTitle || ''" :top-right-icon="topRightIcon || ''"
         :top-right-secondary-title="topRightSecondaryTitle || ''"
-        :top-right-secondary-icon="topRightSecondaryIcon || ''"
-        :top-right-tertiary-title="topRightTertiaryTitle || ''"
-        :top-right-tertiary-icon="topRightTertiaryIcon || ''"
-        :can-view-top-right-action="canViewTopRightAction"
-        @top-right-action="$emit('top-right-action')"
-        @top-right-secondary-action="$emit('top-right-secondary-action')"
-        @top-right-tertiary-action="$emit('top-right-tertiary-action')"
-      />
+        :top-right-secondary-icon="topRightSecondaryIcon || ''" :top-right-tertiary-title="topRightTertiaryTitle || ''"
+        :top-right-tertiary-icon="topRightTertiaryIcon || ''" :can-view-top-right-action="canViewTopRightAction"
+        @top-right-action="$emit('top-right-action')" @top-right-secondary-action="$emit('top-right-secondary-action')"
+        @top-right-tertiary-action="$emit('top-right-tertiary-action')" />
     </template>
 
     <!-- Grid Mode - Custom Item Slot -->
     <template v-if="isGridMode" #item="props">
-      <GridCard
-        :row="props.row"
-        :row-index="props.rowIndex"
-        :columns="(columns as any)"
-        :menu-items="menuItems"
-        v-bind="extraItem ? { extraItem } : {}"
-        :has-expandable-rows="hasExpandableRows"
-        :is-expanded="expanded[getRowKey(props.row)]"
-        :is-selected="selectedGridItems.includes(getRowKey(props.row))"
-        :show-badge="!!pagination"
-        :badge-value="getBadgeValue(props.rowIndex)"
-        :pagination="pagination ?? null"
-        @card-click="handleGridCardClick(props.row)"
-        @action-click="handleGridAction(props.row)"
-        @toggle-expand="toggleExpand(props.row)"
-        @hide-menu="selectedRowId = null"
-        @item-click="(data) => handleItemClick(data, props.row)"
-      />
+      <GridCard :row="props.row" :row-index="props.rowIndex" :columns="(columns as any)" :menu-items="menuItems"
+        v-bind="extraItem ? { extraItem } : {}" :has-expandable-rows="hasExpandableRows"
+        :is-expanded="expanded[getRowKey(props.row)]" :is-selected="selectedGridItems.includes(getRowKey(props.row))"
+        :show-badge="!!pagination" :badge-value="getBadgeValue(props.rowIndex)" :pagination="pagination ?? null"
+        @card-click="handleGridCardClick(props.row)" @action-click="handleGridAction(props.row)"
+        @toggle-expand="toggleExpand(props.row)" @hide-menu="selectedRowId = null"
+        @item-click="(data) => handleItemClick(data, props.row)" />
     </template>
 
     <!-- Table Body -->
@@ -60,7 +43,8 @@
 
           <!-- Index Icon -->
           <template v-else-if="col.name === 'index'">
-            <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1 }}</span>
+            <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1
+              }}</span>
           </template>
 
           <!-- warehouses Column -->
@@ -80,6 +64,16 @@
                 :disable="isEmployee && userBranchId !== props.row.id"
                 :class="{ 'disabled-cashbox': isEmployee && userBranchId !== props.row.id }">
                 <q-icon name="account_balance_wallet" />
+              </Qbutton>
+            </slot>
+          </template>
+
+          <!-- report Column -->
+          <template v-else-if="col.name === 'report'">
+            <slot name="body-cell-actions" :props="props" :row="props.row">
+              <Qbutton @click="() => $emit('handle-report', props.row.id)" is-flat round btn-label=""
+                btn-color="orange">
+                <q-icon name="analytics" />
               </Qbutton>
             </slot>
           </template>
@@ -171,14 +165,8 @@
   </q-table>
 
   <!-- Pagination -->
-  <TablePagination
-    :show-bottom="showBottom"
-    :current-page="currentPage"
-    :max-page="maxPage"
-    :total="pagination?.total || 0"
-    :is-rtl="isRTL"
-    @page-change="handlePageChangeWrapper"
-  />
+  <TablePagination :show-bottom="showBottom" :current-page="currentPage" :max-page="maxPage"
+    :total="pagination?.total || 0" :is-rtl="isRTL" @page-change="handlePageChangeWrapper" />
 </template>
 
 <script setup lang="ts">
@@ -229,6 +217,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   'handle-cashbox': [id: number];
   'handle-warehouses': [id: number];
+  'handle-report': [id: number];
   'handle-items': [id: number];
   'menu-action': [data: { item: MenuItem; rowId: string | null; row: any }];
   'top-right-action': [];
@@ -328,13 +317,41 @@ function handlePageChangeWrapper(page: number) {
   border-radius: 6px;
 }
 
-.progress-container { display: flex; align-items: center; gap: 8px; }
-.progress-bar { flex: 1; border-radius: 4px; overflow: hidden; }
-.progress-label { font-weight: 600; color: #374151; min-width: 40px; text-align: right; }
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-.text-negative { color: #ef4444; font-weight: 600; }
-.text-positive { color: #10b981; font-weight: 600; }
+.progress-bar {
+  flex: 1;
+  border-radius: 4px;
+  overflow: hidden;
+}
 
-.disabled-cashbox { opacity: 0.4 !important; cursor: not-allowed !important; }
-.disabled-cashbox:deep(.q-icon) { color: #9ca3af !important; }
+.progress-label {
+  font-weight: 600;
+  color: #374151;
+  min-width: 40px;
+  text-align: right;
+}
+
+.text-negative {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.text-positive {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.disabled-cashbox {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.disabled-cashbox:deep(.q-icon) {
+  color: #9ca3af !important;
+}
 </style>

@@ -39,6 +39,13 @@
                   <span class="tab-label">{{ t('branch.cashbox', 'Cashbox') }}</span>
                 </div>
               </q-tab>
+
+              <q-tab name="report" class="enhanced-tab" v-if="isAdmin">
+                <div class="tab-content">
+                  <q-icon name="analytics" size="20px" />
+                  <span class="tab-label">{{ t('branch.report', 'Report') }}</span>
+                </div>
+              </q-tab>
             </q-tabs>
           </div>
 
@@ -48,7 +55,7 @@
             <!-- Branches Tab -->
             <q-tab-panel name="branches" class="enhanced-tab-panel">
               <Main @edit-branch="openUpdateModal" @toggle-active="toggleBranchActive" @view-warehouses="viewWarehouses"
-                @view-cashbox="viewCashbox" @add-branch="showAddModal = true" />
+                @view-cashbox="viewCashbox" @view-report="viewReport" @add-branch="showAddModal = true" />
             </q-tab-panel>
 
             <!-- Warehouse Tab -->
@@ -66,6 +73,11 @@
             <q-tab-panel name="cashbox" class="enhanced-tab-panel">
               <CashboxComponent :branch="selectedBranch" @go-back="activeTab = 'branches'" />
             </q-tab-panel>
+
+            <!-- Branch Report Tab -->
+            <q-tab-panel name="report" class="enhanced-tab-panel" v-if="isAdmin">
+              <BranchReport :branch="selectedBranch" @go-back="activeTab = 'branches'" />
+            </q-tab-panel>
           </q-tab-panels>
         </q-card-section>
       </q-card>
@@ -82,26 +94,32 @@
 
 <script setup lang="ts">
 import Header from 'src/components/common/Header.vue'
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Main from 'src/components/branch/Main.vue';
 import WarehouseComponent from 'src/components/branch/warehouse.vue';
 import WarehouseItemsTab from 'src/components/branch/WarehouseItemsTab.vue';
 import CashboxComponent from 'src/components/cashbox/Main.vue';
+import BranchReport from 'src/components/branch/BranchReport.vue';
 import Add from 'src/components/branch/Add.vue';
 import Update from 'src/components/branch/Update.vue';
 import { useBranchStore } from 'src/stores/branchStore';
+import { useMeStore } from 'src/stores/meStore';
 import type { Branch } from 'src/types/branch';
 import type { Warehouse } from 'src/types/warehouse';
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
+const meStore = useMeStore();
 // Removed warehouseStore since it's no longer used in this component
 const showAddModal = ref(false);
 const showUpdateModal = ref(false);
 const selectedBranch = ref<Branch | null>(null);
 const activeTab = ref('branches');
 const selectedWarehouse = ref<Warehouse | null>(null);
+
+// Check if user is admin to show report functionality
+const isAdmin = computed(() => meStore.me?.type === 'admin');
 
 // Fetch branches on component mount
 onMounted(async () => {
@@ -126,6 +144,16 @@ function viewWarehouses(branch: Branch) {
 function viewCashbox(branch: Branch) {
   selectedBranch.value = branch;
   activeTab.value = 'cashbox';
+}
+
+// View branch report - Switch to report tab and load report for selected branch (admin only)
+function viewReport(branch: Branch) {
+  if (!isAdmin.value) {
+    console.warn('Access denied: Only admins can view branch reports');
+    return;
+  }
+  selectedBranch.value = branch;
+  activeTab.value = 'report';
 }
 
 // Handle viewing warehouse items - takes user to the warehouse items tab

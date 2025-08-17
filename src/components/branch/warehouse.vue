@@ -30,9 +30,9 @@
         <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
           :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
           :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
-          @handle-items="handleViewItems"
-          :top-right="isAdmin || isUserBranch" :top-right-title="t('warehouse.addNew', 'Add Warehouse')"
-          @top-right-action="handleAddWarehouse" :top-right-icon="'add_circle'" flat bordered>
+          @handle-items="handleViewItems" :top-right="isAdmin || isUserBranch"
+          :top-right-title="t('warehouse.addNew', 'Add Warehouse')" @top-right-action="handleAddWarehouse"
+          :top-right-icon="'add_circle'" flat bordered>
           <template v-slot:body-cell-is_active="props">
             <q-td :props="props">
               <q-chip :color="props.value ? 'positive' : 'negative'" text-color="white" size="sm">
@@ -82,7 +82,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { date } from 'quasar';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
 import { useMeStore } from 'src/stores/meStore';
 import type { Branch } from 'src/types/branch';
