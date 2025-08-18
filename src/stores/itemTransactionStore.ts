@@ -149,6 +149,10 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     try {
       loading.value = true;
 
+      // Debug: Log the forgiven_price value
+      console.log('🔍 Debug - forgiven_price value:', transactionData.forgiven_price);
+      console.log('🔍 Debug - full transactionData:', transactionData);
+
       // Create FormData for the new endpoints
       const formData = new FormData();
 
@@ -164,6 +168,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       formData.append('usd_price', transactionData.usd_price.toString());
       formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
       formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
+      formData.append('forgiven_price', (transactionData.forgiven_price || 0).toString());
 
       // Add details array
       transactionData.details.forEach((detail: any, index: number) => {
@@ -180,6 +185,12 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       }
       if (transactionData.status) {
         formData.append('status', transactionData.status);
+      }
+
+      // Debug: Log FormData contents
+      console.log('🔍 FormData contents:');
+      for (const [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
       }
 
       const response = await api.post<ApiResponse<any>>(
@@ -418,6 +429,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       formData.append('usd_price', transactionData.usd_price.toString());
       formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
       formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
+      formData.append('forgiven_price', (transactionData.forgiven_price || 0).toString());
 
       // Add details array
       transactionData.details.forEach((detail: any, index: number) => {

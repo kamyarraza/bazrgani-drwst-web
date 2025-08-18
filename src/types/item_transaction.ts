@@ -85,6 +85,7 @@ export interface List {
   discounted_rate?: number;
   total_price: number;
   discounted_price?: number;
+  forgiven_price?: number; // Amount forgiven if customer doesn't pay
   old_borrowed_price?: number;
   new_borrowed_price?: number;
   paid_price: number;

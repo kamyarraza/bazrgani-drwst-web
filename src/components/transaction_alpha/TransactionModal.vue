@@ -87,8 +87,10 @@
               </div>
             </div>
 
-            <div class="form-item" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
-              <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectPaymentType') }} <span class="text-negative">*</span></div>
+            <div class="form-item"
+              style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+              <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectPaymentType') }} <span
+                  class="text-negative">*</span></div>
               <PaymentTypeSelector v-model="selectedPaymentType" />
             </div>
           </div>
@@ -354,6 +356,23 @@
                     <q-input v-model.number="usdReturnAmount" type="number" min="0" step="0.01" dense outlined
                       suffix="USD" class="payment-input" :placeholder="t('transactionAlpha.enterUsdReturnAmount')" />
                   </div>
+
+                  <div class="payment-item forgiven-price-item">
+                    <label class="form-label forgiven-label">
+                      <q-icon name="heart_broken" color="negative" size="16px" />
+                      {{ t('transactionAlpha.forgivenPrice') }}
+                    </label>
+                    <q-input v-model.number="forgivenPrice" type="number" min="0" dense outlined suffix="IQD"
+                      class="payment-input forgiven-input" :placeholder="t('transactionAlpha.enterForgivenAmount')"
+                      :rules="[val => !val || val >= 0 || t('transactionAlpha.forgivenPriceMustBePositive')]">
+                      <template v-slot:hint>
+                        <div class="forgiven-hint">
+                          <q-icon name="info" size="12px" />
+                          {{ t('transactionAlpha.forgivenPriceHint') }}
+                        </div>
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
               </div>
 
@@ -481,6 +500,7 @@ const iqdPrice = ref(0);
 const usdPrice = ref(0);
 const iqdReturnAmount = ref(0);
 const usdReturnAmount = ref(0);
+const forgivenPrice = ref(0);
 
 const statusOptions = [
   { label: t('transaction.status.complete'), value: 'completed' },
@@ -677,6 +697,7 @@ function clearModalData() {
   usdPrice.value = 0;
   iqdReturnAmount.value = 0;
   usdReturnAmount.value = 0;
+  forgivenPrice.value = 0;
 
   // Reset child selectors if possible
   void nextTick(() => {
@@ -762,7 +783,8 @@ async function handleSubmit() {
       iqd_price: iqdPrice.value || 0,
       usd_price: usdPrice.value || 0,
       iqd_return_amount: iqdReturnAmount.value || 0,
-      usd_return_amount: usdReturnAmount.value || 0
+      usd_return_amount: usdReturnAmount.value || 0,
+      forgiven_price: forgivenPrice.value || 0
     };
 
     // Add sell-specific fields
@@ -834,6 +856,7 @@ async function handleSubmit() {
     usdPrice.value = 0;
     iqdReturnAmount.value = 0;
     usdReturnAmount.value = 0;
+    forgivenPrice.value = 0;
 
     $q.notify({
       type: 'positive',
@@ -1700,5 +1723,95 @@ async function checkCashboxStatus() {
   50% {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(5, 150, 105, 0.3);
   }
+}
+
+/* Forgiven Price Field Styles */
+.forgiven-price-item {
+  position: relative;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 15px;
+  padding: 16px;
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+  transition: all 0.3s ease;
+}
+
+.forgiven-price-item::before {
+  content: '💔';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 20px;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(245, 158, 11, 0.3);
+  animation: heartBreak 3s ease-in-out infinite;
+}
+
+@keyframes heartBreak {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+.forgiven-price-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.forgiven-label {
+  color: #92400e !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  margin-bottom: 12px !important;
+}
+
+.forgiven-input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 12px !important;
+}
+
+.forgiven-input .q-field__control {
+  border: 2px solid rgba(245, 158, 11, 0.3) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.3s ease;
+}
+
+.forgiven-input .q-field__control:hover {
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1) !important;
+}
+
+.forgiven-input.q-field--focused .q-field__control {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+}
+
+.forgiven-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-top: 4px;
+  opacity: 0.8;
 }
 </style>

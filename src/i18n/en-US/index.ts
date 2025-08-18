@@ -2595,6 +2595,10 @@ export default {
     enterUsdAmount: "Enter USD amount",
     enterIqdReturnAmount: "Enter IQD return amount",
     enterUsdReturnAmount: "Enter USD return amount",
+    forgivenPrice: "Forgiven Amount",
+    enterForgivenAmount: "Enter forgiven amount",
+    forgivenPriceHint: "Amount forgiven if customer doesn't pay",
+    forgivenPriceMustBePositive: "Forgiven amount cannot be negative",
     paymentAmountRequired: "Payment amount required for cash transactions",
     // Category filtering
     filterByCategory: "Filter by Category",

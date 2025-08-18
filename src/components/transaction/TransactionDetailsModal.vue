@@ -188,9 +188,17 @@
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="price-card unpaid-price">
-                                <q-icon name="schedule" class="price-icon text-red" />
+                                <q-icon name="schedule" class="price-icon text-pink" />
                                 <div class="price-label">{{ t('transaction.unpaidPrice') }}</div>
-                                <div class="price-value text-red">{{ formatCurrency(transactionData.unpaid_price) }}
+                                <div class="price-value text-pink">{{ formatCurrency(transactionData.unpaid_price) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12" v-if="(transactionData).forgiven_price && (transactionData).forgiven_price > 0">
+                            <div class="price-card unpaid-price">
+                                <q-icon name="money_off" class="price-icon text-red" />
+                                <div class="price-label">{{ t('transactionAlpha.forgivenPrice') }}</div>
+                                <div class="price-value text-red">{{ formatCurrency(transactionData.forgiven_price) }}
                                 </div>
                             </div>
                         </div>

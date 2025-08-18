@@ -2722,6 +2722,10 @@ export default {
     enterUsdAmount: "بڕی دۆلار بنووسە",
     enterIqdReturnAmount: "بڕی گەڕاندنەوەی دینار بنووسە",
     enterUsdReturnAmount: "بڕی گەڕاندنەوەی دۆلار بنووسە",
+    forgivenPrice: "بڕی لێبڕین",
+    enterForgivenAmount: "بڕی لێبڕین بنووسە",
+    forgivenPriceHint: "بڕی لێبڕین ئەگەر کڕیار پارە نەدات",
+    forgivenPriceMustBePositive: "بڕی لێبڕین ناتوانێت سالب بێت",
     paymentAmountRequired: "بڕی پارەدان بۆ مامەڵەی نەقدی پێویستە",
     // پالاوتنی جۆری کاڵا
     filterByCategory: "پالاوتن بە پێی جۆری کاڵا",

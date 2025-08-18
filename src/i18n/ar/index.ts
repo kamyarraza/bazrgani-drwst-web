@@ -1927,6 +1927,10 @@ export default {
     enterUsdAmount: "أدخل مبلغ الدولار",
     enterIqdReturnAmount: "أدخل مبلغ إرجاع الدينار",
     enterUsdReturnAmount: "أدخل مبلغ إرجاع الدولار",
+    forgivenPrice: "المبلغ المسامح به",
+    enterForgivenAmount: "أدخل المبلغ المسامح به",
+    forgivenPriceHint: "المبلغ المسامح به إذا لم يدفع العميل",
+    forgivenPriceMustBePositive: "المبلغ المسامح به لا يمكن أن يكون سالباً",
     paymentAmountRequired: "مبلغ الدفع مطلوب للمعاملات النقدية",
     // فلترة الفئات
     filterByCategory: "تصفية حسب الفئة",
