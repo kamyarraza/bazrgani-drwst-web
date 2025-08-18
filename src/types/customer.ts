@@ -1,18 +1,21 @@
 export interface Customer {
   id: number;
+  name?: string; // Full name combination from API
   fname: string;
-  password?:string,
+  password?: string;
   sname: string;
-  type: 'supplier' | 'customer';
+  type: string;
+  type_value: 'supplier' | 'customer';
   location: {
     id: number;
     name: string;
-  };
+  } | null;
   place: string;
   fphone: string;
-  sphone: string;
-  note?: string;
-  user: {
+  sphone?: string; // Secondary phone (optional)
+  note?: string; // Customer notes
+  hasAccount?: boolean; // Whether customer has user account
+  user?: {
     id: string;
     name: string;
     username: string;
@@ -21,7 +24,7 @@ export interface Customer {
   created_at: string; // ISO date string
   sell_borrow?: number; // Amount owed to supplier
   purchase_borrow?: number; // Amount customer owes us
-  has_borrowed_price?: boolean; // Flag indicating if customer has ever borrowed
+  has_borrowed_price?: number | boolean; // Flag indicating if customer has ever borrowed
 }
 export interface CustomerPayload {
   fname: string;
