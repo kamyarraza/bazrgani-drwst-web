@@ -56,7 +56,7 @@
               </h2>
             </div>
 
-            <div class="form-grid">
+            <div class="form-grid" style="margin-bottom: 9px;">
               <div class="form-item">
                 <CustomerSelector ref="customerSelectorRef"
                   :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'" v-model="selectedCustomerId"
@@ -80,14 +80,16 @@
                 <WarehouseSelector ref="warehouseSelectorRef" v-model="selectedWarehouseId" :branchId="selectedBranchId"
                   :disabled="!selectedBranchId" />
               </div>
-              <div class="form-item">
-                <PaymentTypeSelector v-model="selectedPaymentType" />
-              </div>
               <div v-if="transactionType === 'sell'" class="form-item status-item">
                 <label class="form-label">{{ t('transactionAlpha.transactionStatus') }}</label>
                 <q-option-group v-model="transactionStatus" :options="statusOptions" type="radio" color="primary" inline
                   dense class="status-options" />
               </div>
+            </div>
+
+            <div class="form-item" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+              <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectPaymentType') }} <span class="text-negative">*</span></div>
+              <PaymentTypeSelector v-model="selectedPaymentType" />
             </div>
           </div>
 
@@ -285,7 +287,7 @@
               </div>
 
               <!-- Payment and Return Amount Section -->
-              <div class="payment-section">
+              <div class="payment-section" v-if="selectedPaymentType === 'cash' || selectedPaymentType === 'borrow'">
                 <div class="section-header cute-section-header">
                   <div class="section-icon cute-section-icon">
                     <q-icon name="payments" size="20px" />
