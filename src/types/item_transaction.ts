@@ -61,14 +61,17 @@ export interface List {
   customer?: {
     id: number;
     name: string;
-    type: string;
-    phone: string;
+    type?: string;
+    phone?: string;
+    place?: string;
+    fphone?: string;
+    purchase_borrow?: number;
   };
   warehouse?: {
     id: number;
     name: string;
-    code: string;
-    capacity: number;
+    code?: string;
+    capacity?: number;
   };
   payment_type: string;
   items?: {
@@ -76,15 +79,20 @@ export interface List {
     name: string;
     quantity: number;
     unit_price: number;
-    solo_unit_price: number;
-    bulk_unit_price: number;
+    solo_unit_price?: number;
+    bulk_unit_price?: number;
   }[];
+  discounted_rate?: number;
   total_price: number;
+  discounted_price?: number;
+  old_borrowed_price?: number;
+  new_borrowed_price?: number;
   paid_price: number;
   unpaid_price: number;
   usd_iqd_rate: number;
   note: string;
   status?: string; // Status of the transaction (e.g., 'completed', 'reserved')
+  is_editable?: boolean;
   created_at: string;
   refunded?: {
     id: number;

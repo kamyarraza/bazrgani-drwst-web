@@ -159,6 +159,10 @@
 
     <!-- Refund Details Modal -->
     <RefundDetailsModal v-model="showRefundDetailsModal" :refund-data="selectedRefundDetails" />
+
+    <!-- Transaction Details Modal -->
+    <TransactionDetailsModal v-model="showTransactionDetailsModal" :transaction-data="selectedTransactionDetails"
+      @view-invoice="handleViewInvoiceFromDetails" />
   </q-page>
 </template>
 
@@ -178,6 +182,7 @@ import PaySupplier from 'src/components/transaction/PaySupplier.vue'
 import ReceiveFromCustomer from 'src/components/transaction/ReceiveFromCustomer.vue'
 import RefundTransaction from 'src/components/transaction/RefundTransaction.vue'
 import RefundDetailsModal from 'src/components/transaction/RefundDetailsModal.vue'
+import TransactionDetailsModal from 'src/components/transaction/TransactionDetailsModal.vue'
 import TransactionModal from 'src/components/transaction_alpha/TransactionModal.vue'
 import { useAuthStore } from 'src/stores/authStore'
 import { useQuasar } from 'quasar'
@@ -204,6 +209,7 @@ const showRefundModal = ref(false)
 const showRefundDetailsModal = ref(false)
 const showInvoiceModal = ref(false)
 const showPaymentInvoiceModal = ref(false)
+const showTransactionDetailsModal = ref(false)
 
 // Selected transaction data for modals
 const selectedTransactionData = ref<{
@@ -232,6 +238,9 @@ const selectedRefundDetails = ref<{
   created_at: string;
 } | null>(null)
 
+// Selected transaction for details modal
+const selectedTransactionDetails = ref<List | null>(null)
+
 // Selected transaction for invoice modal
 const selectedInvoiceTransaction = ref<List | null>(null)
 // Match PaymentInvoice expected type shape loosely
@@ -246,6 +255,7 @@ const filters = ref({
 const menuItems = computed(() => {
   return (row: List) => {
     const baseItems = [
+      { label: t('transaction.viewDetails'), icon: 'visibility', value: 'view_details' },
       { label: t('transaction.viewInvoice'), icon: 'receipt', value: 'view_invoice' }
     ];
 
@@ -412,7 +422,17 @@ const columns = computed(() => {
 
 // methods
 const handleAction = async (payload: { item: MenuItem; rowId: string | number }) => {
-  if (payload.item.value === 'view_invoice') {
+  if (payload.item.value === 'view_details') {
+    try {
+      const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
+      if (transactionData) {
+        selectedTransactionDetails.value = transactionData
+        showTransactionDetailsModal.value = true
+      }
+    } catch {
+      // ignore error - could show notification
+    }
+  } else if (payload.item.value === 'view_invoice') {
     try {
       const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
       if (transactionData) {
@@ -583,6 +603,15 @@ const handleFreedingTransaction = async (transactionId: string | number) => {
   }
 }
 
+// Handle view invoice from details modal
+const handleViewInvoiceFromDetails = () => {
+  // Use the currently selected transaction details
+  if (selectedTransactionDetails.value) {
+    selectedInvoiceTransaction.value = selectedTransactionDetails.value
+    showInvoiceModal.value = true
+  }
+}
+
 // Watch modal visibility to reset data when closed
 watch(showPaySupplierModal, (isOpen) => {
   if (!isOpen) {
@@ -617,6 +646,12 @@ watch(showRefundModal, (isOpen) => {
 watch(showInvoiceModal, (isOpen) => {
   if (!isOpen) {
     selectedInvoiceTransaction.value = null
+  }
+});
+
+watch(showTransactionDetailsModal, (isOpen) => {
+  if (!isOpen) {
+    selectedTransactionDetails.value = null;
   }
 });
 
