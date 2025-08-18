@@ -142,6 +142,10 @@
     <!-- Add Item Transaction Modal - New Redesigned Modal -->
     <TransactionModal v-model="showAddModal" :transactionType="transactionType" @success="handleTransactionAdded" />
 
+    <!-- Edit Transaction Modal -->
+    <EditTransactionModal v-model="showEditModal" :transaction-data="selectedEditTransaction"
+      @success="handleTransactionUpdated" />
+
     <!-- Payment Modals -->
     <PaySupplier v-model="showPaySupplierModal" :transaction-data="selectedTransactionData"
       @success="handlePaymentSuccess" />
@@ -183,6 +187,7 @@ import ReceiveFromCustomer from 'src/components/transaction/ReceiveFromCustomer.
 import RefundTransaction from 'src/components/transaction/RefundTransaction.vue'
 import RefundDetailsModal from 'src/components/transaction/RefundDetailsModal.vue'
 import TransactionDetailsModal from 'src/components/transaction/TransactionDetailsModal.vue'
+import EditTransactionModal from 'src/components/transaction/EditTransactionModal.vue'
 import TransactionModal from 'src/components/transaction_alpha/TransactionModal.vue'
 import { useAuthStore } from 'src/stores/authStore'
 import { useQuasar } from 'quasar'
@@ -203,6 +208,7 @@ const transactionType = ref<'purchase' | 'sell'>('sell')
 
 // Modal states
 const showAddModal = ref(false)
+const showEditModal = ref(false)
 const showPaySupplierModal = ref(false)
 const showReceiveCustomerModal = ref(false)
 const showRefundModal = ref(false)
@@ -241,6 +247,9 @@ const selectedRefundDetails = ref<{
 // Selected transaction for details modal
 const selectedTransactionDetails = ref<List | null>(null)
 
+// Selected transaction for editing
+const selectedEditTransaction = ref<List | null>(null)
+
 // Selected transaction for invoice modal
 const selectedInvoiceTransaction = ref<List | null>(null)
 // Match PaymentInvoice expected type shape loosely
@@ -258,6 +267,15 @@ const menuItems = computed(() => {
       { label: t('transaction.viewDetails'), icon: 'visibility', value: 'view_details' },
       { label: t('transaction.viewInvoice'), icon: 'receipt', value: 'view_invoice' }
     ];
+
+    // Add edit option if transaction is editable
+    if (row.is_editable) {
+      baseItems.push({
+        label: t('common.edit'),
+        icon: 'edit',
+        value: 'edit_transaction'
+      });
+    }
 
     // Add refund-related options only for sell transactions
     if (transactionType.value === 'sell') {
@@ -428,6 +446,16 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
       if (transactionData) {
         selectedTransactionDetails.value = transactionData
         showTransactionDetailsModal.value = true
+      }
+    } catch {
+      // ignore error - could show notification
+    }
+  } else if (payload.item.value === 'edit_transaction') {
+    try {
+      const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
+      if (transactionData) {
+        selectedEditTransaction.value = transactionData
+        showEditModal.value = true
       }
     } catch {
       // ignore error - could show notification
@@ -655,6 +683,12 @@ watch(showTransactionDetailsModal, (isOpen) => {
   }
 });
 
+watch(showEditModal, (isOpen) => {
+  if (!isOpen) {
+    selectedEditTransaction.value = null;
+  }
+});
+
 // Handle page change for pagination
 async function handlePageChange(page: number) {
   currentPage.value = page;
@@ -676,6 +710,11 @@ const handleTypeChange = async (newType: 'purchase' | 'sell') => {
 
 // Handle transaction added
 const handleTransactionAdded = async () => {
+  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
+};
+
+// Handle transaction updated
+const handleTransactionUpdated = async () => {
   await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
 };
 

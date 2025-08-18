@@ -438,7 +438,6 @@ import { formatCurrency } from 'src/composables/useFormat';
 import { useI18n } from 'vue-i18n';
 import type { Customer } from 'src/types/customer';
 import type { List } from 'src/types/item_transaction';
-import { useRouter } from 'vue-router';
 const { t } = useI18n();
 
 interface SelectedItem {
@@ -497,7 +496,6 @@ const customerDebt = ref(0);
 const exchangeRateStore = useExchangeRateStore();
 const authStore = useAuthStore();
 const cashboxStore = useCashboxStore();
-const router = useRouter();
 const isEmployee = computed(() => authStore.currentUser?.type === 'employee');
 
 onMounted(async () => {

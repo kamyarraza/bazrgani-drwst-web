@@ -160,6 +160,8 @@ export default {
     paymentTypes: {
       cash: "نقدي",
       borrow: "بالدين",
+      credit: "ائتمان",
+      bank: "تحويل مصرفي",
     },
 
     actions: {
@@ -215,6 +217,19 @@ export default {
     oldBorrowed: "القرض السابق",
     newBorrowed: "القرض الجديد",
     viewDetails: "عرض التفاصيل",
+    editTransaction: "تعديل المعاملة",
+    updateTransaction: "تحديث المعاملة",
+    transactionUpdatedSuccessfully: "تم تحديث المعاملة بنجاح",
+    errorUpdatingTransaction: "فشل في تحديث المعاملة. يرجى المحاولة مرة أخرى.",
+    updatingTransaction: "جاري تحديث المعاملة...",
+    customerCannotBeChanged: "لا يمكن تغيير العميل/المورد",
+    warehouseCannotBeChanged: "لا يمكن تغيير المستودع",
+    itemsCannotBeModified: "لا يمكن تعديل المنتجات في وضع التعديل",
+    selectPaymentType: "اختر نوع الدفع",
+    exchangeRateLabel: "سعر الصرف (دينار لكل دولار)",
+    exchangeRateMustBePositive: "يجب أن يكون سعر الصرف موجباً",
+    warehouse: "المستودع",
+    items: "المنتجات",
     statusTypes: {
       completed: "مكتملة",
       reserved: "محجوزة",
@@ -2245,6 +2260,11 @@ export default {
   validation: {
     required: "هذا الحقل مطلوب",
     nameRequired: "الاسم مطلوب",
+    customerRequired: "اختيار العميل مطلوب",
+    branchRequired: "اختيار الفرع مطلوب",
+    warehouseRequired: "اختيار المستودع مطلوب",
+    paymentTypeRequired: "اختيار نوع الدفع مطلوب",
+    discountRateInvalid: "معدل الخصم يجب أن يكون بين 0 و 100",
     positiveNumber: "يجب أن يكون رقماً موجباً",
     integerRequired: "يجب أن يكون رقماً صحيحاً",
     minLength: "يجب أن يكون {min} أحرف على الأقل",

@@ -398,6 +398,55 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     }, 0);
   });
 
+  // Update transaction method
+  const updateTransaction = async (endpoint: string, transactionData: any) => {
+    try {
+      loading.value = true;
+
+      // Create FormData for the update endpoints
+      const formData = new FormData();
+
+      // Add basic fields
+      formData.append('branch_id', transactionData.branch_id.toString());
+      formData.append('customer_id', transactionData.customer_id.toString());
+      formData.append('warehouse_id', transactionData.warehouse_id.toString());
+      formData.append('payment_type', transactionData.payment_type);
+      formData.append('usd_iqd_rate', transactionData.usd_iqd_rate.toString());
+      formData.append('note', transactionData.note || '');
+      formData.append('created_at', transactionData.created_at);
+      formData.append('iqd_price', transactionData.iqd_price.toString());
+      formData.append('usd_price', transactionData.usd_price.toString());
+      formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
+      formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
+
+      // Add details array
+      transactionData.details.forEach((detail: any, index: number) => {
+        formData.append(`details[${index}][item_id]`, detail.item_id.toString());
+        formData.append(`details[${index}][quantity]`, detail.quantity.toString());
+        formData.append(`details[${index}][unit_price]`, detail.unit_price.toString());
+        formData.append(`details[${index}][solo_unit_price]`, detail.solo_unit_price.toString());
+        formData.append(`details[${index}][bulk_unit_price]`, detail.bulk_unit_price.toString());
+      });
+
+      const response = await api.put<ApiResponse<any>>(endpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.status === 'success') {
+        return response.data;
+      }
+
+      throw new Error(response.data.message || 'Failed to update transaction');
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const supplierCustomers = computed(() => {
     return customers.value.filter(customer => customer.type === 'supplier');
   });
@@ -424,6 +473,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     fetchSingleTransaction,
     createTransaction,
     createNewTransaction,
+    updateTransaction,
     addSelectedItem,
     removeSelectedItem,
     updateSelectedItemQuantity,

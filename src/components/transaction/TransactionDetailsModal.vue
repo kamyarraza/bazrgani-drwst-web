@@ -175,7 +175,7 @@
                                 <q-icon name="local_offer" class="price-icon text-purple" />
                                 <div class="price-label">{{ t('transaction.discountedPrice') }}</div>
                                 <div class="price-value text-purple">{{ formatCurrency(transactionData.discounted_price)
-                                }}</div>
+                                    }}</div>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -361,8 +361,8 @@ interface Props {
 }
 
 interface Emits {
-    (e: 'update:modelValue', value: boolean): void
-    (e: 'view-invoice'): void
+    (_e: 'update:modelValue', _value: boolean): void
+    (_e: 'view-invoice'): void
 }
 
 const props = defineProps<Props>()

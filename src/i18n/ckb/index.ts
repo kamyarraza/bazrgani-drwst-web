@@ -949,6 +949,8 @@ export default {
     paymentTypes: {
       cash: "نەقد",
       borrow: "قەرز",
+      credit: "قەرز",
+      bank: "گواستنەوەی بانکی",
     },
 
     actions: {
@@ -1005,6 +1007,19 @@ export default {
     oldBorrowed: "قەرزی پێشوو",
     newBorrowed: "قەرزی نوێ",
     viewDetails: "بینینی وردەکاری",
+    editTransaction: "دەستکاریکردنی مامەڵە",
+    updateTransaction: "نوێکردنەوەی مامەڵە",
+    transactionUpdatedSuccessfully: "مامەڵەکە بە سەرکەوتوویی نوێکرایەوە",
+    errorUpdatingTransaction: "نوێکردنەوەی مامەڵە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.",
+    updatingTransaction: "نوێکردنەوەی مامەڵە...",
+    customerCannotBeChanged: "کڕیار/دابینکەر ناگۆڕدرێت",
+    warehouseCannotBeChanged: "کۆگا ناگۆڕدرێت",
+    itemsCannotBeModified: "کاڵاکان لە دۆخی دەستکاریکردندا ناگۆڕدرێن",
+    selectPaymentType: "جۆری پارەدان هەڵبژێرە",
+    exchangeRateLabel: "ڕێژەی ئاڵوگۆڕ (دینار بۆ هەر دۆلارێک)",
+    exchangeRateMustBePositive: "ڕێژەی ئاڵوگۆڕ دەبێت ژمارەیەکی موجەب بێت",
+    warehouse: "کۆگا",
+    items: "کاڵاکان",
     statusTypes: {
       completed: "تەواو",
       reserved: "حجزکراو",
@@ -2946,6 +2961,11 @@ export default {
   validation: {
     required: "ئەم خانەیە پێویستە",
     nameRequired: "ناو پێویستە",
+    customerRequired: "هەڵبژاردنی کڕیار پێویستە",
+    branchRequired: "هەڵبژاردنی لق پێویستە",
+    warehouseRequired: "هەڵبژاردنی کۆگا پێویستە",
+    paymentTypeRequired: "هەڵبژاردنی جۆری پارەدان پێویستە",
+    discountRateInvalid: "ڕێژەی داشکاندن دەبێت لە نێوان 0 و 100 بێت",
     positiveNumber: "دەبێت ژمارەیەکی ئەرێنی بێت",
     integerRequired: "دەبێت ژمارەیەکی تەواو بێت",
     minLength: "دەبێت بەلایەنی کەمەوە {min} پیت بێت",

@@ -949,6 +949,11 @@ export default {
   validation: {
     required: "This field is required",
     nameRequired: "Name is required",
+    customerRequired: "Customer selection is required",
+    branchRequired: "Branch selection is required",
+    warehouseRequired: "Warehouse selection is required",
+    paymentTypeRequired: "Payment type selection is required",
+    discountRateInvalid: "Discount rate must be between 0 and 100",
     positiveNumber: "Must be a positive number",
     integerRequired: "Must be a whole number",
     minLength: "Must be at least {min} characters long",
@@ -1218,6 +1223,8 @@ export default {
     paymentTypes: {
       cash: "Cash",
       borrow: "Borrow",
+      credit: "Credit",
+      bank: "Bank Transfer",
     },
 
     actions: {
@@ -1288,6 +1295,19 @@ export default {
     oldBorrowed: "Previous Borrowed",
     newBorrowed: "New Borrowed",
     viewDetails: "View Details",
+    editTransaction: "Edit Transaction",
+    updateTransaction: "Update Transaction",
+    transactionUpdatedSuccessfully: "Transaction updated successfully",
+    errorUpdatingTransaction: "Failed to update transaction. Please try again.",
+    updatingTransaction: "Updating transaction...",
+    customerCannotBeChanged: "Customer/Supplier cannot be changed",
+    warehouseCannotBeChanged: "Warehouse cannot be changed",
+    itemsCannotBeModified: "Items cannot be modified in edit mode",
+    selectPaymentType: "Select Payment Type",
+    exchangeRateLabel: "Exchange Rate (IQD per USD)",
+    exchangeRateMustBePositive: "Exchange rate must be positive",
+    warehouse: "Warehouse",
+    items: "Items",
     statusTypes: {
       completed: "Completed",
       reserved: "Reserved", 
