@@ -33,7 +33,7 @@
 
     <!-- Table Body -->
     <template #body="props">
-      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }">
+      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }" :style="props.rowIndex % 2 === 0 ? 'background-color: #e6e6e6;' : ''">
         <q-td v-for="col in props.cols" :key="col.name" :props="props" class="table-cell">
           <!-- Expand Button -->
           <template v-if="col.name === 'expand' && hasExpandableRows">
