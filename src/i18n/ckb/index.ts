@@ -760,8 +760,8 @@ export default {
 
     // Print Template Translations
     print: {
-      companyName: "کۆمپانیای بازرگانی درووست",
-      documentTitle: "وردەکاری کڕیار",
+      companyName: "ERP بازرگانی",
+      documentTitle: "ڕاپۆرتی وردەکاری کڕیار",
       generatedOn: "دروستکراوە لە",
       basicInformationTitle: "زانیاری بنەڕەتی",
       creditInformationTitle: "زانیاری قەرز",
@@ -776,8 +776,8 @@ export default {
       customerOwesUs: "کڕیار قەرزاری ئێمەیە",
       supplierDebtDescription: "ئەمە ئەو بڕە پارەیەیە کە ئێمە قەرزاری ئەم دابینکەرەین بۆ کڕینەکان",
       customerDebtDescription: "ئەمە ئەو بڕە پارەیەیە کە ئەم کڕیارە قەرزاری ئێمەیە بۆ کڕینەکان",
-      footerNote: "ئەم بەڵگەیە بە شێوەی خۆکارانە لەلایەن سیستەمی بازرگانیەوە دروستکراوە.",
-      contactNote: "بۆ پرسیار یان پێشنیار تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکەن."
+      footerNote: "ئەم بەڵگەیە بە شێوەی خۆکارانە لەلایەن سیستەمی ERP بازرگانیەوە دروستکراوە.",
+      contactNote: "بۆ پرسیار یان نیگەرانی، تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکەن."
     },
 
     // New User Account Creation
@@ -1046,6 +1046,11 @@ export default {
     exchangeRateMustBePositive: "ڕێژەی ئاڵوگۆڕ دەبێت ژمارەیەکی موجەب بێت",
     warehouse: "کۆگا",
     items: "کاڵاکان",
+    errors: {
+      failedToLoadTransaction: "سەرکەوتوو نەبوو لە بارکردنی وردەکارییەکانی مامەڵە",
+      transactionNotFound: "مامەڵەکە نەدۆزرایەوە",
+      invalidTransactionId: "ناسنامەی مامەڵەکە درووست نییە"
+    },
     statusTypes: {
       completed: "تەواو",
       reserved: "حجزکراو",
@@ -2098,6 +2103,10 @@ export default {
       errors: {
         customerRequired: "زانیاریەکانی کڕیار پێویستە",
         paymentAmountRequired: "تکایە لانیکەم یەک بڕی پارە بنووسە (دینار یان دۆلار)",
+        discountMustBePositive: "داشکاندن دەبێت ژمارەیەکی ئەرێنی بێت",
+        discountMaximum100: "داشکاندن ناتوانێت لە ١٠٠% زیاتر بێت",
+        forgivenPriceMustBePositive: "بڕی لێخۆشبوون دەبێت ئەرێنی بێت",
+        forgivenPriceHint: "بڕەکە بۆ لێخۆشبوون لە قەرزی کڕیار",
         paymentFailed: "پرۆسەی پارەدانی کۆمەڵی سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە",
       },
     },
@@ -2752,6 +2761,8 @@ export default {
     enterForgivenAmount: "بڕی لێبڕین بنووسە",
     forgivenPriceHint: "بڕی لێبڕین ئەگەر کڕیار پارە نەدات",
     forgivenPriceMustBePositive: "بڕی لێبڕین ناتوانێت سالب بێت",
+    selectBranchToUpdate: "تکایە لقێک هەڵبژێرە بۆ نوێکردنەوەی ئەم مامەڵەیە",
+    pleaseSelectBranch: "تکایە لقێک هەڵبژێرە بۆ بەردەوامبوون",
     paymentAmountRequired: "بڕی پارەدان بۆ مامەڵەی نەقدی پێویستە",
     // پالاوتنی جۆری کاڵا
     filterByCategory: "پالاوتن بە پێی جۆری کاڵا",
@@ -2771,6 +2782,10 @@ export default {
     cashboxClosed: "صندوق داخراوە",
     cashboxMustBeOpened: "پێویستە صندوق بکرێتەوە پێش پرۆسێسکردنی هەر مامەڵەیەک",
     cashboxNotOpened: "صندوق نەکراوەتەوە!",
+    // Loading and edit state
+    loadingTransaction: "بارکردنی وردەکارییەکانی مامەڵە...",
+    transactionNotEditable: "مامەڵەکە ناتوانرێت دەستکاری بکرێت",
+    transactionCannotBeModified: "ئەم مامەڵەیە ناتوانرێت دەستکاری بکرێت",
     openCashboxFirst: "تکایە یەکەم جار صندوق بکەرەوە بۆ ئەنجامدانی مامەڵەکان",
     cannotProcessTransaction: "ناتوانرێت مامەڵەکە پرۆسێس بکرێت",
     unableToCheckCashboxStatus: "ناتوانرێت دۆخی صندوق بپشکنرێت",

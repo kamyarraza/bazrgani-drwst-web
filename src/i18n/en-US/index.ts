@@ -1334,6 +1334,11 @@ export default {
     exchangeRateMustBePositive: "Exchange rate must be positive",
     warehouse: "Warehouse",
     items: "Items",
+    errors: {
+      failedToLoadTransaction: "Failed to load transaction details",
+      transactionNotFound: "Transaction not found",
+      invalidTransactionId: "Invalid transaction ID"
+    },
     statusTypes: {
       completed: "Completed",
       reserved: "Reserved", 
@@ -2623,9 +2628,12 @@ export default {
     enterUsdReturnAmount: "Enter USD return amount",
     forgivenPrice: "Forgiven Amount",
     enterForgivenAmount: "Enter forgiven amount",
-    forgivenPriceHint: "Amount forgiven if customer doesn't pay",
-    forgivenPriceMustBePositive: "Forgiven amount cannot be negative",
-    paymentAmountRequired: "Payment amount required for cash transactions",
+    forgivenPriceHint: "Amount to forgive from the customer's debt",
+    discountMustBePositive: "Discount must be a positive number",
+    discountMaximum100: "Discount cannot exceed 100%",
+    selectBranchToUpdate: "Please select a branch to update this transaction",
+    pleaseSelectBranch: "Please select a branch to proceed",
+    paymentAmountRequired: "Please enter at least one payment amount (IQD or USD)",
     // Category filtering
     filterByCategory: "Filter by Category",
     noCategoryItems: "No items found in selected category",
@@ -2645,6 +2653,10 @@ export default {
     cashboxMustBeOpened:
       "Cashbox must be opened before processing any transactions",
     cashboxNotOpened: "Cashbox Not Opened!",
+    // Loading and edit state
+    loadingTransaction: "Loading transaction details...",
+    transactionNotEditable: "Transaction Not Editable",
+    transactionCannotBeModified: "This transaction cannot be modified",
     openCashboxFirst: "Please open the cashbox first to perform transactions",
     cannotProcessTransaction: "Cannot process transaction",
     unableToCheckCashboxStatus: "Unable to check cashbox status",

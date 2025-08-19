@@ -82,6 +82,12 @@ export interface List {
     solo_unit_price?: number;
     bulk_unit_price?: number;
   }[];
+  payment?: {
+    total_usd_in: number;
+    total_iqd_in: number;
+    total_usd_out: number;
+    total_iqd_out: number;
+  };
   discounted_rate?: number;
   total_price: number;
   discounted_price?: number;

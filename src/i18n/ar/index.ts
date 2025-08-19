@@ -230,6 +230,11 @@ export default {
     exchangeRateMustBePositive: "يجب أن يكون سعر الصرف موجباً",
     warehouse: "المستودع",
     items: "المنتجات",
+    errors: {
+      failedToLoadTransaction: "فشل في تحميل تفاصيل المعاملة",
+      transactionNotFound: "المعاملة غير موجودة",
+      invalidTransactionId: "معرف المعاملة غير صحيح"
+    },
     statusTypes: {
       completed: "مكتملة",
       reserved: "محجوزة",
@@ -1589,6 +1594,10 @@ export default {
         errors: {
           customerRequired: "معلومات العميل مطلوبة",
           paymentAmountRequired: "يرجى إدخال مبلغ دفع واحد على الأقل (دينار أو دولار)",
+          discountMustBePositive: "يجب أن يكون الخصم رقمًا موجبًا",
+          discountMaximum100: "لا يمكن أن يتجاوز الخصم 100%",
+          forgivenPriceMustBePositive: "يجب أن يكون المبلغ المسامح فيه موجبًا",
+          forgivenPriceHint: "المبلغ المراد مسامحته من دين العميل",
           paymentFailed: "فشل في معالجة الدفعة المجمعة. يرجى المحاولة مرة أخرى",
         },
       },
@@ -1957,6 +1966,8 @@ export default {
     enterForgivenAmount: "أدخل المبلغ المسامح به",
     forgivenPriceHint: "المبلغ المسامح به إذا لم يدفع العميل",
     forgivenPriceMustBePositive: "المبلغ المسامح به لا يمكن أن يكون سالباً",
+    selectBranchToUpdate: "يرجى اختيار فرع لتحديث هذه المعاملة",
+    pleaseSelectBranch: "يرجى اختيار فرع للمتابعة",
     paymentAmountRequired: "مبلغ الدفع مطلوب للمعاملات النقدية",
     // فلترة الفئات
     filterByCategory: "تصفية حسب الفئة",
@@ -1976,6 +1987,10 @@ export default {
     cashboxClosed: "الصندوق مغلق",
     cashboxMustBeOpened: "يجب فتح الصندوق قبل معالجة أي معاملات",
     cashboxNotOpened: "الصندوق غير مفتوح!",
+    // Loading and edit state
+    loadingTransaction: "جاري تحميل تفاصيل المعاملة...",
+    transactionNotEditable: "المعاملة غير قابلة للتعديل",
+    transactionCannotBeModified: "لا يمكن تعديل هذه المعاملة",
     openCashboxFirst: "يرجى فتح الصندوق أولاً لأداء المعاملات",
     cannotProcessTransaction: "لا يمكن معالجة المعاملة",
     unableToCheckCashboxStatus: "غير قادر على فحص حالة الصندوق",
