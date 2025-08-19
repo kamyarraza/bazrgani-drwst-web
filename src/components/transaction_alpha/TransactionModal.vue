@@ -503,8 +503,8 @@ const usdReturnAmount = ref(0);
 const forgivenPrice = ref(0);
 
 const statusOptions = [
-  { label: t('transaction.status.complete'), value: 'completed' },
-  { label: t('transaction.status.reserved'), value: 'reserved' }
+  { label: t('transaction.statusTypes.completed'), value: 'completed' },
+  { label: t('transaction.statusTypes.reserved'), value: 'reserved' }
 ];
 
 const customerStore = useCustomerStore();

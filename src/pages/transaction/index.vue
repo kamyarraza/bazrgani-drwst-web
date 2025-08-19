@@ -142,9 +142,12 @@
     <!-- Add Item Transaction Modal - New Redesigned Modal -->
     <TransactionModal v-model="showAddModal" :transactionType="transactionType" @success="handleTransactionAdded" />
 
-    <!-- Edit Transaction Modal -->
-    <EditTransactionModal v-model="showEditModal" :transaction-data="selectedEditTransaction"
-      @success="handleTransactionUpdated" />
+    <!-- Edit Transaction Modal (Alpha Update Modal) -->
+    <TransactionUpdateModal
+      v-model="showEditModal"
+      :transaction-data="selectedEditTransaction"
+      @success="handleTransactionUpdated"
+    />
 
     <!-- Payment Modals -->
     <PaySupplier v-model="showPaySupplierModal" :transaction-data="selectedTransactionData"
@@ -187,8 +190,8 @@ import ReceiveFromCustomer from 'src/components/transaction/ReceiveFromCustomer.
 import RefundTransaction from 'src/components/transaction/RefundTransaction.vue'
 import RefundDetailsModal from 'src/components/transaction/RefundDetailsModal.vue'
 import TransactionDetailsModal from 'src/components/transaction/TransactionDetailsModal.vue'
-import EditTransactionModal from 'src/components/transaction/EditTransactionModal.vue'
 import TransactionModal from 'src/components/transaction_alpha/TransactionModal.vue'
+import TransactionUpdateModal from 'src/components/transaction_alpha/TransactionUpdateModal.vue'
 import { useAuthStore } from 'src/stores/authStore'
 import { useQuasar } from 'quasar'
 import { formatCurrency } from 'src/composables/useFormat'
@@ -265,17 +268,9 @@ const menuItems = computed(() => {
   return (row: List) => {
     const baseItems = [
       { label: t('transaction.viewDetails'), icon: 'visibility', value: 'view_details' },
-      { label: t('transaction.viewInvoice'), icon: 'receipt', value: 'view_invoice' }
+      { label: t('transaction.viewInvoice'), icon: 'receipt', value: 'view_invoice' },
+      { label: t('transaction.updateTransaction'), icon: 'edit', value: 'edit_transaction' }
     ];
-
-    // Add edit option if transaction is editable
-    if (row.is_editable) {
-      baseItems.push({
-        label: t('common.edit'),
-        icon: 'edit',
-        value: 'edit_transaction'
-      });
-    }
 
     // Add refund-related options only for sell transactions
     if (transactionType.value === 'sell') {
