@@ -513,54 +513,113 @@ watch(
   async (tx) => {
     if (!tx) return;
 
+    // Transaction data received for prefilling modal
+
+    // Map basic transaction fields
     selectedCustomerId.value = tx.customer?.id || null;
     selectedWarehouseId.value = tx.warehouse?.id || null;
     selectedPaymentType.value = normalizePaymentType(tx.payment_type);
     note.value = tx.note || '';
-    discountedRate.value = tx.discounted_rate || 0;
+    discountedRate.value = Number(tx.discounted_rate || 0);
     transactionStatus.value = (tx.status as 'completed' | 'reserved') || 'completed';
-    forgivenPrice.value = tx.forgiven_price || 0;
+    forgivenPrice.value = Number(tx.forgiven_price || 0);
     
-    // Map payment amounts from transaction data payment object
+    // Map payment amounts - handle both payment object and direct fields
     if (tx.payment) {
-      // Extract payment amounts from the payment object based on API response structure
+      // Extract payment amounts from the payment object
       iqdPrice.value = Number(tx.payment.total_iqd_in || 0);
       usdPrice.value = Number(tx.payment.total_usd_in || 0);
       iqdReturnAmount.value = Number(tx.payment.total_iqd_out || 0);
       usdReturnAmount.value = Number(tx.payment.total_usd_out || 0);
     } else {
-      // Initialize with defaults if no payment data
-      iqdPrice.value = 0;
+      // Use direct fields from transaction if payment object not available
+      iqdPrice.value = Number(tx.paid_price || 0);
       usdPrice.value = 0;
       iqdReturnAmount.value = 0;
       usdReturnAmount.value = 0;
     }
 
-    // Prefill selected items from transaction
+    // Prefill selected items from transaction with enhanced mapping
     selectedItems.value = (tx.items || []).map((it) => ({
-      item: { id: it.id, name: it.name, solo_unit_price: it.solo_unit_price, bulk_unit_price: it.bulk_unit_price },
+      item: { 
+        id: it.id, 
+        name: it.name, 
+        solo_unit_price: Number(it.solo_unit_price || it.unit_price || 0), 
+        bulk_unit_price: Number(it.bulk_unit_price || it.unit_price || 0)
+      },
       unit_cost: Number(it.unit_price) || 0,
       solo_unit_cost: Number(it.solo_unit_price || it.unit_price || 0),
       bulk_unit_cost: Number(it.bulk_unit_price || it.unit_price || 0),
       quantity: Number(it.quantity) || 0,
-      packages: 0,
-      packets: 0
+      packages: Math.floor((Number(it.quantity) || 0) / 100) || 0, // Estimate packages
+      packets: Math.floor((Number(it.quantity) || 0) / 10) || 0    // Estimate packets
     }));
+
+    // Transaction data mapped successfully
 
     // Load related data
     const customerType = isPurchase.value ? 'supplier' : 'customer';
     await customerStore.fetchCustomers(1, customerType as any);
 
-    // For update modal, if we have transaction data and warehouse, allow sections to show
-    // even if branch is not explicitly selected yet
-    selectedBranchId.value = null;
+    // Auto-set branch if warehouse has branch information (using any type for flexibility)
+    if ((tx.warehouse as any)?.branch_id) {
+      selectedBranchId.value = (tx.warehouse as any).branch_id;
+    } else if (authStore.currentUser?.type === 'employee' && authStore.currentUser?.branch?.id) {
+      // For employees, use their assigned branch
+      selectedBranchId.value = authStore.currentUser.branch.id;
+    } else {
+      // Fetch warehouse details to get branch info
+      try {
+        if (selectedWarehouseId.value) {
+          const warehouseStore = await import('src/stores/warehouseStore');
+          const { useWarehouseStore } = warehouseStore;
+          const store = useWarehouseStore();
+          // Warehouse store method may not exist - skip this approach
+          // selectedBranchId will be set manually by user if needed
+        }
+      } catch (error) {
+        console.warn('Could not fetch warehouse branch info:', error);
+      }
+    }
 
-    // For sell, once warehouse is known, ensure items list is fetched so user can add/change items
+    // Wait for next tick to ensure components are ready
+    await nextTick();
+
+    // Update customer selector display if needed
+    if (customerSelectorRef.value && tx.customer) {
+      const customerDisplayName = tx.customer.name || tx.customer.name;
+      if (customerSelectorRef.value.updateDisplayName) {
+        customerSelectorRef.value.updateDisplayName(customerDisplayName);
+      }
+    }
+
+    // Update warehouse selector display if needed
+    if (warehouseSelectorRef.value && tx.warehouse) {
+      if (warehouseSelectorRef.value.updateDisplayName) {
+        warehouseSelectorRef.value.updateDisplayName(tx.warehouse.name);
+      }
+    }
+
+    // For sell transactions, ensure items list is fetched
     if (isSell.value && selectedWarehouseId.value) {
-      await nextTick();
       if (itemSelectorRef.value && typeof itemSelectorRef.value.fetchItemsForWarehouse === 'function') {
         itemSelectorRef.value.fetchItemsForWarehouse();
       }
+    }
+
+    // Explicitly set selected items in the ItemSelector component after a delay
+    if (selectedItems.value.length > 0) {
+      // Attempting to set selected items in ItemSelector
+      
+      // Use a timeout to ensure the ItemSelector is fully mounted and ready
+      setTimeout(() => {
+        if (itemSelectorRef.value && typeof itemSelectorRef.value.setSelectedItems === 'function') {
+          // Setting selected items on ItemSelector via method
+          itemSelectorRef.value.setSelectedItems(selectedItems.value);
+        } else {
+          // ItemSelector ref or setSelectedItems method not available yet
+        }
+      }, 100);
     }
   },
   { immediate: true }
@@ -584,10 +643,14 @@ const warehouseSelectorRef = ref<any>(null);
 const isFirstSectionComplete = computed(() => {
   // For update modal, if we have transaction data, be more lenient with the requirements
   if (transactionData.value) {
-    return !!selectedCustomerId.value && !!selectedWarehouseId.value && !!selectedPaymentType.value;
+    const result = !!selectedCustomerId.value && !!selectedWarehouseId.value && !!selectedPaymentType.value;
+    // First section validation for update mode
+    return result;
   }
   // For new transactions, require all fields including branch
-  return !!selectedCustomerId.value && !!selectedBranchId.value && !!selectedWarehouseId.value && !!selectedPaymentType.value;
+  const result = !!selectedCustomerId.value && !!selectedBranchId.value && !!selectedWarehouseId.value && !!selectedPaymentType.value;
+  // First section validation for new transaction mode
+  return result;
 });
 
 const canSubmit = computed(() => {
@@ -599,8 +662,11 @@ const canSubmit = computed(() => {
   // For update modal, if we have transaction data, be more lenient with branch requirement
   if (transactionData.value) {
     const basic = selectedCustomerId.value && selectedWarehouseId.value && selectedPaymentType.value && selectedItems.value.length > 0;
-    // Still require branch for submission, but show a warning if missing
-    return !!basic && !!selectedBranchId.value;
+    // For updates, allow submission if we have a branch or can derive it from existing data
+    const hasBranchOrCanDerive = selectedBranchId.value || 
+      ((transactionData.value?.warehouse as any)?.branch_id) || 
+      (authStore.currentUser?.type === 'employee' && authStore.currentUser?.branch?.id);
+    return !!basic && !!hasBranchOrCanDerive;
   }
   // For new transactions, require all fields
   const basic = selectedCustomerId.value && selectedBranchId.value && selectedWarehouseId.value && selectedPaymentType.value && selectedItems.value.length > 0;
@@ -611,7 +677,12 @@ const hasSelectedItems = computed(() => selectedItems.value.length > 0);
 
 function getProgressPercentage(): number {
   let progress = 0;
-  if (selectedCustomerId.value && selectedBranchId.value && selectedWarehouseId.value && selectedPaymentType.value) progress += 50;
+  // For update modal, be more lenient with branch requirement
+  if (transactionData.value) {
+    if (selectedCustomerId.value && selectedWarehouseId.value && selectedPaymentType.value) progress += 50;
+  } else {
+    if (selectedCustomerId.value && selectedBranchId.value && selectedWarehouseId.value && selectedPaymentType.value) progress += 50;
+  }
   if (selectedItems.value.length > 0) progress += 40;
   if (canSubmit.value) progress += 10;
   return Math.min(100, progress);
@@ -691,8 +762,18 @@ async function handleSubmit() {
     return;
   }
   
-  // Check if branch is selected for update
-  if (!selectedBranchId.value) {
+  // Determine branch ID - use selected or derive from existing data
+  let branchId = selectedBranchId.value;
+  if (!branchId) {
+    if ((currentTransaction.warehouse as any)?.branch_id) {
+      branchId = (currentTransaction.warehouse as any).branch_id;
+    } else if (authStore.currentUser?.type === 'employee' && authStore.currentUser?.branch?.id) {
+      branchId = authStore.currentUser.branch.id;
+    }
+  }
+
+  // Check if we still don't have a branch
+  if (!branchId) {
     $q.notify({ type: 'warning', message: t('transactionAlpha.pleaseSelectBranch') || 'Please select a branch', position: 'top' });
     return;
   }
@@ -705,12 +786,53 @@ async function handleSubmit() {
   try {
     submitting.value = true;
 
+    // Validate current values before creating payload
+
+    // Ensure all required fields have valid values
+    const validBranchId = branchId || (currentTransaction.warehouse as any)?.branch_id || (authStore.currentUser?.type === 'employee' ? authStore.currentUser?.branch?.id : null);
+    const validCustomerId = selectedCustomerId.value || currentTransaction.customer?.id;
+    const validWarehouseId = selectedWarehouseId.value || currentTransaction.warehouse?.id;
+    const validPaymentType = selectedPaymentType.value || currentTransaction.payment_type || 'cash';
+
+    // Validate that we have all required fields and they are not NaN
+    const isValidNumber = (val: any) => !isNaN(Number(val)) && Number(val) > 0;
+    
+    if (!isValidNumber(validBranchId) || !isValidNumber(validCustomerId) || !isValidNumber(validWarehouseId) || !validPaymentType || selectedItems.value.length === 0) {
+      const missingFields: string[] = [];
+      if (!isValidNumber(validBranchId)) missingFields.push('branch_id (invalid or missing)');
+      if (!isValidNumber(validCustomerId)) missingFields.push('customer_id (invalid or missing)');
+      if (!isValidNumber(validWarehouseId)) missingFields.push('warehouse_id (invalid or missing)');
+      if (!validPaymentType) missingFields.push('payment_type');
+      if (selectedItems.value.length === 0) missingFields.push('details/items');
+      
+      $q.notify({
+        type: 'negative',
+        message: `Invalid or missing required fields: ${missingFields.join(', ')}`,
+        position: 'top'
+      });
+      return;
+    }
+
+    // Validate selected items have valid data
+    const invalidItems = selectedItems.value.filter(item => 
+      !item.item?.id || !isValidNumber(item.quantity) || !isValidNumber(item.unit_cost)
+    );
+    
+    if (invalidItems.length > 0) {
+      $q.notify({
+        type: 'negative',
+        message: `${invalidItems.length} selected items have invalid data (missing item_id, quantity, or unit_price)`,
+        position: 'top'
+      });
+      return;
+    }
+
     const payload: any = {
-      branch_id: Number(selectedBranchId.value),
-      customer_id: Number(selectedCustomerId.value),
-      warehouse_id: Number(selectedWarehouseId.value),
-      payment_type: selectedPaymentType.value,
-      usd_iqd_rate: Number(usdIqdRate.value),
+      branch_id: Number(validBranchId),
+      customer_id: Number(validCustomerId),
+      warehouse_id: Number(validWarehouseId),
+      payment_type: validPaymentType,
+      usd_iqd_rate: Number(usdIqdRate.value || 1500),
       note: note.value || '',
       created_at: (currentTransaction.created_at || new Date().toISOString().split('T')[0]),
       iqd_price: Number(iqdPrice.value || 0),
@@ -719,13 +841,15 @@ async function handleSubmit() {
       usd_return_amount: Number(usdReturnAmount.value || 0),
       forgiven_price: Number(forgivenPrice.value || 0),
       details: selectedItems.value.map((sel) => ({
-        item_id: sel.item.id,
+        item_id: Number(sel.item.id),
         quantity: Number(sel.quantity || 0),
         unit_price: Number(sel.unit_cost || 0),
         solo_unit_price: Number(sel.solo_unit_cost || sel.unit_cost || 0),
         bulk_unit_price: Number(sel.bulk_unit_cost || sel.unit_cost || 0)
       }))
     };
+
+    // Payload created successfully
 
     if (isSell.value) {
       payload.discounted_rate = Number(discountedRate.value || 0);

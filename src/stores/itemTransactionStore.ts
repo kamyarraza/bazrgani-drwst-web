@@ -414,31 +414,55 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     try {
       loading.value = true;
 
+      // Update transaction called with validated data
+
+      // Validate required fields before creating FormData
+      if (!transactionData.branch_id || !transactionData.customer_id || !transactionData.warehouse_id || !transactionData.payment_type) {
+        throw new Error('Missing required fields in transaction data');
+      }
+
+      if (!transactionData.details || !Array.isArray(transactionData.details) || transactionData.details.length === 0) {
+        throw new Error('Transaction details are required and must be a non-empty array');
+      }
+
       // Create FormData for the update endpoints
       const formData = new FormData();
 
-      // Add basic fields
-      formData.append('branch_id', transactionData.branch_id.toString());
-      formData.append('customer_id', transactionData.customer_id.toString());
-      formData.append('warehouse_id', transactionData.warehouse_id.toString());
-      formData.append('payment_type', transactionData.payment_type);
-      formData.append('usd_iqd_rate', transactionData.usd_iqd_rate.toString());
-      formData.append('note', transactionData.note || '');
-      formData.append('created_at', transactionData.created_at);
-      formData.append('iqd_price', transactionData.iqd_price.toString());
-      formData.append('usd_price', transactionData.usd_price.toString());
-      formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
-      formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
-      formData.append('forgiven_price', (transactionData.forgiven_price || 0).toString());
+      // Add basic fields with validation
+      formData.append('branch_id', Number(transactionData.branch_id).toString());
+      formData.append('customer_id', Number(transactionData.customer_id).toString());
+      formData.append('warehouse_id', Number(transactionData.warehouse_id).toString());
+      formData.append('payment_type', transactionData.payment_type.toString());
+      formData.append('usd_iqd_rate', Number(transactionData.usd_iqd_rate || 1500).toString());
+      formData.append('note', (transactionData.note || '').toString());
+      formData.append('created_at', transactionData.created_at || new Date().toISOString().split('T')[0]);
+      formData.append('iqd_price', Number(transactionData.iqd_price || 0).toString());
+      formData.append('usd_price', Number(transactionData.usd_price || 0).toString());
+      formData.append('iqd_return_amount', Number(transactionData.iqd_return_amount || 0).toString());
+      formData.append('usd_return_amount', Number(transactionData.usd_return_amount || 0).toString());
+      formData.append('forgiven_price', Number(transactionData.forgiven_price || 0).toString());
 
-      // Add details array
+      // Add sell-specific fields if present
+      if (transactionData.discounted_rate !== undefined) {
+        formData.append('discounted_rate', Number(transactionData.discounted_rate || 0).toString());
+      }
+      if (transactionData.status) {
+        formData.append('status', transactionData.status.toString());
+      }
+
+      // Add details array with validation
       transactionData.details.forEach((detail: any, index: number) => {
-        formData.append(`details[${index}][item_id]`, detail.item_id.toString());
-        formData.append(`details[${index}][quantity]`, detail.quantity.toString());
-        formData.append(`details[${index}][unit_price]`, detail.unit_price.toString());
-        formData.append(`details[${index}][solo_unit_price]`, detail.solo_unit_price.toString());
-        formData.append(`details[${index}][bulk_unit_price]`, detail.bulk_unit_price.toString());
+        if (!detail.item_id || !detail.quantity || !detail.unit_price) {
+          throw new Error(`Invalid detail at index ${index}: missing item_id, quantity, or unit_price`);
+        }
+        formData.append(`details[${index}][item_id]`, Number(detail.item_id).toString());
+        formData.append(`details[${index}][quantity]`, Number(detail.quantity).toString());
+        formData.append(`details[${index}][unit_price]`, Number(detail.unit_price).toString());
+        formData.append(`details[${index}][solo_unit_price]`, Number(detail.solo_unit_price || detail.unit_price).toString());
+        formData.append(`details[${index}][bulk_unit_price]`, Number(detail.bulk_unit_price || detail.unit_price).toString());
       });
+
+      // FormData created with all required fields
 
       const response = await api.put<ApiResponse<any>>(endpoint, formData, {
         headers: {

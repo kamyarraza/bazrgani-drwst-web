@@ -465,7 +465,8 @@ interface SelectedItem {
   unit_cost: number;
   solo_unit_cost: number;
   bulk_unit_cost: number;
-  // ... any other fields used
+  packages: number;
+  packets: number;
 }
 
 const props = defineProps({

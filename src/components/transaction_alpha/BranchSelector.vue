@@ -74,7 +74,10 @@ const emit = defineEmits(['update:modelValue', 'select']);
 const branchStore = useBranchStore();
 const authStore = useAuthStore();
 
-const isAdmin = computed(() => authStore.currentUser?.type === 'admin');
+const isAdmin = computed(() => {
+  const userType = authStore.currentUser?.type;
+  return userType === 'admin';
+});
 const isEmployee = computed(() => !isAdmin.value);
 
 interface BranchOption {
@@ -121,15 +124,24 @@ function onBlur() {
 }
 
 onMounted(async () => {
+  // BranchSelector component mounted
+  
   if (isAdmin.value) {
     await fetchBranches('');
-  } else if (isEmployee.value && authStore.currentUser?.branch) {
-    const branch = authStore.currentUser.branch as BranchOption;
-    selectedBranchId.value = branch.id;
-    branchOptions.value = [{ id: branch.id, name: branch.name, code: branch.code ? branch.code : '', phone: branch.phone ? branch.phone : '' }];
-    emit('update:modelValue', branch.id);
-    emit('select', branch);
-    searchQuery.value = branch.name;
+  } else if (isEmployee.value) {
+    // Get branch from currentUser (UserData type which has branch property)
+    const branch = authStore.currentUser?.branch;
+    if (branch) {
+      const branchOption = branch as BranchOption;
+      selectedBranchId.value = branchOption.id;
+      branchOptions.value = [{ id: branchOption.id, name: branchOption.name, code: branchOption.code || '', phone: branchOption.phone || '' }];
+      emit('update:modelValue', branchOption.id);
+      emit('select', branchOption);
+      searchQuery.value = branchOption.name;
+      // Employee branch automatically set
+    } else {
+      // No branch found for employee user
+    }
   }
 });
 

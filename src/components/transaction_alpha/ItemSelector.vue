@@ -57,8 +57,10 @@ const lastChangedField = ref('');
 
 const { t } = useI18n();
 
-// Remove watcher that copies props.selectedItems to local selectedItems
-// Only emit changes to parent
+// ItemSelector manages its own selectedItems state
+// Parent can set items via the setSelectedItems method
+
+// Emit changes to parent
 watch(selectedItems, (val) => {
   emit('update:selectedItems', val);
 }, { deep: true });
@@ -312,13 +314,22 @@ function calculateSelectedPrice(unitPrice: number | string, quantity: number) {
   return total.toFixed(2);
 }
 
+// Method to manually set selected items
+function setSelectedItems(items: SelectedItem[]) {
+  // Set selected items from parent component
+  if (items && items.length > 0) {
+    selectedItems.value = [...items];
+  }
+}
+
 defineExpose({
   fetchItemsForWarehouse,
   clearAll,
   selectAll,
   refreshItems,
   refreshAfterTransaction,
-  clearItems
+  clearItems,
+  setSelectedItems
 });
 </script>
 
