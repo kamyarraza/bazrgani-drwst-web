@@ -254,6 +254,7 @@ import { useI18n } from 'vue-i18n'
 import { date, Notify } from 'quasar'
 import type { Customer } from 'src/types/customer'
 import { useLocale } from 'src/composables/useLocale'
+import { printTemplate } from './printTemplate'
 
 interface Props {
   modelValue: boolean
@@ -326,269 +327,271 @@ const printCustomerDetails = async () => {
     const currentDate = date.formatDate(new Date(), 'MMMM D, YYYY')
 
     // Generate print HTML content
-    const printHTML = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>${t('customer.print.documentTitle')} - ${customer.fname} ${customer.sname}</title>
-        <style>
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
+    const printHTML = printTemplate({ customer, isRTL, t, currentDate, formatDate, formatCurrency });
+    
+    // `
+    //   <!DOCTYPE html>
+    //   <html>
+    //   <head>
+    //     <title>${t('customer.print.documentTitle')} - ${customer.fname} ${customer.sname}</title>
+    //     <style>
+    //       * {
+    //         margin: 0;
+    //         padding: 0;
+    //         box-sizing: border-box;
+    //       }
           
-          body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-          }
+    //       body {
+    //         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    //         line-height: 1.6;
+    //         color: #333;
+    //         max-width: 800px;
+    //         margin: 0 auto;
+    //         padding: 20px;
+    //         background: white;
+    //       }
           
-          .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #1976d2;
-            padding-bottom: 20px;
-          }
+    //       .header {
+    //         text-align: center;
+    //         margin-bottom: 30px;
+    //         border-bottom: 3px solid #1976d2;
+    //         padding-bottom: 20px;
+    //       }
           
-          .company-name {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1976d2;
-            margin-bottom: 5px;
-          }
+    //       .company-name {
+    //         font-size: 28px;
+    //         font-weight: bold;
+    //         color: #1976d2;
+    //         margin-bottom: 5px;
+    //       }
           
-          .document-title {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 10px;
-          }
+    //       .document-title {
+    //         font-size: 20px;
+    //         color: #666;
+    //         margin-bottom: 10px;
+    //       }
           
-          .print-date {
-            font-size: 14px;
-            color: #888;
-          }
+    //       .print-date {
+    //         font-size: 14px;
+    //         color: #888;
+    //       }
           
-          .customer-info {
-            margin-bottom: 30px;
-          }
+    //       .customer-info {
+    //         margin-bottom: 30px;
+    //       }
           
-          .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #1976d2;
-            margin-bottom: 15px;
-            border-left: 4px solid #1976d2;
-            padding-left: 12px;
-          }
+    //       .section-title {
+    //         font-size: 18px;
+    //         font-weight: bold;
+    //         color: #1976d2;
+    //         margin-bottom: 15px;
+    //         border-left: 4px solid #1976d2;
+    //         padding-left: 12px;
+    //       }
           
-          .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-          }
+    //       .info-grid {
+    //         display: grid;
+    //         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    //         gap: 15px;
+    //         margin-bottom: 25px;
+    //       }
           
-          .info-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-          }
+    //       .info-item {
+    //         background: #f8f9fa;
+    //         padding: 15px;
+    //         border-radius: 8px;
+    //         border: 1px solid #e9ecef;
+    //       }
           
-          .info-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-          }
+    //       .info-label {
+    //         font-size: 12px;
+    //         font-weight: 600;
+    //         color: #666;
+    //         text-transform: uppercase;
+    //         letter-spacing: 0.5px;
+    //         margin-bottom: 5px;
+    //       }
           
-          .info-value {
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
-          }
+    //       .info-value {
+    //         font-size: 16px;
+    //         font-weight: 500;
+    //         color: #333;
+    //       }
           
-          .info-value.highlight {
-            color: #1976d2;
-            font-weight: 600;
-          }
+    //       .info-value.highlight {
+    //         color: #1976d2;
+    //         font-weight: 600;
+    //       }
           
-          .credit-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border: 2px solid #dee2e6;
-          }
+    //       .credit-section {
+    //         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    //         padding: 20px;
+    //         border-radius: 10px;
+    //         margin-bottom: 25px;
+    //         border: 2px solid #dee2e6;
+    //       }
           
-          .credit-card {
-            background: ${customer.type === 'supplier' ? 'linear-gradient(135deg, #ff6b6b, #ee5253)' : 'linear-gradient(135deg, #1e88e5, #0d47a1)'};
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 10px;
-          }
+    //       .credit-card {
+    //         background: ${customer.type === 'supplier' ? 'linear-gradient(135deg, #ff6b6b, #ee5253)' : 'linear-gradient(135deg, #1e88e5, #0d47a1)'};
+    //         color: white;
+    //         padding: 20px;
+    //         border-radius: 10px;
+    //         text-align: center;
+    //         margin-bottom: 10px;
+    //       }
           
-          .credit-amount {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-          }
+    //       .credit-amount {
+    //         font-size: 24px;
+    //         font-weight: bold;
+    //         margin-bottom: 5px;
+    //       }
           
-          .credit-label {
-            font-size: 14px;
-            opacity: 0.9;
-          }
+    //       .credit-label {
+    //         font-size: 14px;
+    //         opacity: 0.9;
+    //       }
           
-          .credit-description {
-            text-align: center;
-            font-style: italic;
-            color: #666;
-            font-size: 14px;
-          }
+    //       .credit-description {
+    //         text-align: center;
+    //         font-style: italic;
+    //         color: #666;
+    //         font-size: 14px;
+    //       }
           
-          .footer {
-            margin-top: 40px;
-            text-align: center;
-            border-top: 1px solid #dee2e6;
-            padding-top: 20px;
-            color: #888;
-            font-size: 12px;
-          }
+    //       .footer {
+    //         margin-top: 40px;
+    //         text-align: center;
+    //         border-top: 1px solid #dee2e6;
+    //         padding-top: 20px;
+    //         color: #888;
+    //         font-size: 12px;
+    //       }
           
-          @media print {
-            body {
-              margin: 0;
-              padding: 15px;
-            }
+    //       @media print {
+    //         body {
+    //           margin: 0;
+    //           padding: 15px;
+    //         }
             
-            .header {
-              margin-bottom: 20px;
-              padding-bottom: 15px;
-            }
+    //         .header {
+    //           margin-bottom: 20px;
+    //           padding-bottom: 15px;
+    //         }
             
-            .info-grid {
-              gap: 10px;
-            }
+    //         .info-grid {
+    //           gap: 10px;
+    //         }
             
-            .info-item {
-              padding: 10px;
-            }
+    //         .info-item {
+    //           padding: 10px;
+    //         }
             
-            .credit-section {
-              padding: 15px;
-            }
+    //         .credit-section {
+    //           padding: 15px;
+    //         }
             
-            .footer {
-              margin-top: 30px;
-              padding-top: 15px;
-            }
-          }
-        </style>
-      </head>
-      <body dir="${isRTL.value ? 'rtl' : 'ltr'}">
-        <div class="header">
-          <div class="company-name">${t('customer.print.companyName')}</div>
-          <div class="document-title">${t('customer.print.documentTitle')}</div>
-          <div class="print-date">${t('customer.print.generatedOn')} ${currentDate}</div>
-        </div>
+    //         .footer {
+    //           margin-top: 30px;
+    //           padding-top: 15px;
+    //         }
+    //       }
+    //     </style>
+    //   </head>
+    //   <body dir="${isRTL.value ? 'rtl' : 'ltr'}">
+    //     <div class="header">
+    //       <div class="company-name">${t('customer.print.companyName')}</div>
+    //       <div class="document-title">${t('customer.print.documentTitle')}</div>
+    //       <div class="print-date">${t('customer.print.generatedOn')} ${currentDate}</div>
+    //     </div>
         
-        <div class="customer-info">
-          <div class="section-title">${t('customer.print.basicInformationTitle')}</div>
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.customerId')}</div>
-              <div class="info-value highlight">#${customer.id}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.customerType')}</div>
-              <div class="info-value">${customer.type_value === 'customer' ? t('customer.customer') : t('customer.supplier')}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.fullName')}</div>
-              <div class="info-value">${customer.fname} ${customer.sname}</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.phoneNumber')}</div>
-              <div class="info-value">${customer.fphone}</div>
-            </div>
-            ${customer.sphone ? `
-            <div class="info-item">
-              <div class="info-label">${t('customer.secondPhone')}</div>
-              <div class="info-value">${customer.sphone}</div>
-            </div>
-            ` : ''}
-            ${customer.place ? `
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.place')}</div>
-              <div class="info-value">${customer.place}</div>
-            </div>
-            ` : ''}
-            ${customer.location?.name ? `
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.location')}</div>
-              <div class="info-value">${customer.location.name}</div>
-            </div>
-            ` : ''}
-            <div class="info-item">
-              <div class="info-label">${t('customer.print.createdDate')}</div>
-              <div class="info-value">${formatDate(customer.created_at)}</div>
-            </div>
-            ${customer.hasAccount !== undefined ? `
-            <div class="info-item">
-              <div class="info-label">${t('customer.accountStatus')}</div>
-              <div class="info-value">${customer.hasAccount ? t('customer.hasAccount') : t('customer.noAccount')}</div>
-            </div>
-            ` : ''}
-            ${customer.note ? `
-            <div class="info-item">
-              <div class="info-label">${t('customer.note')}</div>
-              <div class="info-value" style="font-style: italic; background: #f8f9fa; padding: 8px; border-radius: 4px;">${customer.note}</div>
-            </div>
-            ` : ''}
-          </div>
-        </div>
+    //     <div class="customer-info">
+    //       <div class="section-title">${t('customer.print.basicInformationTitle')}</div>
+    //       <div class="info-grid">
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.customerId')}</div>
+    //           <div class="info-value highlight">#${customer.id}</div>
+    //         </div>
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.customerType')}</div>
+    //           <div class="info-value">${customer.type_value === 'customer' ? t('customer.customer') : t('customer.supplier')}</div>
+    //         </div>
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.fullName')}</div>
+    //           <div class="info-value">${customer.fname} ${customer.sname}</div>
+    //         </div>
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.phoneNumber')}</div>
+    //           <div class="info-value">${customer.fphone}</div>
+    //         </div>
+    //         ${customer.sphone ? `
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.secondPhone')}</div>
+    //           <div class="info-value">${customer.sphone}</div>
+    //         </div>
+    //         ` : ''}
+    //         ${customer.place ? `
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.place')}</div>
+    //           <div class="info-value">${customer.place}</div>
+    //         </div>
+    //         ` : ''}
+    //         ${customer.location?.name ? `
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.location')}</div>
+    //           <div class="info-value">${customer.location.name}</div>
+    //         </div>
+    //         ` : ''}
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.print.createdDate')}</div>
+    //           <div class="info-value">${formatDate(customer.created_at)}</div>
+    //         </div>
+    //         ${customer.hasAccount !== undefined ? `
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.accountStatus')}</div>
+    //           <div class="info-value">${customer.hasAccount ? t('customer.hasAccount') : t('customer.noAccount')}</div>
+    //         </div>
+    //         ` : ''}
+    //         ${customer.note ? `
+    //         <div class="info-item">
+    //           <div class="info-label">${t('customer.note')}</div>
+    //           <div class="info-value" style="font-style: italic; background: #f8f9fa; padding: 8px; border-radius: 4px;">${customer.note}</div>
+    //         </div>
+    //         ` : ''}
+    //       </div>
+    //     </div>
         
-        ${(customer.type === 'supplier' && customer.sell_borrow !== undefined) ||
-        (customer.type === 'customer' && customer.purchase_borrow !== undefined) ? `
-        <div class="credit-section">
-          <div class="section-title">${t('customer.print.creditInformationTitle')}</div>
-          ${customer.type === 'supplier' && customer.sell_borrow !== undefined ? `
-          <div class="credit-card">
-            <div class="credit-amount">${formatCurrency(customer.sell_borrow)}</div>
-            <div class="credit-label">${t('customer.print.weOweSupplier')}</div>
-          </div>
-          <div class="credit-description">
-            ${t('customer.print.supplierDebtDescription')}
-          </div>
-          ` : ''}
-          ${customer.type === 'customer' && customer.purchase_borrow !== undefined ? `
-          <div class="credit-card">
-            <div class="credit-amount">${formatCurrency(customer.purchase_borrow)}</div>
-            <div class="credit-label">${t('customer.print.customerOwesUs')}</div>
-          </div>
-          <div class="credit-description">
-            ${t('customer.print.customerDebtDescription')}
-          </div>
-          ` : ''}
-        </div>
-        ` : ''}
+    //     ${(customer.type === 'supplier' && customer.sell_borrow !== undefined) ||
+    //     (customer.type === 'customer' && customer.purchase_borrow !== undefined) ? `
+    //     <div class="credit-section">
+    //       <div class="section-title">${t('customer.print.creditInformationTitle')}</div>
+    //       ${customer.type === 'supplier' && customer.sell_borrow !== undefined ? `
+    //       <div class="credit-card">
+    //         <div class="credit-amount">${formatCurrency(customer.sell_borrow)}</div>
+    //         <div class="credit-label">${t('customer.print.weOweSupplier')}</div>
+    //       </div>
+    //       <div class="credit-description">
+    //         ${t('customer.print.supplierDebtDescription')}
+    //       </div>
+    //       ` : ''}
+    //       ${customer.type === 'customer' && customer.purchase_borrow !== undefined ? `
+    //       <div class="credit-card">
+    //         <div class="credit-amount">${formatCurrency(customer.purchase_borrow)}</div>
+    //         <div class="credit-label">${t('customer.print.customerOwesUs')}</div>
+    //       </div>
+    //       <div class="credit-description">
+    //         ${t('customer.print.customerDebtDescription')}
+    //       </div>
+    //       ` : ''}
+    //     </div>
+    //     ` : ''}
         
-        <div class="footer">
-          <p>${t('customer.print.footerNote')}</p>
-          <p>${t('customer.print.contactNote')}</p>
-        </div>
-      </body>
-      </html>
-    `
+    //     <div class="footer">
+    //       <p>${t('customer.print.footerNote')}</p>
+    //       <p>${t('customer.print.contactNote')}</p>
+    //     </div>
+    //   </body>
+    //   </html>
+    // `
 
     // Write content to print window
     printWindow.document.write(printHTML)

@@ -761,7 +761,7 @@ export default {
     // Print Template Translations
     print: {
       companyName: "کۆمپانیای بازرگانی درووست",
-      documentTitle: "ڕاپۆرتی وردەکاری کڕیار",
+      documentTitle: "وردەکاری کڕیار",
       generatedOn: "دروستکراوە لە",
       basicInformationTitle: "زانیاری بنەڕەتی",
       creditInformationTitle: "زانیاری قەرز",
