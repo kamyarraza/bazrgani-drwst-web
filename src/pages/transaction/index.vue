@@ -376,13 +376,13 @@ const columns = computed(() => {
       field: 'payment_type',
       sortable: true
     },
-    {
-      name: 'total_price',
-      label: t('transaction.columns.totalPrice'),
-      align: "center" as const,
-      field: (row: any) => formatCurrency(Number(row.total_price)),
-      sortable: true
-    },
+    // {
+    //   name: 'total_price',
+    //   label: t('transaction.columns.totalPrice'),
+    //   align: "center" as const,
+    //   field: (row: any) => formatCurrency(Number(row.total_price)),
+    //   sortable: true
+    // },
     // {
     //   name: 'paid_price',
     //   label: t('transaction.columns.paidPrice'),
@@ -412,13 +412,13 @@ const columns = computed(() => {
 
   // Add remaining columns
   baseColumns.push(
-    {
-      name: 'created_at',
-      label: t('transaction.columns.createdAt'),
-      align: "left" as const,
-      field: (row: any) => row.created_at,
-      sortable: true
-    },
+    // {
+    //   name: 'created_at',
+    //   label: t('transaction.columns.createdAt'),
+    //   align: "left" as const,
+    //   field: (row: any) => row.created_at,
+    //   sortable: true
+    // },
 
     {
       name: 'actions',
