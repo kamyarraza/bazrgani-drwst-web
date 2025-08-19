@@ -193,7 +193,7 @@ const columns = [{
   align: "center" as const,
   field: 'purchase_borrow',
   sortable: true,
-  format: (val: any) => formatCurrency(val)
+  format: (val: number) => formatCurrency(val)
 },
 {
   name: 'sell_borrow',

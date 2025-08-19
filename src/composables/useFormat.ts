@@ -5,8 +5,12 @@ export function formatCurrency(
   currencySign: string = "$"
 ): string {
   if (value === null || value === undefined || value === "") return "";
-  const num = typeof value === "string" ? parseFloat(value) : value;
-  if (isNaN(num)) return "";
+
+  if (typeof value === "string") {
+    value = value.replace(/[^\d.-]/g, "");
+    value = parseFloat(value);
+  }
+  if (isNaN(value)) return "";
 
   // IQD (Iraqi Dinar) should show decimal places properly
   const isIQD =
@@ -14,16 +18,16 @@ export function formatCurrency(
 
   if (isIQD) {
     return (
-      num.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+      value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
       }) + currencySign
     );
   }
 
   // Other currencies (USD, EUR, etc.) show 2 decimal places
   return (
-    num.toLocaleString("en-US", {
+    value.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }) + currencySign

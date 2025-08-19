@@ -198,7 +198,7 @@
                             <div class="price-card unpaid-price">
                                 <q-icon name="money_off" class="price-icon text-red" />
                                 <div class="price-label">{{ t('transactionAlpha.forgivenPrice') }}</div>
-                                <div class="price-value text-red">{{ formatCurrency(transactionData.forgiven_price) }}
+                                <div class="price-value text-red">{{ formatCurrency(transactionData.forgiven_price, 'IQD') }}
                                 </div>
                             </div>
                         </div>
