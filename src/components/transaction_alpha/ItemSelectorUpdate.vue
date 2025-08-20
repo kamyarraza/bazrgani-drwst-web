@@ -17,7 +17,8 @@ interface SelectedItem {
 
 const props = defineProps({
   transactionType: { type: String, default: 'purchase' },
-  warehouseId: { type: [Number, String, null], default: null }
+  warehouseId: { type: [Number, String, null], default: null },
+  selectedItems: { type: Array, default: () => [] } // Accept pre-selected items for updates
 });
 const emit = defineEmits(['update:selectedItems']);
 
@@ -57,8 +58,14 @@ const lastChangedField = ref('');
 
 const { t } = useI18n();
 
-// Remove watcher that copies props.selectedItems to local selectedItems
-// Only emit changes to parent
+// Watch for prop changes to sync with parent (for update modal)
+watch(() => props.selectedItems, (newItems) => {
+  if (newItems && Array.isArray(newItems) && newItems.length > 0) {
+    selectedItems.value = [...newItems as SelectedItem[]];
+  }
+}, { immediate: true, deep: true });
+
+// Emit changes to parent
 watch(selectedItems, (val) => {
   emit('update:selectedItems', val);
 }, { deep: true });
@@ -122,7 +129,7 @@ watch(() => props.warehouseId, (warehouseId) => {
 watch(() => props.transactionType, (newType) => {
   // Clear items when changing transaction type
   items.value = [];
-  selectedItems.value = []; // Also clear selected items
+  // Don't clear selected items for update modal - keep existing selections
 
   if (newType === 'sell') {
     // For sell, only load items if warehouse is already selected
@@ -305,6 +312,11 @@ function clearItems() {
   items.value = [];
 }
 
+function setSelectedItems(items: SelectedItem[]) {
+  // Set pre-selected items (for update transactions)
+  selectedItems.value = [...items];
+}
+
 function calculateSelectedPrice(unitPrice: number | string, quantity: number) {
   const qty = Number(quantity || 0);
   const price = Number(unitPrice || 0);
@@ -318,7 +330,8 @@ defineExpose({
   selectAll,
   refreshItems,
   refreshAfterTransaction,
-  clearItems
+  clearItems,
+  setSelectedItems
 });
 </script>
 
@@ -880,10 +893,6 @@ defineExpose({
   margin-top: 8px;
 }
 
-/* .item-selector-selected {
-  flex: 2 1 0;
-  min-width: 0;
-} */
 .item-list-fullwidth {
   width: 100%;
   margin-bottom: 24px;
@@ -1044,7 +1053,6 @@ defineExpose({
   transition: all 0.3s ease;
   max-width: 250px;
   margin-bottom: 35px;
-  /* Reduced space for side-by-side helpers */
 }
 
 .cute-price-container:hover {
@@ -1086,89 +1094,6 @@ defineExpose({
   color: #1b5e20;
   font-weight: 600;
   font-size: 1rem;
-}
-
-/* Cute price helpers */
-.price-helpers {
-  position: absolute;
-  top: 100%;
-  left: 8px;
-  right: 8px;
-  margin-top: 4px;
-  display: flex;
-  flex-direction: row;
-  gap: 6px;
-  z-index: 10;
-}
-
-.price-helper {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(76, 175, 80, 0.2);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  flex: 1;
-  min-width: 0;
-}
-
-.price-helper:hover {
-  background: white;
-  border-color: rgba(76, 175, 80, 0.4);
-  transform: translateX(2px);
-}
-
-.price-helper.solo {
-  color: #6366f1;
-  border-color: rgba(99, 102, 241, 0.2);
-}
-
-.price-helper.solo:hover {
-  border-color: rgba(99, 102, 241, 0.4);
-}
-
-.price-helper.bulk {
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.2);
-}
-
-.price-helper.bulk:hover {
-  border-color: rgba(245, 158, 11, 0.4);
-}
-
-.price-helper span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (max-width: 768px) {
-
-  /* Mobile responsive adjustments for cute price container */
-  .cute-price-container {
-    margin-bottom: 25px !important;
-    /* Less space on mobile */
-  }
-
-  .price-helpers {
-    position: static !important;
-    margin-top: 8px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-  }
-
-  .price-helper {
-    font-size: 0.65rem !important;
-    padding: 2px 6px !important;
-    flex: none !important;
-  }
 }
 
 /* Reference price badges styling */
@@ -1258,8 +1183,6 @@ defineExpose({
 }
 
 @media (max-width: 768px) {
-
-  /* Mobile responsive adjustments for compact price container */
   .cute-price-container {
     max-width: 100%;
     margin-bottom: 6px;
@@ -1394,15 +1317,8 @@ defineExpose({
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .clear-all-container {
@@ -1506,15 +1422,8 @@ defineExpose({
 }
 
 @keyframes fadeInOut {
-
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-
-  50% {
-    opacity: 1;
-  }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 /* Cute button container styles */
