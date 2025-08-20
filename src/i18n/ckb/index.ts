@@ -126,7 +126,7 @@ export default {
     logout: "دەرچوون",
     loginFailed: "چوونەژوورەوە سەرکەوتوو نەبوو",
     logoutDescription: "دەرچوون لە هەژمارەکەت",
-    passwordResetTitle: "داواe: \"یارمەتیت پێویستە بۆ وشەی نهێنیەکەت؟\"",
+    passwordResetTitle: 'داواe: "یارمەتیت پێویستە بۆ وشەی نهێنیەکەت؟"',
     passwordResetMessage:
       "بۆ هۆکارەکانی ئاسایش، تەنها بەڕێوەبەران دەتوانن وشەی نهێنی بەکارهێنەران بگۆڕن. تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکە بە بەکارهێنانی زانیاریەکانی خوارەوە بۆ داواکردنی گۆڕینی وشەی نهێنی.",
     contactAdminTitle: "پەیوەندیکردن بە بەڕێوەبەر",
@@ -653,9 +653,10 @@ export default {
     exportReport: "درووستکردنی ڕاپۆرت",
     exportCSV: "هەناردن وەک CSV",
     exportPDF: "هەناردن وەک PDF",
-    pdfError: "هەڵەیەک لە درووستکردنی PDF دا ڕوویدا. تکایە دووبارە هەوڵ بدەوە یان CSV بەکاربهێنە.",
+    pdfError:
+      "هەڵەیەک لە درووستکردنی PDF دا ڕوویدا. تکایە دووبارە هەوڵ بدەوە یان CSV بەکاربهێنە.",
     noDataAvailable: "هیچ زانیارییەک بۆ ئەم لقە بەردەست نییە",
-    
+
     columns: {
       itemName: "ناوی ئایتم",
       quantity: "بڕ",
@@ -666,7 +667,7 @@ export default {
       packetUnits: "یەکەکانی پاکێت",
       packageUnits: "یەکەکانی پاکەج",
     },
-    
+
     actions: {
       viewDetails: "بینینی وردەکارییەکان",
       exportItem: "هەناردنی ئایتم",
@@ -774,10 +775,14 @@ export default {
       createdDate: "بەرواری دروستکردن",
       weOweSupplier: "ئێمە قەرزاری دابینکەرین",
       customerOwesUs: "کڕیار قەرزاری ئێمەیە",
-      supplierDebtDescription: "ئەمە ئەو بڕە پارەیەیە کە ئێمە قەرزاری ئەم دابینکەرەین بۆ کڕینەکان",
-      customerDebtDescription: "ئەمە ئەو بڕە پارەیەیە کە ئەم کڕیارە قەرزاری ئێمەیە بۆ کڕینەکان",
-      footerNote: "ئەم بەڵگەیە بە شێوەی خۆکارانە لەلایەن سیستەمی بازرگانیەوە دروستکراوە.",
-      contactNote: "بۆ پرسیار یان پێشنیار، تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکەن."
+      supplierDebtDescription:
+        "ئەمە ئەو بڕە پارەیەیە کە ئێمە قەرزاری ئەم دابینکەرەین بۆ کڕینەکان",
+      customerDebtDescription:
+        "ئەمە ئەو بڕە پارەیەیە کە ئەم کڕیارە قەرزاری ئێمەیە بۆ کڕینەکان",
+      footerNote:
+        "ئەم بەڵگەیە بە شێوەی خۆکارانە لەلایەن سیستەمی بازرگانیەوە دروستکراوە.",
+      contactNote:
+        "بۆ پرسیار یان پێشنیار، تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکەن.",
     },
 
     // New User Account Creation
@@ -828,13 +833,13 @@ export default {
       noDebt: "هیچ قەرزێکی نییە",
       success: {
         title: "قەرز بە سەرکەوتوویی دروست کرا!",
-        message: "قەرزێکی ${amount} بۆ کڕیاری {customer} زیاد کرا"
+        message: "قەرزێکی ${amount} بۆ کڕیاری {customer} زیاد کرا",
       },
       error: {
         title: "شکستی دروستکردنی قەرز",
-        message: "تکایە دووبارە هەوڵ بدەرەوە یان پەیوەندی بە پشتگیری بکە"
-      }
-    }
+        message: "تکایە دووبارە هەوڵ بدەرەوە یان پەیوەندی بە پشتگیری بکە",
+      },
+    },
   },
   common: {
     details: "وردەکاریەکان",
@@ -1037,7 +1042,8 @@ export default {
     editTransaction: "دەستکاریکردنی مامەڵە",
     updateTransaction: "نوێکردنەوەی مامەڵە",
     transactionUpdatedSuccessfully: "مامەڵەکە بە سەرکەوتوویی نوێکرایەوە",
-    errorUpdatingTransaction: "نوێکردنەوەی مامەڵە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.",
+    errorUpdatingTransaction:
+      "نوێکردنەوەی مامەڵە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.",
     updatingTransaction: "نوێکردنەوەی مامەڵە...",
     customerCannotBeChanged: "کڕیار/دابینکەر ناگۆڕدرێت",
     warehouseCannotBeChanged: "کۆگا ناگۆڕدرێت",
@@ -1048,14 +1054,15 @@ export default {
     warehouse: "کۆگا",
     items: "کاڵاکان",
     errors: {
-      failedToLoadTransaction: "سەرکەوتوو نەبوو لە بارکردنی وردەکارییەکانی مامەڵە",
+      failedToLoadTransaction:
+        "سەرکەوتوو نەبوو لە بارکردنی وردەکارییەکانی مامەڵە",
       transactionNotFound: "مامەڵەکە نەدۆزرایەوە",
-      invalidTransactionId: "ناسنامەی مامەڵەکە درووست نییە"
+      invalidTransactionId: "ناسنامەی مامەڵەکە درووست نییە",
     },
     statusTypes: {
       completed: "تەواو",
       reserved: "حجزکراو",
-      cancelled: "هەڵوەشێندراوە"
+      cancelled: "هەڵوەشێندراوە",
     },
     customer: "کڕیار",
     status: "دۆخ",
@@ -1921,7 +1928,7 @@ export default {
       usdIn: "دۆلاری وەرگیراو",
       iqdIn: "دیناری وەرگیراو",
       usdOut: "باقی دۆلار",
-      iqdOut: "باقی دینار"
+      iqdOut: "باقی دینار",
     },
     items: {
       title: "کاڵاکان",
@@ -1958,7 +1965,7 @@ export default {
       generatedOn: "دروستکراوە لە",
       exchangeRateInfo: "نرخی ئاڵووگۆڕ: ١ دۆلار = {rate} دینار",
       copyright: "هەموو مافەکان پارێزراون ٢٠٢٥ ©",
-      phone: "موبایل"
+      phone: "موبایل",
     },
     actions: {
       loading: "بارکردنی داتای مامەڵە...",
@@ -2071,6 +2078,30 @@ export default {
         paymentFailed: "پارەدان سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە",
       },
     },
+    refund: {
+      title: "گەڕاندنەوەی کاڵا",
+      subtitle: "پرۆسەی گەڕاندنەوە بۆ کاڵاکانی هەڵگەڕاو",
+      exchangeRateLabel: "ڕێژەی ئاڵوگۆڕ",
+      refreshRate: "نوێکردنەوەی ڕێژەی ئاڵوگۆڕ",
+      paymentAmountsLabel: "وردەکارییەکانی گەڕاندنەوە",
+      iqdAmountLabel: "بڕی دینار",
+      enterIqdAmount: "بڕی دیناری گەڕاندنەوە بنووسە",
+      usdAmountLabel: "بڕی دۆلار",
+      enterUsdAmount: "بڕی دۆلاری گەڕاندنەوە بنووسە",
+      iqdReturnLabel: "گەڕاندنەوەی دینار",
+      enterIqdReturn: "بڕی گەڕاندنەوەی دینار بنووسە",
+      usdReturnLabel: "گەڕاندنەوەی دۆلار",
+      enterUsdReturn: "بڕی گەڕاندنەوەی دۆلار بنووسە",
+      paymentSummary: "کورتەی گەڕاندنەوە",
+      totalPayment: "کۆی گەڕاندنەوە",
+      totalReturn: "کۆی گەڕاوە",
+      netAmount: "بڕی بێخاڵی گەڕاندنەوە",
+      noteLabel: "هۆکار / تێبینی",
+      notePlaceholder:
+        "هۆکار یان تێبینی بۆ ئەم گەڕاندنەوەیە زیاد بکە (دڵخوازانە)",
+      cancel: "پاشگەزبوونەوە",
+      processRefund: "پرۆسەی گەڕاندنەوە",
+    },
     bulkPayment: {
       title: "پارەدانی کۆمەڵی لە کڕیار",
       subtitle: "پرۆسەی پارەدانی کۆمەڵی وەرگیراو لە کڕیار",
@@ -2104,12 +2135,14 @@ export default {
       },
       errors: {
         customerRequired: "زانیاریەکانی کڕیار پێویستە",
-        paymentAmountRequired: "تکایە لانیکەم یەک بڕی پارە بنووسە (دینار یان دۆلار)",
+        paymentAmountRequired:
+          "تکایە لانیکەم یەک بڕی پارە بنووسە (دینار یان دۆلار)",
         discountMustBePositive: "داشکاندن دەبێت ژمارەیەکی ئەرێنی بێت",
         discountMaximum100: "داشکاندن ناتوانێت لە ١٠٠% زیاتر بێت",
         forgivenPriceMustBePositive: "بڕی لێخۆشبوون دەبێت ئەرێنی بێت",
         forgivenPriceHint: "بڕەکە بۆ لێخۆشبوون لە قەرزی کڕیار",
-        paymentFailed: "پرۆسەی پارەدانی کۆمەڵی سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە",
+        paymentFailed:
+          "پرۆسەی پارەدانی کۆمەڵی سەرکەوتوو نەبوو. تکایە دووبارە هەوڵبدەرەوە",
       },
     },
   },
