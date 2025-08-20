@@ -141,9 +141,18 @@ const loading = computed(() => branchReportStore.loading);
 const pagination = computed(() => branchReportStore.pagination);
 
 // Helper function to format numbers
-const formatNumber = (value: number): string => {
+const formatNumber = (value: any): string => {
     if (value === undefined || value === null) return '0';
-    return new Intl.NumberFormat().format(value);
+
+    if (typeof value === "string") {
+        value = value.replace(/[^\d.-]/g, "");
+        value = parseFloat(value);
+    }
+    if (isNaN(value)) return "";
+
+    const num = value.toLocaleString();
+
+    return num
 };
 
 // Calculate max quantity for progress bars
@@ -173,9 +182,9 @@ const columns = computed(() => [
         name: 'total_quantity',
         label: t('branchReport.columns.quantity'),
         field: 'total_quantity',
-        align: 'right' as const,
+        align: 'center' as const,
         sortable: true,
-        format: (val: string) => formatNumber(parseInt(val || '0'))
+        format: (val: any) => formatNumber(val)
     },
     {
         name: 'total_reservations',
@@ -189,7 +198,7 @@ const columns = computed(() => [
         name: 'unit_cost',
         label: t('branchReport.columns.unitCost'),
         field: 'unit_cost',
-        align: 'right' as const,
+        align: 'center' as const,
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
     },
@@ -197,7 +206,7 @@ const columns = computed(() => [
         name: 'solo_unit_price',
         label: t('branchReport.columns.soloPrice'),
         field: 'solo_unit_price',
-        align: 'right' as const,
+        align: 'center' as const,
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
     },
@@ -205,7 +214,7 @@ const columns = computed(() => [
         name: 'bulk_unit_price',
         label: t('branchReport.columns.bulkPrice'),
         field: 'bulk_unit_price',
-        align: 'right' as const,
+        align: 'center' as const,
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
     },
@@ -214,14 +223,16 @@ const columns = computed(() => [
         label: t('branchReport.columns.packetUnits'),
         field: 'packet_units',
         align: 'center' as const,
-        sortable: true
+        sortable: true,
+        format: (val: number) => formatNumber(val || 0)
     },
     {
         name: 'package_units',
         label: t('branchReport.columns.packageUnits'),
         field: 'package_units',
         align: 'center' as const,
-        sortable: true
+        sortable: true,
+        format: (val: number) => formatNumber(val || 0)
     },
     {
         name: 'actions',
@@ -472,12 +483,14 @@ onMounted(async () => {
 
         .summary-card {
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
+            background: #b3c2e677;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            background: #b3c2e655;
             }
         }
     }

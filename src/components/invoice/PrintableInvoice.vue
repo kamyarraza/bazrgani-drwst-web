@@ -179,6 +179,10 @@ const transactionData = computed(() => props.transaction)
 
 const transactionDetails = computed(() => [
   {
+    label: t('itemTransaction.code'),
+    value: transactionData.value?.id || '—'
+  },
+  {
     label: t('itemTransaction.transactionType'),
     value: transactionData.value?.type === 'sell' ? t('transaction.types.sell') : t('transaction.types.purchase')
   },
@@ -190,10 +194,10 @@ const transactionDetails = computed(() => [
     label: t('warehouse.warehouse'),
     value: transactionData.value?.warehouse?.name || '—'
   },
-  {
-    label: t('exchange.rate'),
-    value: formatCurrency((transactionData.value as any)?.usd_iqd_rate, ' IQD')
-  },
+  // {
+  //   label: t('exchange.rate'),
+  //   value: formatCurrency((transactionData.value as any)?.usd_iqd_rate, ' IQD')
+  // },
   {
     label: t('customer.customer'),
     value: transactionData.value?.customer?.name || '—'

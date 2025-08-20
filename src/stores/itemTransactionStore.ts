@@ -441,6 +441,10 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       formData.append('iqd_return_amount', Number(transactionData.iqd_return_amount || 0).toString());
       formData.append('usd_return_amount', Number(transactionData.usd_return_amount || 0).toString());
       formData.append('forgiven_price', Number(transactionData.forgiven_price || 0).toString());
+      formData.append('_method', "PUT");
+
+      console.log(transactionData.iqd_price);
+      
 
       // Add sell-specific fields if present
       if (transactionData.discounted_rate !== undefined) {
@@ -464,7 +468,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
 
       // FormData created with all required fields
 
-      const response = await api.put<ApiResponse<any>>(endpoint, formData, {
+      const response = await api.post<ApiResponse<any>>(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

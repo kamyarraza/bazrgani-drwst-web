@@ -74,6 +74,7 @@ export interface List {
     capacity?: number;
   };
   payment_type: string;
+  payment_type_value: string;
   items?: {
     id: number;
     name: string;

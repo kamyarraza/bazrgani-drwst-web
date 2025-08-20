@@ -14,188 +14,203 @@
 
         <q-card>
           <q-card-section
-            style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh;">
-            <div class="invoice-header">
-              <div class="header-left">
-                <img :src="brandLogo" alt="Brand Logo" class="brand-logo" />
-                <div class="company-info">
-                  <h1 class="company-name">{{ t('invoice.header.companyName') }}</h1>
-                  <p class="company-tagline">{{ t('invoice.header.companyTagline') }}</p>
+            style="display: flex; flex-direction: column; justify-content: space-between; min-height: 85vh; height: 297mm;">
+            <div>
+              <div class="invoice-header">
+                <div class="header-left">
+                  <img :src="brandLogo" alt="Brand Logo" class="brand-logo" />
+                  <div class="company-info">
+                    <h1 class="company-name">{{ t('invoice.header.companyName') }}</h1>
+                    <p class="company-tagline">{{ t('invoice.header.companyTagline') }}</p>
+                  </div>
+                </div>
+  
+                <div class="header-right">
+                  <div class="invoice-meta">
+                    <div class="meta-item" dir="ltr">
+                      <span class="meta-label">💳</span>
+                      <span class="meta-value">{{ transaction?.payment_id || (transaction as any)?.payment_id }}</span>
+                    </div>
+                    <div class="meta-item" dir="ltr">
+                      <span class="meta-label">🗓️</span>
+                      <span class="meta-value">{{ transaction?.created_at || payment?.created_at }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div class="header-right">
-                <div class="invoice-meta">
-                  <div class="meta-item" dir="ltr">
-                    <span class="meta-label">💳</span>
-                    <span class="meta-value">{{ transaction?.payment_id || (transaction as any)?.payment_id }}</span>
+  
+              <!-- Title -->
+              <p class="payment-title-main" style="font-size: 22pt;">{{ t('report.columns.payment') }}</p>
+  
+              <div class="info-cards-container">
+                <!-- Financial Information Card -->
+                <div class="info-card">
+                  <div class="card-header">
+                    <h3 class="card-title">🧾 {{ t('invoice.information') }}</h3>
                   </div>
-                  <div class="meta-item" dir="ltr">
-                    <span class="meta-label">🗓️</span>
-                    <span class="meta-value">{{ transaction?.created_at || payment?.created_at }}</span>
+                  <div class="card-content">
+  
+                    <!-- Invoice Information -->
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td colspan="2">{{ t('invoice.payment.totalPrice') }}</td>
+                          <td class="text-primary fw-bold">{{ formatCurrency((transaction as any)?.paid_price) }}</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">{{ t('transaction.count') }}</td>
+                          <td class=" fw-bold">{{ (transaction as any)?.paid_transactions }}</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">{{ t('transaction.date') }}</td>
+                          <td class="fw-bold">{{ transaction?.created_at }}</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
+                          <td class=" text-danger fw-bold">{{ formatCurrency(transaction?.remained_borrowed_price ?? 0) }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><span style="padding: 0 2rem;"></span></td>
+                          <td><span style="padding: 0 2rem;"></span></td>
+                          <td><span style="padding: 0 4rem;"></span></td>
+                        </tr>
+  
+                        <!-- Fully Paid Badge -->
+                        <tr v-if="(transaction as any)?.is_fully_paid">
+                          <td colspan="3">
+                            <div class="text-center">
+                              <span class="cute-badge">
+                                ✅ fully paid
+                              </span>
+                            </div>
+  
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
+  
+                <!-- Customer Information Card -->
+                <div class="info-card">
+                  <div class="card-header">
+                    <h3 class="card-title">👤 {{ t('customer.customerInfo') }}</h3>
+                  </div>
+                  <div class="card-content">
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>{{ t('customer.columns.id') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerId }}</td>
+                        </tr>
+                        <tr>
+                          <td>{{ t('customer.customer') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerName }}</td>
+                        </tr>
+                        <tr>
+                          <td>{{ t('customer.columns.phone') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerPhone }}</td>
+                        </tr>
+                        <tr>
+                          <td>{{ t('customer.columns.place') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerPlace }}</td>
+                        </tr>
+                        <tr>
+                          <td>{{ t('customer.columns.createdAt') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerCreatedAt }}</td>
+                        </tr>
+                        <tr>
+                          <td>{{ t('customer.columns.purchaseBorrow') }}</td>
+                          <td colspan="2" class="fw-bold text-danger">{{ formatCurrency(customerPurchaseBorrow) }}</td>
+                        </tr>
+                        <tr>
+                          <td><span style="padding: 0 4rem;"></span></td>
+                          <td><span style="padding: 0 4rem;"></span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+  
+                <!-- Payment Details Section -->
+                <div class="info-card">
+                  <div class="card-header">
+                    <h5 class="details-title">📊 {{ t('expense.paymentInformation') }}</h5>
+                  </div>
+                  <div class="card-content payment-details">
+  
+                    <table style="width: 100%;" class="table-prices">
+                      <tbody>
+                        <!-- Grouped by currency -->
+                        <tr v-for="currency in ['usd', 'iqd']" :key="currency">
+                          <td>
+                            <!-- Currency Label -->
+                            <span v-if="currency === 'usd'">{{ t('invoice.payment.usdIn') }}</span>
+                            <span v-else>{{ t('invoice.payment.iqdIn') }}</span>
+                          </td>
+  
+                          <!-- In Amount -->
+                          <td class="fw-bold text-success">
+                            {{
+                              formatCurrency(
+                                ((transaction as any)?.payment || [])
+                                  .find(p => p.currency === currency && p.direction === 'in')?.amount || 0,
+                                ' ' + currency.toUpperCase()
+                              )
+                            }}
+                          </td>
+  
+                          <td>
+                            <!-- Currency Label -->
+                            <span v-if="currency === 'usd'">{{ t('invoice.payment.usdOut') }}</span>
+                            <span v-else>{{ t('invoice.payment.iqdOut') }}</span>
+                          </td>
+  
+                          <!-- Out Amount -->
+                          <td class="fw-bold text-danger">
+                            {{
+                              formatCurrency(
+                                ((transaction as any)?.payment || [])
+                                  .find(p => p.currency === currency && p.direction === 'out')?.amount || 0,
+                                ' ' + currency.toUpperCase()
+                              )
+                            }}
+                          </td>
+                        </tr>
+  
+  
+                        <!-- Exchange Rate -->
+                        <!-- <tr>
+                          <td>{{ t('exchange.rate') }}</td>
+                          <td class="">
+                            {{ formatCurrency((transaction as any)?.exchange_rate?.usd_iqd_rate ?? 0, ' IQD') }}
+                          </td>
+                        </tr> -->
+  
+                        <!-- Spacer row -->
+                        <tr>
+                          <td colspan="4"><span style="padding: 0 2rem;"></span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+  
               </div>
             </div>
 
-            <!-- Title -->
-            <p class="payment-title-main" style="font-size: 22pt;">{{ t('report.columns.payment') }}</p>
-
-            <div class="info-cards-container">
-              <!-- Financial Information Card -->
-              <div class="info-card">
-                <div class="card-header">
-                  <h3 class="card-title">🧾 {{ t('invoice.information') }}</h3>
-                </div>
-                <div class="card-content">
-
-                  <!-- Invoice Information -->
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.payment.totalPrice') }}</td>
-                        <td class="text-primary fw-bold">{{ formatCurrency((transaction as any)?.paid_price) }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('transaction.count') }}</td>
-                        <td class=" fw-bold">{{ (transaction as any)?.paid_transactions }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('transaction.date') }}</td>
-                        <td class="fw-bold">{{ transaction?.created_at }}</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
-                        <td class=" text-danger fw-bold">{{ formatCurrency(transaction?.remained_borrowed_price ?? 0) }}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td><span style="padding: 0 2rem;"></span></td>
-                        <td><span style="padding: 0 2rem;"></span></td>
-                        <td><span style="padding: 0 2rem;"></span></td>
-                      </tr>
-
-                      <!-- Fully Paid Badge -->
-                      <tr v-if="(transaction as any)?.is_fully_paid">
-                        <td colspan="3">
-                          <div class="text-center">
-                            <span class="cute-badge">
-                              ✅ fully paid
-                            </span>
-                          </div>
-
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Customer Information Card -->
-              <div class="info-card">
-                <div class="card-header">
-                  <h3 class="card-title">👤 {{ t('customer.customerInfo') }}</h3>
-                </div>
-                <div class="card-content">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>{{ t('customer.columns.id') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerId }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.customer') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerName }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.phone') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerPhone }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.place') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerPlace }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.createdAt') }}</td>
-                        <td colspan="2" class="fw-bold">{{ customerCreatedAt }}</td>
-                      </tr>
-                      <tr>
-                        <td>{{ t('customer.columns.purchaseBorrow') }}</td>
-                        <td colspan="2" class="fw-bold text-danger">{{ formatCurrency(customerPurchaseBorrow) }}</td>
-                      </tr>
-                      <tr>
-                        <td><span style="padding: 0 4rem;"></span></td>
-                        <td><span style="padding: 0 4rem;"></span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Payment Details Section -->
-              <div class="info-card">
-                <div class="card-header">
-                  <h5 class="details-title">📊 {{ t('expense.paymentInformation') }}</h5>
-                </div>
-                <div class="card-content payment-details">
-
-                  <table style="width: 100%;" class="table-prices">
-                    <tbody>
-                      <!-- Grouped by currency -->
-                      <tr v-for="currency in ['usd', 'iqd']" :key="currency">
-                        <td>
-                          <!-- Currency Label -->
-                          <span v-if="currency === 'usd'">{{ t('invoice.payment.usdIn') }}</span>
-                          <span v-else>{{ t('invoice.payment.iqdIn') }}</span>
-                        </td>
-
-                        <!-- In Amount -->
-                        <td class="fw-bold text-success">
-                          {{
-                            formatCurrency(
-                              ((transaction as any)?.payment || [])
-                                .find(p => p.currency === currency && p.direction === 'in')?.amount || 0,
-                              ' ' + currency.toUpperCase()
-                            )
-                          }}
-                        </td>
-
-                        <td>
-                          <!-- Currency Label -->
-                          <span v-if="currency === 'usd'">{{ t('invoice.payment.usdOut') }}</span>
-                          <span v-else>{{ t('invoice.payment.iqdOut') }}</span>
-                        </td>
-
-                        <!-- Out Amount -->
-                        <td class="fw-bold text-danger">
-                          {{
-                            formatCurrency(
-                              ((transaction as any)?.payment || [])
-                                .find(p => p.currency === currency && p.direction === 'out')?.amount || 0,
-                              ' ' + currency.toUpperCase()
-                            )
-                          }}
-                        </td>
-                      </tr>
-
-
-                      <!-- Exchange Rate -->
-                      <!-- <tr>
-                        <td>{{ t('exchange.rate') }}</td>
-                        <td class="">
-                          {{ formatCurrency((transaction as any)?.exchange_rate?.usd_iqd_rate ?? 0, ' IQD') }}
-                        </td>
-                      </tr> -->
-
-                      <!-- Spacer row -->
-                      <tr>
-                        <td colspan="4"><span style="padding: 0 2rem;"></span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
+            <!-- Footer Section -->
+            <div class="invoice-footer">
+              <table>
+                <tr>
+                  <td><b>{{ t('invoice.footer.thankYou') }}</b></td>
+                  <td><em>{{ t('invoice.footer.copyright') }}</em></td>
+                  <td style="text-align: left;">
+                      <span>{{ t('invoice.footer.phone') }}: <span dir="ltr">{{ (me as any)?.phone || '.........................................' }}</span></span>
+                  </td>
+                </tr>
+              </table>
             </div>
 
           </q-card-section>
@@ -211,8 +226,11 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatCurrency } from 'src/composables/useFormat'
 import printJS from 'print-js'
+import { useMeStore } from 'src/stores/meStore'
 
 const brandLogo = '/brand.jpg'
+
+const me = useMeStore().me
 
 const { t } = useI18n()
 
@@ -671,5 +689,20 @@ const close = () => {
 .table-prices td {
   padding: 0.5rem;
   border: 1px solid #ddd;
+}
+
+.invoice-footer {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 2px solid #4CAF50;
+  font-size: 0.65rem !important;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.invoice-footer table {
+  width: 100%;
+  border-collapse: collapse;
 }
 </style>

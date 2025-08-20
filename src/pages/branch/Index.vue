@@ -243,9 +243,9 @@ function handleUpdateSubmit() {
 .enhanced-tab {
   border-radius: 12px 12px 0 0;
   margin: 0 2px;
-  padding: 14px 24px;
+  padding: 7px 24px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background: transparent;
+  background: #ff890455;
   color: #64748b;
   font-weight: 500;
   min-height: 52px;
@@ -253,7 +253,8 @@ function handleUpdateSubmit() {
   border: none;
 
   &:hover:not(.q-tab--active) {
-    background: rgba(var(--q-primary-rgb), 0.04);
+    // background: rgba(var(--q-primary-rgb), 0.04);
+    background: #ff890477;
     color: var(--q-primary);
     transform: translateY(-1px);
 

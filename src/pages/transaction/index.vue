@@ -305,13 +305,13 @@ const menuItems = computed(() => {
     if (paymentTypeExact === 'Borrow' || paymentTypeExact === 'قەرز') {
       if (transactionType.value === 'purchase') {
         baseItems.push({
-          label: 'Pay Supplier',
+          label: t('transaction.paySupplier'),
           icon: 'payment',
           value: 'pay_supplier'
         });
       } else if (transactionType.value === 'sell') {
         baseItems.push({
-          label: 'Receive from Customer',
+          label: t('transaction.receiveFromCustomer'),
           icon: 'account_balance_wallet',
           value: 'receive_customer'
         });
@@ -448,7 +448,13 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
   } else if (payload.item.value === 'edit_transaction') {
     try {
       const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
-      if (transactionData) {
+      if (transactionData?.is_editable === false) {
+        $q.notify({
+          type: 'negative',
+          message: t('transaction.editNotAllowed'),
+          position: 'top-right'
+        })
+      } else if (transactionData) {
         selectedEditTransaction.value = transactionData
         showEditModal.value = true
       }

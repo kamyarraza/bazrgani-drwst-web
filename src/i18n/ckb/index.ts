@@ -760,7 +760,7 @@ export default {
 
     // Print Template Translations
     print: {
-      companyName: "ERP بازرگانی",
+      companyName: "کۆمپانیای بازرگانی درووست",
       documentTitle: "ڕاپۆرتی وردەکاری کڕیار",
       generatedOn: "دروستکراوە لە",
       basicInformationTitle: "زانیاری بنەڕەتی",
@@ -776,8 +776,8 @@ export default {
       customerOwesUs: "کڕیار قەرزاری ئێمەیە",
       supplierDebtDescription: "ئەمە ئەو بڕە پارەیەیە کە ئێمە قەرزاری ئەم دابینکەرەین بۆ کڕینەکان",
       customerDebtDescription: "ئەمە ئەو بڕە پارەیەیە کە ئەم کڕیارە قەرزاری ئێمەیە بۆ کڕینەکان",
-      footerNote: "ئەم بەڵگەیە بە شێوەی خۆکارانە لەلایەن سیستەمی ERP بازرگانیەوە دروستکراوە.",
-      contactNote: "بۆ پرسیار یان نیگەرانی، تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکەن."
+      footerNote: "ئەم بەڵگەیە بە شێوەی خۆکارانە لەلایەن سیستەمی بازرگانیەوە دروستکراوە.",
+      contactNote: "بۆ پرسیار یان پێشنیار، تکایە پەیوەندی بە بەڕێوەبەری سیستەمەوە بکەن."
     },
 
     // New User Account Creation
@@ -943,6 +943,7 @@ export default {
     paymentType: "شێوازی پارەدان",
     paymentFilter: "فلتەر بە جۆری پارەدان",
     count: "کۆی مامەڵەکان",
+    editNotAllowed: "مامەڵەکە قفڵە و ناتوانرێت دەستکاری بکرێت",
 
     columns: {
       id: "ژمارە",
@@ -1554,6 +1555,7 @@ export default {
     },
   },
   itemTransaction: {
+    code: "کۆد",
     searchItems: "گەڕان",
     itemName: "ناوی کاڵا",
     sku: "کۆدی کاڵا",

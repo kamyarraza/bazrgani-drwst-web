@@ -373,7 +373,7 @@ watch(
 
     selectedCustomerId.value = tx.customer?.id || null;
     selectedWarehouseId.value = tx.warehouse?.id || null;
-    selectedPaymentType.value = normalizePaymentType(tx.payment_type);
+    selectedPaymentType.value = tx.payment_type_value;
     note.value = tx.note || '';
     discountedRate.value = tx.discounted_rate || 0;
     transactionStatus.value = (tx.status as 'completed' | 'reserved') || 'completed';
@@ -415,20 +415,26 @@ watch(
         itemSelectorRef.value.fetchItemsForWarehouse();
       }
     }
+
+    // Load the paid prices
+    iqdPrice.value = tx.payment?.total_iqd_in ?? 0
+    iqdReturnAmount.value = tx.payment?.total_iqd_out ?? 0
+    usdPrice.value = tx.payment?.total_usd_in ?? 0
+    usdReturnAmount.value = tx.payment?.total_usd_out ?? 0
   },
   { immediate: true }
 );
 
-function normalizePaymentType(val: string) {
-  const v = (val || '').toString().toLowerCase();
-  if (v.includes('borrow') || v.includes('قەرز')) return 'borrow';
-  if (v.includes('cash') || v.includes('نەقد')) return 'cash';
-  if (v.includes('bank')) return 'bank';
-  if (v.includes('credit')) return 'credit';
-  if (v.includes('debit')) return 'debit';
-  if (v.includes('transfer')) return 'transfer';
-  return 'cash';
-}
+// function normalizePaymentType(val: string) {
+//   const v = (val || '').toString().toLowerCase();
+//   if (v.includes('borrow') || v.includes('قەرز')) return 'borrow';
+//   if (v.includes('cash') || v.includes('نەقد')) return 'cash';
+//   if (v.includes('bank') || v.includes('نەقد')) return 'bank';
+//   if (v.includes('credit') || v.includes('نەقد')) return 'credit';
+//   if (v.includes('debit') || v.includes('نەقد')) return 'debit';
+//   if (v.includes('transfer') || v.includes('نەقد')) return 'transfer';
+//   return 'cash';
+// }
 
 const itemSelectorRef = ref<any>(null);
 const customerSelectorRef = ref<any>(null);
@@ -495,11 +501,11 @@ async function handleSubmit() {
       usd_iqd_rate: Number(usdIqdRate.value),
       note: note.value || '',
       created_at: (props.transactionData.created_at || new Date().toISOString().split('T')[0]),
-      iqd_price: Number((isSell.value ? totalAfterDiscount.value : totalSelectedItemsPrice.value) * Number(usdIqdRate.value)),
-      usd_price: Number(isSell.value ? totalAfterDiscount.value : totalSelectedItemsPrice.value),
-      iqd_return_amount: Number(iqdReturnAmount.value || 0),
-      usd_return_amount: Number(usdReturnAmount.value || 0),
-      forgiven_price: Number(forgivenPrice.value || 0),
+      iqd_price: iqdPrice.value || 0,
+      usd_price: usdPrice.value || 0,
+      iqd_return_amount: iqdReturnAmount.value || 0,
+      usd_return_amount: usdReturnAmount.value || 0,
+      forgiven_price: forgivenPrice.value || 0,
       details: selectedItems.value.map((sel) => ({
         item_id: sel.item.id,
         quantity: Number(sel.quantity || 0),
