@@ -562,6 +562,10 @@ defineExpose({
 
                     <!-- Reference price badges (solo and bulk) -->
                     <div class="reference-badges q-mt-sm">
+                      <q-badge v-if="selected.unit_cost > 0" color="red-4" text-color="white" class="q-mr-sm">
+                        {{ t('transactionAlpha.unitCost') }}: ${{ Number(selected.unit_cost || 0).toFixed(2)
+                        }}
+                      </q-badge>
                       <q-badge v-if="selected.solo_unit_cost > 0" color="blue-4" text-color="white" class="q-mr-sm">
                         {{ t('transactionAlpha.soloUnitPrice') }}: ${{ Number(selected.solo_unit_cost || 0).toFixed(2)
                         }}
