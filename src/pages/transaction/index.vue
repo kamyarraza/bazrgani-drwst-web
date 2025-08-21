@@ -143,11 +143,8 @@
     <TransactionModal v-model="showAddModal" :transactionType="transactionType" @success="handleTransactionAdded" />
 
     <!-- Edit Transaction Modal (Alpha Update Modal) -->
-    <TransactionUpdateModal
-      v-model="showEditModal"
-      :transaction-data="selectedEditTransaction"
-      @success="handleTransactionUpdated"
-    />
+    <TransactionUpdateModal v-model="showEditModal" :transaction-data="selectedEditTransaction"
+      @success="handleTransactionUpdated" />
 
     <!-- Payment Modals -->
     <PaySupplier v-model="showPaySupplierModal" :transaction-data="selectedTransactionData"
@@ -236,14 +233,20 @@ const selectedRefundTransaction = ref<List | null>(null)
 // Selected refund details for viewing
 const selectedRefundDetails = ref<{
   id: number;
+  refund_price: number;
+  usd_iqd_rate: number;
+  reason: string;
   items: Array<{
     id: number;
     name: string;
     quantity: number;
-    reason: string;
   }>;
-  refund_price: number;
-  usd_iqd_rate: number;
+  refunded_amounts: {
+    total_usd_in: number;
+    total_iqd_in: number;
+    total_usd_out: number;
+    total_iqd_out: number;
+  };
   created_at: string;
 } | null>(null)
 
@@ -561,7 +564,20 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
     const transaction = data.value.find(t => t.id === Number(payload.rowId))
 
     if (transaction && transaction.refunded) {
-      selectedRefundDetails.value = transaction.refunded
+      // Transform the data to match the expected RefundData interface
+      selectedRefundDetails.value = {
+        id: transaction.refunded.id,
+        refund_price: transaction.refunded.refund_price,
+        usd_iqd_rate: transaction.refunded.usd_iqd_rate,
+        reason: '', // This might need to be fetched from the actual refund API
+        items: transaction.refunded.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity
+        })),
+        refunded_amounts: transaction.refunded.refunded_amounts,
+        created_at: transaction.refunded.created_at
+      }
       showRefundDetailsModal.value = true
     }
   } else if (payload.item.value === 'freeding_transaction') {

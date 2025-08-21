@@ -252,7 +252,11 @@ const form = ref({
   refund_price: 0,
   usd_iqd_rate: 1500, // Default rate
   reason: '',
-  details: [] as Array<{ item_id: number; quantity: number }>
+  details: [] as Array<{ item_id: number; quantity: number }>,
+  iqd_price: 0,
+  usd_price: 0,
+  iqd_return_amount: 0,
+  usd_return_amount: 0
 })
 
 const refundQuantities = ref<Record<number, number>>({})
@@ -310,16 +314,18 @@ const hasItemsToRefund = computed(() => {
 })
 
 const isFormValid = computed(() => {
+  // console.log(calculatedRefundAmount.value, form.value.reason.length, hasItemsToRefund.value, isAmountsMatching.value);
+  
   return calculatedRefundAmount.value > 0 &&
          form.value.reason.length >= 10 &&
-         hasItemsToRefund.value &&
-         isAmountsMatching.value
+         hasItemsToRefund.value
+        //  isAmountsMatching.value
 })
 
 // Methods
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString()
-}
+// const formatDate = (dateString: string) => {
+//   return new Date(dateString).toLocaleDateString()
+// }
 
 const updateRefundDetails = () => {
   form.value.details = Object.entries(refundQuantities.value)
@@ -332,13 +338,13 @@ const updateRefundDetails = () => {
   // Auto-calculate refund amount based on selected items
   form.value.refund_price = calculatedRefundAmount.value
   // If user hasn't entered any split yet, default all to USD
-  const noInputs = (iqd_price.value || 0) + (usd_price.value || 0) + (iqd_return_amount.value || 0) + (usd_return_amount.value || 0) === 0
-  if (noInputs) {
-    usd_price.value = Number(calculatedRefundAmount.value.toFixed(2))
-    iqd_price.value = 0
-    iqd_return_amount.value = 0
-    usd_return_amount.value = 0
-  }
+  // const noInputs = (iqd_price.value || 0) + (usd_price.value || 0) + (iqd_return_amount.value || 0) + (usd_return_amount.value || 0) === 0
+  // if (noInputs) {
+  //   usd_price.value = Number(calculatedRefundAmount.value.toFixed(2))
+  //   iqd_price.value = 0
+  //   iqd_return_amount.value = 0
+  //   usd_return_amount.value = 0
+  // }
 }
 
 const close = () => {
@@ -352,7 +358,11 @@ const resetForm = () => {
     refund_price: 0,
     usd_iqd_rate: 1500,
     reason: '',
-    details: []
+    details: [],
+    iqd_price: 0,
+    usd_price: 0,
+    iqd_return_amount: 0,
+    usd_return_amount: 0
   }
   refundQuantities.value = {}
   iqd_price.value = 0
@@ -382,7 +392,12 @@ const handleSubmit = async () => {
     form.value.transaction_id = props.transactionData.id
     // Use the split to set the final refund price
     form.value.refund_price = Number(netRefundAmount.value.toFixed(2))
+    form.value.iqd_price = iqd_price.value
+    form.value.usd_price = usd_price.value
+    form.value.iqd_return_amount = iqd_return_amount.value
+    form.value.usd_return_amount = usd_return_amount.value
 
+    // Calling the API to process the refund
     await transactionStore.refundTransaction(form.value)
 
     $q.notify({
