@@ -59,6 +59,7 @@ import type { MenuItem } from 'src/types'
 import type { Product } from 'src/types/item'
 import { useI18n } from 'vue-i18n'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
+import { formatCurrency } from 'src/composables/useFormat'
 
 // declarations
 const itemStore = useItemStore()
@@ -214,13 +215,14 @@ function clearSearch() {
     void itemStore.fetchItemsPaginated(1)
 }
 
-const columns = [{
-    name: 'image',
-    label: t('item.image', 'Image'),
-    align: "center" as const,
-    field: 'image',
-    sortable: false
-},
+const columns = [
+//     {
+//     name: 'image',
+//     label: t('item.image', 'Image'),
+//     align: "center" as const,
+//     field: 'image',
+//     sortable: false
+// },
 {
     name: 'name',
     label: t('item.name', 'Name'),
@@ -249,17 +251,35 @@ const columns = [{
     label: t('item.cost', 'Cost'),
     align: "right" as const,
     field: 'unit_cost',
-    format: val => `$${val}`,
+    format: val => formatCurrency(val),
     sortable: true
 },
 
 {
-    name: 'total_quantity',
-    label: t('item.totalQuantity', 'Total Quantity'),
-    align: "center" as const,
-    field: 'total_quantity',
+    name: 'solo_unit_price',
+    label: t('item.cost', 'Cost'),
+    align: "right" as const,
+    field: 'solo_unit_price',
+    format: val => formatCurrency(val),
     sortable: true
 },
+
+{
+    name: 'bulk_unit_price',
+    label: t('item.cost', 'Cost'),
+    align: "right" as const,
+    field: 'bulk_unit_price',
+    format: val => formatCurrency(val),
+    sortable: true
+},
+
+// {
+//     name: 'total_quantity',
+//     label: t('item.totalQuantity', 'Total Quantity'),
+//     align: "center" as const,
+//     field: 'total_quantity',
+//     sortable: true
+// },
 {
     name: 'actions',
     label: t('item.actions', 'Actions'),
