@@ -112,6 +112,7 @@ export interface List {
     }[];
     refund_price: number;
     usd_iqd_rate: number;
+    refunded_amounts?:any;
     created_at: string;
   };
 }
