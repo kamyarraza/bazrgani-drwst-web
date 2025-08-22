@@ -1,12 +1,18 @@
-import { ref } from 'vue';
-import { defineStore } from 'pinia';
-import { api } from 'boot/axios';
-import type { Product, ApiResponse, Pagination, AddItemPayload, UpdateItemPayload } from 'src/types/item';
-import type { ApiResponse as GenericApiResponse } from 'src/types';
-import { endPoints } from 'src/endpoint';
-import { showNotify } from 'src/composables/Notify';
+import { ref } from "vue";
+import { defineStore } from "pinia";
+import { api } from "boot/axios";
+import type {
+  Product,
+  ApiResponse,
+  Pagination,
+  AddItemPayload,
+  UpdateItemPayload,
+} from "src/types/item";
+import type { ApiResponse as GenericApiResponse } from "src/types";
+import { endPoints } from "src/endpoint";
+import { showNotify } from "src/composables/Notify";
 
-export const useItemStore = defineStore('item', () => {
+export const useItemStore = defineStore("item", () => {
   const items = ref<Product[]>([]);
   const currentItem = ref<Product | null>(null);
   const loading = ref(false);
@@ -27,12 +33,13 @@ export const useItemStore = defineStore('item', () => {
       items.value = data.data;
       pagination.value = null; // Clear pagination since we're not using it
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch items';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch items";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
     } finally {
@@ -45,7 +52,9 @@ export const useItemStore = defineStore('item', () => {
     error.value = null;
 
     try {
-      let url = `${endPoints.item.list}?query=${encodeURIComponent(searchQuery)}&relations=category`;
+      let url = `${endPoints.item.list}?query=${encodeURIComponent(
+        searchQuery
+      )}&relations=category`;
 
       if (categoryId) {
         url += `&category_id=${categoryId}`;
@@ -56,12 +65,13 @@ export const useItemStore = defineStore('item', () => {
       // Clear pagination when searching since we're not using paginated search
       pagination.value = null;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search items';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to search items";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
     } finally {
@@ -74,29 +84,37 @@ export const useItemStore = defineStore('item', () => {
     error.value = null;
 
     try {
-      const { data } = await api.post<ApiResponse<Product>>(endPoints.item.create, itemData, {
-        headers: itemData instanceof FormData ? {
-          'Content-Type': 'multipart/form-data'
-        } : {
-          'Content-Type': 'application/json'
+      const { data } = await api.post<ApiResponse<Product>>(
+        endPoints.item.create,
+        itemData,
+        {
+          headers:
+            itemData instanceof FormData
+              ? {
+                  "Content-Type": "multipart/form-data",
+                }
+              : {
+                  "Content-Type": "application/json",
+                },
         }
-      });
+      );
 
       showNotify({
-        type: 'positive',
-        message: data?.message || 'Item created successfully',
-        position: 'top',
+        type: "positive",
+        message: data?.message || "Item created successfully",
+        position: "top",
         duration: 3000,
       });
-      await fetchItems()
+      await fetchItems();
       return true;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create item';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to create item";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
       return false;
@@ -110,15 +128,18 @@ export const useItemStore = defineStore('item', () => {
     error.value = null;
 
     try {
-      const { data } = await api.get<ApiResponse<Product>>(endPoints.item.details(itemId));
+      const { data } = await api.get<ApiResponse<Product>>(
+        endPoints.item.details(itemId)
+      );
       currentItem.value = data.data;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch item details';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch item details";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
     } finally {
@@ -126,7 +147,10 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function updateItem(itemId: number | string, itemData: UpdateItemPayload | Partial<Product> | FormData) {
+  async function updateItem(
+    itemId: number | string,
+    itemData: UpdateItemPayload | Partial<Product> | FormData
+  ) {
     loading.value = true;
     error.value = null;
 
@@ -134,7 +158,7 @@ export const useItemStore = defineStore('item', () => {
       let response;
       // If itemData is FormData (for file upload), use POST + _method=PUT
       if (itemData instanceof FormData) {
-        itemData.append('_method', 'PUT');
+        itemData.append("_method", "PUT");
         response = await api.post<ApiResponse<Product>>(
           endPoints.item.update(itemId),
           itemData
@@ -150,15 +174,15 @@ export const useItemStore = defineStore('item', () => {
       const { data } = response;
 
       // Update the local item data
-      const index = items.value.findIndex(item => item.id === Number(itemId));
+      const index = items.value.findIndex((item) => item.id === Number(itemId));
       if (index !== -1) {
         items.value[index] = data.data;
       }
 
       showNotify({
-        type: 'positive',
-        message: data?.message || 'Item updated successfully',
-        position: 'top',
+        type: "positive",
+        message: data?.message || "Item updated successfully",
+        position: "top",
         duration: 3000,
       });
 
@@ -166,12 +190,13 @@ export const useItemStore = defineStore('item', () => {
       await fetchItems();
       return true;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update item';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update item";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
       return false;
@@ -185,26 +210,29 @@ export const useItemStore = defineStore('item', () => {
     error.value = null;
 
     try {
-      const { data } = await api.delete<GenericApiResponse<null>>(endPoints.item.delete(itemId));
+      const { data } = await api.delete<GenericApiResponse<null>>(
+        endPoints.item.delete(itemId)
+      );
 
       // Remove the item from the local array
-      items.value = items.value.filter(item => item.id !== Number(itemId));
+      items.value = items.value.filter((item) => item.id !== Number(itemId));
 
       showNotify({
-        type: 'positive',
-        message: data?.message || 'Item deleted successfully',
-        position: 'top',
+        type: "positive",
+        message: data?.message || "Item deleted successfully",
+        position: "top",
         duration: 3000,
       });
 
       return true;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete item';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete item";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
       return false;
@@ -213,12 +241,15 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function fetchItemsByWarehouse(warehouseId: number | string, categoryId?: number | null) {
+  async function fetchItemsByWarehouse(
+    warehouseId: number | string,
+    categoryId?: number | null
+  ) {
     loading.value = true;
     error.value = null;
     try {
       // Fetch warehouse details, items are in data.items
-      let url = endPoints.warehouse.details(warehouseId) + '?relations=items';
+      let url = endPoints.warehouse.details(warehouseId) + "?relations=items";
 
       if (categoryId) {
         url += `&category_id=${categoryId}`;
@@ -228,12 +259,13 @@ export const useItemStore = defineStore('item', () => {
       items.value = data.data.items || [];
       pagination.value = null;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch warehouse items';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch warehouse items";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
     } finally {
@@ -241,11 +273,17 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function searchItemsByWarehouse(searchQuery: string, warehouseId: number | string, categoryId?: number | null) {
+  async function searchItemsByWarehouse(
+    searchQuery: string,
+    warehouseId: number | string,
+    categoryId?: number | null
+  ) {
     loading.value = true;
     error.value = null;
     try {
-      let url = endPoints.warehouse.details(warehouseId) + `?relations=items&query=${encodeURIComponent(searchQuery)}`;
+      let url =
+        endPoints.warehouse.details(warehouseId) +
+        `?relations=items&query=${encodeURIComponent(searchQuery)}`;
 
       if (categoryId) {
         url += `&category_id=${categoryId}`;
@@ -255,12 +293,13 @@ export const useItemStore = defineStore('item', () => {
       items.value = data.data.items || [];
       pagination.value = null;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search warehouse items';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to search warehouse items";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
     } finally {
@@ -268,7 +307,11 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
-  async function fetchItemsPaginated(page: number = 1, categoryId?: number | null, append: boolean = false) {
+  async function fetchItemsPaginated(
+    page: number = 1,
+    categoryId?: number | null,
+    append: boolean = false
+  ) {
     loading.value = true;
     error.value = null;
     let url = `${endPoints.item.list}?page=${page}&relations=category&paginate=true`;
@@ -290,12 +333,13 @@ export const useItemStore = defineStore('item', () => {
 
       pagination.value = data.pagination || null;
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch items';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch items";
       error.value = errorMessage;
       showNotify({
-        type: 'negative',
+        type: "negative",
         message: error.value,
-        position: 'top',
+        position: "top",
         duration: 3000,
       });
     } finally {
@@ -317,6 +361,6 @@ export const useItemStore = defineStore('item', () => {
     updateItem,
     deleteItem,
     fetchItemsByWarehouse,
-    searchItemsByWarehouse
+    searchItemsByWarehouse,
   };
 });

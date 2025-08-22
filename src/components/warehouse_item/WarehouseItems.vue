@@ -38,113 +38,112 @@
             {{ t('warehouseItem.filterDescription', 'Switch between regular items and blum items') }}
           </div>
         </div>
-      </div>
-    </div> <!-- Data Table -->
-    <div class="warehouse-items-content">
-      <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems"
-        :loading="warehouseStore.loading" :top-right="false" :menuItems="menuItems"
-        :pagination="warehouseStore.pagination" @page-change="handlePageChange" @menu-action="handleAction"
-        class="warehouse-items-table" flat bordered>
-        <template #body-cell-id="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="grey-6" text-color="white" size="sm" square class="id-chip">
-              #{{ props.value }}
-            </q-chip>
-          </q-td>
-        </template>
+             </div>
+     </div> <!-- Data Table -->
+     <div class="warehouse-items-content">
+       <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems"
+         :loading="warehouseStore.loading" :top-right="false" :menuItems="menuItems"
+         :pagination="warehouseStore.pagination" @page-change="handlePageChange" @menu-action="handleAction"
+         class="warehouse-items-table" flat bordered>
+         <template #body-cell-id="props">
+           <q-td :props="props" class="text-center">
+             <q-chip color="grey-6" text-color="white" size="sm" square class="id-chip">
+               #{{ props.value }}
+             </q-chip>
+           </q-td>
+         </template>
 
-        <template #body-cell-name="props">
-          <q-td :props="props">
-            <div class="item-name-cell">
-              <q-icon name="inventory_2" color="primary" size="20px" class="item-icon" />
-              <span class="item-name">{{ props.value }}</span>
-            </div>
-          </q-td>
-        </template>
+         <template #body-cell-name="props">
+           <q-td :props="props">
+             <div class="item-name-cell">
+               <q-icon name="inventory_2" color="primary" size="20px" class="item-icon" />
+               <span class="item-name">{{ props.value }}</span>
+             </div>
+           </q-td>
+         </template>
 
-        <template #body-cell-code="props">
-          <q-td :props="props">
-            <q-chip color="blue-grey" text-color="white" size="sm" class="code-chip">
-              {{ props.value }}
-            </q-chip>
-          </q-td>
-        </template>
+         <template #body-cell-code="props">
+           <q-td :props="props">
+             <q-chip color="blue-grey" text-color="white" size="sm" class="code-chip">
+               {{ props.value }}
+             </q-chip>
+           </q-td>
+         </template>
 
-        <template #body-cell-part_no="props">
-          <q-td :props="props">
-            <q-chip color="indigo" text-color="white" size="sm" class="part-no-chip">
-              {{ props.value }}
-            </q-chip>
-          </q-td>
-        </template>
+         <template #body-cell-part_no="props">
+           <q-td :props="props">
+             <q-chip color="indigo" text-color="white" size="sm" class="part-no-chip">
+               {{ props.value }}
+             </q-chip>
+           </q-td>
+         </template>
 
-        <template #body-cell-unit_cost="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="positive" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
+         <template #body-cell-unit_cost="props">
+           <q-td :props="props" class="text-right">
+             <q-badge color="positive" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
+               class="price-badge" />
+           </q-td>
+         </template>
 
-        <template #body-cell-unit_price="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="primary" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
+         <template #body-cell-unit_price="props">
+           <q-td :props="props" class="text-right">
+             <q-badge color="primary" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
+               class="price-badge" />
+           </q-td>
+         </template>
 
-        <template #body-cell-solo_unit_price="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="primary" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
+         <template #body-cell-solo_unit_price="props">
+           <q-td :props="props" class="text-right">
+             <q-badge color="primary" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
+               class="price-badge" />
+           </q-td>
+         </template>
 
-        <template #body-cell-bulk_unit_price="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="orange" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
+         <template #body-cell-bulk_unit_price="props">
+           <q-td :props="props" class="text-right">
+             <q-badge color="orange" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
+               class="price-badge" />
+           </q-td>
+         </template>
 
-        <template #body-cell-quantity="props">
-          <q-td :props="props" class="text-center">
-            <q-badge :color="props.value > 100 ? 'positive' : props.value > 50 ? 'warning' : 'negative'"
-              :label="Number(props.value || 0).toLocaleString()" class="quantity-badge" />
-          </q-td>
-        </template>
+         <template #body-cell-quantity="props">
+           <q-td :props="props" class="text-center">
+             <q-badge :color="props.value > 100 ? 'positive' : props.value > 50 ? 'warning' : 'negative'"
+               :label="formatQuantity(props.value)" class="quantity-badge" />
+           </q-td>
+         </template>
 
-        <template #body-cell-pieces="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="teal" text-color="white" size="sm" icon="inventory" class="pieces-chip">
-              {{ props.value || 0 }}
-            </q-chip>
-          </q-td>
-        </template>
+         <template #body-cell-pieces="props">
+           <q-td :props="props" class="text-center">
+             <q-chip color="teal" text-color="white" size="sm" icon="inventory" class="pieces-chip">
+               {{ props.value || 0 }}
+             </q-chip>
+           </q-td>
+         </template>
 
-        <template #body-cell-reservations="props">
-          <q-td :props="props" class="text-center">
-            <q-badge color="info" text-color="white" :label="String(props.value || 0)" class="reservations-badge" />
-          </q-td>
-        </template>
+         <template #body-cell-reservations="props">
+           <q-td :props="props" class="text-center">
+             <q-badge color="info" text-color="white" :label="String(props.value || 0)" class="reservations-badge" />
+           </q-td>
+         </template>
 
-        <template #body-cell-position="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="purple" text-color="white" size="sm" icon="place" class="position-chip">
-              {{ props.value || 'N/A' }}
-            </q-chip>
-          </q-td>
-        </template>
+         <template #body-cell-position="props">
+           <q-td :props="props" class="text-center">
+             <q-chip color="purple" text-color="white" size="sm" icon="place" class="position-chip">
+               {{ props.value || 'N/A' }}
+             </q-chip>
+           </q-td>
+         </template>
 
-        <template #body-cell-volume="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="teal" text-color="white" size="sm" icon="straighten" class="volume-chip">
-              {{ parseFloat(props.value || 0).toFixed(2) }}%
-            </q-chip>
-          </q-td>
-        </template>
+         <template #body-cell-volume="props">
+           <q-td :props="props" class="text-center">
+             <q-chip color="teal" text-color="white" size="sm" icon="straighten" class="volume-chip">
+               {{ parseFloat(props.value || 0).toFixed(2) }}%
+             </q-chip>
+           </q-td>
+         </template>
 
-
-      </QtableB>
+       </QtableB>
 
       <!-- Loading State -->
       <div class="warehouse-items-loading text-center q-pa-xl" v-else-if="warehouseStore.loading">
@@ -890,7 +889,7 @@ const itemColumns = [
     sortable: true,
     format: (val: unknown) => {
       const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
-      return num.toLocaleString();
+      return (isNaN(num) ? 0 : num).toLocaleString();
     },
   },
   // {
@@ -970,7 +969,7 @@ const blumItemColumns = [
     sortable: true,
     format: (val: unknown) => {
       const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
-      return num.toLocaleString();
+      return (isNaN(num) ? 0 : num).toLocaleString();
     },
   },
   {
@@ -1012,6 +1011,11 @@ function getStockStatusText(item: AnyItem): string {
   if (quantity > 50) return t('warehouseItem.stockMedium', 'Stock Level: Medium');
   if (quantity > 0) return t('warehouseItem.stockLow', 'Stock Level: Low');
   return t('warehouseItem.stockOut', 'Out of Stock');
+}
+
+function formatQuantity(val: unknown): string {
+  const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
+  return (isNaN(num) ? 0 : num).toLocaleString();
 }
 </script>
 

@@ -288,6 +288,7 @@ import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 import { useAuthStore } from 'src/stores/authStore';
 import { useCashboxStore } from 'src/stores/cashboxStore';
 import type { List } from 'src/types/item_transaction';
+import type { Customer } from 'src/types/customer';
 import { formatCurrency } from 'src/composables/useFormat';
 import { useI18n } from 'vue-i18n';
 
@@ -333,8 +334,8 @@ const iqdReturnAmount = ref<number>(0);
 const usdReturnAmount = ref<number>(0);
 const forgivenPrice = ref<number>(0);
 
-const selectedSupplier = ref<any | null>(null);
-const selectedCustomer = ref<any | null>(null);
+const selectedSupplier = ref<Customer | null>(null);
+const selectedCustomer = ref<Customer | null>(null);
 
 const usdIqdRate = computed(() => props.transactionData?.usd_iqd_rate || exchangeRateStore.activeRate?.usd_iqd_rate || 0);
 

@@ -821,6 +821,7 @@ async function handleSubmit() {
           capacity: apiData.warehouse?.capacity || 0
         },
         payment_type: apiData.payment_type || selectedPaymentType.value,
+        payment_type_value: apiData.payment_type_value || selectedPaymentType.value,
         items: selectedItems.value.map((sel) => ({
           id: sel.item.id,
           name: sel.item.name,

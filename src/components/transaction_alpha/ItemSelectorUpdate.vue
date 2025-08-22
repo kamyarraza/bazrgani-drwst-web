@@ -38,8 +38,8 @@ const hasMorePages = computed(() => {
   return pagination.value ? currentPage.value < pagination.value.last_page : false;
 });
 
-const selectedItems = ref<SelectedItem[]>([]);
-const selectedItemIds = computed(() => new Set(selectedItems.value.map(sel => sel.item.id)));
+const internalSelectedItems = ref<SelectedItem[]>([]);
+const selectedItemIds = computed(() => new Set(internalSelectedItems.value.map(sel => sel.item.id)));
 
 // Items are now filtered server-side, so we just return the items from the store
 const filteredItems = computed(() => {
@@ -61,12 +61,12 @@ const { t } = useI18n();
 // Watch for prop changes to sync with parent (for update modal)
 watch(() => props.selectedItems, (newItems) => {
   if (newItems && Array.isArray(newItems) && newItems.length > 0) {
-    selectedItems.value = [...newItems as SelectedItem[]];
+    internalSelectedItems.value = [...newItems as SelectedItem[]];
   }
 }, { immediate: true, deep: true });
 
 // Emit changes to parent
-watch(selectedItems, (val) => {
+watch(internalSelectedItems, (val) => {
   emit('update:selectedItems', val);
 }, { deep: true });
 
@@ -194,7 +194,7 @@ function selectItem(item) {
     ? (Number(item.solo_unit_price) || Number(item.unit_cost) || 0)
     : (Number(item.unit_cost) || 0);
 
-  selectedItems.value.push({
+  internalSelectedItems.value.push({
     item,
     unit_cost: defaultPrice, // This will be the editable selling price
     solo_unit_cost: Number(item.solo_unit_price) || 0, // Reference only
@@ -250,11 +250,11 @@ function onQuantityChange(selected, val) {
 }
 
 function removeItem(idx) {
-  selectedItems.value.splice(idx, 1);
+  internalSelectedItems.value.splice(idx, 1);
 }
 
 function clearAll() {
-  selectedItems.value = [];
+  internalSelectedItems.value = [];
 }
 
 function selectAll() {
@@ -268,7 +268,7 @@ function selectAll() {
       ? (Number(item.solo_unit_price) || Number(item.unit_cost) || 0)
       : (Number(item.unit_cost) || 0);
 
-    selectedItems.value.push({
+    internalSelectedItems.value.push({
       item,
       unit_cost: defaultPrice, // This will be the editable selling price
       solo_unit_cost: Number(item.solo_unit_price) || 0, // Reference only
@@ -314,7 +314,7 @@ function clearItems() {
 
 function setSelectedItems(items: SelectedItem[]) {
   // Set pre-selected items (for update transactions)
-  selectedItems.value = [...items];
+  internalSelectedItems.value = [...items];
 }
 
 function calculateSelectedPrice(unitPrice: number | string, quantity: number) {
@@ -506,19 +506,19 @@ defineExpose({
       </div>
 
       <!-- 🛒 Selected Items Section -->
-      <div v-if="selectedItems.length > 0" class="section-card selected-section">
+      <div v-if="internalSelectedItems.length > 0" class="section-card selected-section">
         <div class="section-header">
           <div class="section-icon selected-icon">
             <q-icon name="shopping_cart" size="20px" />
           </div>
           <h3 class="section-title">🛒 {{ t('transactionAlpha.selectedItems') }}</h3>
-          <div class="section-badge selected-badge">{{ selectedItems.length }} {{ t('transactionAlpha.selected') }}
+          <div class="section-badge selected-badge">{{ internalSelectedItems.length }} {{ t('transactionAlpha.selected') }}
           </div>
         </div>
 
         <div class="selected-items-scroll">
           <div class="q-mb-sm"><b>{{ t('transactionAlpha.selectedItems') }}</b></div>
-          <div v-for="(selected, idx) in selectedItems" :key="selected.item.id"
+          <div v-for="(selected, idx) in internalSelectedItems" :key="selected.item.id"
             class="selected-item-card-modern q-mb-md">
             <div class="row items-center q-col-gutter-md flex-nowrap">
               <div class="col-auto item-info-col">
