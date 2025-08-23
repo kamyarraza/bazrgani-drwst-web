@@ -389,7 +389,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, ref } from 'vue';
+import { computed, watch, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCashboxStore } from 'src/stores/cashboxStore';
 import { formatCurrency } from 'src/composables/useFormat';
@@ -585,12 +585,13 @@ async function handleWithdraw() {
   }
 }
 
+// Commented by Kamyar: caused duplication of load on branch change. 23-08-2025
 // Load cashbox on component mount if branch is already selected
-onMounted(async () => {
-  if (props.branch) {
-    await loadCashboxForBranch(props.branch.id);
-  }
-});
+// onMounted(async () => {
+//   if (props.branch) {
+//     await loadCashboxForBranch(props.branch.id);
+//   }
+// });
 </script>
 
 <style lang="scss" scoped>
