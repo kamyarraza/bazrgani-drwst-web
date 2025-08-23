@@ -360,15 +360,15 @@ const onSearchItems = async () => {
   searchLoading.value = true;
   try {
     const searchQuery = itemSearchQuery.value.trim();
-    const queryParam = searchQuery ? `&query=${encodeURIComponent(searchQuery)}` : '';
+    const queryParam = searchQuery ? `query=${encodeURIComponent(searchQuery)}` : '';
 
     const response = await api.get<any>(
-      `${endPoints.specialwarehouseItems(formData.value.fromWarehouseId)}?relations=items${queryParam}`
+      `${endPoints.specialwarehouseItems(formData.value.fromWarehouseId)}?${queryParam}`
     );
 
-    if (response.data.status === 'success' && response.data.data?.items) {
+    if (response.data.status === 'success' && response.data.data) {
       // Convert items object to array if needed
-      const itemsData = response.data.data.items;
+      const itemsData = response.data.data;
       if (Array.isArray(itemsData)) {
         searchResults.value = itemsData;
       } else {

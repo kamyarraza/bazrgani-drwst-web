@@ -110,7 +110,8 @@ watch(() => props.warehouseId, (warehouseId) => {
     if (warehouseId) {
       // Clear existing items first and then fetch warehouse-specific items
       items.value = [];
-      void itemStore.fetchItemsByWarehouse(warehouseId, selectedCategoryId.value);
+      // commented out to prevent double fetching. by kamyar at 2025-08-23
+      // void itemStore.fetchItemsByWarehouse(warehouseId, selectedCategoryId.value);
     } else {
       // Clear items when no warehouse is selected
       items.value = [];

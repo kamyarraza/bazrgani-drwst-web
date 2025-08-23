@@ -224,6 +224,7 @@ const selectedTransactionData = ref<{
   amount: number;
   total_price?: number;
   paid_price?: number;
+  usd_iqd_rate?: number;
   unpaid_price?: number;
 } | null>(null)
 
@@ -500,6 +501,7 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
           amount: amountToPay > 0 ? amountToPay : 0,
           total_price: transaction.total_price,
           paid_price: transaction.paid_price,
+          usd_iqd_rate: transaction.usd_iqd_rate,
           unpaid_price: amountToPay
         }
       } catch {
@@ -533,6 +535,7 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
           amount: amountToReceive > 0 ? amountToReceive : 0,
           total_price: transaction.total_price,
           paid_price: transaction.paid_price,
+          usd_iqd_rate: transaction.usd_iqd_rate,
           unpaid_price: amountToReceive
         }
       } catch {

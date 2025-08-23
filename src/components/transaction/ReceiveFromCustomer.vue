@@ -37,6 +37,10 @@
               <span class="status-label">{{ t('payment.receiveFromCustomer.remainingAmount') }}:</span>
               <span class="status-value remaining-amount">${{ formatCurrency(remainingAmount) }}</span>
             </div>
+            <div class="status-item">
+              <span class="status-label">{{ t('payment.receiveFromCustomer.remainingAmount') }}:</span>
+              <span class="status-value remaining-amount iqd">{{ formatCurrency(remainingAmount * (props.transactionData as any).usd_iqd_rate, ' IQD') }}</span>
+            </div>
           </div>
         </div>
 
@@ -181,6 +185,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { useItemTransactionStore } from 'src/stores/itemTransactionStore';
 import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
+import { formatCurrency } from 'src/composables/useFormat';
 
 // Props & Emits
 interface Props {
@@ -196,6 +201,7 @@ interface Props {
     total_price?: number;
     paid_price?: number;
     unpaid_price?: number;
+    usd_iqd_rate?: number;
   } | null;
 }
 
@@ -248,12 +254,12 @@ const netPaymentAmount = computed(() => {
 });
 
 // Methods
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(amount);
-};
+// const formatCurrency = (amount: number) => {
+//   return new Intl.NumberFormat('en-US', {
+//     minimumFractionDigits: 2,
+//     maximumFractionDigits: 2
+//   }).format(amount);
+// };
 
 const formatNumber = (amount: number) => {
   return new Intl.NumberFormat('en-US').format(amount);
@@ -527,6 +533,10 @@ const handleSubmit = async () => {
 
         &.remaining-amount {
           color: #f57c00;
+        }
+
+        &.remaining-amount.iqd {
+          color: #aa3ec5;
         }
       }
     }

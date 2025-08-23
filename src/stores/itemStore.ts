@@ -249,15 +249,15 @@ export const useItemStore = defineStore("item", () => {
     error.value = null;
     try {
       // Fetch warehouse details, items are in data.items
-      let url = endPoints.warehouse.details(warehouseId) + "?relations=items";
+      let url = endPoints.warehouse.details(warehouseId);
 
       if (categoryId) {
         url += `&category_id=${categoryId}`;
       }
 
-      const { data } = await api.get<ApiResponse<any>>(url);
-      items.value = data.data.items || [];
-      pagination.value = null;
+      const { data } = await api.get<ApiResponse<Product[]>>(url);
+      items.value = data.data || [];
+      pagination.value = data.pagination || null;
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to fetch warehouse items";

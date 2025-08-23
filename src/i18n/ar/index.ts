@@ -2011,7 +2011,7 @@ export default {
   },
   dashboard: {
     title: "لوحة التحكم",
-    subtitle: "نظرة عامة على الأعمال والمقاييس الرئيسية",
+    subtitle: "مستودعك في لمحة",
     refresh: "تحديث لوحة التحكم",
     refreshSuccess: "تم تحديث لوحة التحكم بنجاح",
     refreshError: "فشل في تحديث لوحة التحكم",

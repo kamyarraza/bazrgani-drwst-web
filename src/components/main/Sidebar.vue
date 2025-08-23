@@ -476,6 +476,7 @@ const navigationSections = computed(() => {
   text-decoration: none;
   color: #455a64;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .nav-link:hover {

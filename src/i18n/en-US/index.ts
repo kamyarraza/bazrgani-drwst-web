@@ -2207,7 +2207,7 @@ export default {
 
   dashboard: {
     title: "Dashboard",
-    subtitle: "Business overview and key metrics",
+    subtitle: "Your warehouse at a glance",
     refresh: "Refresh Dashboard",
     refreshSuccess: "Dashboard refreshed successfully",
     refreshError: "Failed to refresh dashboard",

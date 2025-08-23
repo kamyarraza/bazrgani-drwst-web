@@ -620,6 +620,7 @@ import QtableB from 'src/components/common/Qtable.vue';
 import type { MenuItem } from 'src/types';
 import { api } from 'boot/axios';
 import { showNotify } from 'src/composables/Notify';
+import { formatCurrency } from 'src/composables/useFormat';
 
 const props = defineProps<{
   selectedWarehouse: Warehouse | null;
@@ -854,10 +855,7 @@ const itemColumns = [
     align: 'right' as const,
     field: 'unit_cost',
     sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? parseFloat(String(val)) : 0;
-      return `$${(isNaN(num) ? 0 : num).toFixed(2)}`;
-    },
+    format: (val: any) => formatCurrency(val),
   },
   {
     name: 'solo_unit_price',
@@ -865,10 +863,7 @@ const itemColumns = [
     align: 'right' as const,
     field: 'solo_unit_price',
     sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? parseFloat(String(val)) : 0;
-      return `$${(isNaN(num) ? 0 : num).toFixed(2)}`;
-    },
+    format: (val: any) => formatCurrency(val),
   },
   {
     name: 'bulk_unit_price',
@@ -876,10 +871,7 @@ const itemColumns = [
     align: 'right' as const,
     field: 'bulk_unit_price',
     sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? parseFloat(String(val)) : 0;
-      return `$${(isNaN(num) ? 0 : num).toFixed(2)}`;
-    },
+    format: (val: any) => formatCurrency(val),
   },
   {
     name: 'quantity',
@@ -887,10 +879,7 @@ const itemColumns = [
     align: 'center' as const,
     field: 'quantity',
     sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
-      return (isNaN(num) ? 0 : num).toLocaleString();
-    },
+    format: (val: unknown) => formatQuantity(val),
   },
   // {
   //   name: 'pieces',
@@ -1013,9 +1002,13 @@ function getStockStatusText(item: AnyItem): string {
   return t('warehouseItem.stockOut', 'Out of Stock');
 }
 
-function formatQuantity(val: unknown): string {
-  const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
-  return (isNaN(num) ? 0 : num).toLocaleString();
+function formatQuantity(value: any): string {
+  // const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
+  if (typeof value === "string") {
+    value = value.replace(/[^\d.-]/g, "");
+    value = parseFloat(value);
+  }
+  return (isNaN(value) ? 0 : value).toLocaleString();
 }
 </script>
 

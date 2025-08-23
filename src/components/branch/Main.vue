@@ -80,21 +80,21 @@ const menuItems = computed(() => {
         icon: 'warehouse',
         value: 'viewWarehouses',
       },
-      {
-        label: t('branch.viewCashbox', 'View Cashbox'),
-        icon: 'account_balance_wallet',
-        value: 'viewCashbox',
-      }
+      // {
+      //   label: t('branch.viewCashbox', 'View Cashbox'),
+      //   icon: 'account_balance_wallet',
+      //   value: 'viewCashbox',
+      // }
     ];
 
     // Only admins can view reports
-    if (isAdmin.value) {
-      baseItems.push({
-        label: t('branch.viewReport', 'View Report'),
-        icon: 'analytics',
-        value: 'viewReport',
-      });
-    }
+    // if (isAdmin.value) {
+    //   baseItems.push({
+    //     label: t('branch.viewReport', 'View Report'),
+    //     icon: 'analytics',
+    //     value: 'viewReport',
+    //   });
+    // }
 
     // Only admins can edit and toggle active status
     if (isAdmin.value) {
