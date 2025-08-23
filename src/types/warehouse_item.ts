@@ -36,16 +36,16 @@ export type AnyItem = WarehouseItem | BlumItem;
 
 // Interface for warehouse with items (actual API response)
 export interface WarehouseWithItems {
-  id: number;
-  name: string;
-  code: string | null;
-  address: string;
-  capacity: number;
-  is_active: boolean;
+  id?: number;
+  name?: string;
+  code?: string | null;
+  address?: string;
+  capacity?: number;
+  is_active?: boolean;
   items?: WarehouseItem[];
   blum_items?: BlumItem[];
   blum_sets?: any[]; // Add blum_sets support
 }
 
 // Re-export existing types
-export * from './warehouse';
+export * from "./warehouse";
