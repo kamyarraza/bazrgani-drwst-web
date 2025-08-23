@@ -35,8 +35,15 @@
     <template #body="props">
       <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }" :style="props.rowIndex % 2 === 0 ? 'background-color: #e6e6e6;' : ''">
         <q-td v-for="col in props.cols" :key="col.name" :props="props" class="table-cell">
+          <!-- Image Avatar -->
+          <template v-if="col.name === 'image'">
+            <q-avatar>
+              <img :src="props.row.image" alt="User Image" />
+            </q-avatar>
+          </template>
+
           <!-- Expand Button -->
-          <template v-if="col.name === 'expand' && hasExpandableRows">
+          <template v-else-if="col.name === 'expand' && hasExpandableRows">
             <q-btn flat round dense size="sm" color="primary" class="expand-button"
               @click.stop="toggleExpand(props.row)" :icon="expanded[getRowKey(props.row)] ? 'remove' : 'add'" />
           </template>

@@ -164,7 +164,8 @@ async function handleSearch() {
     }
 }
 
-const columns = [{
+const columns = [
+    {
     name: 'image',
     label: t('admin.columns.profile'),
     align: "center" as const,

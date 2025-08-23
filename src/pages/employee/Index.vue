@@ -79,6 +79,7 @@ const menuItems = computed<MenuItem[]>(() => [
 
 // Table columns definition
 const columns = computed(() => [
+    { name: 'image', align: 'left' as const, label: t('employee.image'), field: 'image', sortable: true },
     { name: 'name', align: 'left' as const, label: t('employee.name'), field: 'name', sortable: true },
     { name: 'username', align: 'left' as const, label: t('employee.username'), field: 'username', sortable: true },
     { name: 'role', align: 'left' as const, label: t('employee.role'), field: 'role', sortable: true },

@@ -218,22 +218,22 @@ const columns = computed(() => [
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
     },
-    {
-        name: 'packet_units',
-        label: t('branchReport.columns.packetUnits'),
-        field: 'packet_units',
-        align: 'center' as const,
-        sortable: true,
-        format: (val: number) => formatNumber(val || 0)
-    },
-    {
-        name: 'package_units',
-        label: t('branchReport.columns.packageUnits'),
-        field: 'package_units',
-        align: 'center' as const,
-        sortable: true,
-        format: (val: number) => formatNumber(val || 0)
-    },
+    // {
+    //     name: 'packet_units',
+    //     label: t('branchReport.columns.packetUnits'),
+    //     field: 'packet_units',
+    //     align: 'center' as const,
+    //     sortable: true,
+    //     format: (val: number) => formatNumber(val || 0)
+    // },
+    // {
+    //     name: 'package_units',
+    //     label: t('branchReport.columns.packageUnits'),
+    //     field: 'package_units',
+    //     align: 'center' as const,
+    //     sortable: true,
+    //     format: (val: number) => formatNumber(val || 0)
+    // },
     {
         name: 'actions',
         label: t('common.actions'),
