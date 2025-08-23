@@ -1,32 +1,33 @@
 <template>
   <q-page class="offer-page">
-    <!-- Hero Section -->
-    <div class="hero-section">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">
-            <q-icon name="local_offer" class="hero-icon" />
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1 class="page-title">
+            <q-icon name="local_offer" class="title-icon" />
             {{ $t('offer.title') }}
           </h1>
-          <p class="hero-subtitle">{{ $t('offer.subtitle') }}</p>
+          <p class="page-subtitle">{{ $t('offer.subtitle') }}</p>
         </div>
-        <div class="hero-stats">
-          <div class="stat-card">
-            <div class="stat-number">{{ activeOffers.length }}</div>
-            <div class="stat-label">{{ $t('offer.activeOffers') }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">{{ validOffers.length }}</div>
-            <div class="stat-label">{{ $t('offer.availableNow') }}</div>
+        <div class="header-right">
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-number">{{ activeOffers.length }}</span>
+              <span class="stat-label">{{ $t('offer.activeOffers') }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{ validOffers.length }}</span>
+              <span class="stat-label">{{ $t('offer.availableNow') }}</span>
+            </div>
           </div>
           <q-btn
             unelevated
-            color="white"
-            text-color="primary"
-            icon="add_circle"
+            color="primary"
+            icon="add"
             :label="$t('offer.createNewOffer')"
             size="md"
-            class="create-offer-btn"
+            class="create-btn"
             @click="showCreateModal = true"
           />
         </div>
@@ -40,15 +41,15 @@
         :subtitle="$t('offer.loadingSubtitle')"
         :show-dots="true"
         spinner-color="primary"
-        spinner-size="3rem"
+        spinner-size="2rem"
       />
     </div>
 
-    <!-- Offers Grid -->
-    <div v-else class="offers-container">
+    <!-- Offers Content -->
+    <div v-else class="offers-content">
       <!-- Empty State -->
       <div v-if="offers.length === 0" class="empty-state">
-        <q-icon name="redeem" size="5rem" color="grey-4" />
+        <q-icon name="redeem" size="4rem" color="grey-4" />
         <h3 class="empty-title">{{ $t('offer.noOffersAvailable') }}</h3>
         <p class="empty-subtitle">{{ $t('offer.checkBackSoon') }}</p>
       </div>
@@ -61,19 +62,20 @@
           class="offer-card"
           :class="{ 'expired': isOfferExpired(offer) }"
         >
-          <!-- Offer Header -->
-          <div class="offer-header">
-            <div class="offer-badge" :class="getOfferBadgeClass(offer)">
-              <q-icon :name="getOfferIcon(offer)" />
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="status-badge" :class="getOfferBadgeClass(offer)">
+              <q-icon :name="getOfferIcon(offer)" size="sm" />
               <span>{{ getOfferStatus(offer) }}</span>
             </div>
-            <div class="offer-actions" v-if="canManageOffers">
+            <div class="card-actions" v-if="canManageOffers">
               <q-btn
                 flat
                 round
                 dense
                 icon="more_vert"
                 color="grey-6"
+                size="sm"
                 @click.stop
               >
                 <MenuDropdown
@@ -84,95 +86,63 @@
             </div>
           </div>
 
-          <!-- Offer Content -->
-          <div class="offer-content">
-            <!-- Title and Description -->
-            <div class="offer-main">
-              <h3 class="offer-title">{{ offer.title }}</h3>
-              <p class="offer-note" v-if="offer.note">{{ offer.note }}</p>
-            </div>
-
-            <!-- Customer Info -->
-            <div class="customer-info">
-              <q-avatar size="32px" color="primary" text-color="white">
-                {{ getCustomerName(offer)?.charAt(0)?.toUpperCase() || 'C' }}
-              </q-avatar>
-              <div class="customer-details">
-                <div class="customer-name">{{ getCustomerName(offer) || $t('offer.unknownCustomer') }}</div>
-                <div class="customer-id">{{ $t('offer.customerNumber') }}{{ getCustomerId(offer) || $t('offer.notAvailable') }}</div>
+          <!-- Card Body -->
+          <div class="card-body">
+            <h3 class="offer-title">{{ offer.title }}</h3>
+            <p v-if="offer.note" class="offer-note">{{ offer.note }}</p>
+            
+            <div class="offer-details">
+              <div class="detail-row">
+                <q-icon name="person" size="sm" color="grey-6" />
+                <span class="detail-text">{{ getCustomerName(offer) || $t('offer.unknownCustomer') }}</span>
+                <span class="customer-id">#{{ getCustomerId(offer) || $t('offer.notAvailable') }}</span>
               </div>
-            </div>
-
-            <!-- Pricing Section -->
-            <div class="pricing-section">
-              <div class="discount-rate" v-if="offer.discounted_rate && offer.discounted_rate > 0">
-                <q-icon name="percent" />
-                <span class="discount-text">{{ offer.discounted_rate }}{{ $t('offer.discountText') }}</span>
+              
+              <div class="detail-row">
+                <q-icon name="attach_money" size="sm" color="grey-6" />
+                <span class="detail-text">{{ $t('offer.totalPrice') }}</span>
+                <span class="price-value">${{ formatPrice(offer.total_price || 0) }}</span>
               </div>
-              <div class="total-price">
-                <span class="price-label">{{ $t('offer.totalPrice') }}</span>
-                <span class="price-amount">${{ formatPrice(offer.total_price || 0) }}</span>
+              
+              <div v-if="offer.discounted_rate && offer.discounted_rate > 0" class="detail-row">
+                <q-icon name="percent" size="sm" color="orange-6" />
+                <span class="detail-text">{{ $t('offer.discountText') }}</span>
+                <span class="discount-value">{{ offer.discounted_rate }}%</span>
               </div>
-            </div>
-
-            <!-- Valid Until -->
-            <div class="validity-section">
-              <q-icon
-                :name="isOfferExpired(offer) ? 'schedule' : 'event_available'"
-                :color="isOfferExpired(offer) ? 'negative' : 'positive'"
-              />
-              <span
-                class="validity-text"
-                :class="{ 'expired': isOfferExpired(offer) }"
-              >
-                {{ $t('offer.validUntil') }} {{ formatDate(offer.valid_until) }}
-              </span>
-            </div>
-
-            <!-- Items Preview -->
-            <div class="items-preview" v-if="offer.items && offer.items.length > 0">
-              <div class="items-header">
-                <q-icon name="inventory_2" />
-                <span>{{ offer.items.length }} {{ offer.items.length > 1 ? $t('offer.itemsCountPlural') : $t('offer.itemsCount') }}</span>
-              </div>
-              <div class="items-list">
-                <div
-                  v-for="(item, index) in offer.items.slice(0, 3)"
-                  :key="item.item_id || item.id || index"
-                  class="item-chip"
-                >
-                  <q-chip
-                    dense
-                    color="grey-2"
-                    text-color="grey-8"
-                    :label="`${item.item_name || $t('offer.unknownItem')} (${item.quantity || 0}x)`"
-                  />
-                </div>
-                <q-chip
-                  v-if="offer.items.length > 3"
-                  dense
-                  color="primary"
-                  text-color="white"
-                  :label="`+${offer.items.length - 3} ${$t('offer.moreItems')}`"
+              
+              <div class="detail-row">
+                <q-icon
+                  :name="isOfferExpired(offer) ? 'schedule' : 'event_available'"
+                  :color="isOfferExpired(offer) ? 'negative' : 'positive'"
+                  size="sm"
                 />
+                <span class="detail-text">{{ $t('offer.validUntil') }}</span>
+                <span class="date-value" :class="{ 'expired': isOfferExpired(offer) }">
+                  {{ formatDate(offer.valid_until) }}
+                </span>
+              </div>
+              
+              <div v-if="offer.items && offer.items.length > 0" class="detail-row">
+                <q-icon name="inventory_2" size="sm" color="grey-6" />
+                <span class="detail-text">{{ offer.items.length }} {{ offer.items.length > 1 ? $t('offer.itemsCountPlural') : $t('offer.itemsCount') }}</span>
               </div>
             </div>
-
-            <!-- Created By Info -->
+            
             <div class="created-info">
-              <div class="created-text">
+              <small class="created-text">
                 {{ $t('offer.createdBy') }} {{ offer.created_by?.name || $t('offer.unknownCreator') }} {{ $t('offer.on') }} {{ formatDate(offer.created_at) }}
-              </div>
+              </small>
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="offer-footer" v-if="!isOfferExpired(offer)">
+          <!-- Card Footer -->
+          <div class="card-footer" v-if="!isOfferExpired(offer)">
             <q-btn
               unelevated
               color="primary"
               :label="$t('offer.viewDetails')"
               class="full-width"
+              size="sm"
               @click="viewOfferDetails(offer)"
             />
           </div>
@@ -182,7 +152,6 @@
       <!-- Pagination -->
       <div v-if="pagination" class="pagination-container">
         <div class="pagination-wrapper">
-          <!-- Show pagination controls only when we actually have multiple pages -->
           <q-pagination
             v-if="pagination && pagination.last_page > 1"
             v-model="currentPage"
@@ -203,14 +172,13 @@
             :icon-last="isRTL ? 'keyboard_double_arrow_left' : 'keyboard_double_arrow_right'"
             :icon-prev="isRTL ? 'keyboard_arrow_right' : 'keyboard_arrow_left'"
             :icon-next="isRTL ? 'keyboard_arrow_left' : 'keyboard_arrow_right'"
-            class="beautiful-pagination"
+            class="pagination"
           />
-          <!-- Always show pagination info when pagination data exists -->
-          <div class="pagination-info-container">
-            <span v-if="pagination && pagination.last_page > 1" class="pagination-info">
+          <div class="pagination-info">
+            <span v-if="pagination && pagination.last_page > 1">
               {{ $t('offer.pagination.page') }} {{ pagination.current_page }} {{ $t('offer.pagination.of') }} {{ pagination.last_page }}
             </span>
-            <span v-if="pagination" class="pagination-total">
+            <span v-if="pagination">
               {{ $t('offer.pagination.total') }}: {{ pagination.total }} {{ $t('offer.pagination.offers') }}
             </span>
           </div>
@@ -218,7 +186,7 @@
       </div>
     </div>
 
-    <!-- Create/Edit Modals -->
+    <!-- Modals -->
     <NewCreateOfferModal
       v-model="showCreateModal"
       @created="handleOfferCreated"
@@ -475,18 +443,18 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .offer-page {
   min-height: 100vh;
-  position: relative;
+  background: #f8fafc;
 }
 
-.hero-section {
+.page-header {
   background: var(--q-primary);
   color: white;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border-radius: 0 0 24px 24px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0 0 16px 16px;
 }
 
-.hero-content {
+.header-content {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -495,38 +463,64 @@ onMounted(async () => {
   gap: 2rem;
 }
 
-.hero-text {
+.header-left {
   flex: 1;
 }
 
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 700;
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
   color: white;
   margin: 0 0 0.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
-.hero-icon {
-  font-size: 3rem;
+.title-icon {
+  font-size: 2.25rem;
 }
 
-.hero-subtitle {
-  font-size: 1.2rem;
+.page-subtitle {
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
 }
 
-.hero-stats {
+.header-right {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
 }
 
-.create-offer-btn {
-  margin-left: 1rem;
+.stats-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+  min-width: 80px;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+
+.create-btn {
   font-weight: 600;
   border-radius: 8px;
   padding: 0.5rem 1rem;
@@ -539,33 +533,11 @@ onMounted(async () => {
   }
 }
 
-.stat-card {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1.5rem;
-  border-radius: 16px;
-  text-align: center;
-  color: white;
-  min-width: 120px;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin-top: 0.5rem;
-}
-
 .loading-container {
-  padding: 4rem 2rem;
+  padding: 3rem 2rem;
 }
 
-.offers-container {
+.offers-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem 2rem;
@@ -573,61 +545,63 @@ onMounted(async () => {
 
 .empty-state {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem;
   color: var(--q-dark);
 }
 
 .empty-title {
   color: var(--q-dark);
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   margin: 1rem 0 0.5rem;
 }
 
 .empty-subtitle {
   color: var(--q-dark-page);
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin: 0;
 }
 
 .offers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
 }
 
 .offer-card {
   background: white;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   }
 
   &.expired {
-    opacity: 0.7;
-    background: #f5f5f5;
+    opacity: 0.6;
+    background: #f8f9fa;
   }
 }
 
-.offer-header {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem 0;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.offer-badge {
+.status-badge {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
   font-weight: 600;
 
   &.badge-active {
@@ -656,145 +630,89 @@ onMounted(async () => {
   }
 }
 
-.offer-content {
-  padding: 1rem 1.5rem;
-}
-
-.offer-main {
-  margin-bottom: 1.5rem;
+.card-body {
+  padding: 1rem;
 }
 
 .offer-title {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: #1e293b;
   margin: 0 0 0.5rem;
   line-height: 1.3;
 }
 
 .offer-note {
   color: #64748b;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   line-height: 1.4;
-  margin: 0;
+  margin: 0 0 1rem;
 }
 
-.customer-info {
+.offer-details {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: rgba(99, 102, 241, 0.05);
-  border-radius: 12px;
-}
-
-.customer-details {
-  flex: 1;
-}
-
-.customer-name {
-  font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.95rem;
-}
-
-.customer-id {
-  font-size: 0.85rem;
-  color: #64748b;
-}
-
-.pricing-section {
-  margin-bottom: 1.5rem;
-}
-
-.discount-rate {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.total-price {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: rgba(59, 130, 246, 0.05);
-  border-radius: 12px;
-}
-
-.price-label {
-  font-size: 0.9rem;
-  color: #64748b;
-}
-
-.price-amount {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #3b82f6;
-}
-
-.validity-section {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
-
-.validity-text {
-  &.expired {
-    color: #f44336;
-  }
-}
-
-.items-preview {
-  margin-bottom: 1rem;
-}
-
-.items-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.75rem;
-  font-size: 0.9rem;
-}
-
-.items-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.created-info {
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid #e2e8f0;
 }
 
-.created-text {
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.85rem;
   color: #64748b;
+  padding: 0.25rem 0;
 }
 
-.offer-footer {
-  padding: 0 1.5rem 1.5rem;
+.detail-text {
+  font-weight: 500;
+  color: #475569;
+  flex: 1;
 }
 
-.fixed-bottom-right {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
+.customer-id {
+  font-weight: 600;
+  color: #3b82f6;
+  font-size: 0.8rem;
+}
+
+.price-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.discount-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ff9800;
+}
+
+.date-value {
+  font-weight: 500;
+  color: #475569;
+  
+  &.expired {
+    color: #f44336;
+  }
+}
+
+.created-info {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.created-text {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.card-footer {
+  padding: 0 1rem 1rem;
 }
 
 .pagination-container {
@@ -802,29 +720,32 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   padding: 2rem 0;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 .pagination-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
-.pagination-info-container {
+.pagination-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
-.beautiful-pagination {
+.pagination {
   .q-btn {
-    border-radius: 8px;
-    margin: 0 2px;
-    min-width: 40px;
-    height: 40px;
+    border-radius: 6px;
+    margin: 0 1px;
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
 
     &.q-btn--active {
       background: var(--q-primary);
@@ -835,27 +756,11 @@ onMounted(async () => {
     &:not(.q-btn--active) {
       background: white;
       color: var(--q-primary);
-      border: 1px solid rgba(var(--q-primary-rgb), 0.3);
+      border: 1px solid rgba(var(--q-primary-rgb), 0.2);
 
       &:hover {
-        background: rgba(var(--q-primary-rgb), 0.1);
+        background: rgba(var(--q-primary-rgb), 0.05);
       }
-    }
-  }
-
-  // RTL support - ensure proper flow direction
-  :deep(.q-pagination__content) {
-    flex-direction: row;
-  }
-
-  // For RTL languages, reverse the button order visually
-  body.q-rtl & {
-    :deep(.q-pagination__content) {
-      flex-direction: row-reverse;
-    }
-
-    .q-btn {
-      margin: 0 2px;
     }
   }
 }
@@ -863,51 +768,46 @@ onMounted(async () => {
 .pagination-input {
   border-radius: 6px;
   background: white;
-  border: 1px solid rgba(var(--q-primary-rgb), 0.3);
+  border: 1px solid rgba(var(--q-primary-rgb), 0.2);
   padding: 4px 8px;
   text-align: center;
-  min-width: 60px;
-}
-
-.pagination-info {
-  font-size: 0.9rem;
-  color: var(--q-dark);
-  font-weight: 500;
-}
-
-.pagination-total {
+  min-width: 50px;
   font-size: 0.85rem;
-  color: #64748b;
 }
 
 // Mobile responsive
 @media (max-width: 768px) {
-  .hero-content {
+  .header-content {
     flex-direction: column;
     text-align: center;
     gap: 1.5rem;
   }
 
-  .hero-stats {
+  .header-right {
     flex-direction: column;
-    gap: 1rem;
     width: 100%;
   }
 
-  .stat-card {
-    min-width: auto;
-    padding: 1rem;
+  .stats-row {
+    flex-direction: row;
+    gap: 2rem;
+    width: 100%;
+    justify-content: center;
   }
 
-  .create-offer-btn {
+  .stat-item {
+    min-width: auto;
+  }
+
+  .create-btn {
     margin-left: 0;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     width: 100%;
     max-width: 200px;
   }
 
-  .hero-title {
-    font-size: 2rem;
+  .page-title {
+    font-size: 1.75rem;
   }
 
   .offers-grid {
@@ -915,83 +815,51 @@ onMounted(async () => {
     gap: 1rem;
   }
 
-  .offers-container {
+  .offers-content {
     padding: 0 1rem 2rem;
   }
 
-  .hero-section {
-    padding: 1.5rem 1rem;
-  }
-
-  .offer-card {
-    margin-bottom: 1rem;
-  }
-
-  .offer-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  .page-header {
+    padding: 1.25rem 1rem;
   }
 
   .pagination-container {
     padding: 1.5rem 0;
   }
-
-  .pagination-wrapper {
-    gap: 0.75rem;
-  }
-
-  .pagination-info,
-  .pagination-total {
-    font-size: 0.8rem;
-    text-align: center;
-  }
 }
 
 @media (max-width: 480px) {
-  .hero-title {
-    font-size: 1.75rem;
+  .page-title {
+    font-size: 1.5rem;
   }
 
-  .hero-subtitle {
-    font-size: 1rem;
+  .page-subtitle {
+    font-size: 0.9rem;
   }
 
   .stat-number {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   .stat-label {
     font-size: 0.75rem;
   }
 
-  .offer-card {
-    border-radius: 12px;
-  }
-
   .offers-grid {
     grid-template-columns: 1fr;
     gap: 0.75rem;
   }
 
-  .pagination-container {
-    padding: 1rem 0;
-  }
-
-  .beautiful-pagination .q-btn {
+  .pagination .q-btn {
     min-width: 32px;
     height: 32px;
     font-size: 0.8rem;
   }
 
   .pagination-input {
-    min-width: 50px;
+    min-width: 45px;
     font-size: 0.8rem;
-  }
-
-  .pagination-info,
-  .pagination-total {
-    font-size: 0.75rem;
   }
 }
 </style>
+
