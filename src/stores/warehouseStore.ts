@@ -150,13 +150,18 @@ export const useWarehouseStore = defineStore('warehouse', () => {
     selectedWarehouseId.value = warehouseId;
 
     try {
-      const { data } = await api.get<ApiResponse<WarehouseWithItems>>(
-        `${endPoints.specialwarehouseItems(warehouseId)}?page=${page}&per_page=${perPage}&relations=${relationType}`
+      const { data } = await api.get<ApiResponse<any[]>>(
+        `${endPoints.specialwarehouseItems(warehouseId)}?page=${page}`
       );
 
       if (data.status === 'success') {
-        warehouseItems.value = data.data;
+        warehouseItems.value = {
+          id: warehouseId,
+          items: data.data
+        };
         pagination.value = data.pagination || null;
+
+      console.log(data, warehouseItems.value);
       } else {
         error.value = data.message;
         showNotify({

@@ -110,7 +110,7 @@ export const endPoints = {
   // Add missing endpoint for branch warehouses - supports search with ?query=something
   branchWarehouses: (branchId: string | number) =>
     `/warehouses/${branchId}/index`,
-  specialwarehouseItems: (wId: string | number) => `/warehouses/${wId}`,
+  specialwarehouseItems: (wId: string | number) => `warehouses/${wId}/get/items`,
   // Add warehouse items endpoints
   warehouseItems: {
     list: (warehouseId: string | number) => `/warehouses/${warehouseId}/items`,
