@@ -20,6 +20,7 @@
             <div class="stat-label">{{ $t('offer.availableNow') }}</div>
           </div>
           <q-btn
+          v-if="me?.type !== 'customer'"
             unelevated
             color="white"
             text-color="primary"
@@ -250,9 +251,12 @@ import NewCreateOfferModal from 'src/components/offer/NewCreateOfferModal.vue'
 import EditOfferModal from 'src/components/offer/EditOfferModal.vue'
 import PrintableOfferInvoice from 'src/components/invoice/PrintableOfferInvoice.vue'
 import { date } from 'quasar'
+import { useMeStore } from 'src/stores/meStore'
 
 const { t, locale } = useI18n()
 const offerStore = useOfferStore()
+
+const { me } = useMeStore()
 
 // Reactive data
 const showCreateModal = ref(false)
@@ -377,8 +381,15 @@ function getCustomerId(offer: OfferResponse): number | string {
 function getMenuItems(offer: OfferResponse): MenuItem[] {
   const items: MenuItem[] = [
     { label: t('offer.viewDetails'), icon: 'visibility', value: 'view' },
-    { label: t('offer.editOffer'), icon: 'edit', value: 'edit' }
+    // { label: t('offer.editOffer'), icon: 'edit', value: 'edit' }
   ]
+
+  if (me?.type === 'customer') {
+    // Add customer-specific menu items
+    items.push(
+      { label: t('offer.editOffer'), icon: 'edit', value: 'edit' }
+    )
+  }
 
   if (offer && !isOfferExpired(offer)) {
     // Add status change options based on current status

@@ -283,9 +283,11 @@ const handleLogin = async () => {
     if (authStore.token && authStore.currentUser && authStore.loggedIn) {
       // Use router navigation instead of window.location for smoother transition
       await router.replace('/')
-    } else {
-      console.error('❌ Login appeared to succeed but user data or token is missing')
-    }
+    } 
+    
+    // else {
+    //   console.error('❌ Login appeared to succeed but user data or token is missing')
+    // }
   } catch (err) {
     console.error('❌ Login failed:', err)
   }

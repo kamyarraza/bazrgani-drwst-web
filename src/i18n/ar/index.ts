@@ -1041,6 +1041,7 @@ export default {
     items: "العناصر",
   },
   employee: {
+    image: "صورة",
     addNew: "إضافة موظف جديد",
     updateEmployee: "تحديث الموظف",
     employee: "الموظف",

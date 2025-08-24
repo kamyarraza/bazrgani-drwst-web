@@ -15,7 +15,7 @@
               { label: t('itemTransaction.sell'), value: 'sell' }
             ]" @update:model-value="handleTypeChange" class="q-mr-md" />
           </div>
-          <q-btn
+          <q-btn v-if="user?.type !== 'customer'"
             :label="t('itemTransaction.addNew', { type: transactionType === 'purchase' ? t('itemTransaction.purchase') : t('itemTransaction.sell') })"
             icon="add" color="primary" @click="showAddModal = true" no-caps />
         </div>

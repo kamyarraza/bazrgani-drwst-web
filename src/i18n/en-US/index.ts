@@ -583,6 +583,7 @@ export default {
     adjustmentError: "Failed to adjust stock",
   },
   employee: {
+    image: "image",
     addNew: "Add new employee",
     updateEmployee: "Update Employee",
     employee: "Employee",
