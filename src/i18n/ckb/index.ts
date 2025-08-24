@@ -650,16 +650,19 @@ export default {
     totalItems: "کۆی گشتی ئایتمەکان",
     totalQuantity: "کۆی گشتی بڕ",
     totalValue: "کۆی گشتی نرخ",
+    totalUnitCost: "کۆی گشتی تێچوو",
     totalReservations: "کۆی گشتی حجزکراوەکان",
     exportReport: "درووستکردنی ڕاپۆرت",
-    exportCSV: "هەناردن وەک CSV",
-    exportPDF: "هەناردن وەک PDF",
+    exportCSV: "وەرگرتن وەک CSV",
+    exportPDF: "وەرگرتن وەک PDF",
     pdfError:
       "هەڵەیەک لە درووستکردنی PDF دا ڕوویدا. تکایە دووبارە هەوڵ بدەوە یان CSV بەکاربهێنە.",
     noDataAvailable: "هیچ زانیارییەک بۆ ئەم لقە بەردەست نییە",
 
     columns: {
       itemName: "ناوی ئایتم",
+      categoryName: "ناوی جۆر",
+      sales: "فرۆشتن",
       quantity: "بڕ",
       reservations: "حجزکراوەکان",
       unitCost: "تێچووی یەکە",

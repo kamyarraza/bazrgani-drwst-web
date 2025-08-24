@@ -13,14 +13,25 @@ export const useBranchReportStore = defineStore('branchReport', () => {
   const error = ref<string | null>(null);
   const pagination = ref<Pagination | null>(null);
 
-  async function fetchBranchReport(branchId: number, page: number = 1) {
+  async function fetchBranchReport(
+    branchId: number, 
+    page: number = 1, 
+    query?: string, 
+    categoryId?: number
+  ) {
     loading.value = true;
     error.value = null;
-    const parameter = page ? `page=${page}` : '';
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (page) params.append('page', page.toString());
+    params.append('paginate', 'true');
+    if (query && query.trim()) params.append('query', query.trim());
+    if (categoryId) params.append('category_id', categoryId.toString());
 
     try {
       const { data } = await api.get<ApiResponse<BranchReportItem[]>>(
-        `${endPoints.branch.report(branchId)}?${parameter}&paginate=true`
+        `${endPoints.branch.report(branchId)}?${params.toString()}`
       );
       
       // Check if data exists and has items
@@ -60,56 +71,13 @@ export const useBranchReportStore = defineStore('branchReport', () => {
     }
   }
 
-  async function searchBranchReport(branchId: number, searchQuery: string) {
-    loading.value = true;
-    error.value = null;
-
-    try {
-      const { data } = await api.get<ApiResponse<BranchReportItem[]>>(
-        `${endPoints.branch.report(branchId)}?query=${encodeURIComponent(searchQuery)}`
-      );
-      
-      // Check if data exists and has items
-      if (data && data.data && Array.isArray(data.data)) {
-        reportItems.value = data.data;
-        
-        // If no items returned, clear the summary
-        if (data.data.length === 0) {
-          summary.value = null;
-        } else {
-          calculateSummary();
-        }
-      } else {
-        // Clear existing data if response is invalid
-        reportItems.value = [];
-        summary.value = null;
-      }
-
-    } catch (err: unknown) {
-      // Clear existing data when endpoint fails
-      reportItems.value = [];
-      summary.value = null;
-      
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search branch report';
-      error.value = errorMessage;
-      showNotify({
-        type: 'negative',
-        message: error.value,
-        position: 'top',
-        duration: 3000,
-      });
-    } finally {
-      loading.value = false;
-    }
-  }
-
   function calculateSummary() {
     if (!reportItems.value.length) {
       summary.value = null;
       return;
     }
 
-    const totalItems = reportItems.value.length;
+    const totalItems = pagination.value?.total || reportItems.value.length;
     const totalQuantity = reportItems.value.reduce((sum, item) => sum + parseInt(item.total_quantity || '0'), 0);
     const totalReservations = reportItems.value.reduce((sum, item) => sum + parseInt(item.total_reservations || '0'), 0);
     const totalValue = reportItems.value.reduce((sum, item) => {
@@ -139,7 +107,6 @@ export const useBranchReportStore = defineStore('branchReport', () => {
     error,
     pagination,
     fetchBranchReport,
-    searchBranchReport,
     clearReport,
   };
 });

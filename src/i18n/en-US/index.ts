@@ -718,6 +718,7 @@ export default {
     totalItems: "Total Items",
     totalQuantity: "Total Quantity",
     totalValue: "Total Value",
+    totalUnitCost: "Total Unit Cost",
     totalReservations: "Total Reservations",
     exportReport: "Export Report",
     exportCSV: "Export CSV",
@@ -727,6 +728,8 @@ export default {
 
     columns: {
       itemName: "Item Name",
+      categoryName: "Category Name",
+      sales: "Sales",
       quantity: "Quantity",
       reservations: "Reservations",
       unitCost: "Unit Cost",

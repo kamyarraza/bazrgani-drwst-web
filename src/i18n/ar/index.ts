@@ -1172,6 +1172,7 @@ export default {
     totalItems: "إجمالي العناصر",
     totalQuantity: "إجمالي الكمية",
     totalValue: "إجمالي القيمة",
+    totalUnitCost: "إجمالي تكلفة الوحدة",
     totalReservations: "إجمالي الحجوزات",
     exportReport: "تصدير التقرير",
     exportCSV: "تصدير CSV",
@@ -1181,6 +1182,8 @@ export default {
     
     columns: {
       itemName: "اسم العنصر",
+      categoryName: "اسم الفئة",
+      sales: "المبيعات",
       quantity: "الكمية",
       reservations: "الحجوزات",
       unitCost: "تكلفة الوحدة",

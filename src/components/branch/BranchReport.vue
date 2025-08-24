@@ -29,7 +29,7 @@
 
                 <q-card class="summary-card">
                     <q-card-section class="text-center">
-                        <q-icon name="trending_up" size="2rem" color="positive" />
+                        <q-icon name="calculate" size="2rem" color="positive" />
                         <div class="text-h6 q-mt-sm">{{ formatNumber(summary.total_quantity) }}</div>
                         <div class="text-caption text-grey-6">{{ t('branchReport.totalQuantity') }}</div>
                     </q-card-section>
@@ -37,17 +37,62 @@
 
                 <q-card class="summary-card">
                     <q-card-section class="text-center">
-                        <q-icon name="attach_money" size="2rem" color="warning" />
+                        <q-icon name="sell" size="2rem" color="teal" />
                         <div class="text-h6 q-mt-sm">{{ formatCurrency(summary.total_value) }}</div>
-                        <div class="text-caption text-grey-6">{{ t('branchReport.totalValue') }}</div>
+                        <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCost') }}</div>
                     </q-card-section>
                 </q-card>
 
                 <q-card class="summary-card">
                     <q-card-section class="text-center">
-                        <q-icon name="bookmark" size="2rem" color="info" />
-                        <div class="text-h6 q-mt-sm">{{ formatNumber(summary.total_reservations) }}</div>
-                        <div class="text-caption text-grey-6">{{ t('branchReport.totalReservations') }}</div>
+                        <q-icon name="currency_exchange" size="2rem" color="deep-orange" />
+                        <div class="text-h6 q-mt-sm">{{ formatCurrency(summary.total_value * usdIqdRate, ' IQD') }}</div>
+                        <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCost') }}</div>
+                    </q-card-section>
+                </q-card>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section q-mb-md">
+                <q-card class="filter-card">
+                    <q-card-section>
+                        <div class="text-subtitle2 q-mb-md">
+                            <q-icon name="filter_list" class="q-mr-sm" />
+                            {{ t('branchReport.filters.title', 'Filters') }}
+                        </div>
+                        <div class="row q-col-gutter-md">
+                            <!-- Search Query Input -->
+                            <div class="col-12 col-md-6">
+                                <q-input v-model="searchQuery"
+                                    :label="t('branchReport.filters.searchPlaceholder', 'Search items...')" outlined
+                                    dense clearable debounce="500" @update:model-value="onSearchChange">
+                                    <template v-slot:prepend>
+                                        <q-icon name="search" />
+                                    </template>
+                                </q-input>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="col-12 col-md-6">
+                                <q-select v-model="selectedCategory" :options="categoryOptions"
+                                    :label="t('branchReport.filters.categoryPlaceholder', 'Filter by category')"
+                                    outlined dense clearable option-value="value" option-label="label" emit-value
+                                    map-options @update:model-value="onCategoryChange">
+                                    <template v-slot:prepend>
+                                        <q-icon name="category" />
+                                    </template>
+                                </q-select>
+                            </div>
+                        </div>
+
+                        <!-- Clear Filters Button -->
+                        <div class="row q-mt-sm" v-if="searchQuery || selectedCategory">
+                            <div class="col-12">
+                                <q-btn flat color="negative" icon="clear"
+                                    :label="t('branchReport.filters.clearFilters', 'Clear Filters')" size="sm"
+                                    @click="clearFilters" />
+                            </div>
+                        </div>
                     </q-card-section>
                 </q-card>
             </div>
@@ -111,9 +156,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, watch, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useBranchReportStore } from 'src/stores/branchReportStore';
+import { useItemCategoryStore } from 'src/stores/itemCategoryStore';
 import { useMeStore } from 'src/stores/meStore';
 import QtableB from 'src/components/common/Qtable.vue';
 import { formatCurrency } from 'src/composables/useFormat';
@@ -121,6 +167,7 @@ import type { MenuItem } from 'src/types';
 import type { Branch } from 'src/types/branch';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 
 interface Props {
     branch: Branch | null;
@@ -129,7 +176,13 @@ interface Props {
 const props = defineProps<Props>();
 const { t } = useI18n();
 const branchReportStore = useBranchReportStore();
+const itemCategoryStore = useItemCategoryStore();
 const meStore = useMeStore();
+const exchangeRateStore = useExchangeRateStore();
+
+// Filter reactive data
+const searchQuery = ref('');
+const selectedCategory = ref<number | null>(null);
 
 // Admin check - only admins can access reports
 const isAdmin = computed(() => meStore.me?.type === 'admin');
@@ -139,6 +192,24 @@ const reportItems = computed(() => branchReportStore.reportItems);
 const summary = computed(() => branchReportStore.summary);
 const loading = computed(() => branchReportStore.loading);
 const pagination = computed(() => branchReportStore.pagination);
+
+// Category options for select
+const categoryOptions = computed(() => {
+    const allOption = { value: null, label: t('branchReport.filters.allCategories', 'All Categories') };
+    const categoryOpts = itemCategoryStore.itemCategories.map(category => ({
+        value: category.id,
+        label: category.name
+    }));
+    return [allOption, ...categoryOpts];
+});
+
+onMounted(async () => {
+  if (!exchangeRateStore.activeRate) {
+    await exchangeRateStore.fetchActiveExchangeRate();
+  }
+});
+
+const usdIqdRate = computed(() => exchangeRateStore.activeRate?.usd_iqd_rate || 0);
 
 // Helper function to format numbers
 const formatNumber = (value: any): string => {
@@ -175,6 +246,13 @@ const columns = computed(() => [
         name: 'name',
         label: t('branchReport.columns.itemName'),
         field: 'name',
+        align: 'left' as const,
+        sortable: true
+    },
+    {
+        name: 'category',
+        label: t('branchReport.columns.categoryName'),
+        field: 'category',
         align: 'left' as const,
         sortable: true
     },
@@ -218,6 +296,14 @@ const columns = computed(() => [
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
     },
+    {
+        name: 'total_sales',
+        label: t('branchReport.columns.sales'),
+        field: 'total_sales',
+        align: 'center' as const,
+        sortable: true,
+        format: (val: any) => formatNumber(val)
+    },
     // {
     //     name: 'packet_units',
     //     label: t('branchReport.columns.packetUnits'),
@@ -234,13 +320,13 @@ const columns = computed(() => [
     //     sortable: true,
     //     format: (val: number) => formatNumber(val || 0)
     // },
-    {
-        name: 'actions',
-        label: t('common.actions'),
-        field: 'actions',
-        align: 'center' as const,
-        sortable: false
-    }
+    // {
+    //     name: 'actions',
+    //     label: t('common.actions'),
+    //     field: 'actions',
+    //     align: 'center' as const,
+    //     sortable: false
+    // }
 ]);
 
 // Menu items for actions
@@ -260,7 +346,44 @@ const getMenuItems = (): MenuItem[] => [
 // Event handlers
 const handlePageChange = async (page: number) => {
     if (props.branch?.id) {
-        await branchReportStore.fetchBranchReport(props.branch.id, page);
+        await branchReportStore.fetchBranchReport(
+            props.branch.id,
+            page,
+            searchQuery.value || undefined,
+            selectedCategory.value || undefined
+        );
+    }
+};
+
+// Filter event handlers
+const onSearchChange = async () => {
+    if (props.branch?.id) {
+        await branchReportStore.fetchBranchReport(
+            props.branch.id,
+            1, // Reset to first page when searching
+            searchQuery.value || undefined,
+            selectedCategory.value || undefined
+        );
+    }
+};
+
+const onCategoryChange = async () => {
+    if (props.branch?.id) {
+        await branchReportStore.fetchBranchReport(
+            props.branch.id,
+            1, // Reset to first page when filtering
+            searchQuery.value || undefined,
+            selectedCategory.value || undefined
+        );
+    }
+};
+
+const clearFilters = async () => {
+    searchQuery.value = '';
+    selectedCategory.value = null;
+
+    if (props.branch?.id) {
+        await branchReportStore.fetchBranchReport(props.branch.id, 1);
     }
 };
 
@@ -447,6 +570,9 @@ const exportReportAsPDF = () => {
 // Watchers
 watch(() => props.branch?.id, async (newBranchId) => {
     if (newBranchId && isAdmin.value) {
+        // Clear filters when branch changes
+        searchQuery.value = '';
+        selectedCategory.value = null;
         await branchReportStore.fetchBranchReport(newBranchId);
     } else {
         branchReportStore.clearReport();
@@ -455,8 +581,13 @@ watch(() => props.branch?.id, async (newBranchId) => {
 
 // Lifecycle
 onMounted(async () => {
-    if (props.branch?.id && isAdmin.value) {
-        await branchReportStore.fetchBranchReport(props.branch.id);
+    // Fetch categories for filter
+    if (isAdmin.value) {
+        await itemCategoryStore.fetchItemCategories();
+
+        if (props.branch?.id) {
+            await branchReportStore.fetchBranchReport(props.branch.id);
+        }
     }
 });
 </script>
@@ -490,7 +621,29 @@ onMounted(async () => {
             &:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-            background: #b3c2e655;
+                background: #b3c2e655;
+            }
+        }
+    }
+
+    .filter-section {
+        .filter-card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e5e9;
+
+            .text-subtitle2 {
+                color: #5f6368;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+            }
+
+            .q-input,
+            .q-select {
+                .q-field__control {
+                    border-radius: 8px;
+                }
             }
         }
     }
@@ -511,6 +664,14 @@ onMounted(async () => {
 @media (max-width: 768px) {
     .summary-cards {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-section {
+        .row.q-col-gutter-md {
+            .col-12.col-md-6 {
+                margin-bottom: 1rem;
+            }
+        }
     }
 }
 </style>
