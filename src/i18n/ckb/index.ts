@@ -509,6 +509,8 @@ export default {
     confirmSubmit: "دڵنیابوونەوە و ناردن",
     adjustmentSuccess: "ڕێکخستنەکان بە سەرکەوتوویی جێبەجێکران",
     adjustmentError: "سەرنەکەوت لە ڕێکخستنی کۆگا",
+    reasonPlaceholder: "هۆکار بنووسە",
+    adjustmentReason: "هۆکاری ڕێکخستنی کۆگا",
     // کلیلەکانی کۆگای مۆدالی نوێ
     selectBranchFirst: "یەکەم جار لقێک هەڵبژێرە",
     noWarehousesAvailable: "هیچ کۆگایەک بەردەست نییە",

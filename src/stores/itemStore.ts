@@ -252,7 +252,7 @@ export const useItemStore = defineStore("item", () => {
       let url = endPoints.warehouse.details(warehouseId);
 
       if (categoryId) {
-        url += `&category_id=${categoryId}`;
+        url += `?category_id=${categoryId}`;
       }
 
       const { data } = await api.get<ApiResponse<Product[]>>(url);

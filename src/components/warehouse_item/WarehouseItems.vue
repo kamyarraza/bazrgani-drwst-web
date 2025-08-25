@@ -590,6 +590,13 @@
         </q-item>
       </q-list>
 
+      <div class="q-mb-md">
+        <q-input v-model="adjustmentReason" type="textarea" 
+          :label="t('warehouseItem.adjustmentReason', 'Reason for adjustment')"
+          :placeholder="t('warehouseItem.reasonPlaceholder', 'Please provide a reason for these stock adjustments...')"
+          outlined rows="3" counter maxlength="500" />
+      </div>
+
       <q-card-actions align="right">
         <q-btn flat :label="t('common.cancel', 'Cancel')" v-close-popup />
         <q-btn color="primary" :label="t('warehouseItem.confirmSubmit', 'Confirm & Submit')"
@@ -676,6 +683,7 @@ const adjustQuantity = ref(1);
 const adjustAction = ref<'add' | 'remove'>('add');
 const isSubmitting = ref(false);
 const showConfirmDialog = ref(false);
+const adjustmentReason = ref('');
 
 // Computed to get items with pending adjustments
 const adjustedItems = computed(() => {
@@ -745,7 +753,8 @@ async function submitAllAdjustments() {
         item_id: Number(itemId),
         quantity: adjustment.quantity,
         action: adjustment.action
-      }))
+      })),
+      reason: adjustmentReason.value.trim() || 'No reason provided'
     };
 
     await api.post(`/warehouses-items/adjust/quantity/${props.selectedWarehouse.id}`, payload);
