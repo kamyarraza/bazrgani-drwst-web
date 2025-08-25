@@ -283,7 +283,7 @@ export const useItemStore = defineStore("item", () => {
     try {
       let url =
         endPoints.warehouse.details(warehouseId) +
-        `?relations=items&query=${encodeURIComponent(searchQuery)}`;
+        `?query=${encodeURIComponent(searchQuery)}`;
 
       if (categoryId) {
         url += `&category_id=${categoryId}`;

@@ -155,7 +155,7 @@ function onSearch() {
     return;
   }
   // For purchase, use regular search (not paginated for search results)
-  void itemStore.searchItems((searchQuery.value || '').trim(), selectedCategoryId.value);
+  void itemStore.searchItemsByWarehouse((searchQuery.value || '').trim(), props.warehouseId || '', selectedCategoryId.value);
 }
 
 watch(searchQuery, (val) => {
