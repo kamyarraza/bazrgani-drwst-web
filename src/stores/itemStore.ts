@@ -60,7 +60,9 @@ export const useItemStore = defineStore("item", () => {
         url += `&category_id=${categoryId}`;
       }
 
+      console.log("Searching items with URL:", url);
       const { data } = await api.get<ApiResponse<Product[]>>(url);
+      console.log("Search response:", data);
       items.value = data.data;
       // Clear pagination when searching since we're not using paginated search
       pagination.value = null;
@@ -68,6 +70,7 @@ export const useItemStore = defineStore("item", () => {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to search items";
       error.value = errorMessage;
+      console.error("Search error:", err);
       showNotify({
         type: "negative",
         message: error.value,
@@ -290,7 +293,8 @@ export const useItemStore = defineStore("item", () => {
       }
 
       const { data } = await api.get<ApiResponse<any>>(url);
-      items.value = data.data.items || [];
+      // Handle both possible response structures: data.data.items or data.data
+      items.value = data.data?.items || data.data || [];
       pagination.value = null;
     } catch (err: unknown) {
       const errorMessage =

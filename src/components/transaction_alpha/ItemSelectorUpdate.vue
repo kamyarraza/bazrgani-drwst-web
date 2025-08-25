@@ -157,7 +157,7 @@ function onSearch() {
   if (searchTimeout) clearTimeout(searchTimeout);
   if (props.transactionType === 'sell') {
     if (!props.warehouseId) return; // Don't search if no warehouse selected
-    void itemStore['searchItemsByWarehouse']((searchQuery.value || '').trim(), props.warehouseId, selectedCategoryId.value);
+    void itemStore.searchItemsByWarehouse((searchQuery.value || '').trim(), props.warehouseId, selectedCategoryId.value);
     return;
   }
   // For purchase, use regular search (not paginated for search results)
@@ -179,7 +179,7 @@ watch(searchQuery, (val) => {
   }
   searchTimeout = setTimeout(() => {
     if (props.transactionType === 'sell' && props.warehouseId) {
-      void itemStore['searchItemsByWarehouse'](val.trim(), props.warehouseId, selectedCategoryId.value);
+      void itemStore.searchItemsByWarehouse(val.trim(), props.warehouseId, selectedCategoryId.value);
     } else {
       void itemStore.searchItems(val.trim(), selectedCategoryId.value);
     }
