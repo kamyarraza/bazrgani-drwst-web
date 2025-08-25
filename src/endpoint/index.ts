@@ -101,7 +101,7 @@ export const endPoints = {
   warehouse: {
     list: "/warehouses?relations=items",
     create: "/warehouses",
-    details: (warehouseId: string | number) => `/warehouses/${warehouseId}/get/items`,
+    details: (warehouseId: string | number) => `/warehouses/${warehouseId}`,
     update: (warehouseId: string | number) => `/warehouses/${warehouseId}`,
     toggleActive: (warehouseId: string | number) =>
       `/warehouses/toggle-active/${warehouseId}`,
@@ -110,7 +110,9 @@ export const endPoints = {
   // Add missing endpoint for branch warehouses - supports search with ?query=something
   branchWarehouses: (branchId: string | number) =>
     `/warehouses/${branchId}/index`,
-  specialwarehouseItems: (wId: string | number) => `warehouses/${wId}/get/items`,
+  warehouseStockMovements: (branchId: string | number) =>
+    `/warehouses/${branchId}/get/stock-movements`,
+  specialwarehouseItems: (wId: string | number) => `/warehouses/${wId}`,
   // Add warehouse items endpoints
   warehouseItems: {
     list: (warehouseId: string | number) => `/warehouses/${warehouseId}/items`,

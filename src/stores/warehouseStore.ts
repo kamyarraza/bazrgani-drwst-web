@@ -6,6 +6,7 @@ import type {
   Warehouse,
   ApiResponse,
   BranchWithWarehouses,
+  StockMovement,
   Pagination,
   WarehouseCreate,
 } from "src/types/warehouse";
@@ -24,6 +25,9 @@ export const useWarehouseStore = defineStore("warehouse", () => {
   // Warehouse Items State
   const warehouseItems = ref<WarehouseWithItems | null>(null);
   const selectedWarehouseId = ref<number | null>(null);
+
+  // Stock movements
+  const stockMovements = ref<StockMovement[]>([]);
 
   // Actions
   async function fetchWarehouses(page = 1, perPage = 10) {
@@ -149,6 +153,47 @@ export const useWarehouseStore = defineStore("warehouse", () => {
         duration: 3000,
       });
       return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchStockMovements(
+    warehouseId: number,
+    page = 1,
+  ) {
+    loading.value = true;
+    error.value = null;
+    selectedBranchId.value = warehouseId;
+
+    try {
+      const { data } = await api.get<ApiResponse<StockMovement[]>>(
+        `${endPoints.warehouseStockMovements(
+          warehouseId
+        )}?page=${page}`
+      );
+
+      if (data.status === "success") {
+        stockMovements.value = data.data;
+        pagination.value = data.pagination || null;
+      } else {
+        error.value = data.message;
+        showNotify({
+          type: "negative",
+          message: data.message || "Failed to fetch stock movements",
+          position: "top",
+          duration: 3000,
+        });
+      }
+    } catch (err) {
+      error.value = "Failed to fetch stock movements"
+      console.error("Error fetching stock movements", err);
+      showNotify({
+        type: "negative",
+        message: "Failed to fetch stock movements",
+        position: "top",
+        duration: 3000,
+      });
     } finally {
       loading.value = false;
     }
@@ -428,12 +473,14 @@ export const useWarehouseStore = defineStore("warehouse", () => {
     selectedBranchId,
     warehouseItems,
     selectedWarehouseId,
+    stockMovements,
 
     // Actions
     fetchWarehouses,
     fetchBranchWarehouses,
     toggleWarehouseActive,
     fetchWarehouseItems,
+    fetchStockMovements,
     createWarehouse,
     updateWarehouse,
     searchWarehouseBlumItems,

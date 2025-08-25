@@ -33,6 +33,13 @@
                 </div>
               </q-tab>
 
+              <q-tab name="stockMovements" class="enhanced-tab">
+                <div class="tab-content">
+                  <q-icon name="inventory_2" size="20px" />
+                  <span class="tab-label">{{ t('branch.stockMovements', 'Stock Movements') }}</span>
+                </div>
+              </q-tab>
+
               <q-tab name="cashbox" class="enhanced-tab">
                 <div class="tab-content">
                   <q-icon name="account_balance_wallet" size="20px" />
@@ -61,12 +68,17 @@
             <!-- Warehouse Tab -->
             <q-tab-panel name="warehouse" class="enhanced-tab-panel">
               <WarehouseComponent :branch="selectedBranch" :selected-warehouse="selectedWarehouse"
-                @view-items="handleViewItems" @go-back="activeTab = 'branches'" />
+                @view-items="handleViewItems" @view-item-movements="handleViewItemMovements" @go-back="activeTab = 'branches'" />
             </q-tab-panel>
 
             <!-- Warehouse Items Tab -->
             <q-tab-panel name="warehouseItems" class="enhanced-tab-panel">
               <WarehouseItemsTab :warehouse="selectedWarehouse" @go-back="activeTab = 'warehouse'" />
+            </q-tab-panel>
+
+            <!-- Stock Movements Tab -->
+            <q-tab-panel name="stockMovements" class="enhanced-tab-panel">
+              <StockMovementsTab :warehouse="selectedWarehouse" @go-back="activeTab = 'warehouse'" />
             </q-tab-panel>
 
             <!-- Cashbox Tab -->
@@ -107,6 +119,7 @@ import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
 import type { Branch } from 'src/types/branch';
 import type { Warehouse } from 'src/types/warehouse';
+import StockMovementsTab from 'src/components/branch/StockMovementsTab.vue';
 
 const { t } = useI18n();
 const branchStore = useBranchStore();
@@ -160,6 +173,16 @@ function viewReport(branch: Branch) {
 function handleViewItems(warehouse: Warehouse) {
   selectedWarehouse.value = warehouse;
   activeTab.value = 'warehouseItems';
+}
+
+// Handle viewing stock movements - takes user to the stock movements tab
+function handleViewItemMovements(warehouse: Warehouse) {
+  if (!isAdmin.value) {
+    console.warn('Access denied: Only admins can view branch reports');
+    return;
+  }
+  selectedWarehouse.value = warehouse;
+  activeTab.value = 'stockMovements';
 }
 
 // Toggle branch active status
@@ -243,9 +266,9 @@ function handleUpdateSubmit() {
 .enhanced-tab {
   border-radius: 12px 12px 0 0;
   margin: 0 2px;
-  padding: 7px 24px;
+  padding: 14px 24px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #ff890455;
+  background: transparent;
   color: #64748b;
   font-weight: 500;
   min-height: 52px;
@@ -253,8 +276,7 @@ function handleUpdateSubmit() {
   border: none;
 
   &:hover:not(.q-tab--active) {
-    // background: rgba(var(--q-primary-rgb), 0.04);
-    background: #ff890477;
+    background: rgba(var(--q-primary-rgb), 0.04);
     color: var(--q-primary);
     transform: translateY(-1px);
 

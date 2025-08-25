@@ -960,6 +960,7 @@ export default {
     units: "units",
     item: "item",
     items: "items",
+    itemMovements: "item movements",
     unknownItem: "Unknown Item",
     noResults: "No results found",
     clear: "Clear",

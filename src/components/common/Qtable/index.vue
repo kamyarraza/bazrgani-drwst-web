@@ -33,7 +33,8 @@
 
     <!-- Table Body -->
     <template #body="props">
-      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }" :style="props.rowIndex % 2 === 0 ? 'background-color: #e6e6e6;' : ''">
+      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }"
+        :style="props.rowIndex % 2 === 0 ? 'background-color: #e6e6e6;' : ''">
         <q-td v-for="col in props.cols" :key="col.name" :props="props" class="table-cell">
           <!-- Image Avatar -->
           <template v-if="col.name === 'image'">
@@ -51,7 +52,7 @@
           <!-- Index Icon -->
           <template v-else-if="col.name === 'index'">
             <span>{{ typeof col.field === 'function' ? col.field(props.row, props.rowIndex) : props.rowIndex + 1
-              }}</span>
+            }}</span>
           </template>
 
           <!-- warehouses Column -->
@@ -90,6 +91,16 @@
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <Qbutton @click="() => $emit('handle-items', props.row.id)" is-flat round btn-label="" btn-color="grey">
                 <q-icon name="inventory" />
+              </Qbutton>
+            </slot>
+          </template>
+
+          <!-- item-movements Column -->
+          <template v-else-if="col.name === 'item-movements'">
+            <slot name="body-cell-actions" :props="props" :row="props.row">
+              <Qbutton @click="() => $emit('handle-item-movements', props.row.id)" is-flat round btn-label=""
+                btn-color="purple">
+                <q-icon name="swap_horiz" />
               </Qbutton>
             </slot>
           </template>
@@ -226,6 +237,7 @@ const emit = defineEmits<{
   'handle-warehouses': [id: number];
   'handle-report': [id: number];
   'handle-items': [id: number];
+  'handle-item-movements': [id: number];
   'menu-action': [data: { item: MenuItem; rowId: string | null; row: any }];
   'top-right-action': [];
   'top-right-secondary-action': [];

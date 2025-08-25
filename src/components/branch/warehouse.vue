@@ -30,7 +30,7 @@
         <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
           :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
           :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
-          @handle-items="handleViewItems" :top-right="isAdmin || isUserBranch"
+          @handle-items="handleViewItems" @handle-item-movements="handleViewItemMovements" :top-right="isAdmin || isUserBranch"
           :top-right-title="t('warehouse.addNew', 'Add Warehouse')" @top-right-action="handleAddWarehouse"
           :top-right-icon="'add_circle'" flat bordered>
           <template v-slot:body-cell-is_active="props">
@@ -96,7 +96,7 @@ const props = defineProps<{
   selectedWarehouse: Warehouse | null;
 }>();
 
-const emit = defineEmits(['view-items', 'go-back', 'add-warehouse', 'edit-warehouse', 'toggle-active']);
+const emit = defineEmits(['view-items', 'go-back', 'add-warehouse', 'edit-warehouse', 'toggle-active', 'view-item-movements']);
 
 const { t, locale } = useI18n();
 const warehouseStore = useWarehouseStore();
@@ -245,6 +245,14 @@ function handleViewItems(warehouseId: number) {
   emit('view-items', warehouse);
 }
 
+// Handle view item movements button click (for employee top-right button)
+function handleViewItemMovements(warehouseId: number) {
+  const warehouse = warehouseStore.branchWarehouses?.warehouses.find(w => w.id === warehouseId);
+  if (!warehouse) return;
+
+  emit('view-item-movements', warehouse);
+}
+
 // Handle toggle active
 async function handleToggleActive(warehouseId: number) {
   try {
@@ -315,6 +323,14 @@ const warehouseColumns = [
     label: t('common.items', 'Items'),
     align: 'center' as const,
     field: 'items',
+    sortable: false,
+  },
+  {
+    name: 'item-movements',
+    required: true,
+    label: t('common.itemMovements', 'Item Movements'),
+    align: 'center' as const,
+    field: 'itemMovements',
     sortable: false,
   },
   {

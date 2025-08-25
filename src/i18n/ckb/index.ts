@@ -892,6 +892,7 @@ export default {
     units: "یەکە",
     item: "کاڵا",
     items: "کاڵاکان",
+    itemMovements: "گۆڕانەکانی کاڵا",
     unknownItem: "کاڵای نەناسراو",
     noResults: "هیچ ئەنجامێک نەدۆزرایەوە",
     clearFilters: "پاککردنەوەی فلتەرەکان",

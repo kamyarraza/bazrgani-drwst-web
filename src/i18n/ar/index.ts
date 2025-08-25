@@ -1411,6 +1411,7 @@ export default {
     units: "وحدات",
     item: "عنصر",
     items: "عناصر",
+    itemMovements: "حركات العنصر",
     noResults: "لم يتم العثور على نتائج",
     clearAll: "مسح الكل",
     applyFilter: "تطبيق الفلتر",

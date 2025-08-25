@@ -35,6 +35,26 @@ export interface BranchWithWarehouses {
   warehouses: Warehouse[];
 }
 
+export interface StockMovement {
+  item_id: number;
+  warehouse_id: number;
+  quantity_change: number;
+  old_quantity: number;
+  new_quantity: number;
+  reason: string;
+  user_id: number;
+  item?: {
+    id: number;
+    sku: string;
+    name: string;
+  };
+  user?: {
+    id: number;
+    name: string;
+  };
+  created_at: string;
+}
+
 export interface ApiResponse<T> {
   status: 'success' | 'error';
   message: string;
