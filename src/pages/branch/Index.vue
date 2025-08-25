@@ -35,8 +35,8 @@
 
               <q-tab name="stockMovements" class="enhanced-tab">
                 <div class="tab-content">
-                  <q-icon name="inventory_2" size="20px" />
-                  <span class="tab-label">{{ t('branch.stockMovements', 'Stock Movements') }}</span>
+                  <q-icon name="swap_horiz" size="20px" />
+                  <span class="tab-label">{{ t('StockMovement.title', 'Stock Movements') }}</span>
                 </div>
               </q-tab>
 

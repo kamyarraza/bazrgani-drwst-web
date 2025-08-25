@@ -581,10 +581,19 @@ export default {
     confirmSubmit: "Confirm & Submit",
     adjustmentSuccess: "Stock adjustments applied successfully",
     adjustmentError: "Failed to adjust stock",
-  },
-  employee: {
-    image: "image",
-    addNew: "Add new employee",
+    },
+    stockMovement: {
+    title: "Stock Movements",
+    name: "Item",
+    oldQuantity: "Old Quantity",
+    quantityChange: "Quantity Change",
+    newQuantity: "New Quantity",
+    reason: "Reason",
+    createdAt: "Date",
+    },
+    employee: {
+    image: "Profile Image",
+    addNew: "Add New Employee",
     updateEmployee: "Update Employee",
     employee: "Employee",
     dashboardTitle: "Employee Dashboard",

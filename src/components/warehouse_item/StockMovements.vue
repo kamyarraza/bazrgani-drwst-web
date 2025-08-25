@@ -5,8 +5,8 @@
       <div class="row items-center justify-between">
         <div class="col">
           <div class="text-h6 text-weight-medium">
-            <q-icon name="inventory_2" class="q-mr-sm" />
-            {{ t('warehouseItem.title', 'Warehouse Items') }}
+            <q-icon name="swap_horiz" class="q-mr-sm" />
+            {{ t('StockMovement.title', 'Stock Movement') }}
           </div>
           <div class="text-subtitle2 text-grey-6">
             <b>{{ t('warehouseItem.warehouseName', 'Warehouse') }}: </b>
@@ -18,32 +18,11 @@
         </div>
       </div>
 
-      <!-- Filter Section -->
-      <div class="row items-center q-mt-md">
-        <div class="col-auto">
-          <div class="filter-buttons">
-            <q-btn :label="t('warehouseItem.regularItems', 'Regular Items')"
-              :color="selectedRelationType === 'items' ? 'primary' : 'grey-5'" :flat="selectedRelationType !== 'items'"
-              :icon="selectedRelationType === 'items' ? 'inventory' : 'inventory'" no-caps class="q-mr-sm filter-btn"
-              @click="handleRelationTypeChange('items')" />
-            <q-btn :label="t('warehouseItem.blumItems', 'Blum Items')"
-              :color="selectedRelationType === 'blum_items' ? 'primary' : 'grey-5'"
-              :flat="selectedRelationType !== 'blum_items'"
-              :icon="selectedRelationType === 'blum_items' ? 'inventory_2' : 'inventory_2'" no-caps class="filter-btn"
-              @click="handleRelationTypeChange('blum_items')" />
-          </div>
-        </div>
-        <div class="col">
-          <div class="text-caption text-grey-6 q-ml-md">
-            {{ t('warehouseItem.filterDescription', 'Switch between regular items and blum items') }}
-          </div>
-        </div>
-             </div>
      </div> <!-- Data Table -->
      <div class="warehouse-items-content">
        <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems"
          :loading="warehouseStore.loading" :top-right="false" :menuItems="menuItems"
-         :pagination="warehouseStore.pagination" @page-change="handlePageChange" @menu-action="handleAction"
+         :pagination="warehouseStore.pagination" @page-change="handlePageChange"
          class="warehouse-items-table" flat bordered>
          <template #body-cell-id="props">
            <q-td :props="props" class="text-center">
@@ -172,7 +151,7 @@
           {{ t('warehouseItem.loadDataFirst', 'Please wait while we load the warehouse items') }}
         </div>
         <q-btn color="primary" icon="refresh" :label="t('common.refresh', 'Refresh')"
-          @click="props.selectedWarehouse && loadWarehouseItems(props.selectedWarehouse.id)" class="q-mt-md" />
+          @click="props.selectedWarehouse && loadStockMovements(props.selectedWarehouse.id)" class="q-mt-md" />
       </q-card>
     </div>
   </div>
@@ -192,12 +171,8 @@ import { useI18n } from 'vue-i18n';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
 import { useRTL } from 'src/composables/useRTL';
 import type { Warehouse } from 'src/types/warehouse';
-import type { AnyItem } from 'src/types/warehouse_item';
 import QtableB from 'src/components/common/Qtable.vue';
 import type { MenuItem } from 'src/types';
-import { api } from 'boot/axios';
-import { showNotify } from 'src/composables/Notify';
-import { formatCurrency } from 'src/composables/useFormat';
 
 const props = defineProps<{
   selectedWarehouse: Warehouse | null;
@@ -216,19 +191,9 @@ const goBackIcon = computed(() => isRTL.value ? 'arrow_forward' : 'arrow_back');
 // Relation type filter state
 const selectedRelationType = ref<'items' | 'blum_items'>('items');
 
-// Modal state
-const showViewModal = ref(false);
-const selectedItemForView = ref<AnyItem | null>(null);
-
 // Computed property to get current items based on selected type
 const currentItems = computed(() => {
-  if (!warehouseStore.warehouseItems) return [];
-
-  if (selectedRelationType.value === 'items') {
-    return warehouseStore.warehouseItems.items || [];
-  } else {
-    return warehouseStore.warehouseItems.blum_items || [];
-  }
+  return warehouseStore.stockMovements || [];
 });
 
 // Check if we have any data for the current selection
@@ -237,30 +202,60 @@ const hasCurrentItems = computed(() => {
 });
 
 // Get current columns based on selected type
-const currentColumns = computed(() => {
-  if (selectedRelationType.value === 'items') {
-    return itemColumns;
-  } else {
-    return blumItemColumns;
-  }
-});
-
-// --- Stock Adjustment State ---
-const adjustments = ref<Record<number, { quantity: number, action: 'add' | 'remove' }>>({});
-const showAdjustDialog = ref(false);
-const adjustItem = ref<AnyItem | null>(null);
-const adjustQuantity = ref(1);
-const adjustAction = ref<'add' | 'remove'>('add');
-const isSubmitting = ref(false);
-const showConfirmDialog = ref(false);
-const adjustmentReason = ref('');
-
-// Computed to get items with pending adjustments
-const adjustedItems = computed(() => {
-  return Object.fromEntries(
-    Object.entries(adjustments.value).filter(([_, adj]) => adj.quantity > 0)
-  );
-});
+const currentColumns = [
+  {
+    name: 'item.name',
+    label: t('StockMovement.name', 'Item Name'),
+    align: 'left' as const,
+    field: (row: any) => row.item?.name || 'N/A',
+    sortable: true,
+  },
+  {
+    name: 'old_quantity',
+    label: t('StockMovement.oldQuantity', 'Old Quantity'),
+    align: 'center' as const,
+    field: 'old_quantity',
+    sortable: true,
+    format: (val: any) => formatQuantity(val),
+  },
+  {
+    name: 'quantity_change',
+    label: t('StockMovement.quantityChange', 'Quantity Change'),
+    align: 'center' as const,
+    field: 'quantity_change',
+    sortable: true,
+    format: (val: any) => formatQuantity(val),
+    },
+  {
+    name: 'new_quantity',
+    label: t('StockMovement.newQuantity', 'New Quantity'),
+    align: 'center' as const,
+    field: 'new_quantity',
+    sortable: true,
+    format: (val: any) => formatQuantity(val),
+  },
+  {
+    name: 'reason',
+    label: t('StockMovement.reason', 'Reason'),
+    align: 'left' as const,
+    field: 'reason',
+    sortable: false,
+  },
+  {
+    name: 'created_at',
+    label: t('StockMovement.createdAt', 'Created At'),
+    align: 'center' as const,
+    field: 'created_at',
+    sortable: true,
+  },
+  // {
+  //   name: 'actions',
+  //   label: t('common.actions', 'Actions'),
+  //   align: 'center' as const,
+  //   field: 'actions',
+  //   sortable: false,
+  // },
+];
 
 // Menu items for row actions - now includes adjust stock
 const menuItems: MenuItem[] = [
@@ -268,116 +263,17 @@ const menuItems: MenuItem[] = [
   { label: t('warehouseItem.adjust', 'Adjust Stock'), icon: 'tune', value: 'adjust' }
 ];
 
-// Handle menu actions
-function handleAction(payload: { item: { value: string }, rowId: number }) {
-  const item = currentItems.value.find(item => item.id === payload.rowId);
-  if (!item) return;
-
-  if (payload.item.value === 'view') {
-    viewItem(item);
-  } else if (payload.item.value === 'edit') {
-    editItem(item);
-  } else if (payload.item.value === 'delete') {
-    removeItem(payload.rowId);
-  } else if (payload.item.value === 'adjust') {
-    openAdjustDialog(item);
-  }
-}
-
-// Open adjustment dialog for a single item
-function openAdjustDialog(item: AnyItem) {
-  adjustItem.value = item;
-  adjustQuantity.value = 1;
-  adjustAction.value = 'add';
-  showAdjustDialog.value = true;
-}
-
-// Add adjustment to pending list
-function addAdjustment() {
-  if (!adjustItem.value || adjustQuantity.value <= 0) return;
-
-  adjustments.value[adjustItem.value.id] = {
-    quantity: adjustQuantity.value,
-    action: adjustAction.value
-  };
-
-  showAdjustDialog.value = false;
-
-  showNotify({
-    type: 'positive',
-    message: t('warehouseItem.adjustmentAdded', 'Adjustment added to queue'),
-    position: 'top',
-    duration: 2000
-  });
-}
-
-// Submit all pending adjustments
-async function submitAllAdjustments() {
-  if (!props.selectedWarehouse || Object.keys(adjustedItems.value).length === 0) return;
-
-  isSubmitting.value = true;
-  try {
-    const payload = {
-      _method: 'put',
-      items: Object.entries(adjustedItems.value).map(([itemId, adjustment]) => ({
-        item_id: Number(itemId),
-        quantity: adjustment.quantity,
-        action: adjustment.action
-      })),
-      reason: adjustmentReason.value.trim() || 'No reason provided'
-    };
-
-    await api.post(`/warehouses-items/adjust/quantity/${props.selectedWarehouse.id}`, payload);
-
-    showNotify({
-      type: 'positive',
-      message: t('warehouseItem.adjustmentSuccess', 'Stock adjustments applied successfully'),
-      position: 'top',
-      duration: 3000
-    });
-
-    // Clear adjustments and refresh data
-    adjustments.value = {};
-    showConfirmDialog.value = false;
-    await warehouseStore.fetchWarehouseItems(props.selectedWarehouse.id);
-
-  } catch (error) {
-    console.error('Error adjusting stock:', error);
-    showNotify({
-      type: 'negative',
-      message: t('warehouseItem.adjustmentError', 'Failed to adjust stock'),
-      position: 'top',
-      duration: 3000
-    });
-  } finally {
-    isSubmitting.value = false;
-  }
-}
-
-// Remove adjustment from queue
-function removeAdjustment(itemId: number) {
-  delete adjustments.value[itemId];
-}
-
 // Combined watcher for warehouse selection and tab visibility changes
 watch(() => [props.selectedWarehouse, props.showItemsTab] as const, ([newWarehouse, showItems]) => {
   if (newWarehouse && showItems && typeof newWarehouse === 'object') {
-    void loadWarehouseItems(newWarehouse.id);
+    void loadStockMovements(newWarehouse.id);
   }
 }, { immediate: true });
 
-// Handle relation type change
-async function handleRelationTypeChange(newRelationType: 'items' | 'blum_items') {
-  selectedRelationType.value = newRelationType;
-  if (props.selectedWarehouse) {
-    await loadWarehouseItems(props.selectedWarehouse.id);
-  }
-}
-
 // Load items for the selected warehouse
-async function loadWarehouseItems(warehouseId: number) {
+async function loadStockMovements(warehouseId: number) {
   try {
-    await warehouseStore.fetchWarehouseItems(warehouseId, 1, 10, selectedRelationType.value);
+    await warehouseStore.fetchStockMovements(warehouseId, 1);
   } catch (error) {
     console.error('Error loading warehouse items:', error);
   }
@@ -389,196 +285,15 @@ function goBack() {
   emit('update:showItemsTab', false);
 }
 
-// View item details
-function viewItem(item: AnyItem) {
-  selectedItemForView.value = item;
-  showViewModal.value = true;
-}
-
 // Handle page change for pagination
 async function handlePageChange(page: number) {
   if (props.selectedWarehouse) {
     try {
-      await warehouseStore.fetchWarehouseItems(props.selectedWarehouse.id, page, 10, selectedRelationType.value);
+      await warehouseStore.fetchStockMovements(props.selectedWarehouse.id, page);
     } catch (error) {
       console.error('Error loading warehouse items:', error);
     }
   }
-}
-
-// Edit warehouse item
-function editItem(item: AnyItem) {
-  console.log('Edit item:', item);
-  // Implement edit functionality
-}
-
-// Remove item from warehouse
-function removeItem(itemId: number) {
-  console.log('Remove item:', itemId);
-  // Implement remove functionality
-}
-
-// Table columns for warehouse items
-const itemColumns = [
-
-  {
-    name: 'name',
-    label: t('warehouseItem.name', 'Item Name'),
-    align: 'left' as const,
-    field: 'name',
-    sortable: true,
-  },
-  {
-    name: 'unit_cost',
-    label: t('warehouseItem.unitCost', 'Unit Cost'),
-    align: 'right' as const,
-    field: 'unit_cost',
-    sortable: true,
-    format: (val: any) => formatCurrency(val),
-  },
-  {
-    name: 'solo_unit_price',
-    label: t('warehouseItem.soloPrice', 'Solo Price'),
-    align: 'right' as const,
-    field: 'solo_unit_price',
-    sortable: true,
-    format: (val: any) => formatCurrency(val),
-  },
-  {
-    name: 'bulk_unit_price',
-    label: t('warehouseItem.bulkPrice', 'Bulk Price'),
-    align: 'right' as const,
-    field: 'bulk_unit_price',
-    sortable: true,
-    format: (val: any) => formatCurrency(val),
-  },
-  {
-    name: 'quantity',
-    label: t('warehouseItem.quantity', 'Quantity'),
-    align: 'center' as const,
-    field: 'quantity',
-    sortable: true,
-    format: (val: unknown) => formatQuantity(val),
-  },
-  // {
-  //   name: 'pieces',
-  //   label: t('warehouseItem.pieces', 'Pieces'),
-  //   align: 'center' as const,
-  //   field: 'pieces',
-  //   sortable: true,
-  // },
-  // {
-  //   name: 'reservations',
-  //   label: t('warehouseItem.reservations', 'Reserved'),
-  //   align: 'center' as const,
-  //   field: 'reservations',
-  //   sortable: true,
-  // },
-  {
-    name: 'actions',
-    label: t('common.actions', 'Actions'),
-    align: 'center' as const,
-    field: 'actions',
-    sortable: false,
-  },
-];
-
-// Table columns for blum items
-const blumItemColumns = [
-
-  {
-    name: 'code',
-    label: t('warehouseItem.code', 'Code'),
-    align: 'left' as const,
-    field: 'code',
-    sortable: true,
-  },
-  {
-    name: 'part_no',
-    label: t('warehouseItem.partNo', 'Part No'),
-    align: 'left' as const,
-    field: 'part_no',
-    sortable: true,
-  },
-  {
-    name: 'name',
-    label: t('warehouseItem.name', 'Item Name'),
-    align: 'left' as const,
-    field: 'name',
-    sortable: true,
-  },
-  {
-    name: 'unit_cost',
-    label: t('warehouseItem.unitCost', 'Unit Cost'),
-    align: 'right' as const,
-    field: 'unit_cost',
-    sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? parseFloat(String(val)) : 0;
-      return `$${(isNaN(num) ? 0 : num).toFixed(2)}`;
-    },
-  },
-  {
-    name: 'unit_price',
-    label: t('warehouseItem.unitPrice', 'Unit Price'),
-    align: 'right' as const,
-    field: 'unit_price',
-    sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? parseFloat(String(val)) : 0;
-      return `$${(isNaN(num) ? 0 : num).toFixed(2)}`;
-    },
-  },
-  {
-    name: 'quantity',
-    label: t('warehouseItem.quantity', 'Quantity'),
-    align: 'center' as const,
-    field: 'quantity',
-    sortable: true,
-    format: (val: unknown) => {
-      const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
-      return (isNaN(num) ? 0 : num).toLocaleString();
-    },
-  },
-  {
-    name: 'position',
-    label: t('warehouseItem.position', 'Position'),
-    align: 'center' as const,
-    field: 'position',
-    sortable: true,
-  },
-  {
-    name: 'actions',
-    label: t('common.actions', 'Actions'),
-    align: 'center' as const,
-    field: 'actions',
-    sortable: false,
-  },
-];
-
-// Helper functions for stock status
-function getStockStatusColor(item: AnyItem): string {
-  const quantity = item.quantity || 0;
-  if (quantity > 100) return 'positive';
-  if (quantity > 50) return 'warning';
-  if (quantity > 0) return 'orange';
-  return 'negative';
-}
-
-function getStockStatusIcon(item: AnyItem): string {
-  const quantity = item.quantity || 0;
-  if (quantity > 100) return 'check_circle';
-  if (quantity > 50) return 'warning';
-  if (quantity > 0) return 'error';
-  return 'cancel';
-}
-
-function getStockStatusText(item: AnyItem): string {
-  const quantity = item.quantity || 0;
-  if (quantity > 100) return t('warehouseItem.stockHigh', 'Stock Level: High');
-  if (quantity > 50) return t('warehouseItem.stockMedium', 'Stock Level: Medium');
-  if (quantity > 0) return t('warehouseItem.stockLow', 'Stock Level: Low');
-  return t('warehouseItem.stockOut', 'Out of Stock');
 }
 
 function formatQuantity(value: any): string {

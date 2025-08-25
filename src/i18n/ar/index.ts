@@ -1039,8 +1039,17 @@ export default {
     branchRequiredForSelection: "الفرع مطلوب لاختيار المستودع",
     warehouseSelectionDisabled: "اختيار المستودع معطل",
     items: "العناصر",
-  },
-  employee: {
+    },
+    StockMovement: {
+    title: "حركة المخزون",
+    name: "المنتج",
+    oldQuantity: "الكمية السابقة",
+    quantityChange: "التغيير في الكمية",
+    newQuantity: "الكمية الجديدة",
+    reason: "السبب",
+    createdAt: "التاريخ",
+    },
+    employee: {
     image: "صورة",
     addNew: "إضافة موظف جديد",
     updateEmployee: "تحديث الموظف",

@@ -520,6 +520,15 @@ export default {
     warehouseSelectionDisabled: "هەڵبژاردنی کۆگا ناچالاکە",
     items: "کەلوپەلەکان",
   },
+  StockMovement: {
+    title: "جوڵەی کاڵاکان",
+    name: "کاڵا",
+    oldQuantity: "عەددی کۆن",
+    quantityChange: "عەدەدی گۆڕدراو",
+    newQuantity: "عەدەدی نوێ",
+    reason: "هۆکار",
+    createdAt: "بەروار",
+  },
   employee: {
     image: "وێنە",
     addNew: "زیادکردنی کارمەندی نوێ",
