@@ -72,7 +72,7 @@
                   </q-avatar>
                   <div class="user-info q-ml-sm" v-if="!isMobile">
                     <div class="user-name">{{ userProfile?.name.split(" ")[0] || 'User' }}</div>
-                    <div class="user-role">{{ userProfile?.role || 'User' }}</div>
+                    <div class="user-phone">{{ userProfile?.phone || 'User' }}</div>
                   </div>
                 </div>
               </template>
@@ -80,8 +80,8 @@
               <q-list class="user-menu">
                 <!-- Profile Info Section -->
                 <q-item class="user-menu-header">
-                  <q-item-section avatar>
-                    <q-avatar size="40px">
+                  <q-item-section avatar style="margin-left: 10px; padding: 0;">
+                    <q-avatar size="60px">
                       <img v-if="userProfile?.image" :src="userProfile.image" alt="Profile">
                       <q-icon v-else name="person" />
                     </q-avatar>
@@ -89,6 +89,7 @@
                   <q-item-section>
                     <q-item-label class="text-weight-medium">{{ userProfile?.name || 'User' }}</q-item-label>
                     <q-item-label caption>{{ userProfile?.username }}</q-item-label>
+                    <q-item-label caption style="font-size: 8px;">{{ userProfile?.id }}</q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -629,6 +630,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   min-width: 0;
   flex: 1;
   overflow: hidden;
+  gap: 3px;
 }
 
 .user-name {
@@ -642,8 +644,8 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   max-width: 100px;
 }
 
-.user-role {
-  font-size: 0.75rem;
+.user-phone {
+  font-size: 0.60rem;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.2;
   white-space: nowrap;
@@ -663,7 +665,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 .user-menu-header {
   padding: 16px 12px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(25, 118, 210, 0.05) 0%, rgba(25, 118, 210, 0.02) 100%);
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.13) 0%, rgba(25, 118, 210, 0.17) 100%);
   margin-bottom: 8px;
 }
 
