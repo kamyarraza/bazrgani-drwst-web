@@ -4,12 +4,12 @@
     <Qbutton v-if="topRightTitle" :isFlat="true" :btn-color="'primary'" :btn-label="topRightTitle" :no-caps="true"
       @click="$emit('top-right-action')" class="table-top-action">
       <q-icon v-if="topRightIcon" :name="topRightIcon" class="q-mr-xs" />
+      <q-icon v-else name="add" class="q-mr-xs" />
     </Qbutton>
 
     <!-- Secondary Action Button -->
-    <Qbutton v-if="topRightSecondaryTitle" :isFlat="true" :btn-color="'secondary'"
-      :btn-label="topRightSecondaryTitle" :no-caps="true" @click="$emit('top-right-secondary-action')"
-      class="table-top-action secondary-action">
+    <Qbutton v-if="topRightSecondaryTitle" :isFlat="true" :btn-color="'secondary'" :btn-label="topRightSecondaryTitle"
+      :no-caps="true" @click="$emit('top-right-secondary-action')" class="table-top-action secondary-action">
       <q-icon v-if="topRightSecondaryIcon" :name="topRightSecondaryIcon" class="q-mr-xs" />
     </Qbutton>
 
@@ -53,11 +53,14 @@ defineEmits<{
 
 .table-top-action {
   transition: all 0.2s ease;
+  border: 1px solid #cfcfcf;
+  box-shadow: -1px 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .table-top-action:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: -1px 2px 12px rgba(0, 0, 0, 0.28);
+  background: #45454509;
 }
 
 .secondary-action {

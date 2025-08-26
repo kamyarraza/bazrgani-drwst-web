@@ -57,6 +57,7 @@
       :menuItems="menuItems"
       @menu-action="handleAction"
       @top-right-action="() => showAddModal = true"
+      top-right-icon="add"
       :top-right-title="t('itemCategory.addNew')"
       :pagination="pagination"
       @page-change="handlePageChange"
