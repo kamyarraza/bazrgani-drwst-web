@@ -486,6 +486,7 @@ export default {
     stockOut: "تەواو بووە لە کۆگا",
     lastUpdated: "ئاستی کۆگا تا ئێستا",
     reserved: "تەرخانکراو",
+    reasonRequired: "هۆکار پێویستە بۆ ڕێکخستن",
     // خانەی کۆن
     inventoryInfo: "زانیاریەکانی کۆگا",
     packageInfo: "زانیاریەکانی پاکێج",

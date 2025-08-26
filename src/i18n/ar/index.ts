@@ -1008,6 +1008,7 @@ export default {
     stockOut: "نفد من المخزون",
     lastUpdated: "مستويات المخزون اعتباراً من الآن",
     reserved: "محجوز",
+    reasonRequired: "السبب مطلوب",
     // الحقول القديمة
     inventoryInfo: "معلومات المخزون",
     packageInfo: "معلومات الحزمة",
@@ -1083,6 +1084,10 @@ export default {
       manager: "مدير",
       sales: "مبيعات",
       inventory: "مخزون",
+    },
+    permissions: {
+      title: "الأذونات",
+      adjustments: "تعديلات المخزون",
     },
   },
   location: {

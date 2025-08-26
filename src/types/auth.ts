@@ -18,6 +18,7 @@ export interface UserData {
   username: string;
   sticky_notes?: StickyNote[];
   branch?: Branch;
+  permissions: string[];
 }
 
 export interface StickyNote {

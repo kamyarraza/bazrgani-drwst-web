@@ -558,6 +558,7 @@ export default {
     stockOut: "Out of Stock",
     lastUpdated: "Stock levels as of now",
     reserved: "Reserved",
+    reasonRequired: "Reason is required for adjustments",
     // Legacy fields
     inventoryInfo: "Inventory Information",
     packageInfo: "Package Information",
@@ -626,6 +627,10 @@ export default {
       manager: "Manager",
       sales: "Sales",
       inventory: "Inventory",
+    },
+    permissions: {
+      title: "Permissions",
+      adjustments: "Stock Adjustments",
     },
   },
   location: {
