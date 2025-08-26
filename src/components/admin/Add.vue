@@ -4,8 +4,7 @@
         :title="t('admin.addNew')"
         :show-user-info="true"
         :user-name="form.name"
-        :default-user-name="t('admin.newUser')"
-        :user-role="form.role || t('admin.role')">
+        :default-user-name="t('admin.newUser')">
         <template #default>
             <q-form @submit.prevent="submitForm">
                 <div class="q-pa-md">
@@ -24,19 +23,6 @@
                             >
                                 <template #before>
                                     <q-icon name="person" color="primary" />
-                                </template>
-                            </Qinput>
-
-                            <Qinput
-                                v-model="form.username"
-                                :label="t('admin.username')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                              id="admin_username"
-                                class="enhanced-input"
-                            >
-                                <template #before>
-                                    <q-icon name="alternate_email" color="primary" />
                                 </template>
                             </Qinput>
 
@@ -73,14 +59,15 @@
                             <div class="text-subtitle1 text-primary q-mb-sm">{{ t('admin.accountDetails') }}</div>
 
                             <Qinput
-                                v-model="form.role"
-                                :label="t('admin.role')"
+                                v-model="form.username"
+                                :label="t('admin.username')"
                                 :rules="[val => !!val || t('validation.required')]"
                                 outlined
+                              id="admin_username"
                                 class="enhanced-input"
                             >
                                 <template #before>
-                                    <q-icon name="badge" color="primary" />
+                                    <q-icon name="alternate_email" color="primary" />
                                 </template>
                             </Qinput>
 
