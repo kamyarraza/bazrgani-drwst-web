@@ -129,7 +129,7 @@ export const useEmployeeStore = defineStore('employee', () => {
         duration: 3000,
       });
       // Refresh the employee list to get updated data
-      await fetchEmployees();
+      await fetchEmployees(pagination.value?.current_page || 1);
       return true;
     } catch (err) {
       let errorMessage = 'Failed to update employee';

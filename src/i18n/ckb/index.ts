@@ -564,6 +564,11 @@ export default {
       sales: "فرۆشتن",
       inventory: "کۆگا",
     },
+    permissions: {
+      title: "ڕێگەپێدانەکان",
+      adjustments: "ڕێکخستنی کۆگا",
+    },
+
   },
   location: {
     title: "بەڕێوەبردنی شوێنەکان",

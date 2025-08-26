@@ -21,6 +21,7 @@ export interface Employee {
     is_active: boolean;
     created_at: string;
   };
+  permissions?: Array<string>
 };
 
 export interface Pagination {

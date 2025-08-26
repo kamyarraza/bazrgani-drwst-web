@@ -1,35 +1,22 @@
 <template>
     <q-page class="q-pa-md">
         <!-- Employee Dashboard Header Card -->
-        <Header
-            :title="t('employee.dashboardTitle', 'Employee Dashboard')"
-            :subtitle="t('employee.managingUsers', 'Managing system employees')"
-            icon="people"
-            icon-size="3rem"
-            icon-color="white"
-            :show-waves="true"
-            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-        />
+        <Header :title="t('employee.dashboardTitle', 'Employee Dashboard')"
+            :subtitle="t('employee.managingUsers', 'Managing system employees')" icon="people" icon-size="3rem"
+            icon-color="white" :show-waves="true"
+            background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
 
         <!-- Filters Section -->
         <Filter v-model:filters="filters" :filter-options="filterOptions"
             :search-label="t('employee.searchLabel', 'Search by name or username')"
-            :reset-label="t('employee.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
+            :reset-label="t('employee.resetFilters', 'Reset')" @filter-change="handleFilterChange"
+            @reset="resetFilters" />
 
         <!-- Employee Table with Enhanced UI -->
-        <QtableB
-        show-bottom
-            :hasExpandableRows="false"
-            @menu-action="handleAction"
-            :columns="columns"
-            :rows="filteredData"
-            :loading="employeeStore.loading"
-            :menuItems="menuItems"
-            @top-right-action="() => showModal = !showModal"
-            :top-right-title="t('employee.addNew')"
-            :pagination="pagination"
-            @page-change="handlePageChange"
-        >
+        <QtableB show-bottom :hasExpandableRows="false" @menu-action="handleAction" :columns="columns"
+            :rows="filteredData" :loading="employeeStore.loading" :menuItems="menuItems"
+            @top-right-action="() => showModal = !showModal" :top-right-title="t('employee.addNew')"
+            :pagination="pagination" @page-change="handlePageChange">
         </QtableB>
         <Add v-model="showModal"></Add>
         <Update v-model="showUpdateModal" :employee="userToUpdate!"></Update>
