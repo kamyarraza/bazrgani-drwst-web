@@ -112,7 +112,7 @@ export const endPoints = {
     `/warehouses/${branchId}/index`,
   warehouseStockMovements: (branchId: string | number) =>
     `/warehouses/${branchId}/get/stock-movements`,
-  specialwarehouseItems: (wId: string | number) => `/warehouses/${wId}`,
+  specialwarehouseItems: (wId: string | number) => `warehouses/${wId}/get/items`,
   // Add warehouse items endpoints
   warehouseItems: {
     list: (warehouseId: string | number) => `/warehouses/${warehouseId}/items`,

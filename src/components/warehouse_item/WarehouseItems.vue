@@ -807,7 +807,7 @@ async function handleRelationTypeChange(newRelationType: 'items' | 'blum_items')
 // Load items for the selected warehouse
 async function loadWarehouseItems(warehouseId: number) {
   try {
-    await warehouseStore.fetchWarehouseItems(warehouseId, 1, 10, selectedRelationType.value);
+    await warehouseStore.fetchWarehouseItems(warehouseId, 1);   // , 10, selectedRelationType.value
   } catch (error) {
     console.error('Error loading warehouse items:', error);
   }
@@ -829,7 +829,7 @@ function viewItem(item: AnyItem) {
 async function handlePageChange(page: number) {
   if (props.selectedWarehouse) {
     try {
-      await warehouseStore.fetchWarehouseItems(props.selectedWarehouse.id, page, 10, selectedRelationType.value);
+      await warehouseStore.fetchWarehouseItems(props.selectedWarehouse.id, page);   // , 10, selectedRelationType.value
     } catch (error) {
       console.error('Error loading warehouse items:', error);
     }

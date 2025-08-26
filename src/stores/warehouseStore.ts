@@ -206,9 +206,9 @@ export const useWarehouseStore = defineStore("warehouse", () => {
    */
   async function fetchWarehouseItems(
     warehouseId: number,
-    page = 1,
-    perPage = 10,
-    relationType = "items"
+    page = 1
+    // , perPage = 10,
+    // relationType = "items"
   ) {
     loading.value = true;
     error.value = null;
