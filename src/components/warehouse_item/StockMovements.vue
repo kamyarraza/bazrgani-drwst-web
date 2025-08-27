@@ -20,20 +20,23 @@
 
     </div> <!-- Data Table -->
     <div class="warehouse-items-content">
-      <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems" 
+      <QtableB v-if="hasCurrentItems" show-bottom :columns="mainColumns" :rows="currentItems"
         :loading="warehouseStore.loading" :top-right="false" :hasExpandableRows="true"
-        :pagination="warehouseStore.pagination" @page-change="handlePageChange" class="warehouse-items-table" flat
+        :pagination="warehouseStore.pagination" @page-change="handlePageChange" class="stock-movement-table" flat
         bordered>
 
         <template #expanded-row="{ row }">
           <div class="q-pa-md full-width">
             <div class="row">
               <div class="col-12">
-                <div class="text-h6 text-primary q-mb-md text-left">
-                  {{ t('blumTransaction.transactionItems') }}
+                <div class="text-h6 text-primary q-mb-md text-left" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);">
+                  {{ t('item.stock') }}
                 </div>
-                <div v-if="row.items?.length">
-                  <!-- The rows must be show in here -->
+                <div v-if="row.items?.length" class="items-movement-table-container">
+                  <QtableB hide-bottom :columns="itemColumns" :rows="row.items"
+                    :loading="warehouseStore.loading" :top-right="false"
+                    class="items-movement-table">
+                  </QtableB>
                 </div>
                 <div v-else class="text-grey text-center q-mt-md">
                   <q-icon name="info" size="md" class="q-mr-xs" />
@@ -130,12 +133,12 @@ const hasCurrentItems = computed(() => {
 });
 
 // Get current columns based on selected type
-const currentColumns = [
+const itemColumns = [
   {
     name: 'item.name',
     label: t('StockMovement.name', 'Item Name'),
     align: 'left' as const,
-    field: (row: any) => row.item?.name || 'N/A',
+    field: "item_name",
     sortable: true,
   },
   {
@@ -164,6 +167,10 @@ const currentColumns = [
     sortable: true,
     format: (val: any) => formatQuantity(val),
   },
+];
+
+// Get current columns based on selected type
+const mainColumns = [
   {
     name: 'reason',
     label: t('StockMovement.reason', 'Reason'),
@@ -175,7 +182,7 @@ const currentColumns = [
     name: 'created_at',
     label: t('StockMovement.createdAt', 'Created At'),
     align: 'center' as const,
-    field: 'created_at',
+    field: 'date',
     sortable: true,
   },
   // {
@@ -244,7 +251,7 @@ function formatQuantity(value: any): string {
   flex-direction: column;
 }
 
-.warehouse-items-table {
+.stock-movement-table {
   border-radius: 8px;
   overflow: hidden;
 
@@ -256,6 +263,29 @@ function formatQuantity(value: any): string {
   :deep(.q-table tr:hover) {
     background: rgba(0, 0, 0, 0.02);
   }
+}
+
+.items-movement-table {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+
+  :deep(.q-table th) {
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  :deep(.q-table tr:hover) {
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.items-movement-table-container {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 8px;
 }
 
 // Item table cell styling
