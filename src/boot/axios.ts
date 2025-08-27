@@ -14,11 +14,11 @@ declare module "vue" {
 
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
-  // baseURL: "https://dev-warehouse-api.bazrganidrwst.com/api",
+  //  baseURL: "https://dev-warehouse-api.bazrganidrwst.com/api",
   // baseURL: "https://warehouse-api.bazrganidrwst.com/api",
-  baseURL: "http://localhost:4000/api",
+  // baseURL: "http://localhost:4000/api",
 
-  // baseURL: import.meta.env.VITE_API_URL,
+   baseURL: import.meta.env.VITE_API_URL,
 
   withCredentials: true,
   timeout: 7000, // 7 seconds timeout for all requests mr kamyar you needed only this line
@@ -72,7 +72,7 @@ async function logoutAndRedirect(authStore) {
   ) {
     window.location.href = "/auth/login";
   }
-  return Promise.reject(new Error("مۆڵەتنامەکەت کۆن بووە، تکایە دووبارە بچۆ ژوورەوە."));
+  return Promise.reject(new Error("Session expired. Please login again."));
 }
 
 api.interceptors.response.use(
@@ -143,7 +143,7 @@ api.interceptors.response.use(
             await logoutAndRedirect(authStore);
           }
           return Promise.reject(
-            new Error("مۆڵەتنامەکەت کۆن بووە، تکایە دووبارە بچۆ ژوورەوە.")
+            new Error("Session expired. Please login again.")
           );
         }
         // If already refreshing, queue the request
@@ -213,7 +213,7 @@ api.interceptors.response.use(
         });
       }
     } else {
-      message = "شتێکی هەڵەت ڕوویدا، تکایە پاش کەمێکی تر هەوڵ بدەرەوە یان پەیوەندی بکە بە بەڕێوەبردن.";
+      message = "Network error: Please check your internet connection";
       void Notify.create({
         type: "negative",
         message,

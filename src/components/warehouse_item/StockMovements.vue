@@ -113,8 +113,15 @@ const goBackIcon = computed(() => isRTL.value ? 'arrow_forward' : 'arrow_back');
 const selectedRelationType = ref<'items' | 'blum_items'>('items');
 
 // Computed property to get current items based on selected type
+// Ensure each row has a stable `id` so expandable rows work reliably
 const currentItems = computed(() => {
-  return warehouseStore.stockMovements || [];
+  const rows = warehouseStore.stockMovements || [];
+  return rows.map((row: any, index: number) => {
+    // Prefer backend-provided identifiers if present
+    const fallbackId = `${row?.item?.id ?? 'item'}_${row?.created_at ?? 'ts'}_${index}`;
+    const stableId = row?.id ?? row?.movement_id ?? row?.stock_movement_id ?? fallbackId;
+    return { id: stableId, ...row };
+  });
 });
 
 // Check if we have any data for the current selection
