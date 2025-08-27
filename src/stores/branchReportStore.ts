@@ -30,10 +30,10 @@ export const useBranchReportStore = defineStore('branchReport', () => {
     if (categoryId) params.append('category_id', categoryId.toString());
 
     try {
-      const { data } = await api.get<ApiResponse<BranchReportItem[]>>(
+      const { data, headers } = await api.get<ApiResponse<BranchReportItem[]>>(
         `${endPoints.branch.report(branchId)}?${params.toString()}`
       );
-      
+
       // Check if data exists and has items
       if (data && data.data && Array.isArray(data.data)) {
         reportItems.value = data.data;
@@ -43,7 +43,7 @@ export const useBranchReportStore = defineStore('branchReport', () => {
         if (data.data.length === 0) {
           summary.value = null;
         } else {
-          calculateSummary();
+          calculateSummary(headers);
         }
       } else {
         // Clear existing data if response is invalid
@@ -71,19 +71,21 @@ export const useBranchReportStore = defineStore('branchReport', () => {
     }
   }
 
-  function calculateSummary() {
+  function calculateSummary(headers: any) {
     if (!reportItems.value.length) {
       summary.value = null;
       return;
     }
 
     const totalItems = pagination.value?.total || reportItems.value.length;
-    const totalQuantity = reportItems.value.reduce((sum, item) => sum + parseInt(item.total_quantity || '0'), 0);
+    // const totalQuantity = reportItems.value.reduce((sum, item) => sum + parseInt(item.total_quantity || '0'), 0);
+    const totalQuantity = headers['x-total-quantity'] || 0;
     const totalReservations = reportItems.value.reduce((sum, item) => sum + parseInt(item.total_reservations || '0'), 0);
-    const totalValue = reportItems.value.reduce((sum, item) => {
-      const quantity = parseInt(item.total_quantity || '0');
-      return sum + (quantity * item.unit_cost);
-    }, 0);
+    // const totalValue = reportItems.value.reduce((sum, item) => {
+    //   const quantity = parseInt(item.total_quantity || '0');
+    //   return sum + (quantity * item.unit_cost);
+    // }, 0);
+    const totalValue = headers['x-total-cost'] || 0;
 
     summary.value = {
       total_items: totalItems,

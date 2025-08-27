@@ -37,17 +37,17 @@
 
                 <q-card class="summary-card">
                     <q-card-section class="text-center">
-                        <q-icon name="sell" size="2rem" color="teal" />
+                        <q-icon name="request_quote" size="2rem" color="orange" />
                         <div class="text-h6 q-mt-sm">{{ formatCurrency(summary.total_value) }}</div>
-                        <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCost') }}</div>
+                        <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCostUSD') }}</div>
                     </q-card-section>
                 </q-card>
 
                 <q-card class="summary-card">
                     <q-card-section class="text-center">
-                        <q-icon name="currency_exchange" size="2rem" color="deep-orange" />
+                        <q-icon name="account_balance_wallet" size="2rem" color="deep-orange" />
                         <div class="text-h6 q-mt-sm">{{ formatCurrency(summary.total_value * usdIqdRate, ' IQD') }}</div>
-                        <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCost') }}</div>
+                        <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCostIQD') }}</div>
                     </q-card-section>
                 </q-card>
             </div>
@@ -264,18 +264,26 @@ const columns = computed(() => [
         sortable: true,
         format: (val: any) => formatNumber(val)
     },
-    {
-        name: 'total_reservations',
-        label: t('branchReport.columns.reservations'),
-        field: 'total_reservations',
-        align: 'center' as const,
-        sortable: true,
-        format: (val: string) => formatNumber(parseInt(val || '0'))
-    },
+    // {
+    //     name: 'total_reservations',
+    //     label: t('branchReport.columns.reservations'),
+    //     field: 'total_reservations',
+    //     align: 'center' as const,
+    //     sortable: true,
+    //     format: (val: string) => formatNumber(parseInt(val || '0'))
+    // },
     {
         name: 'unit_cost',
         label: t('branchReport.columns.unitCost'),
         field: 'unit_cost',
+        align: 'center' as const,
+        sortable: true,
+        format: (val: number) => formatCurrency(val || 0)
+    },
+    {
+        name: 'unit_cost',
+        label: t('branchReport.columns.totalCost'),
+        field: (item: any) => (item.unit_cost * item.total_quantity).toFixed(2),
         align: 'center' as const,
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
@@ -296,30 +304,6 @@ const columns = computed(() => [
         sortable: true,
         format: (val: number) => formatCurrency(val || 0)
     },
-    {
-        name: 'total_sales',
-        label: t('branchReport.columns.sales'),
-        field: 'total_sales',
-        align: 'center' as const,
-        sortable: true,
-        format: (val: any) => formatNumber(val)
-    },
-    // {
-    //     name: 'packet_units',
-    //     label: t('branchReport.columns.packetUnits'),
-    //     field: 'packet_units',
-    //     align: 'center' as const,
-    //     sortable: true,
-    //     format: (val: number) => formatNumber(val || 0)
-    // },
-    // {
-    //     name: 'package_units',
-    //     label: t('branchReport.columns.packageUnits'),
-    //     field: 'package_units',
-    //     align: 'center' as const,
-    //     sortable: true,
-    //     format: (val: number) => formatNumber(val || 0)
-    // },
     // {
     //     name: 'actions',
     //     label: t('common.actions'),
@@ -433,7 +417,7 @@ const exportReportAsCSV = () => {
 
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `ڕاپۆرتی کاڵاکان لە کۆگاکانی لقی ${props.branch?.name || 'branch_report'}.csv`);
+    link.setAttribute("download", `ڕاپۆرتی کاڵاکان لە لقی ${props.branch?.name || 'branch_report'}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -586,7 +570,7 @@ onMounted(async () => {
         await itemCategoryStore.fetchItemCategories();
 
         if (props.branch?.id) {
-            await branchReportStore.fetchBranchReport(props.branch.id);
+            // await branchReportStore.fetchBranchReport(props.branch.id);
         }
     }
 });
