@@ -20,106 +20,28 @@
 
     </div> <!-- Data Table -->
     <div class="warehouse-items-content">
-      <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems"
-        :loading="warehouseStore.loading" :top-right="false" :menuItems="menuItems"
+      <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems" 
+        :loading="warehouseStore.loading" :top-right="false" :hasExpandableRows="true"
         :pagination="warehouseStore.pagination" @page-change="handlePageChange" class="warehouse-items-table" flat
         bordered>
-        <template #body-cell-id="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="grey-6" text-color="white" size="sm" square class="id-chip">
-              #{{ props.value }}
-            </q-chip>
-          </q-td>
-        </template>
 
-        <template #body-cell-name="props">
-          <q-td :props="props">
-            <div class="item-name-cell">
-              <q-icon name="inventory_2" color="primary" size="20px" class="item-icon" />
-              <span class="item-name">{{ props.value }}</span>
+        <template #expanded-row="{ row }">
+          <div class="q-pa-md full-width">
+            <div class="row">
+              <div class="col-12">
+                <div class="text-h6 text-primary q-mb-md text-left">
+                  {{ t('blumTransaction.transactionItems') }}
+                </div>
+                <div v-if="row.items?.length">
+                  <!-- The rows must be show in here -->
+                </div>
+                <div v-else class="text-grey text-center q-mt-md">
+                  <q-icon name="info" size="md" class="q-mr-xs" />
+                  {{ t('noItems') || 'No items available for this row.' }}
+                </div>
+              </div>
             </div>
-          </q-td>
-        </template>
-
-        <template #body-cell-code="props">
-          <q-td :props="props">
-            <q-chip color="blue-grey" text-color="white" size="sm" class="code-chip">
-              {{ props.value }}
-            </q-chip>
-          </q-td>
-        </template>
-
-        <template #body-cell-part_no="props">
-          <q-td :props="props">
-            <q-chip color="indigo" text-color="white" size="sm" class="part-no-chip">
-              {{ props.value }}
-            </q-chip>
-          </q-td>
-        </template>
-
-        <template #body-cell-unit_cost="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="positive" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
-
-        <template #body-cell-unit_price="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="primary" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
-
-        <template #body-cell-solo_unit_price="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="primary" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
-
-        <template #body-cell-bulk_unit_price="props">
-          <q-td :props="props" class="text-right">
-            <q-badge color="orange" text-color="white" :label="`$${parseFloat(props.value || '0').toFixed(2)}`"
-              class="price-badge" />
-          </q-td>
-        </template>
-
-        <template #body-cell-quantity="props">
-          <q-td :props="props" class="text-center">
-            <q-badge :color="props.value > 100 ? 'positive' : props.value > 50 ? 'warning' : 'negative'"
-              :label="formatQuantity(props.value)" class="quantity-badge" />
-          </q-td>
-        </template>
-
-        <template #body-cell-pieces="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="teal" text-color="white" size="sm" icon="inventory" class="pieces-chip">
-              {{ props.value || 0 }}
-            </q-chip>
-          </q-td>
-        </template>
-
-        <template #body-cell-reservations="props">
-          <q-td :props="props" class="text-center">
-            <q-badge color="info" text-color="white" :label="String(props.value || 0)" class="reservations-badge" />
-          </q-td>
-        </template>
-
-        <template #body-cell-position="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="purple" text-color="white" size="sm" icon="place" class="position-chip">
-              {{ props.value || 'N/A' }}
-            </q-chip>
-          </q-td>
-        </template>
-
-        <template #body-cell-volume="props">
-          <q-td :props="props" class="text-center">
-            <q-chip color="teal" text-color="white" size="sm" icon="straighten" class="volume-chip">
-              {{ parseFloat(props.value || 0).toFixed(2) }}%
-            </q-chip>
-          </q-td>
+          </div>
         </template>
 
       </QtableB>
@@ -172,7 +94,6 @@ import { useWarehouseStore } from 'src/stores/warehouseStore';
 import { useRTL } from 'src/composables/useRTL';
 import type { Warehouse } from 'src/types/warehouse';
 import QtableB from 'src/components/common/Qtable.vue';
-import type { MenuItem } from 'src/types';
 
 const props = defineProps<{
   selectedWarehouse: Warehouse | null;
@@ -257,12 +178,6 @@ const currentColumns = [
   //   field: 'actions',
   //   sortable: false,
   // },
-];
-
-// Menu items for row actions - now includes adjust stock
-const menuItems: MenuItem[] = [
-  { label: t('common.details', 'View Item'), icon: 'visibility', value: 'view' },
-  { label: t('warehouseItem.adjust', 'Adjust Stock'), icon: 'tune', value: 'adjust' }
 ];
 
 // Combined watcher for warehouse selection and tab visibility changes
