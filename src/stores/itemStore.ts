@@ -252,7 +252,7 @@ export const useItemStore = defineStore("item", () => {
     error.value = null;
     try {
       // Fetch warehouse details, items are in data.items
-      let url = endPoints.warehouse.details(warehouseId);
+      let url = endPoints.specialwarehouseItems(warehouseId);
 
       if (categoryId) {
         url += `?category_id=${categoryId}`;

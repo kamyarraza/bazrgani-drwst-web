@@ -72,7 +72,7 @@ async function logoutAndRedirect(authStore) {
   ) {
     window.location.href = "/auth/login";
   }
-  return Promise.reject(new Error("Session expired. Please login again."));
+  return Promise.reject(new Error("مۆڵەتنامەکەت کۆن بووە، تکایە دووبارە بچۆ ژوورەوە."));
 }
 
 api.interceptors.response.use(
@@ -143,7 +143,7 @@ api.interceptors.response.use(
             await logoutAndRedirect(authStore);
           }
           return Promise.reject(
-            new Error("Session expired. Please login again.")
+            new Error("مۆڵەتنامەکەت کۆن بووە، تکایە دووبارە بچۆ ژوورەوە.")
           );
         }
         // If already refreshing, queue the request
@@ -213,7 +213,7 @@ api.interceptors.response.use(
         });
       }
     } else {
-      message = "Network error: Please check your internet connection";
+      message = "شتێکی هەڵەت ڕوویدا، تکایە پاش کەمێکی تر هەوڵ بدەرەوە یان پەیوەندی بکە بە بەڕێوەبردن.";
       void Notify.create({
         type: "negative",
         message,
