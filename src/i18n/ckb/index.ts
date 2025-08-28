@@ -734,7 +734,7 @@ export default {
     customerInfo: "زانیاری کڕیار",
     locationInfo: "زانیاری شوێن",
     firstName: "ناوی یەکەم",
-    lastName: "ناوی خێزان",
+    lastName: "ناوی دووەم",
     primaryPhone: "ژمارەی مۆبایل",
     secondPhone: "ژماره‌ی مۆبایلی دووەم",
     type: "جۆر",
