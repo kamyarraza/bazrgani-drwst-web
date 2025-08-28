@@ -8,6 +8,16 @@
     <!-- USD ↔️ IQD Exchange Rate Display -->
     <div class="exchange-rate-section q-mb-xl">
       <div class="row justify-center">
+        <div class="col-12 col-md-2 col-lg-3 flex justify-center items-center">
+          <q-img
+            src="/public/illustrations/dashboard-04.png"
+            alt="Dashboard Illustration"
+            class="dashboard-illustration"
+            fit="contain"
+            style="max-height: 200px; opacity: 0.5;"
+            loading="lazy"
+          />
+        </div>
         <div class="col-12 col-md-8 col-lg-6">
           <q-card flat bordered class="exchange-rate-card cute-card shadow-4 rounded-borders-xl">
             <q-card-section class="exchange-rate-content text-center">
@@ -94,6 +104,16 @@
 
             </q-card-section>
           </q-card>
+        </div>
+        <div class="col-12 col-md-2 col-lg-3 flex justify-center items-center">
+          <q-img
+            src="/public/illustrations/dashboard-02.png"
+            alt="Dashboard Illustration"
+            class="dashboard-illustration"
+            fit="contain"
+            style="max-height: 200px; opacity: 0.5;"
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
