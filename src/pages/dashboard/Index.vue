@@ -3,7 +3,7 @@
     <AdminDashboard />
   </template>
   <template v-else>
-    <AdminDashboard />
+    <AdminDashboard />  <!-- This is a temp and we must be create another dashboard for them -->
   </template>
 </template>
 
