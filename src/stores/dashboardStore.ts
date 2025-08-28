@@ -113,24 +113,24 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   // Helper functions
-  function formatCurrency(value: number): string {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`;
-    } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(0)}k`;
-    }
-    return `$${value.toLocaleString()}`;
-  }
+  // function formatCurrency(value: number): string {
+  //   if (value >= 1000000) {
+  //     return `$${(value / 1000000).toFixed(1)}M`;
+  //   } else if (value >= 1000) {
+  //     return `$${(value / 1000).toFixed(0)}k`;
+  //   }
+  //   return `$${value.toLocaleString()}`;
+  // }
 
   function formatDateForChart(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
-  function calculateTrend(current: number, previous: number): number {
-    if (previous === 0) return 0;
-    return Math.round(((current - previous) / previous) * 100);
-  }
+  // function calculateTrend(current: number, previous: number): number {
+  //   if (previous === 0) return 0;
+  //   return Math.round(((current - previous) / previous) * 100);
+  // }
 
   // Auto-refresh functionality
   let refreshInterval: ReturnType<typeof setInterval> | null = null;

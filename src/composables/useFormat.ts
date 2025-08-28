@@ -68,3 +68,12 @@ export function formatPrice(
       );
   }
 }
+
+export function formatNumber(value: any): string {
+  // const num = typeof val === 'string' || typeof val === 'number' ? Number(val) : 0;
+  if (typeof value === "string") {
+    value = value.replace(/[^\d.-]/g, "");
+    value = parseFloat(value);
+  }
+  return (isNaN(value) ? 0 : value).toLocaleString();
+}

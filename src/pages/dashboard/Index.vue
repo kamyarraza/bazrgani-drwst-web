@@ -3,7 +3,7 @@
     <AdminDashboard />
   </template>
   <template v-else>
-    <h1>Employee</h1>
+    <AdminDashboard />
   </template>
 </template>
 

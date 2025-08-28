@@ -2229,6 +2229,7 @@ export default {
   dashboard: {
     title: "Dashboard",
     subtitle: "Your warehouse at a glance",
+    tagline: "Smart solutions for a better future",
     refresh: "Refresh Dashboard",
     refreshSuccess: "Dashboard refreshed successfully",
     refreshError: "Failed to refresh dashboard",

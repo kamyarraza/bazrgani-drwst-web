@@ -56,6 +56,7 @@ export const useExchangeRateStore = defineStore('exchangeRate', () => {
       error.value = null;
       try {
         const { data } = await api.get<ApiResponse<DetailedExchangeRate>>(endPoints.exchangeRate.activeRate);
+        
         activeRate.value = data.data;
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch active exchange rate';

@@ -1,6 +1,7 @@
 export const endPoints = {
   home: {
     dashboard: "dashboard",
+    dashboardForAdmin: "dashboard/admin",
     me: "/me?relations=stickyNotes,branch",
     changePassword: "/change-password",
     updateProfile: "/update-profile",

@@ -1808,6 +1808,7 @@ export default {
   dashboard: {
     title: "داشبۆرد",
     subtitle: "عەمبارەکەت لە چاوێکدا",
+    tagline: "چارەسەری ژیرانە بۆ ئایندەیەکی باشتر",
     refresh: "نوێکردنەوەی داشبۆرد",
     refreshSuccess: "داشبۆرد بە سەرکەوتوویی نوێکرایەوە",
     refreshError: "نوێکردنەوەی داشبۆرد سەرکەوتوو نەبوو",
@@ -1823,7 +1824,7 @@ export default {
     viewAnalytics: "بینینی شیکارییەکان",
     loadingBranches: "بارکردنی داتای لقەکان...",
     noBranches: "هیچ داتایەک بەردەست نییە بۆ لقەکان",
-    exchangeRate: "نرخی گۆڕینی IQD بۆ USD",
+    exchangeRate: "نرخی USD بەرامبەر IQD",
     exchangeRateSubtitle:
       "نرخی گۆڕینی دیناری عێراقی بۆ دۆلاری ئەمریکی بە پێی کات",
     refreshData: "نوێکردنەوەی داتا",
