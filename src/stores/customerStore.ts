@@ -13,12 +13,16 @@ export const useCustomerStore = defineStore('customer', () => {
   const error = ref<string | null>(null);
   const pagination = ref<Pagination | null>(null);
 
-  async function fetchCustomers(page: number = 1, type?: 'supplier' | 'customer') {
+  async function fetchCustomers(page: number = 1, type?: 'supplier' | 'customer', query?: string) {
     loading.value = true;
     error.value = null;
     let parameter = page ? '?page=' + page : '?page=1';
     if (type) {
       parameter += `&type=${type}`;
+    }
+
+    if (query) {
+      parameter += `&query=${query}`;
     }
 
     try {

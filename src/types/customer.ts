@@ -4,7 +4,8 @@ export interface Customer {
   fname: string;
   password?: string;
   sname: string;
-  type: 'supplier' | 'customer';
+  type: string;
+  type_value: 'supplier' | 'customer';
   location: {
     id: number;
     name: string;

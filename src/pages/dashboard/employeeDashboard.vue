@@ -27,8 +27,8 @@
                 <div class="text-h5 text-weight-bold text-white q-mb-sm">
                   {{ employeeData?.branch?.name || 'Branch Name' }}
                 </div>
-                <div class="text-subtitle1 text-grey-7">
-                  Code: {{ employeeData?.branch?.code || 'N/A' }}
+                <div class="text-subtitle1 text-yellow-7">
+                  {{ employeeData?.branch?.code || 'N/A' }}
                 </div>
               </div>
               <div class="branch-stats">

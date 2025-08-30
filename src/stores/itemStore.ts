@@ -246,7 +246,8 @@ export const useItemStore = defineStore("item", () => {
 
   async function fetchItemsByWarehouse(
     warehouseId: number | string,
-    categoryId?: number | null
+    categoryId?: number | null,
+    query?: string | null
   ) {
     loading.value = true;
     error.value = null;
@@ -256,6 +257,10 @@ export const useItemStore = defineStore("item", () => {
 
       if (categoryId) {
         url += `?category_id=${categoryId}`;
+      }
+
+      if (query) {
+        url += `&query=${encodeURIComponent(query)}`;
       }
 
       const { data } = await api.get<ApiResponse<Product[]>>(url);
@@ -285,7 +290,7 @@ export const useItemStore = defineStore("item", () => {
     error.value = null;
     try {
       let url =
-        endPoints.warehouse.details(warehouseId) +
+        endPoints.specialwarehouseItems(warehouseId) +
         `?query=${encodeURIComponent(searchQuery)}`;
 
       if (categoryId) {

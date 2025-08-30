@@ -2600,6 +2600,7 @@ export default {
     pkg: "Pkg",
     pkt: "Pkt",
     pcs: "Pcs",
+    category: "Category",
     pieces: "Pieces",
     total: "Total",
     stock: "Stock",

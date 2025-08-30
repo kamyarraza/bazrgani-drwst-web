@@ -4,6 +4,7 @@ import { useItemStore } from 'src/stores/itemStore';
 import { useItemCategoryStore } from 'src/stores/itemCategoryStore';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+import { formatNumber } from 'src/composables/useFormat';
 
 interface SelectedItem {
   item: any;
@@ -143,7 +144,7 @@ watch(selectedCategoryId, () => {
   } else if (props.transactionType === 'sell' && props.warehouseId) {
     // Clear existing items first and then fetch warehouse-specific items
     items.value = [];
-    void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value);
+    void itemStore.fetchItemsByWarehouse(props.warehouseId, selectedCategoryId.value, searchQuery.value);
   }
 });
 
@@ -419,16 +420,18 @@ defineExpose({
                   <div class="item-quantities">
                     <!-- Stock Information Display -->
                     <div class="stock-header">
-                      <q-icon name="inventory" size="14px" color="primary" />
+                      <q-icon name="warehouse" size="14px" color="primary" />
                       <span class="stock-title">{{ t('transactionAlpha.inStock') }}</span>
                     </div>
 
                     <!-- Total Quantity (always show) -->
                     <div class="quantity-badge total-stock">
                       <q-icon name="apps" size="14px" />
-                      <span>{{ t('transactionAlpha.total') }}: {{ item.quantity || 0 }} {{ t('transactionAlpha.pcs')
+                      <span>{{ t('transactionAlpha.total') }}: {{ formatNumber(item.quantity || 0) }} {{ t('transactionAlpha.pcs')
                       }}</span>
                     </div>
+
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 
                     <!-- Stock Breakdown (if item has packaging structure) -->
                     <template v-if="(item.package_units || 0) > 0 && (item.packet_units || 0) > 0">
@@ -440,13 +443,13 @@ defineExpose({
                       </div>
 
                       <div class="quantity-badge packets">
-                        <q-icon name="category" size="14px" />
+                        <q-icon name="inbox" size="14px" />
                         <span>{{ Math.floor(((item.quantity || 0) % ((item.package_units || 1) * (item.packet_units ||
                           1))) / (item.packet_units || 1)) }} {{ t('transactionAlpha.pkt') }}</span>
                       </div>
 
                       <div class="quantity-badge pieces">
-                        <q-icon name="style" size="14px" />
+                        <q-icon name="widgets" size="14px" />
                         <span>{{ (item.quantity || 0) % (item.packet_units || 1) }} {{ t('transactionAlpha.pcs')
                         }}</span>
                       </div>
@@ -762,11 +765,12 @@ defineExpose({
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 .item-card:hover {
-  border-color: #1976d2;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+  border-color: #1976d2dd;
+  box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.4);
   transform: translateY(-1px);
 }
 
@@ -872,13 +876,13 @@ defineExpose({
   color: #0369a1;
   font-weight: 600;
   border: 1px solid #0369a1;
+  padding: 4px 20px;
 }
 
 .stock-header {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 6px;
   padding: 2px 0;
 }
 

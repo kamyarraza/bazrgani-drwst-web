@@ -62,10 +62,10 @@
                   :customerType="transactionType === 'purchase' ? 'supplier' : 'customer'" v-model="selectedCustomerId"
                   @select="handleSelectCustomer" />
               </div>
+              <!-- Cashbox Status Indicator -->
               <div class="form-item" :style="isEmployee ? 'display:none' : ''">
                 <BranchSelector v-model="selectedBranchId" @select="handleSelectBranch" />
-                <!-- Cashbox Status Indicator -->
-                <div v-if="selectedBranchId && cashboxStore.cashbox" class="cashbox-status-indicator">
+                <!-- <div v-if="selectedBranchId && cashboxStore.cashbox" class="cashbox-status-indicator">
                   <div v-if="cashboxStore.cashbox.is_opened" class="status-badge status-opened">
                     <q-icon name="lock_open" size="xs" />
                     <span>{{ t('transactionAlpha.cashboxOpened') }}</span>
@@ -74,7 +74,7 @@
                     <q-icon name="lock" size="xs" />
                     <span>{{ t('transactionAlpha.cashboxClosed') }}</span>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="form-item">
                 <WarehouseSelector ref="warehouseSelectorRef" v-model="selectedWarehouseId" :branchId="selectedBranchId"

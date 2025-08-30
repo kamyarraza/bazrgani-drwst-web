@@ -147,18 +147,20 @@ const getMenuItems = (customer: Customer) => {
 
 // Filtered data based on search and filters
 const filteredData = computed(() => {
-  return data.value.filter(customer => {
-    // Search filter - search in combined name and phone
-    const fullName = `${customer.fname} ${customer.sname}`.toLowerCase();
-    const searchMatch = !filters.value.search ||
-      fullName.includes(filters.value.search.toLowerCase()) ||
-      customer.fphone.toLowerCase().includes(filters.value.search.toLowerCase())
+  return data.value;
+  
+  // .filter(customer => {
+  //   // Search filter - search in combined name and phone
+  //   const fullName = `${customer.fname} ${customer.sname}`.toLowerCase();
+  //   const searchMatch = !filters.value.search ||
+  //     fullName.includes(filters.value.search.toLowerCase()) ||
+  //     customer.fphone.toLowerCase().includes(filters.value.search.toLowerCase())
 
-    // Type filter
-    const typeMatch = !filters.value.type || customer.type === filters.value.type
+  //   // Type filter
+  //   const typeMatch = !filters.value.type || customer.type === filters.value.type
 
-    return searchMatch && typeMatch
-  })
+  //   return searchMatch && typeMatch
+  // })
 })
 
 // Reset all filters
@@ -170,7 +172,14 @@ function resetFilters() {
 }
 
 // Handle filter changes from Filter component
-function handleFilterChange(_newFilters: { search?: string; type?: string | null }) {
+async function handleFilterChange(_newFilters: { search?: string; type?: string | null }) {
+  // Fetch customer data when the component is mounted
+  await customerStore.fetchCustomers(currentPage.value, (_newFilters as any).type, _newFilters.search)
+
+  // Set current page from pagination if available
+  if (customerStore.pagination) {
+    currentPage.value = customerStore.pagination.current_page
+  }
 }
 
 const columns = [{
@@ -193,7 +202,11 @@ const columns = [{
   align: "center" as const,
   field: 'purchase_borrow',
   sortable: true,
-  format: (val: number) => formatCurrency(val)
+  format: (val: number) => formatCurrency(val),
+  style: (val: any) => ({
+    color: val.purchase_borrow > 0 ? 'red' : 'black',
+    fontWeight: val.purchase_borrow > 0 ? 'bold': 'normal'
+  })
 },
 {
   name: 'sell_borrow',
@@ -201,22 +214,26 @@ const columns = [{
   align: "center" as const,
   field: 'sell_borrow',
   sortable: true,
-  format: (val: any) => formatCurrency(val)
+  format: (val: any) => formatCurrency(val),
+  style: (val: any) => ({
+    color: val.sell_borrow > 0 ? 'orange' : 'black',
+    fontWeight: val.sell_borrow > 0 ? 'bold': 'normal'
+  })
 },
-{
-  name: 'phone',
-  label: t('customer.columns.phone'),
-  align: "left" as const,
-  field: 'fphone',
-  sortable: false
-},
-{
-  name: 'place',
-  label: t('customer.columns.place'),
-  align: "left" as const,
-  field: 'place',
-  sortable: false
-},
+// {
+//   name: 'phone',
+//   label: t('customer.columns.phone'),
+//   align: "left" as const,
+//   field: 'fphone',
+//   sortable: false
+// },
+// {
+//   name: 'place',
+//   label: t('customer.columns.place'),
+//   align: "left" as const,
+//   field: 'place',
+//   sortable: false
+// },
 {
   name: 'created_at',
   label: t('customer.columns.createdAt'),

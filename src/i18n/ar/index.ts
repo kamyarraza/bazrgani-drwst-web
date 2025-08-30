@@ -1913,6 +1913,7 @@ export default {
     pkg: "طرد",
     pkt: "حزمة",
     pcs: "قطعة",
+    category: "الفئة",
     pieces: "قطع",
     total: "المجموع",
     stock: "المخزون",

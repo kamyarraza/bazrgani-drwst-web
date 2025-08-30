@@ -28,18 +28,6 @@
                             </Qinput>
 
                             <Qinput
-                                v-model="form.sname"
-                                :label="t('customer.lastName')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input"
-                            >
-                                <template #before>
-                                    <q-icon name="person" color="primary" />
-                                </template>
-                            </Qinput>
-
-                            <Qinput
                                 v-model="form.fphone"
                                 :label="t('customer.primaryPhone')"
                                 :rules="[val => !!val || t('validation.required')]"
@@ -51,17 +39,20 @@
                                 </template>
                             </Qinput>
 
-                            <Qinput
-                                v-model="form.sphone"
-                                :label="t('customer.secondPhone', 'Second Phone Number')"
-                                :rules="[]"
+                            <q-select
+                                v-model="form.location_id"
+                                :options="locationOptions"
+                                :label="t('customer.location')"
+                                :rules="[val => !!val || t('validation.required')]"
                                 outlined
-                                class="enhanced-input"
+                                class="enhanced-input q-mb-md"
+                                emit-value
+                                map-options
                             >
                                 <template #before>
-                                    <q-icon name="phone" color="secondary" />
+                                    <q-icon name="location_on" color="primary" />
                                 </template>
-                            </Qinput>
+                            </q-select>
 
                             <q-select
                                 v-model="form.type"
@@ -83,20 +74,29 @@
                         <div class="col-12 col-md-6">
                             <div class="text-subtitle1 text-primary q-mb-sm">{{ t('customer.locationInfo') }}</div>
 
-                            <q-select
-                                v-model="form.location_id"
-                                :options="locationOptions"
-                                :label="t('customer.location')"
+                            <Qinput
+                                v-model="form.sname"
+                                :label="t('customer.lastName')"
                                 :rules="[val => !!val || t('validation.required')]"
                                 outlined
-                                class="enhanced-input q-mb-md"
-                                emit-value
-                                map-options
+                                class="enhanced-input"
                             >
                                 <template #before>
-                                    <q-icon name="location_on" color="primary" />
+                                    <q-icon name="person" color="primary" />
                                 </template>
-                            </q-select>
+                            </Qinput>
+
+                            <Qinput
+                                v-model="form.sphone"
+                                :label="t('customer.secondPhone', 'Second Phone Number')"
+                                :rules="[]"
+                                outlined
+                                class="enhanced-input"
+                            >
+                                <template #before>
+                                    <q-icon name="phone" color="secondary" />
+                                </template>
+                            </Qinput>
 
                             <Qinput
                                 v-model="form.place"
@@ -204,7 +204,7 @@ watch(() => props.customer, (newCustomer) => {
 function updateFormFromCustomer(customer: Customer) {
     form.fname = customer.fname || '';
     form.sname = customer.sname || '';
-    form.type = customer.type || 'customer';
+    form.type = customer.type_value || 'customer';
     form.location_id = customer.location?.id || 0;
     form.place = customer.place || '';
     form.fphone = customer.fphone || '';
