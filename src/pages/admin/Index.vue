@@ -186,6 +186,7 @@ const columns = [
     field: 'username',
     sortable: true
 },
+    { name: 'last_activity', align: 'left' as const, label: t('employee.lastActivity'), field: 'last_activity', sortable: true },
 {
     name: 'phone',
     label: t('admin.columns.phone'),

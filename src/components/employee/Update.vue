@@ -1,7 +1,7 @@
 <template>
     <QModalForm v-model="model" :title="t('employee.updateEmployee')" :show-user-info="true"
         :user-image="(imagePreview || form.image) || null" :user-name="form.name"
-        :default-user-name="t('employee.employee')" :user-role="form.role || t('employee.role')">
+        :default-user-name="t('employee.employee')">
         <template #default>
             <q-form @submit.prevent="submitForm">
                 <div class="q-pa-md">
@@ -262,7 +262,7 @@ const submitForm = async () => {
         formData.append('username', form.value.username);
         formData.append('phone', form.value.phone);
         formData.append('is_male', (form.value.is_male === 'Male' ? 1 : 0).toString());
-        formData.append('role', form.value.role);
+        // formData.append('role', form.value.role);
         formData.append('branch_id', form.value.branch_id.toString());
 
         // Add permissions - send exactly what's currently checked

@@ -622,6 +622,7 @@ export default {
     profileImage: "Profile Image",
     newUser: "New Employee",
     fetchError: "Failed to fetch employee details:",
+    lastActivity: "Last Activity",
     roles: {
       cashier: "Cashier",
       manager: "Manager",

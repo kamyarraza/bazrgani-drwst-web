@@ -1079,6 +1079,7 @@ export default {
     profileImage: "صورة الملف الشخصي",
     newUser: "موظف جديد",
     fetchError: "فشل في جلب بيانات الموظف:",
+    lastActivity: "آخر نشاط",
     roles: {
       cashier: "أمين صندوق",
       manager: "مدير",

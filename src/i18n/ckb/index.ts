@@ -559,6 +559,7 @@ export default {
     profileImage: "وێنەی پڕۆفایل",
     newUser: "کارمەندی نوێ",
     fetchError: "نەتوانرا زانیاری کارمەند بهێنرێت:",
+    lastActivity: "دوایین چالاکی",
     roles: {
       cashier: "کاشیر",
       manager: "بەڕێوەبەر",

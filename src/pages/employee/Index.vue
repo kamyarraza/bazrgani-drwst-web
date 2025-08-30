@@ -61,7 +61,7 @@ const filterOptions = computed(() => [])
 // Menu items for row actions
 const menuItems = computed<MenuItem[]>(() => [
     { label: t('common.edit'), icon: 'edit', value: 'edit' },
-    { label: t('common.delete'), icon: 'delete', value: 'delete' }
+    // { label: t('common.delete'), icon: 'delete', value: 'delete' }
 ])
 
 // Table columns definition
@@ -69,6 +69,7 @@ const columns = computed(() => [
     { name: 'image', align: 'left' as const, label: t('employee.image'), field: 'image', sortable: true },
     { name: 'name', align: 'left' as const, label: t('employee.name'), field: 'name', sortable: true },
     { name: 'username', align: 'left' as const, label: t('employee.username'), field: 'username', sortable: true },
+    { name: 'last_activity', align: 'left' as const, label: t('employee.lastActivity'), field: 'last_activity', sortable: true },
     // { name: 'role', align: 'left' as const, label: t('employee.role'), field: 'role', sortable: true },
     { name: 'phone', align: 'left' as const, label: t('employee.phone'), field: 'phone', sortable: true },
     {

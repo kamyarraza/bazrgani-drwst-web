@@ -1,6 +1,6 @@
 <template>
     <QModalForm v-model="model" :title="t('employee.addNew')" :show-user-info="true" :user-name="form.name"
-        :default-user-name="t('employee.newUser')" :user-role="form.role || t('employee.role')">
+        :default-user-name="t('employee.newUser')">
         <template #default>
             <q-form @submit.prevent="submitForm">
                 <div class="q-pa-md">

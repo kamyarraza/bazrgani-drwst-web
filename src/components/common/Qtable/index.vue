@@ -38,8 +38,11 @@
         <q-td v-for="col in props.cols" :key="col.name" :props="props" class="table-cell">
           <!-- Image Avatar -->
           <template v-if="col.name === 'image'">
-            <q-avatar>
+            <q-avatar style="position: relative;">
               <img :src="props.row.image" alt="User Image" />
+
+              <q-badge v-if="props.row.is_online" color="green" floating rounded transparent class="online-dot" />
+
             </q-avatar>
           </template>
 
@@ -379,5 +382,18 @@ function handlePageChangeWrapper(page: number) {
 
 .disabled-cashbox:deep(.q-icon) {
   color: #9ca3af !important;
+}
+
+.online-dot {
+  width: 0px;
+  min-height: 0px;
+  padding: 0.25rem;
+  bottom: 0;
+  top: 100%;
+  transform: translate(-40%, -160%);
+  box-shadow: 1px 1px 7px #33ff33cc;
+  opacity: 0.89;
+  border: 1px solid #bfbfbf;
+  z-index: 999;
 }
 </style>
