@@ -15,8 +15,8 @@ declare module "vue" {
 // Create the Axios instance that will be used throughout the app
 const api = axios.create({
   //  baseURL: "https://dev-warehouse-api.bazrganidrwst.com/api",
-  baseURL: "https://warehouse-api.bazrganidrwst.com/api",
-  // baseURL: "http://localhost:4000/api",
+  // baseURL: "https://warehouse-api.bazrganidrwst.com/api",
+  baseURL: "http://localhost:4000/api",
 
   //  baseURL: import.meta.env.VITE_API_URL,
 
@@ -84,16 +84,17 @@ api.interceptors.response.use(
 
     if (response) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const apiResponse = response.data as ApiResponse<any>;
-      message = apiResponse?.message || "An error occurred";
+      // Improved By Kamyar on 2025-08-30:
+      // response.data may not always match ApiResponse. It could be HTML, plain string, etc.
+      // To avoid crashes:
+      const apiResponse = response.data as Partial<ApiResponse<any>> ?? {};
+      message = (typeof apiResponse.message === "string" ? apiResponse.message : "") || "An error occurred";
 
       // Handle authentication errors (401, 403) or unauthenticated messages
-      const isDeviceRevocationRequest =
-        error.config?.url?.includes("/revoke-token");
-      const isAuthError =
-        !isDeviceRevocationRequest &&
+      const isDeviceRevocationRequest = error.config?.url?.includes("/revoke-token");
+      const isAuthError = !isDeviceRevocationRequest &&
         (response.status === 401 ||
-          apiResponse?.message?.toLowerCase().includes("unauthenticated.") ||
+          apiResponse?.message?.toLowerCase().includes("unauthenticated") ||
           apiResponse?.message?.toLowerCase().includes("unauthorized") ||
           apiResponse?.message?.toLowerCase().includes("token") ||
           apiResponse?.message?.toLowerCase().includes("expired"));
@@ -106,7 +107,7 @@ api.interceptors.response.use(
           return logoutAndRedirect(authStore);
         }
 
-        // Try refresh token logic
+        // Try refresh token logic silently
         const refreshToken = authStore.refreshToken;
         if (refreshToken && !isLoggingOut && !isRefreshing) {
           isRefreshing = true;
@@ -115,20 +116,33 @@ api.interceptors.response.use(
               refresh_token: refreshToken,
             });
 
-            if (
-              data &&
-              data.status === "success" &&
-              data.data.token &&
-              data.data.refresh_token
-            ) {
-              if (import.meta.env.VITE_APP_ENV == "local") {
-                console.log("data", data, "and", data.data);
-              }
+            if (data && data.status === "success" && data.data.token && data.data.refresh_token) {
               authStore.updateTokens(data.data.token, data.data.refresh_token);
+
               isRefreshing = false;
+
               onRefreshed();
-              // Instead of reloading, retry the original request
-              return api(error.config);
+
+              // Improved By Kamyar on 2025-08-30:
+              // Retry original request only once
+              // Imagine: for some reason (bad backend config, clock skew, or expired refresh token) the retried request still comes back with 401 Unauthorized.
+              // Then catches that 401 again … and tries refreshing again … and then retries again … and so on → infinite loop
+              // Prevent infinite loop by checking a custom flag
+              if (!error.config._retry) {
+                error.config._retry = true;
+
+                const originalRequest = {
+                  ...error.config,
+                  headers: {
+                    ...error.config.headers,
+                    Authorization: `Bearer ${data.data.token}`,
+                  },
+                };
+
+                return api(originalRequest);
+              } else {
+                return logoutAndRedirect(authStore);
+              }
             } else {
               // Refresh failed, logout
               return logoutAndRedirect(authStore);
@@ -213,7 +227,7 @@ api.interceptors.response.use(
         });
       }
     } else {
-      message = "Network error: Please check your internet connection";
+      message = "شتێکی هەڵەت ڕوویدا، تکایە دڵنیاببەرەوە لە پەیوەندی ئینتەرنێتەکەت و دووبارە هەوڵبدەرەوە.";
       void Notify.create({
         type: "negative",
         message,
