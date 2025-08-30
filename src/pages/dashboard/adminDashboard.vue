@@ -145,23 +145,15 @@
 
     <!-- Main Dashboard Content -->
     <div class="row q-col-gutter-lg q-mb-lg">
-      <!-- Left column - Exchange Rate Chart (Hidden on mobile) -->
-      <!-- <div class="col-lg-7 col-md-12 gt-sm">
-        <ExchangeRateChart :data="dashboardStore.exchangeRatesArray" :loading="dashboardStore.loading"
-          @refresh="refreshDashboard" class="equal-height-card" />
-      </div> -->
-
-      <!-- Right column - Branch Performance (Full width on mobile) -->
-      <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+      <!-- Branch Performance -->
+      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
         <BranchesPerformance :branches="dashboardStore.branchesArray" :loading="dashboardStore.loading"
           @analytics="viewBranchAnalytics" class="equal-height-card" />
       </div>
-    </div>
 
-    <!-- Prices Overview - Full Width -->
-    <div class="row q-mb-lg">
-      <div class="col-12">
-        <PricesOverview :prices="dashboardStore.prices" :loading="dashboardStore.loading" @refresh="refreshDashboard" />
+      <!-- Financial Overview -->
+      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <PricesOverview :prices="dashboardStore.prices" :loading="dashboardStore.loading" @refresh="refreshDashboard" class="equal-height-card" />
       </div>
     </div>
 

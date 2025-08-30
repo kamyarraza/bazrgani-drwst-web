@@ -76,7 +76,7 @@
 
           <div class="branch-metrics gt-xs">
             <div class="capacity-metric">
-              <div class="metric-label">Capacity</div>
+              <div class="metric-label">CAPACITY</div>
               <div class="metric-value">{{ formatCapacity(branch.capacity) }}</div>
               <q-linear-progress
                 :value="branch.capacity / maxCapacity"
@@ -149,7 +149,7 @@ const emit = defineEmits<{
 
 // Computed properties
 const topBranches = computed(() => {
-  return props.branches.slice(0, 5); // Show top 5 branches
+  return props.branches.slice(0, 3); // Show only top 3 branches to limit height
 });
 
 const maxCapacity = computed(() => {
@@ -160,11 +160,6 @@ const maxCapacity = computed(() => {
 
 
 // Methods
-function _getRankingColor(index: number): string {
-  const colors = ['amber', 'orange', 'deep-orange', 'red', 'pink'];
-  return colors[index] || 'grey';
-}
-
 function getCapacityColor(ratio: number): string {
   if (ratio >= 0.8) return 'positive';
   if (ratio >= 0.6) return 'warning';
@@ -179,7 +174,6 @@ function getPerformanceClass(performance: number): string {
 }
 
 function getPerformanceTrendIcon(index: number): string {
-  // Mock trend data based on position
   return index < 2 ? 'trending_up' : index === 2 ? 'trending_flat' : 'trending_down';
 }
 
@@ -210,6 +204,10 @@ function showAnalytics() {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: none;
   background: white;
+  height: 100%;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
 
   .section-header {
     .text-h6 {
@@ -217,14 +215,37 @@ function showAnalytics() {
       font-weight: 600;
       margin-bottom: 4px;
     }
+
+    .text-caption {
+      color: #6c757d;
+      font-size: 0.85rem;
+    }
   }
 
-  .loading-state, .empty-state {
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #6c757d;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 2rem;
     text-align: center;
     color: #6c757d;
   }
+
   .branches-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 350px;
+
     .branch-item {
       display: flex;
       align-items: center;
@@ -257,24 +278,6 @@ function showAnalytics() {
         background-color: rgba(52, 152, 219, 0.02);
         transform: translateX(2px);
         border-radius: 8px;
-      }      .branch-ranking {
-        margin-right: 1.2rem;
-        flex-shrink: 0;
-
-        .ranking-avatar {
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-          .ranking-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .ranking-number {
-              font-size: 1.1rem;
-              font-weight: 700;
-            }
-          }
-        }
       }
 
       .branch-info {
@@ -309,6 +312,10 @@ function showAnalytics() {
             color: #dee2e6;
           }
         }
+
+        .branch-details-mobile {
+          display: none;
+        }
       }
 
       .branch-metrics {
@@ -336,6 +343,10 @@ function showAnalytics() {
             border-radius: 2px;
           }
         }
+      }
+
+      .branch-metrics-mobile {
+        display: none;
       }
 
       .branch-performance {
@@ -379,13 +390,13 @@ function showAnalytics() {
       }
     }
   }
-
-
 }
 
 // Responsive adjustments
 @media (max-width: 768px) {
   .branches-performance-card {
+    max-height: none;
+    
     .section-header {
       .text-h6 {
         font-size: 1.1rem;
@@ -395,100 +406,91 @@ function showAnalytics() {
       }
     }
 
-    .branch-item {
-      padding: 0.75rem;
+    .branches-list {
+      max-height: none;
+      
+      .branch-item {
+        padding: 0.75rem;
 
-      .branch-ranking {
-        .ranking-avatar {
-          width: 35px;
-          height: 35px;
-          font-size: 0.75rem;
-        }
-      }
+        .branch-info {
+          .branch-details {
+            display: none;
+          }
 
-      .branch-info {
-        flex: 1;
-
-        .branch-name {
-          font-size: 0.9rem;
-          font-weight: 600;
-        }
-
-        .branch-details-mobile {
-          display: flex;
-          gap: 1rem;
-          margin-top: 0.25rem;
-
-          .detail-mobile {
+          .branch-details-mobile {
             display: flex;
-            align-items: center;
-            font-size: 0.75rem;
-            color: #6c757d;
+            gap: 1rem;
+            margin-top: 0.25rem;
+
+            .detail-mobile {
+              display: flex;
+              align-items: center;
+              font-size: 0.75rem;
+              color: #6c757d;
+            }
           }
         }
-      }
 
-      .branch-metrics-mobile {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 0.5rem;
-      }
-
-      .branch-performance {
-        .performance-score {
-          font-size: 0.8rem;
-          padding: 2px 4px;
-          min-width: 30px;
+        .branch-metrics {
+          display: none;
         }
 
-        .performance-trend {
-          margin-left: 0.25rem;
+        .branch-metrics-mobile {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-left: 0.5rem;
+        }
 
-          .q-icon {
-            font-size: 0.9rem;
+        .branch-performance {
+          .performance-score {
+            font-size: 0.8rem;
+            padding: 2px 4px;
+            min-width: 30px;
+          }
+
+          .performance-trend {
+            margin-left: 0.25rem;
+
+            .q-icon {
+              font-size: 0.9rem;
+            }
           }
         }
       }
     }
-
-
   }
 }
 
 @media (max-width: 599px) {
   .branches-performance-card {
-    .branch-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
+    .branches-list {
+      .branch-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
 
-      .branch-ranking {
-        align-self: flex-start;
-      }
-
-      .branch-info {
-        width: 100%;
-
-        .branch-details-mobile {
-          justify-content: space-between;
+        .branch-info {
           width: 100%;
+
+          .branch-details-mobile {
+            justify-content: space-between;
+            width: 100%;
+          }
+        }
+
+        .branch-metrics-mobile {
+          align-self: flex-end;
+          margin: 0;
+        }
+
+        .branch-performance {
+          align-self: flex-end;
+          margin-top: -2rem;
+          margin-right: 0.5rem;
         }
       }
-
-      .branch-metrics-mobile {
-        align-self: flex-end;
-        margin: 0;
-      }
-
-      .branch-performance {
-        align-self: flex-end;
-        margin-top: -2rem;
-        margin-right: 0.5rem;
-      }
     }
-
-
   }
 }
 </style>

@@ -240,6 +240,10 @@ function formatCurrency(value: number): string {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   background: white;
   border: none;
+  height: 100%;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-header {
@@ -280,6 +284,9 @@ function formatCurrency(value: number): string {
 
 .prices-content {
   padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 350px;
 }
 
 .loading-container {
@@ -296,6 +303,16 @@ function formatCurrency(value: number): string {
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .prices-card {
+    max-height: none;
+    
+    .prices-content {
+      max-height: none;
+    }
   }
 }
 
