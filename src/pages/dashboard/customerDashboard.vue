@@ -25,13 +25,13 @@
             <div class="row items-center justify-between">
               <div class="customer-info">
                 <div class="text-h5 text-weight-bold text-white q-mb-sm">
-                  {{ customerData?.name || 'Customer Name' }}
+                  {{ customerInfo?.name || 'Customer Name' }}
                 </div>
                 <div class="text-subtitle1 text-grey-7 q-mb-xs">
-                  Phone: {{ customerData?.phone || 'N/A' }}
+                  Phone: {{ customerInfo?.phone || 'N/A' }}
                 </div>
                 <div class="text-subtitle1 text-grey-7">
-                  Member Since: {{ customerData?.member_since || 'N/A' }}
+                  Member Since: {{ customerInfo?.member_since || 'N/A' }}
                 </div>
               </div>
               <div class="customer-avatar">
@@ -53,7 +53,7 @@
           <q-card-section class="text-center">
             <q-icon name="shopping_bag" size="3rem" color="primary" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-primary">
-              {{ formatNumber(customerData?.stats?.total_orders || 0) }}
+              {{ formatNumber(stats?.total_orders || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Total Orders</div>
           </q-card-section>
@@ -66,7 +66,7 @@
           <q-card-section class="text-center">
             <q-icon name="attach_money" size="3rem" color="secondary" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-secondary">
-              {{ formatCurrency(customerData?.stats?.total_spent || 0) }}
+              {{ formatCurrency(stats?.total_spent || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Total Spent</div>
           </q-card-section>
@@ -79,7 +79,7 @@
           <q-card-section class="text-center">
             <q-icon name="pending" size="3rem" color="warning" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-warning">
-              {{ formatNumber(customerData?.stats?.pending_orders || 0) }}
+              {{ formatNumber(stats?.pending_orders || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Pending Orders</div>
           </q-card-section>
@@ -92,7 +92,7 @@
           <q-card-section class="text-center">
             <q-icon name="stars" size="3rem" color="accent" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-accent">
-              {{ formatNumber(customerData?.stats?.loyalty_points || 0) }}
+              {{ formatNumber(stats?.loyalty_points || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Loyalty Points</div>
           </q-card-section>
@@ -113,12 +113,12 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!customerData?.recent_orders || customerData?.recent_orders?.length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="recentOrders.length === 0" class="text-center q-pa-md text-grey-6">
               No recent orders
             </div>
             <div v-else class="orders-list">
               <div
-                v-for="order in customerData.recent_orders"
+                v-for="order in recentOrders"
                 :key="order.id"
                 class="order-item"
               >
@@ -150,12 +150,12 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!customerData?.recent_transactions || customerData?.recent_transactions?.length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="lastTransactions.length === 0" class="text-center q-pa-md text-grey-6">
               No recent transactions
             </div>
             <div v-else class="transactions-list">
               <div
-                v-for="transaction in customerData.recent_transactions"
+                v-for="transaction in lastTransactions"
                 :key="transaction.id"
                 class="transaction-item"
               >
@@ -187,12 +187,12 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!customerData?.special_offers || customerData?.special_offers?.length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="specialOffers.length === 0" class="text-center q-pa-md text-grey-6">
               No special offers available
             </div>
             <div v-else class="offers-list">
               <div
-                v-for="offer in customerData.special_offers"
+                v-for="offer in specialOffers"
                 :key="offer.id"
                 class="offer-item"
               >
@@ -221,12 +221,12 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!customerData?.notifications || customerData?.notifications?.length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="notifications.length === 0" class="text-center q-pa-md text-grey-6">
               No notifications
             </div>
             <div v-else class="notifications-list">
               <div
-                v-for="notification in customerData.notifications"
+                v-for="notification in notifications"
                 :key="notification.id"
                 class="notification-item"
                 :class="getNotificationClass(notification.type)"
@@ -246,43 +246,77 @@
       </div>
     </div>
 
+    <!-- Recent Activity Logs -->
+    <div class="row q-col-gutter-lg q-mb-lg" v-if="activityLogsArray.length > 0">
+      <div class="col-12">
+        <q-card class="dashboard-card">
+          <q-card-section>
+            <div class="text-h6 q-mb-md">
+              <q-icon name="history" size="1.2rem" color="info" class="q-mr-sm" />
+              Recent Activities
+            </div>
+            <div class="activities-list">
+              <div
+                v-for="activity in activityLogsArray"
+                :key="activity.id"
+                class="activity-item"
+              >
+                <div class="activity-info">
+                  <div class="activity-title">{{ activity.title }}</div>
+                  <div class="activity-details">
+                    <span class="activity-platform">{{ activity.platform }}</span>
+                    <span class="activity-browser">{{ activity.browser }}</span>
+                  </div>
+                  <div class="activity-date">{{ activity.created_at }}</div>
+                </div>
+                <div class="activity-icon">
+                  <q-icon name="fiber_manual_record" size="0.5rem" color="primary" />
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+
     <!-- Loading overlay -->
     <q-inner-loading :showing="loading" color="primary" size="lg" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useCustomerDashboardStore } from 'src/stores/customerDashboardStore';
 
 // Initialize i18n
 const { t } = useI18n();
 
-// Mock data - replace with actual API call
-const loading = ref(false);
-const customerData = ref<any>(null);
+// Use the customer dashboard store
+const customerStore = useCustomerDashboardStore();
+
+// Destructure store properties
+const {
+  loading,
+  customerInfo,
+  stats,
+  recentOrders,
+  lastTransactions,
+  specialOffers,
+  notifications,
+  activityLogsArray,
+  fetchDashboard,
+  refreshDashboard,
+  startAutoRefresh,
+  stopAutoRefresh
+} = customerStore;
 
 // Current date/time
 const currentDateTime = computed(() => {
   return new Date().toISOString().slice(0, 19).replace('T', ' ');
 });
 
-// Methods
-async function refreshDashboard() {
-  loading.value = true;
-  try {
-    // Simulate API call - replace with actual API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Here you would call your actual API endpoint
-    // const response = await api.get('/customer-dashboard');
-    // customerData.value = response.data.data;
-  } catch (error) {
-    console.error('Failed to refresh dashboard:', error);
-  } finally {
-    loading.value = false;
-  }
-}
-
+// Utility functions
 function formatNumber(value: number): string {
   if (value >= 1000000) {
     return `${(value / 1000000).toFixed(1)}M`;
@@ -338,114 +372,12 @@ function getNotificationIcon(type: string): string {
 
 // Lifecycle
 onMounted(async () => {
-  // Load mock data for now - replace with actual API call
-  loading.value = true;
-  try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock data structure for customer dashboard
-    customerData.value = {
-      name: "John Doe",
-      phone: "+964 750 123 4567",
-      member_since: "2024-01-15",
-      stats: {
-        total_orders: 25,
-        total_spent: 1250.75,
-        pending_orders: 2,
-        loyalty_points: 450
-      },
-      recent_orders: [
-        {
-          id: "ORD-001",
-          status: "delivered",
-          items_count: 3,
-          total_amount: 89.99,
-          created_at: "2024-01-20"
-        },
-        {
-          id: "ORD-002",
-          status: "shipped",
-          items_count: 1,
-          total_amount: 45.50,
-          created_at: "2024-01-19"
-        },
-        {
-          id: "ORD-003",
-          status: "pending",
-          items_count: 2,
-          total_amount: 67.25,
-          created_at: "2024-01-18"
-        }
-      ],
-      recent_transactions: [
-        {
-          id: 1,
-          type: "Purchase",
-          description: "Order ORD-001",
-          amount: -89.99,
-          created_at: "2024-01-20"
-        },
-        {
-          id: 2,
-          type: "Refund",
-          description: "Order cancellation",
-          amount: 25.00,
-          created_at: "2024-01-19"
-        },
-        {
-          id: 3,
-          type: "Purchase",
-          description: "Order ORD-002",
-          amount: -45.50,
-          created_at: "2024-01-19"
-        }
-      ],
-      special_offers: [
-        {
-          id: 1,
-          title: "New Year Sale",
-          description: "Get 20% off on all electronics",
-          discount: 20,
-          valid_until: "2024-02-01"
-        },
-        {
-          id: 2,
-          title: "Loyalty Bonus",
-          description: "Extra 10% off for loyal customers",
-          discount: 10,
-          valid_until: "2024-01-31"
-        }
-      ],
-      notifications: [
-        {
-          id: 1,
-          type: "success",
-          title: "Order Delivered",
-          message: "Your order ORD-001 has been delivered successfully",
-          created_at: "2024-01-20 14:30"
-        },
-        {
-          id: 2,
-          type: "info",
-          title: "New Offer Available",
-          message: "Check out our latest special offers",
-          created_at: "2024-01-19 10:15"
-        },
-        {
-          id: 3,
-          type: "warning",
-          title: "Payment Due",
-          message: "Please complete your pending payment",
-          created_at: "2024-01-18 16:45"
-        }
-      ]
-    };
-  } catch (error) {
-    console.error('Failed to load dashboard data:', error);
-  } finally {
-    loading.value = false;
-  }
+  await fetchDashboard();
+  startAutoRefresh(5); // Auto-refresh every 5 minutes
+});
+
+onUnmounted(() => {
+  stopAutoRefresh();
 });
 </script>
 
@@ -693,6 +625,57 @@ onMounted(async () => {
   &.notification-error .notification-icon {
     background: rgba(231, 76, 60, 0.1);
     color: #e74c3c;
+  }
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #9b59b6;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .activity-info {
+    flex: 1;
+
+    .activity-title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-details {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-bottom: 0.25rem;
+
+      .activity-platform {
+        margin-right: 0.5rem;
+      }
+    }
+
+    .activity-date {
+      font-size: 0.75rem;
+      color: #adb5bd;
+    }
+  }
+
+  .activity-icon {
+    margin-left: 1rem;
   }
 }
 

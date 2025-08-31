@@ -87,12 +87,16 @@ api.interceptors.response.use(
       // Improved By Kamyar on 2025-08-30:
       // response.data may not always match ApiResponse. It could be HTML, plain string, etc.
       // To avoid crashes:
-      const apiResponse = response.data as Partial<ApiResponse<any>> ?? {};
-      message = (typeof apiResponse.message === "string" ? apiResponse.message : "") || "An error occurred";
+      const apiResponse = (response.data as Partial<ApiResponse<any>>) ?? {};
+      message =
+        (typeof apiResponse.message === "string" ? apiResponse.message : "") ||
+        "An error occurred";
 
       // Handle authentication errors (401, 403) or unauthenticated messages
-      const isDeviceRevocationRequest = error.config?.url?.includes("/revoke-token");
-      const isAuthError = !isDeviceRevocationRequest &&
+      const isDeviceRevocationRequest =
+        error.config?.url?.includes("/revoke-token");
+      const isAuthError =
+        !isDeviceRevocationRequest &&
         (response.status === 401 ||
           apiResponse?.message?.toLowerCase().includes("unauthenticated") ||
           apiResponse?.message?.toLowerCase().includes("unauthorized") ||
@@ -116,7 +120,12 @@ api.interceptors.response.use(
               refresh_token: refreshToken,
             });
 
-            if (data && data.status === "success" && data.data.token && data.data.refresh_token) {
+            if (
+              data &&
+              data.status === "success" &&
+              data.data.token &&
+              data.data.refresh_token
+            ) {
               authStore.updateTokens(data.data.token, data.data.refresh_token);
 
               isRefreshing = false;
@@ -227,7 +236,8 @@ api.interceptors.response.use(
         });
       }
     } else {
-      message = "شتێکی هەڵەت ڕوویدا، تکایە دڵنیاببەرەوە لە پەیوەندی ئینتەرنێتەکەت و دووبارە هەوڵبدەرەوە.";
+      message =
+        "شتێکی هەڵەت ڕوویدا، تکایە دڵنیاببەرەوە لە پەیوەندی ئینتەرنێتەکەت و دووبارە هەوڵبدەرەوە.";
       void Notify.create({
         type: "negative",
         message,
