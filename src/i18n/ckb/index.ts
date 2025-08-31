@@ -962,6 +962,8 @@ export default {
     creating: "دروستکردن...",
     updating: "نوێکردنەوە...",
     ellipsis: "...",
+    available: "بەردەست",
+    sku: "SKU",
   },
   error: {
     somethingWentWrong: "شتێک هەڵە ڕوویدا",
@@ -2620,6 +2622,7 @@ export default {
     newTransfer: "گواستنەوەی نوێ",
     createRequest: "دروستکردنی داواکاری",
     createTransfer: "دروستکردنی گواستنەوە",
+    available: "بەردەست",
 
     // هەنگاوی ١: هەڵبژاردنی جۆری گواستنەوە
     selectTransferType: "جۆری گواستنەوە هەڵبژێرە",
@@ -2660,7 +2663,7 @@ export default {
     requestTo: "داواکاری بۆ",
     transferTo: "گواستنەوە بۆ",
     warehouseSelectionSummary:
-      "هەڵبژاردنی کۆگاکانت پێداچەرەوە پێش چوون بۆ هەڵبژاردنی کاڵا.",
+      "بە دیاریکردنی کۆگاکاندا بچۆرەوە پێش ئەوەی بچیت بۆ دیاریکردنی کاڵاکان",
 
     // هەنگاوی ٣: هەڵبژاردنی کاڵا
     selectItems: "کاڵاکان هەڵبژێرە",
@@ -2681,7 +2684,7 @@ export default {
 
     // هەنگاوی ٤: پوختە
     reviewSummary: "پوختە پێداچوونەوە",
-    reviewSummaryDescription: "وردەکارییەکانی گواستنەوەت پێداچەرەوە پێش ناردن",
+    reviewSummaryDescription: "پێداچوونەوە بە ووردەکارییەکانی گواستنەوەکەدا بکە پێش ئەوەی بینێریت",
     requestSummaryNote:
       "ئەم داواکارییە بۆ پەسەندکردن دەنێردرێت بۆ کۆگای مەبەست.",
     transferSummaryNote: "ئەم گواستنەوەیە بە یەکجار پرۆسێس دەکرێت.",

@@ -93,7 +93,7 @@
             <q-btn
               v-if="currentStep < totalSteps"
               color="primary"
-              icon-right="arrow_forward"
+                :icon-right="isRTL ? 'arrow_back':'arrow_forward'"
               :label="t('common.next')"
               :disable="!isCurrentStepValid"
               @click="nextStep"
@@ -120,7 +120,6 @@ import { ref, computed, watch, markRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useTransferRequestStore } from 'src/stores/transferRequestStore';
-import { useAuthStore } from 'src/stores/authStore';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useRTL } from 'src/composables/useRTL';
 
@@ -146,12 +145,14 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 // Composables
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const $q = useQuasar();
 const transferStore = useTransferRequestStore();
-const _authStore = useAuthStore();
 const branchStore = useBranchStore();
 const { backIcon } = useRTL();
+
+// RTL detection
+const isRTL = computed(() => locale.value === 'ar' || locale.value === 'ckb');
 
 // Dialog visibility
 const dialogVisible = computed({
@@ -234,6 +235,7 @@ const submitting = ref(false);
 const canSubmit = computed(() => {
   return Object.values(stepValidation.value).every(valid => valid) &&
          formData.value.selectedItems.length > 0 &&
+         formData.value.note.length > 0 &&
          formData.value.fromWarehouseId &&
          formData.value.toWarehouseId;
 });

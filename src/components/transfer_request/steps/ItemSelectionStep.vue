@@ -135,7 +135,7 @@
                     {{ t('transferRequest.volume') }}: {{ item.volume }}
                   </div>
                   <div class="text-caption text-positive q-mt-xs">
-                    {{ t('transferRequest.available') }}: {{ item.quantity }} {{ t('common.units') }}
+                    {{ t('transferRequest.available') }}: {{ formatNumber(item.quantity) }} {{ t('common.units') }}
                   </div>
                 </q-item-label>
               </q-item-section>
@@ -229,7 +229,7 @@
               <div class="item-details-section q-mt-sm">
                 <div class="availability-info">
                   <span class="availability-label">{{ t('transferRequest.available') }}:</span>
-                  <span class="availability-value">{{ selectedItem.availableQuantity }} {{ t('common.units') }}</span>
+                  <span class="availability-value">{{ formatNumber(selectedItem.availableQuantity) }} {{ t('common.units') }}</span>
                 </div>
               </div>
 
@@ -303,6 +303,7 @@ import { useQuasar, debounce } from 'quasar';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
 import { api } from 'boot/axios';
 import { endPoints } from 'src/endpoint';
+import { formatNumber } from 'src/composables/useFormat';
 
 // Props & Emits
 interface Props {

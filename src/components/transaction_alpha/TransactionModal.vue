@@ -831,6 +831,7 @@ async function handleSubmit() {
           bulk_unit_price: sel.bulk_unit_cost
         })),
         total_price: apiData.total_price || totalAfterDiscount.value,
+        original_total_price: apiData.total_price || totalAfterDiscount.value,
         paid_price: apiData.paid_price || (selectedPaymentType.value === 'cash' ? (apiData.total_price || totalAfterDiscount.value) : 0),
         unpaid_price: apiData.unpaid_price || (selectedPaymentType.value === 'borrow' ? (apiData.total_price || totalAfterDiscount.value) : 0),
         usd_iqd_rate: apiData.usd_iqd_rate || usdIqdRate.value,

@@ -127,7 +127,7 @@
               <template #body-cell-quantity="props">
                 <q-td :props="props">
                   <q-chip color="primary" text-color="white" size="sm">
-                    {{ props.row.quantity }} {{ t('common.units') }}
+                    {{ formatNumber(props.row.quantity) }} {{ t('common.units') }}
                   </q-chip>
                 </q-td>
               </template>
@@ -136,7 +136,7 @@
               <template #body-cell-available="props">
                 <q-td :props="props">
                   <div class="text-grey-6">
-                    {{ props.row.availableQuantity }} {{ t('common.available') }}
+                    {{ formatNumber(props.row.availableQuantity) }} {{ t('common.available') }}
                   </div>
                 </q-td>
               </template>
@@ -149,24 +149,27 @@
     <!-- Notes Section -->
     <div class="notes-section q-mb-lg">
       <q-card flat bordered>
-        <q-card-section>
-          <div class="text-subtitle1 text-weight-medium q-mb-md">
-            <q-icon name="note" class="q-mr-sm" />
-            {{ t('transferRequest.additionalNotes') }}
-          </div>
+      <q-card-section>
+        <div class="text-subtitle1 text-weight-medium q-mb-md">
+        <q-icon name="note" class="q-mr-sm" />
+        {{ t('transferRequest.additionalNotes') }}
+        <span class="text-negative">*</span>
+        </div>
 
-          <q-input
-            v-model="formData.note"
-            type="textarea"
-            :label="t('transferRequest.addNote')"
-            outlined
-            rows="3"
-            :placeholder="t('transferRequest.notePlaceholder')"
-            maxlength="500"
-            counter
-            @update:model-value="updateNote"
-          />
-        </q-card-section>
+        <q-input
+        v-model="formData.note"
+        type="textarea"
+        :label="t('transferRequest.addNote')"
+        outlined
+        rows="3"
+        :placeholder="t('transferRequest.notePlaceholder')"
+        maxlength="500"
+        counter
+        required
+        :rules="[val => !!val || t('validation.required')]"
+        @update:model-value="updateNote"
+        />
+      </q-card-section>
       </q-card>
     </div>
 
@@ -204,6 +207,7 @@
 </template>
 
 <script setup lang="ts">
+import { formatNumber } from 'src/composables/useFormat';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
