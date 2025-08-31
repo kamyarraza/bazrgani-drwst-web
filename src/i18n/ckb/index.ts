@@ -660,6 +660,34 @@ export default {
       status: "دۆخ",
       actions: "کردارەکان",
     },
+
+    employeeDashboard: {
+      users: "بەکارهێنەرەکان",
+      items: "کاڵاکان",
+      item: "کاڵا",
+      warehouses: "کۆگا",
+      capacity: "تواناداری",
+      itemsQuantity: "بڕی بەرهەمەکان",
+      itemsCount: "کۆی بەرهەمەکان",
+      itemsCost: "تێچووی بەرهەمەکان",
+      cashboxBalance: "باڵانسی صندوق",
+      showCashbox: "بینینی صندوق",
+      useDoubleClickForHide: "دەبڵ کلیك بەکاربهێنە بۆ شاردنەوە",
+      useDoubleClickForShow: "دەبڵ کلیك بەکاربهێنە بۆ پیشاندان",
+      refreshDashboard: "نوێکردنەوەی داشبۆرد",
+
+      recentExpenses: "کۆتا خەرجییەکان",
+      noExpenses: "هیچ خەرجییەك تۆمار نەکراوە هێشتا",
+
+      recentPurchases: "کۆتا کڕینەکان",
+      noPurchases: "هیچ کڕینێك تۆمارنەکراوە هێشتا",
+
+      recentSales: "کۆتا فرۆشتنەکان",
+      noSales: "هیچ فرۆشتنێك تۆمارنەکراوە هێشتا",
+
+      recentActivities: "کۆتا چالاکییەکان",
+      noActivities: "هیچ چالاکییەك ئەنجامنەدراوە هێشتا"
+    }
   },
   branchReport: {
     title: "ڕاپۆرتی لق",
@@ -2978,7 +3006,7 @@ export default {
 
   // بەشی خەرجیەکان
   expense: {
-    title: "ناونیشان",
+    title: "تایتڵ",
     dashboardTitle: "بەڕێوەبردنی خەرجیەکان",
     managingExpenses: "بەڕێوەبردن و چاودێری خەرجیەکانی کۆمپانیا",
     searchLabel: "گەڕان بە ناونیشان، وەرگر، یان ژمارەی ڕێنوما",

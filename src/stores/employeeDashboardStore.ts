@@ -18,6 +18,7 @@ export interface EmployeeDashboardData {
     cashbox: {
       iqd_balance: number;
       usd_balance: string;
+      is_opened: boolean;
     };
   };
   last_expenses: Record<
