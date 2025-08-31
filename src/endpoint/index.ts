@@ -2,6 +2,8 @@ export const endPoints = {
   home: {
     dashboard: "dashboard",
     dashboardForAdmin: "dashboard/admin",
+    dashboardForEmployee: "dashboard/employee",
+    dashboardForCustomer: "dashboard/customer",
     me: "/me?relations=stickyNotes,branch",
     changePassword: "/change-password",
     updateProfile: "/update-profile",
@@ -53,7 +55,8 @@ export const endPoints = {
     update: (id: string) => `/customers/${id}`,
     createAccount: (id: string) => `/customers/${id}/create-account`,
     borrow: (id: string) => `/customers/${id}/borrowing`,
-    bulkPaymentReceive: (id: string) => `/transactions/${id}/bulk-payment/receive/customer`,
+    bulkPaymentReceive: (id: string) =>
+      `/transactions/${id}/bulk-payment/receive/customer`,
   },
   // Using locations instead of location for consistency
   // location endpoint removed as it's duplicated by the more complete locations endpoint
@@ -97,7 +100,8 @@ export const endPoints = {
     update: (branchId: string | number) => `/branches/${branchId}`,
     toggleActive: (branchId: string | number) =>
       `/branches/toggle-active/${branchId}`,
-    report: (branchId: string | number) => `/branches/warehouses/items/${branchId}`,
+    report: (branchId: string | number) =>
+      `/branches/warehouses/items/${branchId}`,
   },
   warehouse: {
     list: "/warehouses?relations=items",
@@ -113,7 +117,8 @@ export const endPoints = {
     `/warehouses/${branchId}/index`,
   warehouseStockMovements: (branchId: string | number) =>
     `/warehouses/${branchId}/get/stock-movements`,
-  specialwarehouseItems: (wId: string | number) => `warehouses/${wId}/get/items`,
+  specialwarehouseItems: (wId: string | number) =>
+    `warehouses/${wId}/get/items`,
   // Add warehouse items endpoints
   warehouseItems: {
     list: (warehouseId: string | number) => `/warehouses/${warehouseId}/items`,

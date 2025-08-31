@@ -25,26 +25,26 @@
             <div class="row items-center justify-between">
               <div class="branch-info">
                 <div class="text-h5 text-weight-bold text-white q-mb-sm">
-                  {{ employeeData?.branch?.name || 'Branch Name' }}
+                  {{ branch?.name || 'Branch Name' }}
                 </div>
                 <div class="text-subtitle1 text-yellow-7">
-                  {{ employeeData?.branch?.code || 'N/A' }}
+                  {{ branch?.code || 'N/A' }}
                 </div>
               </div>
               <div class="branch-stats">
                 <div class="stat-item">
                   <q-icon name="people" size="1.5rem" color="primary" />
-                  <span class="stat-value">{{ employeeData?.branch?.users || 0 }}</span>
+                  <span class="stat-value">{{ branch?.users || 0 }}</span>
                   <span class="stat-label">Users</span>
                 </div>
                 <div class="stat-item">
                   <q-icon name="warehouse" size="1.5rem" color="secondary" />
-                  <span class="stat-value">{{ employeeData?.branch?.warehouses || 0 }}</span>
+                  <span class="stat-value">{{ branch?.warehouses || 0 }}</span>
                   <span class="stat-label">Warehouses</span>
                 </div>
                 <div class="stat-item">
                   <q-icon name="inventory" size="1.5rem" color="accent" />
-                  <span class="stat-value">{{ formatNumber(employeeData?.branch?.capacity || 0) }}</span>
+                  <span class="stat-value">{{ formatNumber(branch?.capacity || 0) }}</span>
                   <span class="stat-label">Capacity</span>
                 </div>
               </div>
@@ -62,7 +62,7 @@
           <q-card-section class="text-center">
             <q-icon name="category" size="3rem" color="primary" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-primary">
-              {{ formatNumber(employeeData?.branch?.items_count || 0) }}
+              {{ formatNumber(branch?.items_count || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Total Items</div>
           </q-card-section>
@@ -75,7 +75,7 @@
           <q-card-section class="text-center">
             <q-icon name="inventory_2" size="3rem" color="secondary" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-secondary">
-              {{ formatNumber(employeeData?.branch?.items_quantity || 0) }}
+              {{ formatNumber(branch?.items_quantity || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Total Quantity</div>
           </q-card-section>
@@ -88,7 +88,7 @@
           <q-card-section class="text-center">
             <q-icon name="attach_money" size="3rem" color="accent" class="q-mb-md" />
             <div class="text-h4 text-weight-bold text-accent">
-              {{ formatCurrency(employeeData?.branch?.items_cost || 0) }}
+              {{ formatCurrency(branch?.items_cost || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">Total Cost</div>
           </q-card-section>
@@ -101,11 +101,11 @@
           <q-card-section class="text-center">
             <q-icon name="account_balance_wallet" size="3rem" color="positive" class="q-mb-md" />
             <div class="text-h6 text-weight-bold text-positive q-mb-xs">
-              {{ formatCurrency(employeeData?.branch?.cashbox?.iqd_balance || 0) }}
+              {{ formatCurrency(branch?.cashbox?.iqd_balance || 0) }}
             </div>
             <div class="text-subtitle2 text-grey-7">IQD Balance</div>
             <div class="text-caption text-grey-6">
-              USD: {{ formatCurrency(employeeData?.branch?.cashbox?.usd_balance || 0) }}
+              USD: {{ formatCurrency(branch?.cashbox?.usd_balance || 0) }}
             </div>
           </q-card-section>
         </q-card>
@@ -125,13 +125,13 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!employeeData?.last_expenses || Object.keys(employeeData?.last_expenses || {}).length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="expensesArray.length === 0" class="text-center q-pa-md text-grey-6">
               No recent expenses
             </div>
             <div v-else class="expenses-list">
               <div
-                v-for="(expense, id) in employeeData.last_expenses"
-                :key="id"
+                v-for="expense in expensesArray"
+                :key="expense.id"
                 class="expense-item"
               >
                 <div class="expense-info">
@@ -164,13 +164,13 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!employeeData?.last_purchases || Object.keys(employeeData?.last_purchases || {}).length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="purchasesArray.length === 0" class="text-center q-pa-md text-grey-6">
               No recent purchases
             </div>
             <div v-else class="purchases-list">
               <div
-                v-for="(purchase, id) in employeeData.last_purchases"
-                :key="id"
+                v-for="purchase in purchasesArray"
+                :key="purchase.id"
                 class="purchase-item"
               >
                 <div class="purchase-info">
@@ -202,13 +202,13 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!employeeData?.last_sells || Object.keys(employeeData?.last_sells || {}).length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="sellsArray.length === 0" class="text-center q-pa-md text-grey-6">
               No recent sales
             </div>
             <div v-else class="sells-list">
               <div
-                v-for="(sell, id) in employeeData.last_sells"
-                :key="id"
+                v-for="sell in sellsArray"
+                :key="sell.id"
                 class="sell-item"
               >
                 <div class="sell-info">
@@ -237,13 +237,13 @@
             <div v-if="loading" class="text-center q-pa-md">
               <q-spinner-dots size="2rem" color="primary" />
             </div>
-            <div v-else-if="!employeeData?.last_activity_logs || Object.keys(employeeData?.last_activity_logs || {}).length === 0" class="text-center q-pa-md text-grey-6">
+            <div v-else-if="activityLogsArray.length === 0" class="text-center q-pa-md text-grey-6">
               No recent activities
             </div>
             <div v-else class="activities-list">
               <div
-                v-for="(activity, id) in employeeData.last_activity_logs"
-                :key="id"
+                v-for="activity in activityLogsArray"
+                :key="activity.id"
                 class="activity-item"
               >
                 <div class="activity-info">
@@ -270,37 +270,36 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useEmployeeDashboardStore } from 'src/stores/employeeDashboardStore';
 
 // Initialize i18n
 const { t } = useI18n();
 
-// Mock data - replace with actual API call
-const loading = ref(false);
-const employeeData = ref<any>(null);
+// Use the employee dashboard store
+const employeeStore = useEmployeeDashboardStore();
+
+// Destructure store properties
+const {
+  loading,
+  branch,
+  expensesArray,
+  purchasesArray,
+  sellsArray,
+  activityLogsArray,
+  fetchDashboard,
+  refreshDashboard,
+  startAutoRefresh,
+  stopAutoRefresh
+} = employeeStore;
 
 // Current date/time
 const currentDateTime = computed(() => {
   return new Date().toISOString().slice(0, 19).replace('T', ' ');
 });
 
-// Methods
-async function refreshDashboard() {
-  loading.value = true;
-  try {
-    // Simulate API call - replace with actual API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Here you would call your actual API endpoint
-    // const response = await api.get('/employee-dashboard');
-    // employeeData.value = response.data.data;
-  } catch (error) {
-    console.error('Failed to refresh dashboard:', error);
-  } finally {
-    loading.value = false;
-  }
-}
-
+// Utility functions
 function formatNumber(value: number): string {
   if (value >= 1000000) {
     return `${(value / 1000000).toFixed(1)}M`;
@@ -321,99 +320,12 @@ function formatCurrency(value: number): string {
 
 // Lifecycle
 onMounted(async () => {
-  // Load mock data for now - replace with actual API call
-  loading.value = true;
-  try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock data structure based on your JSON
-    employeeData.value = {
-      branch: {
-        id: 1,
-        name: "مەجید بەگ",
-        code: "MJ-01",
-        users: 3,
-        warehouses: 1,
-        capacity: 200,
-        items_count: 50,
-        items_quantity: 230490,
-        items_cost: 233191.1,
-        cashbox: {
-          iqd_balance: 308000,
-          usd_balance: "100.00"
-        }
-      },
-      last_expenses: {
-        "2": {
-          category: "ڕێکخستنی ناو کۆگا",
-          title: "ژاڵە",
-          total_usd: 0,
-          total_iqd: 4000,
-          paid_at: "پێش ڕۆژێک"
-        },
-        "1": {
-          category: "بەنزین",
-          title: "سلێمانی",
-          total_usd: 0,
-          total_iqd: 25000,
-          paid_at: "پێش ڕۆژێک"
-        }
-      },
-      last_purchases: {
-        "1": {
-          branch: "مەجید بەگ",
-          payment_type: "حەواسە",
-          items: 50,
-          total_usd: "233354.00",
-          created_at: "پێش ڕۆژێک"
-        }
-      },
-      last_sells: {
-        "3": {
-          branch: "مەجید بەگ",
-          payment_type: "حەواسە",
-          items: 2,
-          total_usd: "172.00",
-          created_at: "پێش ڕۆژێک"
-        },
-        "4": {
-          branch: "مەجید بەگ",
-          payment_type: "حەواسە",
-          items: 1,
-          total_usd: "130.00",
-          created_at: "پێش ڕۆژێک"
-        }
-      },
-      last_activity_logs: {
-        "1645": {
-          title: "Expense Created",
-          ip_address: "127.0.0.1",
-          platform: "Windows",
-          browser: "Edge",
-          created_at: "پێش دوو کاتژمێر"
-        },
-        "1644": {
-          title: "Expense Created",
-          ip_address: "127.0.0.1",
-          platform: "Windows",
-          browser: "Edge",
-          created_at: "پێش دوو کاتژمێر"
-        },
-        "1643": {
-          title: "Authentication",
-          ip_address: "127.0.0.1",
-          platform: "Windows",
-          browser: "Edge",
-          created_at: "پێش 4 کاتژمێر"
-        }
-      }
-    };
-  } catch (error) {
-    console.error('Failed to load dashboard data:', error);
-  } finally {
-    loading.value = false;
-  }
+  await fetchDashboard();
+  startAutoRefresh(5); // Auto-refresh every 5 minutes
+});
+
+onUnmounted(() => {
+  stopAutoRefresh();
 });
 </script>
 
