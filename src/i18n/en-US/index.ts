@@ -500,6 +500,7 @@ export default {
     selectWarehouse: "Select a Warehouse First",
     selectWarehouseDesc: "Please select a warehouse to view its items",
     name: "Item Name",
+    category: "Category",
     code: "Code",
     partNo: "Part No",
     volume: "Volume",
@@ -725,6 +726,34 @@ export default {
       status: "Status",
       actions: "Actions",
     },
+
+    employeeDashboard: {
+      users: "Users",
+      items: "Items",
+      item: "item",
+      warehouses: "warehouses",
+      capacity: "Capacity",
+      itemsQuantity: "Items quantity",
+      itemsCount: "Items count",
+      itemsCost: "Items cost",
+      cashboxBalance: "Cashbox balance",
+      showCashbox: "Show cashbox",
+      useDoubleClickForHide: "Double click to hide",
+      useDoubleClickForShow: "Double click to show",
+      refreshDashboard: "Refresh dashboard",
+
+      recentExpenses: "Recent Expenses",
+      noExpenses: "No expenses recorded yet",
+
+      recentPurchases: "Recent Purchases",
+      noPurchases: "No purchases recorded yet",
+
+      recentSales: "Recent Sales",
+      noSales: "No sales recorded yet",
+
+      recentActivities: "Recent Activities",
+      noActivities: "No activities performed yet"
+    }
   },
   branchReport: {
     title: "Branch Report",

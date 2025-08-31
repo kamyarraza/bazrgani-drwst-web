@@ -19,7 +19,50 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="row items-center q-mt-md">
+      <div class="filter-section q-mb-md">
+        <q-card class="filter-card">
+          <q-card-section>
+            <div class="text-subtitle2 q-mb-md">
+              <q-icon name="filter_list" class="q-mr-sm" />
+              {{ t('branchReport.filters.title', 'Filters') }}
+            </div>
+            <div class="row q-col-gutter-md">
+              <!-- Search Query Input -->
+              <div class="col-12 col-md-6">
+                <q-input v-model="searchQuery" :label="t('branchReport.filters.searchPlaceholder', 'Search items...')"
+                  outlined dense clearable debounce="500" @update:model-value="onSearchChange">
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </div>
+
+              <!-- Category Filter -->
+              <div class="col-12 col-md-6">
+                <q-select v-model="selectedCategory" :options="categoryOptions"
+                  :label="t('branchReport.filters.categoryPlaceholder', 'Filter by category')" outlined dense clearable
+                  option-value="value" option-label="label" emit-value map-options
+                  @update:model-value="onCategoryChange">
+                  <template v-slot:prepend>
+                    <q-icon name="category" />
+                  </template>
+                </q-select>
+              </div>
+            </div>
+
+            <!-- Clear Filters Button -->
+            <div class="row q-mt-sm" v-if="searchQuery || selectedCategory">
+              <div class="col-12">
+                <q-btn flat color="negative" icon="clear"
+                  :label="t('branchReport.filters.clearFilters', 'Clear Filters')" size="sm" @click="clearFilters" />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- Filter Section -->
+      <!-- <div class="row items-center q-mt-md">
         <div class="col-auto">
           <div class="filter-buttons">
             <q-btn :label="t('warehouseItem.regularItems', 'Regular Items')"
@@ -38,7 +81,8 @@
             {{ t('warehouseItem.filterDescription', 'Switch between regular items and blum items') }}
           </div>
         </div>
-      </div>
+      </div> -->
+
     </div> <!-- Data Table -->
     <div class="warehouse-items-content">
       <QtableB v-if="hasCurrentItems" show-bottom :columns="currentColumns" :rows="currentItems"
@@ -617,7 +661,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
 import { useRTL } from 'src/composables/useRTL';
@@ -629,6 +673,7 @@ import { api } from 'boot/axios';
 import { showNotify } from 'src/composables/Notify';
 import { formatCurrency } from 'src/composables/useFormat';
 import { useMeStore } from 'src/stores/meStore';
+import { useItemCategoryStore } from 'src/stores/itemCategoryStore';
 
 const props = defineProps<{
   selectedWarehouse: Warehouse | null;
@@ -640,8 +685,39 @@ const emit = defineEmits(['back', 'update:showItemsTab']);
 const { t } = useI18n();
 const { isRTL } = useRTL();
 const warehouseStore = useWarehouseStore();
+const itemCategoryStore = useItemCategoryStore();
 
 const meStore = useMeStore();
+
+// Filter reactive data
+const searchQuery = ref('');
+const selectedCategory = ref<number | null>(null);
+
+// Category options for select
+const categoryOptions = computed(() => {
+  const allOption = { value: null, label: t('branchReport.filters.allCategories', 'All Categories') };
+  const categoryOpts = itemCategoryStore.itemCategories.map(category => ({
+    value: category.id,
+    label: category.name
+  }));
+  return [allOption, ...categoryOpts];
+});
+
+// Filter event handlers
+const onSearchChange = async () => {
+    await loadWarehouseItems(props.selectedWarehouse?.id, warehouseStore.pagination?.current_page, searchQuery.value, selectedCategory.value);
+};
+
+const onCategoryChange = async () => {
+    await loadWarehouseItems(props.selectedWarehouse?.id, warehouseStore.pagination?.current_page, searchQuery.value, selectedCategory.value);
+};
+
+const clearFilters = async () => {
+    searchQuery.value = '';
+    selectedCategory.value = null;
+
+    await loadWarehouseItems(props.selectedWarehouse?.id, warehouseStore.pagination?.current_page);
+};
 
 const canAdjustStock = computed(() => {
   // Only admins or users with 'adjustments' permission can adjust stock
@@ -852,17 +928,17 @@ watch(() => [props.selectedWarehouse, props.showItemsTab] as const, ([newWarehou
 }, { immediate: true });
 
 // Handle relation type change
-async function handleRelationTypeChange(newRelationType: 'items' | 'blum_items') {
-  selectedRelationType.value = newRelationType;
-  if (props.selectedWarehouse) {
-    await loadWarehouseItems(props.selectedWarehouse.id);
-  }
-}
+// async function handleRelationTypeChange(newRelationType: 'items' | 'blum_items') {
+//   selectedRelationType.value = newRelationType;
+//   if (props.selectedWarehouse) {
+//     await loadWarehouseItems(props.selectedWarehouse.id);
+//   }
+// }
 
 // Load items for the selected warehouse
-async function loadWarehouseItems(warehouseId: number) {
+async function loadWarehouseItems(warehouseId: any, page: number = 1, query?: string, categoryId?: any) {
   try {
-    await warehouseStore.fetchWarehouseItems(warehouseId, 1);   // , 10, selectedRelationType.value
+    await warehouseStore.fetchWarehouseItems(warehouseId, page, query, categoryId);
   } catch (error) {
     console.error('Error loading warehouse items:', error);
   }
@@ -911,6 +987,13 @@ const itemColumns = [
     label: t('warehouseItem.name', 'Item Name'),
     align: 'left' as const,
     field: 'name',
+    sortable: true,
+  },
+  {
+    name: 'category',
+    label: t('warehouseItem.category', 'Category'),
+    align: 'left' as const,
+    field: (row: any) => row.category.name,
     sortable: true,
   },
   {
@@ -1074,6 +1157,16 @@ function formatQuantity(value: any): string {
   }
   return (isNaN(value) ? 0 : value).toLocaleString();
 }
+
+
+// Lifecycle
+onMounted(async () => {
+  // Fetch categories for filter
+  if (itemCategoryStore.itemCategories.length === 0) {
+    await itemCategoryStore.fetchItemCategories();
+  }
+}
+);
 </script>
 
 <style lang="scss" scoped>

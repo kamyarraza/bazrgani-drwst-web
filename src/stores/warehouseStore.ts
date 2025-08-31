@@ -206,18 +206,26 @@ export const useWarehouseStore = defineStore("warehouse", () => {
    */
   async function fetchWarehouseItems(
     warehouseId: number,
-    page = 1
-    // , perPage = 10,
-    // relationType = "items"
+    page = 1,
+    query?: string,
+    category_id?: number
   ) {
     loading.value = true;
     error.value = null;
     selectedWarehouseId.value = warehouseId;
 
     try {
-      const { data } = await api.get<ApiResponse<any[]>>(
-        `${endPoints.specialwarehouseItems(warehouseId)}?page=${page}`
-      );
+      let url = `${endPoints.specialwarehouseItems(warehouseId)}?page=${page}`;
+
+      if (query) {
+        url += `&query=${encodeURIComponent(query)}`;
+      }
+
+      if (category_id) {
+        url += `&category_id=${category_id}`;
+      }
+
+      const { data } = await api.get<ApiResponse<any[]>>(url);
 
       if (data.status === "success") {
         warehouseItems.value = {

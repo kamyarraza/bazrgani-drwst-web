@@ -428,6 +428,7 @@ export default {
     selectWarehouse: "کۆگایەک هەڵبژێرە",
     selectWarehouseDesc: "تکایە کۆگایەک هەڵبژێرە بۆ بینینی کەلوپەلەکان",
     name: "ناو",
+    category: "جۆر",
     code: "کۆد",
     partNo: "ژمارەی بەش",
     volume: "قەبارە",

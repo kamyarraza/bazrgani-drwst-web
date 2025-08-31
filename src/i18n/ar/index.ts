@@ -950,6 +950,7 @@ export default {
     selectWarehouse: "اختر مستودعاً",
     selectWarehouseDesc: "يرجى اختيار مستودع لعرض العناصر",
     name: "الاسم",
+    category: "الفئة",
     code: "الكود",
     partNo: "رقم القطعة",
     volume: "الحجم",
@@ -1179,6 +1180,34 @@ export default {
       status: "الحالة",
       actions: "الإجراءات",
     },
+
+    employeeDashboard: {
+      users: "المستخدمون",
+      items: "المنتجات",
+      item: "منتج",
+      warehouses: "المستودعات",
+      capacity: "السعة",
+      itemsQuantity: "كمية المنتجات",
+      itemsCount: "عدد المنتجات",
+      itemsCost: "تكلفة المنتجات",
+      cashboxBalance: "رصيد الصندوق",
+      showCashbox: "عرض الصندوق",
+      useDoubleClickForHide: "انقر نقرة مزدوجة للإخفاء",
+      useDoubleClickForShow: "انقر نقرة مزدوجة للعرض",
+      refreshDashboard: "تحديث لوحة التحكم",
+
+      recentExpenses: "المصروفات الحديثة",
+      noExpenses: "لا توجد مصروفات مسجلة بعد",
+
+      recentPurchases: "المشتريات الحديثة",
+      noPurchases: "لا توجد مشتريات مسجلة بعد",
+
+      recentSales: "المبيعات الحديثة",
+      noSales: "لا توجد مبيعات مسجلة بعد",
+
+      recentActivities: "الأنشطة الحديثة",
+      noActivities: "لا توجد أنشطة تم تنفيذها بعد"
+    }
   },
   branchReport: {
     title: "تقرير الفرع",
