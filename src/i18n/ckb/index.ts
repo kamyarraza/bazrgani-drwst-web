@@ -2864,8 +2864,8 @@ export default {
     verifyBranchSelection:
       "تکایە هەڵبژاردنی لقەکەت بپشکنە و دووبارە هەوڵ بدەرەوە",
     cashboxStatusCheckFailed: "پشکنینی دۆخی صندوق شکستی هێنا",
-    checkConnectionAndTryAgain:
-      "تکایە پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە",
+    checkConnectionAndTryAgain:"تکایە پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە",
+    forgivenPriceTooltip: "ئەو بڕە پارەیەی کە بڕدراوە یان بەخشراوە واتە وەرنەگیراوە لە کڕیار"
   },
 
   // بەڕێوەبردنی صندوق

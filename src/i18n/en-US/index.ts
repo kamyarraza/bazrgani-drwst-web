@@ -2722,6 +2722,7 @@ export default {
     verifyBranchSelection: "Please verify your branch selection and try again",
     cashboxStatusCheckFailed: "Cashbox status check failed",
     checkConnectionAndTryAgain: "Please check your connection and try again",
+    forgivenPriceTooltip: "The amount forgiven if the customer does not pay"
   },
 
   // Expense Category Section

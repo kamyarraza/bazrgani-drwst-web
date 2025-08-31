@@ -115,8 +115,15 @@
                         {{ t('transaction.warehouseInfo') }}
                     </div>
 
-                    <div class="row q-col-gutter-md">
-                        <div class="col-md-4 col-xs-12">
+                    <div class="row q-col-gutter-md items-center">
+                        <div class="col-md-3 col-xs-12">
+                            <div class="info-card">
+                                <q-icon name="warehouse" class="info-icon text-indigo" />
+                                <div class="info-label">{{ t('itemTransaction.branch') }}</div>
+                                <div class="info-value">{{ transactionData.warehouse?.branch_name || t('common.notSet') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-xs-12">
                             <div class="info-card">
                                 <q-icon name="warehouse" class="info-icon text-indigo" />
                                 <div class="info-label">{{ t('transaction.warehouseName') }}</div>
@@ -124,16 +131,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4 col-xs-12">
-                            <div class="info-card">
+                        <div class="col-md-2 col-xs-12">
+                            <div class="info-card" style="padding: 0;">
                                 <q-icon name="qr_code" class="info-icon text-cyan" />
                                 <div class="info-label">{{ t('transaction.warehouseCode') }}</div>
                                 <div class="info-value">{{ transactionData.warehouse?.code || t('common.notSet') }}
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 col-xs-12">
-                            <div class="info-card">
+                            <div class="info-card" style="padding: 0;">
                                 <q-icon name="inventory" class="info-icon text-teal" />
                                 <div class="info-label">{{ t('transaction.capacity') }}</div>
                                 <div class="info-value">{{ transactionData.warehouse?.capacity || t('common.notSet') }}
@@ -154,16 +159,17 @@
 
                     <div class="row q-col-gutter-md">
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card total-price">
+                            <div class="price-card total-price price-box">
                                 <q-icon name="attach_money" class="price-icon text-blue" />
                                 <div class="price-label">{{ t('transaction.totalPrice') }}</div>
-                                <div class="price-value text-blue">{{ formatCurrency(transactionData.total_price) }}
+                                <div class="price-value text-blue">{{
+                                    formatCurrency(transactionData.original_total_price) }}
                                 </div>
                             </div>
                         </div>
                         <div v-if="transactionData.discounted_rate && transactionData.discounted_rate > 0"
                             class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card discount-rate">
+                            <div class="price-card discount-rate price-box">
                                 <q-icon name="percent" class="price-icon text-orange" />
                                 <div class="price-label">{{ t('transaction.discountRate') }}</div>
                                 <div class="price-value text-orange">{{ transactionData.discounted_rate }}%</div>
@@ -171,15 +177,15 @@
                         </div>
                         <div v-if="transactionData.discounted_price && transactionData.discounted_price !== transactionData.total_price"
                             class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card discounted-price">
+                            <div class="price-card discounted-price price-box">
                                 <q-icon name="local_offer" class="price-icon text-purple" />
                                 <div class="price-label">{{ t('transaction.discountedPrice') }}</div>
                                 <div class="price-value text-purple">{{ formatCurrency(transactionData.discounted_price)
-                                    }}</div>
+                                }}</div>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card paid-price">
+                            <div class="price-card paid-price price-box">
                                 <q-icon name="check_circle" class="price-icon text-green" />
                                 <div class="price-label">{{ t('transaction.paidPrice') }}</div>
                                 <div class="price-value text-green">{{ formatCurrency(transactionData.paid_price) }}
@@ -187,23 +193,32 @@
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card unpaid-price">
+                            <div class="price-card unpaid-price price-box">
                                 <q-icon name="schedule" class="price-icon text-pink" />
                                 <div class="price-label">{{ t('transaction.unpaidPrice') }}</div>
                                 <div class="price-value text-pink">{{ formatCurrency(transactionData.unpaid_price) }}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 col-sm-6 col-xs-12" v-if="(transactionData).forgiven_price && (transactionData).forgiven_price > 0">
-                            <div class="price-card unpaid-price">
+                        <div class="col-md-3 col-sm-6 col-xs-12"
+                            v-if="(transactionData).forgiven_price && (transactionData).forgiven_price > 0">
+                            <div class="price-card unpaid-price price-box">
                                 <q-icon name="money_off" class="price-icon text-red" />
-                                <div class="price-label">{{ t('transactionAlpha.forgivenPrice') }}</div>
-                                <div class="price-value text-red">{{ formatCurrency(transactionData.forgiven_price, 'IQD') }}
+                                <div class="price-label">
+                                    {{ t('transactionAlpha.forgivenPrice') }}
+                                    <q-icon name="help_outline" size="1rem" />
+
+                                    <q-tooltip anchor="top middle" self="bottom middle" max-width="200px">
+                                        {{ t('transactionAlpha.forgivenPriceTooltip') }}
+                                    </q-tooltip>
+                                </div>
+                                <div class="price-value text-red">{{ formatCurrency(transactionData.forgiven_price,
+                                    'IQD') }}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card exchange-rate">
+                            <div class="price-card exchange-rate price-box">
                                 <q-icon name="currency_exchange" class="price-icon text-amber" />
                                 <div class="price-label">{{ t('transaction.exchangeRate') }}</div>
                                 <div class="price-value text-amber">{{ transactionData.usd_iqd_rate }} {{
@@ -211,14 +226,14 @@
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card payment-type">
+                            <div class="price-card payment-type price-box">
                                 <q-icon name="payment" class="price-icon text-indigo" />
                                 <div class="price-label">{{ t('transaction.paymentType') }}</div>
                                 <div class="price-value text-indigo">{{ transactionData.payment_type }}</div>
                             </div>
                         </div>
                         <div v-if="transactionData.is_editable !== undefined" class="col-md-3 col-sm-6 col-xs-12">
-                            <div class="price-card edit-status">
+                            <div class="price-card edit-status price-box">
                                 <q-icon :name="transactionData.is_editable ? 'edit' : 'lock'"
                                     :class="transactionData.is_editable ? 'price-icon text-green' : 'price-icon text-red'" />
                                 <div class="price-label">{{ t('transaction.editability') }}</div>
@@ -260,7 +275,7 @@
                                 <q-item-section side top>
                                     <div class="q-gutter-xs flex column items-end">
                                         <q-chip color="blue-2" text-color="blue-10" icon="inventory" size="sm" square>
-                                            {{ t('transaction.quantity') }}: {{ item.quantity }}
+                                            {{ t('transaction.quantity') }}: {{ formatNumber(item.quantity) }}
                                         </q-chip>
 
                                         <q-chip color="green-2" text-color="green-10" icon="attach_money" size="sm"
@@ -359,7 +374,7 @@
 <script setup lang="ts">
 import { computed, defineProps, defineEmits } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatCurrency } from 'src/composables/useFormat'
+import { formatCurrency, formatNumber } from 'src/composables/useFormat'
 import { date } from 'quasar'
 import type { List } from 'src/types/item_transaction'
 
@@ -471,10 +486,28 @@ const getStatusColor = (status: string) => {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.summary-item {
+    box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.25);
+    height: 78px;
+    overflow: hidden;
 
     &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
         transform: translateY(-1px);
+        background: #ebebeb;
+    }
+}
+
+.price-card.price-box {
+    box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.3);
+    border: 2px solid transparent;
+
+    &:hover {
+        box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
+        border: 2px solid #4e91cfa8;
     }
 }
 

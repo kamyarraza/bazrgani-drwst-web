@@ -75,7 +75,7 @@
               <div class="price-row">
                 <span>{{ t('invoice.payment.totalPrice') }}:</span>
                 &nbsp;&nbsp;
-                <b style="color: #090909">{{ formatCurrency((transactionData as any)?.orginal_total_price) }}</b>
+                <b style="color: #090909">{{ formatCurrency((transactionData as any)?.original_total_price) }}</b>
               </div>
               <div class="price-row" v-if="(transactionData as any)?.discounted_rate">
                 <span>{{ t('invoice.payment.discountRate') }}:</span>

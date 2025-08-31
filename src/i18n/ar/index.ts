@@ -2031,6 +2031,7 @@ export default {
     verifyBranchSelection: "يرجى التحقق من اختيار الفرع والمحاولة مرة أخرى",
     cashboxStatusCheckFailed: "فشل فحص حالة الصندوق",
     checkConnectionAndTryAgain: "يرجى فحص اتصالك والمحاولة مرة أخرى",
+    forgivenPriceTooltip: "المبلغ المسامح به إذا لم يدفع العميل"
   },
   dashboard: {
     title: "لوحة التحكم",

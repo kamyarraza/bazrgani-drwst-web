@@ -30,7 +30,7 @@ export function formatCurrency(
     value.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }) + currencySign
+    }).replace(/[.]00$/, "") + currencySign
   );
 }
 

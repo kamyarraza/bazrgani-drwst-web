@@ -148,7 +148,7 @@ const getMenuItems = (customer: Customer) => {
 // Filtered data based on search and filters
 const filteredData = computed(() => {
   return data.value;
-  
+
   // .filter(customer => {
   //   // Search filter - search in combined name and phone
   //   const fullName = `${customer.fname} ${customer.sname}`.toLowerCase();
@@ -171,15 +171,19 @@ function resetFilters() {
   }
 }
 
-// Handle filter changes from Filter component
-async function handleFilterChange(_newFilters: { search?: string; type?: string | null }) {
-  // Fetch customer data when the component is mounted
-  await customerStore.fetchCustomers(currentPage.value, (_newFilters as any).type, _newFilters.search)
+// Debounce filter input to avoid excessive calls
+let filterTimeout: ReturnType<typeof setTimeout>;
 
-  // Set current page from pagination if available
-  if (customerStore.pagination) {
-    currentPage.value = customerStore.pagination.current_page
-  }
+// Handle filter changes from Filter component
+function handleFilterChange(_newFilters: { search?: string; type?: string | null }) {
+  clearTimeout(filterTimeout); // clear previous timeout
+
+  // Apply new filters after a short delay (debounce)
+  filterTimeout = setTimeout(() => {
+    loadCustomers(currentPage.value, _newFilters.type, _newFilters.search).catch(err => {
+      console.error(t('customer.fetchError'), err)
+    });
+  }, 750);  // 750ms delay
 }
 
 const columns = [{
@@ -205,7 +209,8 @@ const columns = [{
   format: (val: number) => formatCurrency(val),
   style: (val: any) => ({
     color: val.purchase_borrow > 0 ? 'red' : 'black',
-    fontWeight: val.purchase_borrow > 0 ? 'bold': 'normal'
+    fontWeight: val.purchase_borrow > 0 ? 'bold' : 'normal',
+    textShadow: val.purchase_borrow > 0 ? '1px 1px 12px yellow' : 'none'
   })
 },
 {
@@ -216,8 +221,9 @@ const columns = [{
   sortable: true,
   format: (val: any) => formatCurrency(val),
   style: (val: any) => ({
-    color: val.sell_borrow > 0 ? 'orange' : 'black',
-    fontWeight: val.sell_borrow > 0 ? 'bold': 'normal'
+    color: val.sell_borrow > 0 ? 'purple' : 'black',
+    fontWeight: val.sell_borrow > 0 ? 'bold' : 'normal',
+    textShadow: val.sell_borrow > 0 ? '1px 1px 12px orange' : 'none'
   })
 },
 // {
@@ -363,7 +369,7 @@ function removeNote(id: number) {
 async function handlePageChange(page: number) {
   currentPage.value = page;
   // We're not resetting filters to maintain the user's filter state when paging
-  await customerStore.fetchCustomers(page);
+  await loadCustomers(page);
 
   // Scroll to top when changing pages for better UX
   window.scrollTo({
@@ -375,13 +381,18 @@ async function handlePageChange(page: number) {
 // hooks
 onMounted(async () => {
   // Fetch customer data when the component is mounted
-  await customerStore.fetchCustomers()
+  await loadCustomers();
+})
+
+async function loadCustomers(page?: number, type?: any, search?: string) {
+  // Fetch customer data when the component is mounted
+  await customerStore.fetchCustomers(page, type, search)
 
   // Set current page from pagination if available
   if (customerStore.pagination) {
     currentPage.value = customerStore.pagination.current_page
   }
-})
+}
 </script>
 
 <style lang="scss" scoped>

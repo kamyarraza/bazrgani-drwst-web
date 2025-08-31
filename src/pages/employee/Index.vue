@@ -68,6 +68,13 @@ const menuItems = computed<MenuItem[]>(() => [
 const columns = computed(() => [
     { name: 'image', align: 'left' as const, label: t('employee.image'), field: 'image', sortable: true },
     { name: 'name', align: 'left' as const, label: t('employee.name'), field: 'name', sortable: true },
+    // {
+    //     name: 'gender',
+    //     align: 'left' as const,
+    //     label: t('employee.gender'),
+    //     field: (row: Record<string, unknown>) => row.gender === 'Male' ? t('employee.male') : t('employee.female'),
+    //     sortable: true
+    // },
     { name: 'username', align: 'left' as const, label: t('employee.username'), field: 'username', sortable: true },
     { name: 'last_activity', align: 'left' as const, label: t('employee.lastActivity'), field: 'last_activity', sortable: true },
     // { name: 'role', align: 'left' as const, label: t('employee.role'), field: 'role', sortable: true },
@@ -80,13 +87,6 @@ const columns = computed(() => [
             const employee = row as unknown as Employee
             return employee.branch ? employee.branch.name : '-'
         },
-        sortable: true
-    },
-    {
-        name: 'gender',
-        align: 'left' as const,
-        label: t('employee.gender'),
-        field: (row: Record<string, unknown>) => row.gender === 'Male' ? t('employee.male') : t('employee.female'),
         sortable: true
     },
     { name: 'actions', align: 'right' as const, label: t('common.actions'), field: () => '', sortable: false }

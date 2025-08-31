@@ -193,16 +193,7 @@ const columns = [
     align: "left" as const,
     field: 'phone',
     sortable: false
-}, {
-    name: 'role',
-    label: t('admin.columns.role'),
-    align: "center" as const,
-    field: 'role',
-
-    sortable: true
 },
-
-
 {
     name: 'actions',
     label: t('admin.columns.actions'),

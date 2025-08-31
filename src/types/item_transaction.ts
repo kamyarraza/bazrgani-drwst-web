@@ -72,6 +72,8 @@ export interface List {
     name: string;
     code?: string;
     capacity?: number;
+    branch_id?: string;
+    branch_name?: string;
   };
   payment_type: string;
   payment_type_value: string;
@@ -91,6 +93,7 @@ export interface List {
   };
   discounted_rate?: number;
   total_price: number;
+  original_total_price: number;
   discounted_price?: number;
   forgiven_price?: number; // Amount forgiven if customer doesn't pay
   old_borrowed_price?: number;
