@@ -157,6 +157,21 @@
             </slot>
           </template>
 
+          <!-- View Action Column -->
+          <template v-else-if="col.name === 'view_action'">
+            <slot name="body-cell-view_action" :props="props" :row="props.row">
+              <div class="view_action-container">
+                <q-btn flat round icon="visibility" size="sm" color="primary" class="view_action-btn"
+                  @click="handleViewActionClick(props.row)">
+                  <q-tooltip class="bg-primary text-white shadow-2" anchor="top middle" self="bottom middle"
+                  :offset="[0, 8]">
+                  View
+                  </q-tooltip>
+                </q-btn>
+              </div>
+            </slot>
+          </template>
+
           <!-- Default Column Rendering -->
           <template v-else>
             <slot name="body-cell" :props="props" :row="props.row" :col="col">
@@ -250,7 +265,7 @@ const emit = defineEmits<{
   'row-expand': [data: { row: any; expanded: boolean }];
   'update:pagination': [page: number];
   'page-change': [page: number];
-  'view-action': [];
+  'view-action': [data: { item: any; rowId: string | null }];
 }>();
 
 // Use table logic composable
@@ -294,6 +309,12 @@ function handleActionClick(row: any) {
 function handleItemClick(data: any, row?: any) {
   const currentRow = row || (selectedRowId.value ? props.rows.find((r: any) => r.id === selectedRowId.value) : null);
   emit('menu-action', { item: data.item, rowId: selectedRowId.value, row: currentRow });
+  selectedRowId.value = null;
+}
+
+function handleViewActionClick(row: any) {
+  selectedRowId.value = row.id;
+  emit('view-action', {item: row, rowId: selectedRowId.value});
   selectedRowId.value = null;
 }
 

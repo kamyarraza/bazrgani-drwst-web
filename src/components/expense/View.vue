@@ -96,7 +96,7 @@
                     </div>
                     <div class="summary-details">
                       <div class="summary-label">{{ t('expense.createdAt', 'Created At') }}</div>
-                      <div class="summary-value date-value">{{ formatDate(expense.created_at) }}</div>
+                      <div class="summary-value date-value">{{ expense.paid_at }}</div>
                     </div>
                   </div>
 
@@ -205,8 +205,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { storeToRefs } from 'pinia';
-import { useMeStore } from 'src/stores/meStore';
+// import { storeToRefs } from 'pinia';
+// import { useMeStore } from 'src/stores/meStore';
 import type { Expense } from 'src/types/expense';
 
 // Props
@@ -225,8 +225,8 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const { t } = useI18n();
-const meStore = useMeStore();
-const { me } = storeToRefs(meStore);
+// const meStore = useMeStore();
+// const { me } = storeToRefs(meStore);
 
 // Local model for v-model
 const localModel = computed({
@@ -235,7 +235,7 @@ const localModel = computed({
 });
 
 // Check if user can edit expenses (only employees)
-const canEdit = computed(() => me.value?.type === 'employee');
+// const canEdit = computed(() => me.value?.type === 'employee');
 
 // Utility functions
 function formatAmountWithColor(amount?: number, fractionDigits = 2): string {
@@ -247,17 +247,6 @@ function formatAmountWithColor(amount?: number, fractionDigits = 2): string {
 function getAmountColorClass(amount?: number): string {
   if (!amount && amount !== 0) return '';
   return amount < 0 ? 'amount-negative' : 'amount-positive';
-}
-
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return 'N/A';
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
 }
 
 function getPaymentMethodColor(method: string): string {
@@ -273,12 +262,12 @@ function getPaymentMethodColor(method: string): string {
   return colorMap[method?.toLowerCase()] || 'primary';
 }
 
-function handleEdit() {
-  if (props.expense) {
-    emit('edit', props.expense);
-    localModel.value = false;
-  }
-}
+// function handleEdit() {
+//   if (props.expense) {
+//     emit('edit', props.expense);
+//     localModel.value = false;
+//   }
+// }
 </script>
 
 <style scoped>

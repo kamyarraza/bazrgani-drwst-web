@@ -133,6 +133,12 @@ const isSearching = computed(() => filters.value.query.length > 0);
 // Table columns
 const columns = computed(() => [
   {
+    name: 'reference_number',
+    label: t('expense.referenceNumber', 'Reference Number'),
+    field: 'reference_number',
+    sortable: true,
+    align: 'left' as const
+  },{
     name: 'title',
     label: t('expense.title'),
     field: 'title',
@@ -285,8 +291,8 @@ function loadExpenses(page: number) {
   void expenseStore.fetchExpenses(page, selectedBranchId.value);
 }
 
-function handleAction(action: string, expense: Expense) {
-  switch (action) {
+function handleAction(action: any, expense: Expense) {
+  switch (action.item.value) {
     case 'view':
       selectedExpense.value = expense;
       showViewModal.value = true;
@@ -296,8 +302,8 @@ function handleAction(action: string, expense: Expense) {
   }
 }
 
-function handleViewAction(expense: Expense) {
-  selectedExpense.value = expense;
+function handleViewAction(data: any) {
+  selectedExpense.value = data.item as Expense;
   showViewModal.value = true;
 }
 

@@ -1629,6 +1629,7 @@ export default {
       ipAddress: "ناونیشانی IP",
       timestamp: "کات",
       actions: "کردارەکان",
+      quickView: "بینینی خێرا",
     },
   },
   itemTransaction: {

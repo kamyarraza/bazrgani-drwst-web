@@ -29,7 +29,7 @@
               <div class="summary-item">
                 <q-icon name="person" class="summary-icon text-primary" />
                 <div>
-                  <div class="summary-label">{{ t('logs.user') }}</div>
+                  <div class="summary-label">{{ t('logs.columns.user') }}</div>
                   <div class="summary-value">{{ logData.user?.name || t('common.notSet') }}</div>
                   <div class="summary-subtitle">{{ logData.user?.username || '' }}</div>
                 </div>
@@ -39,7 +39,7 @@
               <div class="summary-item">
                 <q-icon name="event" class="summary-icon text-blue" />
                 <div>
-                  <div class="summary-label">{{ t('logs.action') }}</div>
+                  <div class="summary-label">{{ t('logs.columns.action') }}</div>
                   <div class="summary-value">{{ logData.title || t('common.notSet') }}</div>
                 </div>
               </div>

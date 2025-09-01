@@ -20,7 +20,7 @@
     <!-- Activity Logs Table -->
     <QtableB show-bottom :top-right="false" :hasExpandableRows="false" :columns="columns" :rows="filteredData"
       :loading="logStore.loading" :menuItems="menuItems" :pagination="pagination" @page-change="handlePageChange"
-      @menu-action="handleAction">
+      @view-action="handleViewAction">
 
     </QtableB>
 
@@ -43,7 +43,6 @@ import { ref, computed, onMounted, reactive } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 import type { AuditLogEntry } from 'src/types/log'
-import type { MenuItem } from 'src/types'
 
 // Store and composables
 const logStore = useLogStore()
@@ -136,10 +135,10 @@ const columns = computed(() => [
     sortable: true
   },
   {
-    name: 'actions',
-    label: t('logs.columns.actions', 'Actions'),
+    name: 'view_action',
+    label: t('logs.columns.quickView', 'Quick View'),
     align: 'center' as const,
-    field: 'actions',
+    field: 'view_action',
     sortable: false
   }
 ])
@@ -177,15 +176,9 @@ function handleFilterChange(_newFilters: { search?: string; entity?: string | nu
   // intentionally left blank
 }
 
-// Handle menu actions from Qtable
-function handleAction(payload: { item: MenuItem; rowId: string | number }) {
-  if (payload.item.value === 'view') {
-    const log = data.value.find(l => l.id === payload.rowId)
-    if (log) {
-      selectedLog.value = log
-      showDetailsModal.value = true
-    }
-  }
+function handleViewAction(data: any) {
+  selectedLog.value = data.item;
+  showDetailsModal.value = true;
 }
 
 

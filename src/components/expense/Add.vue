@@ -259,7 +259,7 @@ const form = ref<Expense>({
   usd_return_amount: 0,
   payee: '',
   paid_at: '',
-  payment_method: '',
+  payment_method: 'Cash',
   reference_number: ''
 });
 
@@ -273,7 +273,7 @@ async function onSubmit() {
     // Convert date to ISO string and map field names for API
     const formData = {
       ...form.value,
-      paid_at: new Date(form.value.paid_at + 'T00:00:00').toISOString(),
+      paid_at: form.value.paid_at,
       // Map form fields to API field names
       iqd_price: form.value.expensed_iqd,
       usd_price: form.value.expensed_usd
