@@ -86,11 +86,11 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     }
   };
 
-  const fetchTransactionList = async (transactionType: 'purchase' | 'sell' = 'purchase', page: number = 1) => {
+  const fetchTransactionList = async (transactionType: 'purchase' | 'sell' = 'purchase', page: number = 1, query?: string) => {
     try {
       loading.value = true;
       const endpoint = endPoints.transaction.list(transactionType);
-      const response = await api.get<ApiResponse<List[]>>(`${endpoint}?page=${page}&relations=customer,warehouse,items&paginate=true`);
+      const response = await api.get<ApiResponse<List[]>>(`${endpoint}?page=${page}&relations=customer,warehouse,items&paginate=true${query ? `&query=${query}` : ''}`);
 
       if (response.data.status === 'success') {
         list.value = response.data.data;

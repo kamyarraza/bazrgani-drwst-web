@@ -328,26 +328,28 @@ const menuItems = computed(() => {
 
 // Filtered data based on search only
 const filteredData = computed(() => {
-  return data.value.filter(transaction => {
-    // Search filter - check customer name and transaction note
-    const searchMatch = !filters.value.search ||
-      (transaction.customer?.name && transaction.customer.name.toLowerCase().includes(filters.value.search.toLowerCase())) ||
-      transaction.note.toLowerCase().includes(filters.value.search.toLowerCase())
-
-    return searchMatch
-  })
+  return data.value;
 })
 
 // Reset search filter
-function resetFilters() {
+async function resetFilters() {
   filters.value = {
     search: ''
   }
+
+  // reload the fresh items
+  await loadTransactions();
 }
 
 // Handle search input changes
-function handleSearchChange(_searchValue: string | number | null) {
-  // The filtering is handled automatically by the computed filteredData property
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+//...
+function handleSearchChange(_searchValue: any) {
+  if (searchTimeout) clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(() => {
+    void loadTransactions(_searchValue);
+  }, 750);
 }
 
 const columns = computed(() => {
@@ -607,7 +609,7 @@ function removeNote(id: number) {
 // Handle payment success - refresh data
 const handlePaymentSuccess = async (payload?: any) => {
   // Refresh transaction list after successful payment
-  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
+  await loadTransactions();
 
   // Reset selected transaction data
   selectedTransactionData.value = null;
@@ -622,7 +624,7 @@ const handlePaymentSuccess = async (payload?: any) => {
 // Handle refund success - refresh data
 const handleRefundSuccess = async () => {
   // Refresh transaction list after successful refund
-  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
+  await loadTransactions();
 
   // Reset selected refund transaction data
   selectedRefundTransaction.value = null;
@@ -641,7 +643,7 @@ const handleFreedingTransaction = async (transactionId: string | number) => {
     })
 
     // Refresh the transaction list
-    await transactionStore.fetchTransactionList(transactionType.value, currentPage.value)
+    await loadTransactions();
   } catch {
     $q.notify({
       type: 'negative',
@@ -713,7 +715,7 @@ watch(showEditModal, (isOpen) => {
 async function handlePageChange(page: number) {
   currentPage.value = page;
   // Use current transaction type for pagination
-  await transactionStore.fetchTransactionList(transactionType.value, page);
+  await loadTransactions();
 
   // Scroll to top when changing pages for better UX
   window.scrollTo({
@@ -723,19 +725,20 @@ async function handlePageChange(page: number) {
 }
 
 // Handle transaction type change
-const handleTypeChange = async (newType: 'purchase' | 'sell') => {
+const handleTypeChange = async () => {
   currentPage.value = 1;
-  await transactionStore.fetchTransactionList(newType, 1);
+  // await loadTransactions();
+  await resetFilters();
 };
 
 // Handle transaction added
 const handleTransactionAdded = async () => {
-  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
+  await loadTransactions();
 };
 
 // Handle transaction updated
 const handleTransactionUpdated = async () => {
-  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value);
+  await loadTransactions();
 };
 
 // Print prevention function
@@ -763,10 +766,15 @@ const handlePrintShortcut = (event: KeyboardEvent) => {
   }
 };
 
+// Load transactions
+async function loadTransactions(query?: string) {
+  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value, query);
+}
+
 // hooks
 onMounted(async () => {
   // Fetch transaction data when the component is mounted
-  await transactionStore.fetchTransactionList(transactionType.value);
+  await loadTransactions();
 
   // Set current page from pagination if available
   if (transactionStore.pagination) {

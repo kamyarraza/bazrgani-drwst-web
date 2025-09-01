@@ -8,6 +8,7 @@ import { formatNumber } from 'src/composables/useFormat';
 
 interface SelectedItem {
   item: any;
+  last_unit_cost?: number; // To show previous cost price if available
   unit_cost: number;
   solo_unit_cost: number;
   bulk_unit_cost: number;
@@ -200,6 +201,7 @@ function selectItem(item) {
 
   selectedItems.value.push({
     item,
+    last_unit_cost: Number(item.last_unit_cost) || 0, // Store previous cost price if available
     unit_cost: defaultPrice, // This will be the editable selling price
     solo_unit_cost: Number(item.solo_unit_price) || 0, // Reference only
     bulk_unit_cost: Number(item.bulk_unit_price) || 0, // Reference only
@@ -427,7 +429,8 @@ defineExpose({
                     <!-- Total Quantity (always show) -->
                     <div class="quantity-badge total-stock">
                       <q-icon name="apps" size="14px" />
-                      <span>{{ t('transactionAlpha.total') }}: {{ formatNumber(item.quantity || 0) }} {{ t('transactionAlpha.pcs')
+                      <span>{{ t('transactionAlpha.total') }}: {{ formatNumber(item.quantity || 0) }} {{
+                        t('transactionAlpha.pcs')
                       }}</span>
                     </div>
 
@@ -575,18 +578,44 @@ defineExpose({
 
                     <!-- Reference price badges (solo and bulk) -->
                     <div class="reference-badges q-mt-sm">
-                      <q-badge v-if="selected.unit_cost > 0" color="red-4" text-color="white" class="q-mr-sm">
-                        {{ t('transactionAlpha.unitCost') }}: ${{ Number(selected.unit_cost || 0).toFixed(2)
-                        }}
-                      </q-badge>
-                      <q-badge v-if="selected.solo_unit_cost > 0" color="blue-4" text-color="white" class="q-mr-sm">
-                        {{ t('transactionAlpha.soloUnitPrice') }}: ${{ Number(selected.solo_unit_cost || 0).toFixed(2)
-                        }}
-                      </q-badge>
-                      <q-badge v-if="selected.bulk_unit_cost > 0" color="purple-4" text-color="white">
-                        {{ t('transactionAlpha.bulkUnitPrice') }}: ${{ Number(selected.bulk_unit_cost || 0).toFixed(2)
-                        }}
-                      </q-badge>
+                        <table style="width: 100%; text-align: center;">
+                        <tr>
+                          <td style="text-align: center; padding: 2px;">
+                          <q-badge v-if="(selected.last_unit_cost || 0) > 0" color="orange-6" text-color="white"
+                            class="q-mr-sm">
+                            {{ t('transactionAlpha.lastUnitCost') }}: ${{ Number(selected.last_unit_cost ||
+                            0).toFixed(2)
+                            }}
+                          </q-badge>
+                          </td>
+
+                          <td style="text-align: center; padding: 2px;">
+                          <q-badge v-if="selected.unit_cost > 0" color="red-4" text-color="white" class="q-mr-sm">
+                            {{ t('transactionAlpha.unitCost') }}: ${{ Number(selected.unit_cost || 0).toFixed(2)
+                            }}
+                          </q-badge>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td style="text-align: center; padding: 2px;">
+                          <q-badge v-if="selected.solo_unit_cost > 0" color="blue-4" text-color="white"
+                            class="q-mr-sm">
+                            {{ t('transactionAlpha.soloUnitPrice') }}: ${{ Number(selected.solo_unit_cost ||
+                            0).toFixed(2)
+                            }}
+                          </q-badge>
+                          </td>
+
+                          <td style="text-align: center; padding: 2px;">
+                          <q-badge v-if="selected.bulk_unit_cost > 0" color="purple-4" text-color="white">
+                            {{ t('transactionAlpha.bulkUnitPrice') }}: ${{ Number(selected.bulk_unit_cost ||
+                            0).toFixed(2)
+                            }}
+                          </q-badge>
+                          </td>
+                        </tr>
+                        </table>
                     </div>
 
                     <!-- Compact Total Prices Display -->
@@ -1057,23 +1086,24 @@ defineExpose({
   background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
   border-radius: 12px;
   padding: 8px 12px 12px 12px;
-  border: none;
+  border: 1px solid transparent;
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
   transition: all 0.3s ease;
-  max-width: 250px;
+  max-width: 300px;
   margin-bottom: 35px;
   /* Reduced space for side-by-side helpers */
 }
 
 .cute-price-container:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+  box-shadow: -2px 6px 12px rgba(98, 184, 101, 0.4);
+  border: 1px solid #4caf5055;
 }
 
 .cute-price-input {
   background: transparent;
   border: none;
-  max-width: 210px;
+  max-width: 288px;
 }
 
 .cute-price-input .q-field__control {

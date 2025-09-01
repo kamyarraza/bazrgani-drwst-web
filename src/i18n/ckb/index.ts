@@ -2795,6 +2795,7 @@ export default {
     packetHint: "١ پاکەت = {n} دانە",
     quantity: "ژمارە",
     totalItems: "کۆی گشتی: {n}",
+    lastUnitCost: "دوایین تێچوو",
     unitCost: "تێچووی یەکە",
     unitPrice: "نرخی یەکە",
     sellingPrice: "نرخی فرۆشتن",
