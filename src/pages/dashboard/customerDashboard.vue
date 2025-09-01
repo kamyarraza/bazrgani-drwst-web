@@ -286,11 +286,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useCustomerDashboardStore } from 'src/stores/customerDashboardStore';
-
-// Initialize i18n
-const { t } = useI18n();
 
 // Use the customer dashboard store
 const customerStore = useCustomerDashboardStore();

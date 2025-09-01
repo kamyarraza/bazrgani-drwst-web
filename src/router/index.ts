@@ -19,7 +19,7 @@ export default defineRouter(function () {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
-  Router.beforeEach((to, from) => {
+  Router.beforeEach((to, _from) => {
     if (to.path.startsWith('/auth')) {
       const notificationStore = useNotificationStore();
       try { notificationStore.stopAutoRefresh(); } catch { /* ignore */ }

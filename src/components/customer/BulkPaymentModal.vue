@@ -345,7 +345,7 @@ const handleSubmit = async () => {
         };
 
         const response = await customerStore.bulkPaymentReceive(props.customer.id, paymentData);
-        console.log('BulkPaymentModal - API Response:', response);
+        // console.log('BulkPaymentModal - API Response:', response);
 
         // Only emit success if we have a valid response (not false)
         if (response && typeof response === 'object') {
@@ -355,7 +355,7 @@ const handleSubmit = async () => {
                 position: 'top'
             });
 
-            console.log('BulkPaymentModal - Emitting success with:', response);
+            // console.log('BulkPaymentModal - Emitting success with:', response);
             emit('success', response);
             close();
         } else {

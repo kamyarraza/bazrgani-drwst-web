@@ -87,7 +87,7 @@ const form = reactive({
 
 // Sync form when modal opens or category changes
 watch(model, (newVal) => {
-    console.log('Modal state changed:', newVal, 'Category:', props.category);
+    // console.log('Modal state changed:', newVal, 'Category:', props.category);
     if (newVal && props.category) {
         populateForm(props.category)
     }
@@ -97,19 +97,19 @@ watch(model, (newVal) => {
 })
 
 watch(() => props.category, (cat) => {
-    console.log('Category prop changed:', cat);
+    // console.log('Category prop changed:', cat);
     if (model.value && cat) {
         populateForm(cat)
     }
 }, { immediate: true })
 
 function populateForm(category) {
-    console.log('Populating form with category:', category);
+    // console.log('Populating form with category:', category);
     form.id = category.id
     form.name = category.name
     // Use nullish coalescing for maximum safety
     form.description = category.description ?? ''
-    console.log('Form after population:', form);
+    // console.log('Form after population:', form);
 }
 
 function resetForm() {

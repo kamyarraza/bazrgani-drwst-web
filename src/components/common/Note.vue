@@ -117,7 +117,7 @@ function onMouseUp() {
 function handleContentChange() {
   // Update timestamp
   timestamp.value = date.formatDate(new Date(), 'HH:mm:ss')
-  console.log(currentNote.value,'wtf')
+  // console.log(currentNote.value,'wtf')
   // Update the current note content with user typed content
   currentNote.value.content = userTypedContent.value
 
@@ -205,7 +205,7 @@ async function createEmptyNote() {
   if (!showAllNotes.value && props.noteType === 'new' && !currentNote.value.id) {
     const response = await meStore.createStickyNote('')
     currentNote.value = response?.data as unknown as StickyNote
-    console.log(currentNote.value,'haere')
+    // console.log(currentNote.value,'haere')
 
   }
 }

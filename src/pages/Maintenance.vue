@@ -114,7 +114,7 @@ const startAutoStatusCheck = () => {
           console.log('Server is back online, redirecting to home');
 
         }
-      } catch (_error) {
+      } catch {
         // Server still down, continue waiting
       }
     })();
@@ -156,7 +156,7 @@ const checkStatus = async () => {
       // Still in maintenance, show message
       alert('Server is still under maintenance. Please try again later.');
     }
-  } catch (_error) {
+  } catch {
     // Network error or server still down
     alert('Server is still under maintenance. Please try again later.');
   } finally {

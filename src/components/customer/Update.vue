@@ -237,7 +237,7 @@ async function submitForm() {
     const success = await customerStore.updateCustomer(props.customer.id.toString(), payload);
     if (success) {
         // Show success notification
-        console.log(t('customer.updateSuccess'));
+        // console.log(t('customer.updateSuccess'));
 
         // Close modal
         model.value = false;

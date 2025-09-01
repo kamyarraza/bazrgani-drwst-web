@@ -56,6 +56,7 @@ export default {
 
   layout: {
     title: "بازرگانی درووست",
+    dashboard: "داشبۆرد",
     toggleSidebar: "کردنەوە/داخستنی لاتەنیشت",
     languageSelector: "زمان",
     version: "وەشانی ١.٠.٠",
@@ -676,6 +677,7 @@ export default {
       useDoubleClickForHide: "دەبڵ کلیك بەکاربهێنە بۆ شاردنەوە",
       useDoubleClickForShow: "دەبڵ کلیك بەکاربهێنە بۆ پیشاندان",
       refreshDashboard: "نوێکردنەوەی داشبۆرد",
+      comeBackLater: "تکایە دووبارە هەوڵ بدە پاش کەمێکی تر",
 
       recentExpenses: "کۆتا خەرجییەکان",
       noExpenses: "هیچ خەرجییەك تۆمار نەکراوە هێشتا",

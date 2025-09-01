@@ -421,7 +421,7 @@ function handleStatusChange(newStatus: string) {
   try {
     // TODO: Implement updateOfferStatus method in offerStore
     // await offerStore.updateOfferStatus(props.offer.id, newStatus)
-    console.log('Status change requested:', newStatus);
+    // console.log('Status change requested:', newStatus);
     emit('statusChanged')
   } catch (error) {
     console.error('Failed to update offer status:', error)

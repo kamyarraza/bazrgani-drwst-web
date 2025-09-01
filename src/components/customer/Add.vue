@@ -207,7 +207,7 @@ async function submitForm() {
     const success = await customerStore.createCustomer(payload)
     if (success) {
         // Show success notification
-        console.log(t('customer.createSuccess'))
+        // console.log(t('customer.createSuccess'))
 
         // Close modal
         model.value = false

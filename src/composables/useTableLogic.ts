@@ -4,10 +4,10 @@ import { useQuasar } from 'quasar';
 export interface Column {
   name: string;
   label: string;
-  field: string | ((row: any) => any);
+  field: string | ((_row: any) => any);
   align?: string;
   sortable?: boolean;
-  format?: (value: any, row: any) => string;
+  format?: (_value: any, _row: any) => string;
 }
 
 export interface MenuItem {

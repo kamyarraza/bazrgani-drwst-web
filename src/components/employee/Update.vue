@@ -269,7 +269,7 @@ const submitForm = async () => {
         if (form.value.permissions && form.value.permissions.length > 0) {
             form.value.permissions.forEach((permission, index) => {
                 if (typeof permission !== 'string') return;
-                console.log('Appending permission:', permission);
+                // console.log('Appending permission:', permission);
                 formData.append(`permissions[${index}]`, permission);
             });
         } else {
@@ -324,7 +324,7 @@ watch(() => props.employee, (newValue) => {
         // Reset image upload state when switching employees
         imageFile.value = null;
         imagePreview.value = null;
-        console.log('Employee data loaded into form:', form.value.name);
+        // console.log('Employee data loaded into form:', form.value.name);
     }
 }, { immediate: true });
 

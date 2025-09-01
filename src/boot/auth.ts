@@ -16,7 +16,7 @@ export default boot(async ({ router, store }) => {
         meStore.setUserData(userData);
         profileStore.setUserData(userData);
       }
-    } catch (e) {
+    } catch {
       // ignore; axios interceptor / router guard will handle
     }
   }

@@ -58,7 +58,7 @@
 
           <q-separator class="tab-separator" />
 
-          <q-tab-panels v-model="activeTab" animated swipeable class="enhanced-tab-panels">
+          <q-tab-panels v-model="activeTab" animated  class="enhanced-tab-panels">   <!-- swipeable -->
             <!-- Branches Tab -->
             <q-tab-panel name="branches" class="enhanced-tab-panel">
               <Main @edit-branch="openUpdateModal" @toggle-active="toggleBranchActive" @view-warehouses="viewWarehouses"
