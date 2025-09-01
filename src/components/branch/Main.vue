@@ -23,6 +23,7 @@ import Qtable from 'src/components/common/Qtable.vue';
 import Filter from 'src/components/common/Filter.vue';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
+import { useRoute } from 'vue-router';
 
 const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch', 'view-cashbox', 'view-report']);
 
@@ -356,6 +357,34 @@ function handleAction(payload: { item: { value: string }, rowId: number }) {
     emit('view-report', branch);
   }
 }
+
+
+const route = useRoute()
+
+function checkRouteParam() {
+  // Only for non-admin users
+  if (!isAdmin.value) {
+    // Look for the query parameter to show cashbox
+    if (route.query['show-my-cashbox'] === 'true') {
+      // Show cashbox for employee's branch
+      handleViewCashbox();
+    }
+
+    // Show warehouses for employee's branch
+    if (route.query['show-my-warehouses'] === 'true') {
+      handleViewWarehouses(meStore.me?.branch?.id || 0);
+    }
+  }
+}
+
+// Run immediately when component is created
+checkRouteParam()
+
+// React every time route (or query params) change
+watch(
+  () => route.query,
+  () => checkRouteParam()
+)
 </script>
 
 <style lang="scss" scoped>

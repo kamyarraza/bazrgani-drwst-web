@@ -17,6 +17,11 @@
 
         <!-- Right Section -->
         <div class="header-right flex items-center q-gutter-sm">
+          <!-- Custom Route Button -->
+           <template v-if="!isAdmin">
+             <q-btn flat dense round color="orange-5" icon="receipt_long" :aria-label="t('layout.dashboard')" class="route-btn q-mr-sm"
+               @click="$router.push('/transaction-section')" />
+            </template>
           <!-- Language Selector -->
           <q-btn-dropdown flat dense icon="language" :aria-label="t('layout.languageSelector')" dropdown-icon="">
             <q-list class="language-menu">
@@ -106,6 +111,31 @@
                   </q-item-section>
                 </q-item>
 
+                <template v-if="!isAdmin">
+                  <q-separator />
+
+                  <!-- View warehouses -->
+                  <q-item clickable @click="$router.push('/branch-section?show-my-warehouses=true')" class="menu-item">
+                    <q-item-section avatar>
+                      <q-icon name="warehouse" color="brown" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('branch.warehouse', 'Warehouses') }}</q-item-label>
+                      <q-item-label caption>{{ t('branch.viewWarehouses', 'Warehouses') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+  
+                  <!-- View cashbox -->
+                  <q-item clickable @click="$router.push('/branch-section?show-my-cashbox=true')" class="menu-item">
+                    <q-item-section avatar>
+                      <q-icon name="account_balance_wallet" color="teal" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('branch.cashbox', 'Cashbox') }}</q-item-label>
+                      <q-item-label caption>{{ t('branch.viewCashbox', 'Cashbox') }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
 
                 <q-separator />
 
@@ -163,10 +193,12 @@ import { showNotify } from 'src/composables/Notify';
 import NotificationPopup from 'src/components/notfication/NotificationPopup.vue';
 import Qbtn from 'src/components/common/Qbtn.vue';
 import ErrorBoundary from 'src/components/common/ErrorBoundary.vue';
+import { useMeStore } from 'src/stores/meStore';
 
 const { t } = useI18n();
 const { setLocale } = useLocale();
 const authStore = useAuthStore();
+const meStore = useMeStore();
 const profileStore = useProfileStore();
 const notificationStore = useNotificationStore();
 const sidebarOpen = ref(false);
@@ -174,6 +206,9 @@ const isMobile = ref(false);
 const router = useRouter();
 // Get user profile from store
 const userProfile = computed(() => profileStore.userProfile);
+
+// Check if user is admin to show top-right button
+const isAdmin = computed(() => meStore.me?.type === 'admin');
 
 const checkScreenSize = () => {
   isMobile.value = window.innerWidth <= 1024;

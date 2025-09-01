@@ -17,7 +17,7 @@
       :reset-label="t('customer.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
 
     <!-- Customer Table with Enhanced UI -->
-    <QtableB show-bottom :hasExpandableRows="true" @menu-action="handleAction" :columns="columns" :rows="filteredData"
+    <QtableB show-bottom :hasExpandableRows="false" @menu-action="handleAction" :columns="columns" :rows="filteredData"
       :loading="customerStore.loading" :menuItems="getMenuItems" @top-right-action="() => showModal = !showModal"
       :top-right-title="t('customer.addNew')" :pagination="pagination" @page-change="handlePageChange">
     </QtableB>
