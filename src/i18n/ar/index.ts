@@ -1206,7 +1206,11 @@ export default {
       noSales: "لا توجد مبيعات مسجلة بعد",
 
       recentActivities: "الأنشطة الحديثة",
-      noActivities: "لا توجد أنشطة تم تنفيذها بعد"
+      noActivities: "لا توجد أنشطة تم تنفيذها بعد",
+
+      usdToIqdRate: "سعر الدولار إلى الدينار",
+      euroToUsdRate: "سعر اليورو إلى الدولار",
+      lastUpdated: "آخر تحديث",
     }
   },
   branchReport: {

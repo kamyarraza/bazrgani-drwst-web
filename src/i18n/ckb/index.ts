@@ -687,7 +687,11 @@ export default {
       noSales: "هیچ فرۆشتنێك تۆمارنەکراوە هێشتا",
 
       recentActivities: "کۆتا چالاکییەکان",
-      noActivities: "هیچ چالاکییەك ئەنجامنەدراوە هێشتا"
+      noActivities: "هیچ چالاکییەك ئەنجامنەدراوە هێشتا",
+
+      usdToIqdRate: "ڕێژەی دۆلار بۆ دینار",
+      euroToUsdRate: "ڕێژەی یۆرۆ بۆ دۆلار",
+      lastUpdated: "دوایین نوێکردنەوە",
     }
   },
   branchReport: {

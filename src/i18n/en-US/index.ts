@@ -752,7 +752,11 @@ export default {
       noSales: "No sales recorded yet",
 
       recentActivities: "Recent Activities",
-      noActivities: "No activities performed yet"
+      noActivities: "No activities performed yet",
+
+      usdToIqdRate: "USD to IQD Rate",
+      euroToUsdRate: "EUR to USD Rate",
+      lastUpdated: "Last updated",
     }
   },
   branchReport: {

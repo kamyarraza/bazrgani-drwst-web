@@ -84,7 +84,7 @@
     <!-- Cashbox Balance and session -->
     <div class="row q-col-gutter-lg q-mb-lg justify-center">
       <!-- Cashbox Balance -->
-      <div class="col-12">
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <q-card class="dashboard-card stat-card">
           <q-card-section class="text-center" @dblclick="showCashbox = !showCashbox">
 
@@ -137,6 +137,90 @@
           </q-card-section>
         </q-card>
 
+      </div>
+
+      <!-- Exchange Rate Of IQD vs USD Card -->
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <q-card class="dashboard-card exchange-rates-card">
+          <q-card-section class="text-center">
+
+            <!-- Icon -->
+            <q-icon name="currency_exchange" size="3rem" color="amber-8" />
+
+            <br><br>
+
+            <!-- Exchange Rates -->
+            <div class="exchange-rates-container">
+              <!-- USD to IQD -->
+              <div class="exchange-rate-item">
+                <div class="currency-pair">
+                  <q-avatar size="24px" class="currency-flag">
+                    <q-icon name="attach_money" color="green-7" />
+                  </q-avatar>
+                  <q-icon name="arrow_forward" size="1rem" color="grey-6" class="q-mx-xs" />
+                  <q-avatar size="24px" class="currency-flag">
+                    <q-icon name="account_balance" color="blue-7" />
+                  </q-avatar>
+                </div>
+                <div class="exchange-value text-body1 text-weight-bold text-green-7" dir="ltr">
+                  1 USD = {{ formatCurrency(exchangeRates.usd_iqd_rate, "IQD") }}
+                </div>
+                <div class="exchange-label text-caption text-grey-6">
+                  {{ t('branch.employeeDashboard.usdToIqdRate') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Last Updated -->
+            <div class="text-caption text-grey-5 q-mt-md">
+              <q-icon name="update" size="0.8rem" class="q-mr-xs" />
+              {{ t('branch.employeeDashboard.lastUpdated') }}: {{ exchangeRates.created_at || 'N/A' }}
+            </div>
+
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- Exchange Rate Of EUR vs USD Card -->
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <q-card class="dashboard-card exchange-rates-card">
+          <q-card-section class="text-center">
+
+            <!-- Icon -->
+            <q-icon name="autorenew" size="3rem" color="amber-8" />
+
+            <br><br>
+
+            <!-- Exchange Rates -->
+            <div class="exchange-rates-container">
+              <!-- EUR to USD -->
+              <div class="exchange-rate-item">
+                <div class="currency-pair">
+                  <q-avatar size="24px" class="currency-flag">
+                    <q-icon name="euro" color="blue-8" />
+                  </q-avatar>
+                  <q-icon name="arrow_forward" size="1rem" color="grey-6" class="q-mx-xs" />
+                  <q-avatar size="24px" class="currency-flag">
+                    <q-icon name="attach_money" color="green-7" />
+                  </q-avatar>
+                </div>
+                <div class="exchange-value text-body1 text-weight-bold text-blue-7" dir="ltr">
+                  1 EUR = {{ formatCurrency(exchangeRates.eur_usd_rate) }}
+                </div>
+                <div class="exchange-label text-caption text-grey-6">
+                  {{ t('branch.employeeDashboard.euroToUsdRate') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Last Updated -->
+            <div class="text-caption text-grey-5 q-mt-md">
+              <q-icon name="update" size="0.8rem" class="q-mr-xs" />
+              {{ t('branch.employeeDashboard.lastUpdated') }}: {{ exchangeRates.created_at || 'N/A' }}
+            </div>
+
+          </q-card-section>
+        </q-card>
       </div>
     </div>
 
@@ -302,6 +386,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useEmployeeDashboardStore } from 'src/stores/employeeDashboardStore';
 import { formatNumber, formatCurrency } from 'src/composables/useFormat';
+import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 
 // Initialize i18n
 const { t } = useI18n();
@@ -310,6 +395,8 @@ const showCashbox = ref(false);
 
 // Use the employee dashboard store
 const employeeStore = useEmployeeDashboardStore();
+
+const exchangeRateStore = useExchangeRateStore();
 
 // Destructure store properties
 const {
@@ -369,6 +456,8 @@ const activityLogsArray = computed(() => {
     ...activity,
   }));
 });
+
+const exchangeRates: any = computed(() => exchangeRateStore.activeRate || {});
 
 // Current date/time
 const time = ref('')
