@@ -938,7 +938,7 @@ watch(() => [props.selectedWarehouse, props.showItemsTab] as const, ([newWarehou
 // Load items for the selected warehouse
 async function loadWarehouseItems(warehouseId: any, page: number = 1, query?: string, categoryId?: any) {
   try {
-    await warehouseStore.fetchWarehouseItems(warehouseId, page, query, categoryId);
+    await warehouseStore.fetchWarehouseItems(warehouseId, page, query, categoryId, false);
   } catch (error) {
     console.error('Error loading warehouse items:', error);
   }

@@ -208,7 +208,8 @@ export const useWarehouseStore = defineStore("warehouse", () => {
     warehouseId: number,
     page = 1,
     query?: string,
-    category_id?: number
+    category_id?: number,
+    withArchived = false
   ) {
     loading.value = true;
     error.value = null;
@@ -223,6 +224,10 @@ export const useWarehouseStore = defineStore("warehouse", () => {
 
       if (category_id) {
         url += `&category_id=${category_id}`;
+      }
+
+      if (withArchived) {
+        url += `&include_archived=1`;
       }
 
       const { data } = await api.get<ApiResponse<any[]>>(url);
