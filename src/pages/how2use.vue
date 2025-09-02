@@ -10,7 +10,7 @@
         <div class="q-gutter-y-md" style="max-width: 768px; width: 100%">
 
             <!-- Step 1 -->
-            <q-card v-for="content in contents" flat bordered class="q-pa-md card-container">
+            <q-card v-for="(content, index) in contents" :key="index" flat bordered class="q-pa-md card-container">
                 <div class="row items-center no-wrap box-card">
                     <q-icon :name="content.icon" :color="content.iconColor" size="md" class="q-mr-md" />
                     <div>

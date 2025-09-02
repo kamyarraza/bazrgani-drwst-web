@@ -92,6 +92,7 @@ export const endPoints = {
     details: (itemId: string | number) => `/items/${itemId}`,
     update: (itemId: string | number) => `/items/${itemId}`,
     delete: (itemId: string | number) => `/items/${itemId}`,
+    archive: (itemId: string | number) => `/items/${itemId}/archive`,
   },
   branch: {
     list: "/branches",

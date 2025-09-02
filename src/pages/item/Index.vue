@@ -44,6 +44,13 @@
 
         <!-- Item Details Modal -->
         <ItemDetailsModal v-model="showDetailsModal" :item-data="itemToView" />
+
+        <!-- Archive Modal -->
+        <ArchiveModal 
+          v-model="showArchiveModal" 
+          :item="itemToArchive" 
+          @archived="handleItemArchived" 
+        />
     </q-page>
 </template>
 
@@ -53,6 +60,7 @@ import Header from 'src/components/common/Header.vue'
 import Add from 'src/components/item/Add.vue'
 import Update from 'src/components/item/Update.vue'
 import ItemDetailsModal from 'src/components/item/ItemDetailsModal.vue'
+import ArchiveModal from 'src/components/item/ArchiveModal.vue'
 import { useItemStore } from 'src/stores/itemStore'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import type { MenuItem } from 'src/types'
@@ -72,8 +80,10 @@ const currentPage = ref(1)
 const showModal = ref(false)
 const showUpdateModal = ref(false)
 const showDetailsModal = ref(false)
+const showArchiveModal = ref(false)
 const itemToUpdate = ref<Product>()
 const itemToView = ref<Product | null>(null)
+const itemToArchive = ref<Product | null>(null)
 
 // Filter states
 const filters = ref<FilterState>({
@@ -139,6 +149,7 @@ const categoryOptions = computed(() => {
 const menuItems = [
     { label: t('item.update'), icon: 'edit', value: 'update' },
     { label: t('item.details'), icon: 'visibility', value: 'view' },
+    { label: t('item.archive'), icon: 'archive', value: 'archive' },
     // { label: t('item.delete'), icon: 'delete', value: 'delete' }
 ]
 
@@ -319,7 +330,25 @@ const handleAction = (payload: { item: MenuItem; rowId: number }) => {
             itemToView.value = selectedItem(payload.rowId) || null
             showDetailsModal.value = true
             break
+
+        case 'archive':
+            itemToArchive.value = selectedItem(payload.rowId) || null
+            showArchiveModal.value = true
+            break
     }
+}
+
+// Handle successful item archiving
+async function handleItemArchived() {
+    // Refresh the items list to reflect the archived item is no longer visible
+    if (isSearching.value) {
+        await handleSearch()
+    } else {
+        await itemStore.fetchItemsPaginated(currentPage.value)
+    }
+
+    // Close the archive modal
+    showArchiveModal.value = false
 }
 
 // Fetch data when component is mounted

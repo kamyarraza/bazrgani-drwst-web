@@ -244,6 +244,42 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
+  async function archiveItem(itemId: number | string) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data } = await api.put<GenericApiResponse<null>>(
+        endPoints.item.archive(itemId)
+      );
+
+      // Remove the item from the local array since it's archived
+      items.value = items.value.filter((item) => item.id !== Number(itemId));
+
+      showNotify({
+        type: "positive",
+        message: data?.message || "Item archived successfully",
+        position: "top",
+        duration: 3000,
+      });
+
+      return true;
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to archive item";
+      error.value = errorMessage;
+      showNotify({
+        type: "negative",
+        message: error.value,
+        position: "top",
+        duration: 3000,
+      });
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function fetchItemsByWarehouse(
     warehouseId: number | string,
     categoryId?: number | null,
@@ -369,6 +405,7 @@ export const useItemStore = defineStore("item", () => {
     getItemDetails,
     updateItem,
     deleteItem,
+    archiveItem,
     fetchItemsByWarehouse,
     searchItemsByWarehouse,
   };
