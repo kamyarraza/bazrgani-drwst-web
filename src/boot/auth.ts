@@ -39,6 +39,7 @@ export default boot(async ({ router, store }) => {
       "profile",
       "logs-section",
       "blum-section",
+      "how-to-use",
     ],
     accountant: [],
     employee: [
@@ -55,6 +56,7 @@ export default boot(async ({ router, store }) => {
       "profile",
       "blum-section",
       "customer-section",
+      "how-to-use",
     ],
     customer: ["transaction-section", "dashboard", "offer-section"],
   };

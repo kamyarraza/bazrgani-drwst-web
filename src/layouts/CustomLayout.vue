@@ -139,6 +139,19 @@
 
                 <q-separator />
 
+                <!-- How to use -->
+                <q-item clickable @click="$router.push('/how-to-use')" class="menu-item">
+                  <q-item-section avatar>
+                    <q-icon name="help_outline" color="orange" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t('how2use.title') }}</q-item-label>
+                    <q-item-label caption>{{ t('how2use.subtitle') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-separator />
+
                 <!-- Logout -->
                 <q-item clickable @click="handleLogout" class="menu-item logout-item">
                   <q-item-section avatar>

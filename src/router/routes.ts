@@ -99,6 +99,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import("src/pages/profile/index.vue"),
       },
       {
+        path: "how-to-use",
+        component: () => import("src/pages/how2use.vue"),
+      },
+      {
         path: "logs-section",
         component: () => import("src/pages/logs/index.vue"),
       },
