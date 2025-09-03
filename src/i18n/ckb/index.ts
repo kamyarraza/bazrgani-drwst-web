@@ -31,6 +31,7 @@ export default {
     itemTransaction: "مامەڵەی کاڵا",
     system: "سیستەم",
     activityLog: "تۆماری چالاکیەکان",
+    pendingUpdates: "داواکاری نوێکردنەوەکان",
     notifications: "ناردنی ئاگادارکردنەوە", // Admin notification sender
     people: "خەڵک",
     accountant: "ژمێریار",
@@ -3149,5 +3150,68 @@ export default {
   how2use: {
     title: "چۆن بەکاریبهێنم؟",
     subtitle: "ڕێنمایی بەکارهێنەر بۆ بەکارهێنانی سیستەمەکە",
-  }
+  },
+  pendingUpdate: {
+    dashboardTitle: "بەڕێوەبردنی داواکاری نوێکردنەوەکان",
+    managingPendingUpdates: "پێداچوونەوە و بەڕێوەبردنی داواکاری نوێکردنەوەی فەرمانبەران",
+    id: "ناسنامە",
+    requestedBy: "داواکراوە لەلایەن",
+    entityType: "جۆری کیان",
+    updatableType: "جۆر",
+    updatableId: "ناسنامەی کاڵا",
+    status: "دۆخ",
+    requestedAt: "کاتی داواکردن",
+    actions: "کردارەکان",
+    
+    // Status translations
+    "status.pending": "چاوەڕوان",
+    "status.approved": "پەسەندکراو", 
+    "status.rejected": "ڕەتکراوە",
+    pending: "چاوەڕوان",
+    approved: "پەسەندکراو",
+    rejected: "ڕەتکراوە",
+    
+    // Filter functionality
+    filterByStatus: "فلتەرکردن بەپێی دۆخ",
+    clearFilters: "پاککردنەوەی فلتەرەکان",
+    
+    // Actions
+    viewDetails: "بینینی وردەکاریەکان",
+    approve: "پەسەندکردن",
+    reject: "ڕەتکردنەوە",
+    
+    // Details Modal
+    updateRequestDetails: "وردەکاریەکانی داواکاری نوێکردنەوە",
+    viewRequestInformation: "بینینی زانیاری وردی ئەم داواکاریە نوێکردنەوەیە",
+    basicInformation: "زانیاری سەرەتایی",
+    requestId: "ناسنامەی داواکاری",
+    requestInformation: "زانیاری داواکاری",
+    changesCount: "گۆڕانکاریەکان",
+    fieldChanges: "گۆڕانکاری خانەکان",
+    requestedChanges: "گۆڕانکاری داواکراوەکان",
+    noChangesRequested: "هیچ گۆڕانکاریەک داوا نەکراوە",
+    
+    // Approve Modal
+    approveRequest: "پەسەندکردنی داواکاری نوێکردنەوە",
+    confirmApprovalAction: "دڵنیابوونەوە کە دەتەوێت ئەم داواکاری نوێکردنەوەیە پەسەند بکەیت",
+    approvalConfirmation: "دڵنیابوونەوەی پەسەندکردن",
+    approvalWarning: "گرنگ - تکایە بە وردی بیخوێنەوە:",
+    approvalWarning1: "گۆڕانکاری داواکراوەکان دەستبەجێ جێبەجێ دەکرێن لە سیستەمەکەدا",
+    approvalWarning2: "ئەم کردارە ناتوانرێت بگەڕێندرێتەوە کاتێک پەسندت کرد",
+    approvalWarning3: "فەرمانبەری داواکار ئاگادار دەکرێتەوە لە پەسەندکردنەکە",
+    approveNow: "پەسەندکردنی داواکاری",
+    
+    // Reject Modal
+    rejectRequest: "ڕەتکردنەوەی داواکاری نوێکردنەوە", 
+    provideRejectionReason: "تکایە هۆکارێک بۆ ڕەتکردنەوەی ئەم داواکاریە پێشکەش بکە",
+    rejectionReason: "هۆکاری ڕەتکردنەوە",
+    rejectionReasonLabel: "بۆچی ئەم داواکاریە ڕەت دەکەیتەوە؟",
+    rejectionReasonPlaceholder: "تکایە ڕوونی بکەرەوە کە بۆچی ئەم داواکاری نوێکردنەوەیە ڕەت دەکرێتەوە. ئەمە یارمەتی فەرمانبەرەکە دەدات تێبگات چی پێویستی بە چاکسازیەوە هەیە.",
+    rejectionReasonRequired: "هۆکاری ڕەتکردنەوە پێویستە",
+    rejectionWarning: "گرنگ - تکایە بە وردی بیخوێنەوە:",
+    rejectionWarning1: "گۆڕانکارییە داواکراوەکان جێبەجێ ناکرێن لە سیستەمەکەدا",
+    rejectionWarning2: "فەرمانبەری داواکار ئاگادار دەکرێتەوە لەگەڵ هۆکاری ڕەتکردنەوەکەت",
+    rejectionWarning3: "فەرمانبەرەکە دەتوانێت داواکاریەکی نوێ بنێرێت",
+    rejectNow: "ڕەتکردنەوەی داواکاری",
+  },
 };

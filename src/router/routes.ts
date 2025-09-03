@@ -34,6 +34,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import("src/pages/admin/TestNotifications.vue"),
       },
       {
+        path: "pending-update-section",
+        component: () => import("src/pages/pending_update/Index.vue"),
+      },
+      {
         path: "accountant-section",
         component: () => import("src/pages/accountant/Index.vue"),
       },

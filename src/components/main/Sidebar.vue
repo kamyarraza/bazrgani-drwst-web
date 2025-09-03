@@ -276,6 +276,7 @@ const allNavigationSections = [
     links: [
       { path: '/logs-section', label: t('sidebar.activityLog'), icon: 'history', permission: 'logs-section' },
       { path: '/admin-notifications', label: t('sidebar.notifications'), icon: 'notifications_active', permission: 'admin-section' },
+      { path: '/pending-update-section', label: t('sidebar.pendingUpdates'), icon: 'pending_actions', permission: 'admin-section' },
     ]
   }
 ];

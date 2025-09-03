@@ -30,6 +30,7 @@ export default {
     itemTransaction: "معاملة منتج",
     system: "النظام",
     activityLog: "سجل النشاط",
+    pendingUpdates: "الطلبات المعلقة",
     notifications: "إرسال الإشعارات", // Admin notification sender
     people: "الأشخاص",
     accountant: "المحاسب",
@@ -2399,5 +2400,68 @@ export default {
     integerRequired: "يجب أن يكون رقماً صحيحاً",
     minLength: "يجب أن يكون {min} أحرف على الأقل",
     passwordMatch: "كلمات المرور يجب أن تتطابق",
+  },
+  pendingUpdate: {
+    dashboardTitle: "إدارة الطلبات المعلقة",
+    managingPendingUpdates: "مراجعة وإدارة طلبات التحديث من الموظفين",
+    id: "الرقم التعريفي",
+    requestedBy: "طلب من قبل",
+    entityType: "نوع الكيان",
+    updatableType: "النوع",
+    updatableId: "رقم العنصر",
+    status: "الحالة",
+    requestedAt: "تاريخ الطلب",
+    actions: "الإجراءات",
+    
+    // Status translations
+    "status.pending": "معلق",
+    "status.approved": "موافق عليه", 
+    "status.rejected": "مرفوض",
+    pending: "معلق",
+    approved: "موافق عليه",
+    rejected: "مرفوض",
+    
+    // Filter functionality
+    filterByStatus: "تصفية حسب الحالة",
+    clearFilters: "مسح المرشحات",
+    
+    // Actions
+    viewDetails: "عرض التفاصيل",
+    approve: "موافقة",
+    reject: "رفض",
+    
+    // Details Modal
+    updateRequestDetails: "تفاصيل طلب التحديث",
+    viewRequestInformation: "عرض معلومات مفصلة حول طلب التحديث هذا",
+    basicInformation: "المعلومات الأساسية",
+    requestId: "رقم الطلب",
+    requestInformation: "معلومات الطلب",
+    changesCount: "التغييرات",
+    fieldChanges: "تغييرات الحقول",
+    requestedChanges: "التغييرات المطلوبة",
+    noChangesRequested: "لم يتم طلب أي تغييرات",
+    
+    // Approve Modal
+    approveRequest: "الموافقة على طلب التحديث",
+    confirmApprovalAction: "تأكيد أنك تريد الموافقة على طلب التحديث هذا",
+    approvalConfirmation: "تأكيد الموافقة",
+    approvalWarning: "مهم - يرجى القراءة بعناية:",
+    approvalWarning1: "سيتم تطبيق التغييرات المطلوبة فوراً على النظام",
+    approvalWarning2: "لا يمكن التراجع عن هذا الإجراء بمجرد التأكيد",
+    approvalWarning3: "سيتم إشعار الموظف المطالب بالموافقة",
+    approveNow: "الموافقة على الطلب",
+    
+    // Reject Modal
+    rejectRequest: "رفض طلب التحديث", 
+    provideRejectionReason: "يرجى تقديم سبب لرفض هذا الطلب",
+    rejectionReason: "سبب الرفض",
+    rejectionReasonLabel: "لماذا ترفض هذا الطلب؟",
+    rejectionReasonPlaceholder: "يرجى شرح سبب رفض طلب التحديث هذا. سيساعد هذا الموظف على فهم ما يحتاج إلى تصحيحه.",
+    rejectionReasonRequired: "سبب الرفض مطلوب",
+    rejectionWarning: "مهم - يرجى القراءة بعناية:",
+    rejectionWarning1: "لن يتم تطبيق التغييرات المطلوبة على النظام",
+    rejectionWarning2: "سيتم إشعار الموظف المطالب مع سبب الرفض",
+    rejectionWarning3: "يمكن للموظف تقديم طلب جديد مع التصحيحات",
+    rejectNow: "رفض الطلب",
   },
 };

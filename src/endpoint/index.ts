@@ -242,4 +242,11 @@ export const endPoints = {
     update: (id: string | number) => `/expenses/expenses/${id}`,
     delete: (id: string | number) => `/expenses/expenses/${id}`,
   },
+
+  pendingUpdate: {
+    list: "/pending-updates",
+    details: (pendingUpdateId: string | number) => `/pending-updates/${pendingUpdateId}`,
+    approve: (pendingUpdateId: string | number) => `/pending-updates/${pendingUpdateId}/approve`,
+    reject: (pendingUpdateId: string | number) => `/pending-updates/${pendingUpdateId}/reject`,
+  },
 };

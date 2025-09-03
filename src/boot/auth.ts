@@ -40,6 +40,7 @@ export default boot(async ({ router, store }) => {
       "logs-section",
       "blum-section",
       "how-to-use",
+      "pending-update-section",
     ],
     accountant: [],
     employee: [
