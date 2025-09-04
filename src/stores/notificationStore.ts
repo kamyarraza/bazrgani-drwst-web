@@ -4,6 +4,7 @@ import { api } from 'boot/axios';
 import { endPoints } from 'src/endpoint';
 import type { Notification, ApiResponse } from 'src/types/notfication';
 import { Notify } from 'quasar';
+import { useRouter } from 'vue-router';
 
 export const useNotificationStore = defineStore('notification', () => {
   const isOpenNotfication = ref(false);
@@ -20,6 +21,8 @@ export const useNotificationStore = defineStore('notification', () => {
   // Track previous notification count for sound alerts
   const previousUnreadCount = ref(0);
 
+  const router = useRouter();
+
   // Basic audio: no preload/permission gymnastics
   const playNotificationSound = async () => {
     try {
@@ -35,7 +38,7 @@ export const useNotificationStore = defineStore('notification', () => {
   const showVisualNotification = () => {
     Notify.create({
       type: 'info',
-      message: '🔔 New notification received',
+      message: '🔔 ئاگادارییەکی نوێ گەیشت',
       position: 'top-right',
       timeout: 3000,
       color: 'primary',
@@ -45,6 +48,22 @@ export const useNotificationStore = defineStore('notification', () => {
       ]
     });
   };
+
+  // Show a notification
+const showBrowserNotification = (title, options:any = {}) => {
+  if ("Notification" in window && Notification.permission === "granted") {
+    const notification = new Notification(title, {
+      body: options.body || "",
+      icon: options.icon || "https://cdn-icons-png.flaticon.com/512/11820/11820177.png", // put your icon path
+    })
+
+    // Optional: Handle click
+    notification.onclick = async () => {
+      window.focus()
+      await router.push(options.url) // Navigate to item section page
+    }
+  }
+}
 
   // Computed properties
   const unreadNotifications = computed(() =>
@@ -65,11 +84,16 @@ export const useNotificationStore = defineStore('notification', () => {
     loading.value = true;
     error.value = null;
 
-    const wasFirstLoad = notifications.value.length === 0;
+    // const wasFirstLoad = notifications.value.length === 0;
 
     try {
+      // request the permission on page load
+      await Notification.requestPermission();
+
+      // Fetch notifications
       const response = await api.get<ApiResponse<Notification[]>>(endPoints.notification.getUnreads);
 
+      // Handle API response
       if (response.data.status === 'success') {
         const sorted = response.data.data.sort((a, b) => {
           if (a.read !== b.read) return a.read ? 1 : -1; // unread first
@@ -77,9 +101,18 @@ export const useNotificationStore = defineStore('notification', () => {
         });
 
         const currentUnreadCount = sorted.filter(n => !n.read).length;
-        if (currentUnreadCount > previousUnreadCount.value && !wasFirstLoad) {
+        const currentUnread:any = sorted.filter(n => !n.read);
+
+        if (currentUnreadCount > previousUnreadCount.value) {
+          // New unread notifications arrived
           void playNotificationSound();
+          // Show browser notification for the latest unread
+          showBrowserNotification(currentUnread[0].title, {
+            body: currentUnread[0].message.slice(0, 30)+"...",
+            url: currentUnread[0].action
+          });
         }
+        
         previousUnreadCount.value = currentUnreadCount;
 
         notifications.value = sorted;
@@ -114,7 +147,7 @@ export const useNotificationStore = defineStore('notification', () => {
       if (response.data.status === 'success') {
         const index = notifications.value.findIndex(n => n.id === notificationId);
         if (index !== -1 && notifications.value[index]) notifications.value[index].read = true;
-        Notify.create({ type: 'positive', message: 'Notification marked as read' });
+        Notify.create({ type: 'positive', message: 'ئاگادارییەکە خوێندرایەوە' });
       } else {
         Notify.create({ type: 'negative', message: response.data.message || 'Failed to mark notification as read' });
       }

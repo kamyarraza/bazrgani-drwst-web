@@ -190,7 +190,7 @@ export const useItemStore = defineStore("item", () => {
       });
 
       // Refresh the item list to get updated data
-      await fetchItems();
+      // await fetchItems();
       return true;
     } catch (err: unknown) {
       const errorMessage =

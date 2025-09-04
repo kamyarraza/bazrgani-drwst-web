@@ -137,7 +137,7 @@ import Qbtn from 'src/components/common/Qbtn.vue'
 import QModalForm from 'src/components/common/QModalForm.vue'
 import { useItemStore } from 'src/stores/itemStore'
 import { useItemCategoryStore } from 'src/stores/itemCategoryStore'
-import { showNotify } from 'src/composables/Notify'
+// import { showNotify } from 'src/composables/Notify'
 import type { UpdateItemPayload, Product, ItemFormData } from 'src/types/item'
 
 const emit = defineEmits(['item-updated'])
@@ -251,10 +251,10 @@ async function submitForm() {
     if (success) {
       model.value = false;
       emit('item-updated');
-      showNotify({
-        message: t('item.updateSuccess'),
-        type: 'positive'
-      });
+      // showNotify({
+      //   message: t('item.updateSuccess'),
+      //   type: 'positive'
+      // });
       // Clear image after successful update
       imageFile.value = null;
     }

@@ -46,11 +46,7 @@
         <ItemDetailsModal v-model="showDetailsModal" :item-data="itemToView" />
 
         <!-- Archive Modal -->
-        <ArchiveModal 
-          v-model="showArchiveModal" 
-          :item="itemToArchive" 
-          @archived="handleItemArchived" 
-        />
+        <ArchiveModal v-model="showArchiveModal" :item="itemToArchive" @archived="handleItemArchived" />
     </q-page>
 </template>
 
@@ -227,77 +223,77 @@ function clearSearch() {
 }
 
 const columns = [
-//     {
-//     name: 'image',
-//     label: t('item.image', 'Image'),
-//     align: "center" as const,
-//     field: 'image',
-//     sortable: false
-// },
-{
-    name: 'name',
-    label: t('item.name', 'Name'),
-    align: "left" as const,
-    field: 'name',
-    sortable: true
-},
-{
-    name: 'sku',
-    label: t('item.sku', 'SKU'),
-    align: "left" as const,
-    field: 'sku',
-    sortable: true
-},
-{
-    name: 'category',
-    label: t('item.category', 'Category'),
-    align: 'center' as const,
-    field: (row: Record<string, unknown>) =>
-        (row.category as { name?: string })?.name || '',
-    sortable: true
-},
+    //     {
+    //     name: 'image',
+    //     label: t('item.image', 'Image'),
+    //     align: "center" as const,
+    //     field: 'image',
+    //     sortable: false
+    // },
+    {
+        name: 'name',
+        label: t('item.name', 'Name'),
+        align: "left" as const,
+        field: 'name',
+        sortable: true
+    },
+    {
+        name: 'sku',
+        label: t('item.sku', 'SKU'),
+        align: "left" as const,
+        field: 'sku',
+        sortable: true
+    },
+    {
+        name: 'category',
+        label: t('item.category', 'Category'),
+        align: 'center' as const,
+        field: (row: Record<string, unknown>) =>
+            (row.category as { name?: string })?.name || '',
+        sortable: true
+    },
 
-{
-    name: 'unit_cost',
-    label: t('item.cost', 'Cost'),
-    align: "right" as const,
-    field: 'unit_cost',
-    format: val => formatCurrency(val),
-    sortable: true
-},
+    {
+        name: 'unit_cost',
+        label: t('item.cost', 'Cost'),
+        align: "right" as const,
+        field: 'unit_cost',
+        format: val => formatCurrency(val),
+        sortable: true
+    },
 
-{
-    name: 'solo_unit_price',
-    label: t('item.cost', 'Cost'),
-    align: "right" as const,
-    field: 'solo_unit_price',
-    format: val => formatCurrency(val),
-    sortable: true
-},
+    {
+        name: 'solo_unit_price',
+        label: t('item.cost', 'Cost'),
+        align: "right" as const,
+        field: 'solo_unit_price',
+        format: val => formatCurrency(val),
+        sortable: true
+    },
 
-{
-    name: 'bulk_unit_price',
-    label: t('item.cost', 'Cost'),
-    align: "right" as const,
-    field: 'bulk_unit_price',
-    format: val => formatCurrency(val),
-    sortable: true
-},
+    {
+        name: 'bulk_unit_price',
+        label: t('item.cost', 'Cost'),
+        align: "right" as const,
+        field: 'bulk_unit_price',
+        format: val => formatCurrency(val),
+        sortable: true
+    },
 
-// {
-//     name: 'total_quantity',
-//     label: t('item.totalQuantity', 'Total Quantity'),
-//     align: "center" as const,
-//     field: 'total_quantity',
-//     sortable: true
-// },
-{
-    name: 'actions',
-    label: t('item.actions', 'Actions'),
-    align: "center" as const,
-    field: 'actions',
-    sortable: false
-}]
+    // {
+    //     name: 'total_quantity',
+    //     label: t('item.totalQuantity', 'Total Quantity'),
+    //     align: "center" as const,
+    //     field: 'total_quantity',
+    //     sortable: true
+    // },
+    {
+        name: 'actions',
+        label: t('item.actions', 'Actions'),
+        align: "center" as const,
+        field: 'actions',
+        sortable: false
+    }]
 
 // Find selected item by ID
 const selectedItem = (id: number) => {
