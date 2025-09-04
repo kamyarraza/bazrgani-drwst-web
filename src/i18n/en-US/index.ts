@@ -423,6 +423,13 @@ export default {
     close: "Close",
     yes: "Yes",
     no: "No",
+
+    chartTitle: "Sales Report",
+    topSold: {
+      unitSold: "Units Sold",
+      chartTitle: "Top Selling Products",
+      chartSubtitle: "{count} Top Selling Products"
+    }
     },
     warehouse: {
     title: "Warehouse Management",

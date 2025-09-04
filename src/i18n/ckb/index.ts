@@ -372,6 +372,13 @@ export default {
     numberOfPackages: "ژمارەی پاکێجەکان",
     searchToBegin: "گەڕان بۆ دەستپێکردن",
     browseAllItems: "گەڕان لە هەموو کاڵاکان",
+
+    chartTitle: "ڕاپۆرتی زۆرترین فرۆشتنەکان",
+    topSold: {
+      unitSold: "یەکەی فرۆشراو",
+      chartTitle: "کاڵا زۆر فرۆشراوەکان",
+      chartSubtitle: "{count} کاڵای زۆرترین فرۆشراو"
+    }
   },
   warehouse: {
     viewWarehouses: "کۆگاکانی لق",

@@ -67,6 +67,13 @@ export interface Product {
   created_at_humans: string;
   "": string[]; // This is an unusual key. If it's an error or unused, you may remove it.
 }
+
+export interface TopSoldItem {
+  id: number;
+  name: string;
+  sku: string;
+  total_sold_quantity: number;
+}
 export interface ApiResponse<T> {
   status: 'success' | 'error';
   message: string;

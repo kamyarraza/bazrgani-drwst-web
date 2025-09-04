@@ -895,6 +895,13 @@ export default {
     numberOfPackages: "عدد الحزم",
     searchToBegin: "ابدأ البحث",
     browseAllItems: "تصفح جميع المنتجات",
+
+    chartTitle: "تقرير المبيعات",
+    topSold: {
+      unitSold: "وحدة مباعة",
+      chartTitle: "المنتجات الأكثر مبيعًا",
+      chartSubtitle: "{count} منتج الأكثر مبيعًا"
+    }
   },
   warehouse: {
     title: "إدارة المستودع",

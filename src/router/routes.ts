@@ -46,6 +46,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import("src/pages/item/Index.vue"),
       },
       {
+        path: "item-chart-report",
+        component: () => import("src/pages/item/ChartReport.vue"),
+      },
+      {
         path: "branch-section",
         component: () => import("src/pages/branch/Index.vue"),
       },

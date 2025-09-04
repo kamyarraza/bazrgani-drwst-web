@@ -7,6 +7,7 @@ import type {
   Pagination,
   AddItemPayload,
   UpdateItemPayload,
+  TopSoldItem,
 } from "src/types/item";
 import type { ApiResponse as GenericApiResponse } from "src/types";
 import { endPoints } from "src/endpoint";
@@ -14,6 +15,7 @@ import { showNotify } from "src/composables/Notify";
 
 export const useItemStore = defineStore("item", () => {
   const items = ref<Product[]>([]);
+  const topSoldItems = ref<TopSoldItem[]>([]);
   const currentItem = ref<Product | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -392,8 +394,36 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
+
+  async function fetchTopSoldItems(
+    // categoryId?: number | null,
+  ) {
+    loading.value = true;
+    error.value = null;
+    const url = `${endPoints.item.topSold}`;
+
+    try {
+      const { data } = await api.get<ApiResponse<Product[]>>(url);
+
+      topSoldItems.value = data.data as any;
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch items";
+      error.value = errorMessage;
+      showNotify({
+        type: "negative",
+        message: error.value,
+        position: "top",
+        duration: 3000,
+      });
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     items,
+    topSoldItems,
     currentItem,
     loading,
     error,
@@ -408,5 +438,7 @@ export const useItemStore = defineStore("item", () => {
     archiveItem,
     fetchItemsByWarehouse,
     searchItemsByWarehouse,
+
+    fetchTopSoldItems,
   };
 });
