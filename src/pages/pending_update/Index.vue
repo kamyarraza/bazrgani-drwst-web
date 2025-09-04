@@ -63,7 +63,7 @@
             <!-- Pending Updates Table -->
             <QtableB show-bottom :user-type="me?.type!" :allowed-types="['admin']" :hasExpandableRows="false"
                 :columns="columns" :rows="pendingUpdates" :loading="pendingUpdateStore.loading" :pagination="pagination"
-                :menuItems="menuItems" @menu-action="handleAction" @page-change="handlePageChange" />
+                :menuItems="getMenuItems" @menu-action="handleAction" @page-change="handlePageChange" />
 
             <!-- Details Modal -->
             <DetailsModal v-model="showDetailsModal" :pending-update="pendingUpdateToView" />
@@ -181,12 +181,22 @@ const columns = [
     }
 ];
 
-// Menu items for row actions
-const menuItems: MenuItem[] = [
-    { label: t('pendingUpdate.viewDetails'), icon: 'visibility', value: 'view' },
-    { label: t('pendingUpdate.approve'), icon: 'check_circle', value: 'approve' },
-    { label: t('pendingUpdate.reject'), icon: 'cancel', value: 'reject' }
-];
+// Get menu items for row actions
+const getMenuItems = (row: PendingUpdate): MenuItem[] => {
+    const baseItems = [
+        { label: t('pendingUpdate.viewDetails'), icon: 'visibility', value: 'view' },
+    ];
+
+    // Only show approve/reject for pending updates
+    if (row.status === 'pending') {
+        baseItems.push(
+            { label: t('pendingUpdate.approve'), icon: 'check_circle', value: 'approve' },
+            { label: t('pendingUpdate.reject'), icon: 'cancel', value: 'reject' }
+        );
+    }
+    // return the appropriate menu items based on status
+    return baseItems;
+};
 
 // Filter functions
 function toggleFilter(status: 'pending' | 'approved' | 'rejected') {
@@ -279,17 +289,23 @@ async function handlePageChange(page: number) {
 }
 
 // Handle successful approval
-function handleApproved() {
+async function handleApproved() {
     // The store already removes the item from the list
     // Just refresh to ensure consistency
-    void pendingUpdateStore.refreshPendingUpdates();
+    await pendingUpdateStore.refreshPendingUpdates();
+
+    pendingUpdateToApprove.value = null;
+    showApproveModal.value = false;
 }
 
 // Handle successful rejection
-function handleRejected() {
+async function handleRejected() {
     // The store already removes the item from the list
     // Just refresh to ensure consistency
-    void pendingUpdateStore.refreshPendingUpdates();
+    await pendingUpdateStore.refreshPendingUpdates();
+
+    pendingUpdateToReject.value = null;
+    showRejectModal.value = false;
 }
 
 // Lifecycle

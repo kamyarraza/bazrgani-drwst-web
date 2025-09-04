@@ -138,7 +138,7 @@ const filterOptions = computed(() => [
 
 // Get unique categories for filter dropdown
 const categoryOptions = computed(() => {
-    const categories = new Set(items.value.map(item => item.category?.name).filter(Boolean))
+    const categories = new Set(items.value.map(item => item?.category?.name).filter(Boolean))
     return Array.from(categories).map(name => ({
         label: name,
         value: name
