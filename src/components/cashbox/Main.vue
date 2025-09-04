@@ -416,12 +416,12 @@ const showOpenDialog = ref(false);
 const showCloseDialog = ref(false);
 
 // Transaction form states
-const depositIqdAmount = ref<number | null>(null);
-const depositUsdAmount = ref<number | null>(null);
+const depositIqdAmount = ref<number | null>(0);
+const depositUsdAmount = ref<number | null>(0);
 const depositNote = ref('');
 
-const withdrawIqdAmount = ref<number | null>(null);
-const withdrawUsdAmount = ref<number | null>(null);
+const withdrawIqdAmount = ref<number | null>(0);
+const withdrawUsdAmount = ref<number | null>(0);
 const withdrawNote = ref('');
 
 // Password form states
@@ -532,15 +532,10 @@ async function handleDeposit() {
     return;
   }
 
-  const depositData: { iqd_amount?: number; usd_amount?: number; note?: string } = {};
+  const depositData: { iqd_amount?: number|null; usd_amount?: number|null; note?: string } = {};
 
-  if (depositIqdAmount.value && depositIqdAmount.value > 0) {
     depositData.iqd_amount = depositIqdAmount.value;
-  }
-
-  if (depositUsdAmount.value && depositUsdAmount.value > 0) {
     depositData.usd_amount = depositUsdAmount.value;
-  }
 
   if (depositNote.value.trim()) {
     depositData.note = depositNote.value.trim();
@@ -564,15 +559,10 @@ async function handleWithdraw() {
     return;
   }
 
-  const withdrawData: { iqd_amount?: number; usd_amount?: number; note?: string } = {};
+  const withdrawData: { iqd_amount?: number|null; usd_amount?: number|null; note?: string } = {};
 
-  if (withdrawIqdAmount.value && withdrawIqdAmount.value > 0) {
     withdrawData.iqd_amount = withdrawIqdAmount.value;
-  }
-
-  if (withdrawUsdAmount.value && withdrawUsdAmount.value > 0) {
     withdrawData.usd_amount = withdrawUsdAmount.value;
-  }
 
   if (withdrawNote.value.trim()) {
     withdrawData.note = withdrawNote.value.trim();

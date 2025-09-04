@@ -101,7 +101,7 @@ export const useCashboxStore = defineStore('cashbox', () => {
     }
   }
 
-  async function depositToCashbox(branchId: number, depositData: { iqd_amount?: number; usd_amount?: number; note?: string }) {
+  async function depositToCashbox(branchId: number, depositData: { iqd_amount?: number|null; usd_amount?: number|null; note?: string }) {
     loading.value = true;
     error.value = null;
 
@@ -133,7 +133,7 @@ export const useCashboxStore = defineStore('cashbox', () => {
     }
   }
 
-  async function withdrawFromCashbox(branchId: number, withdrawData: { iqd_amount?: number; usd_amount?: number; note?: string }) {
+  async function withdrawFromCashbox(branchId: number, withdrawData: { iqd_amount?: number|null; usd_amount?: number|null; note?: string }) {
     loading.value = true;
     error.value = null;
 
