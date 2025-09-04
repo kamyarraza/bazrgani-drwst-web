@@ -1,10 +1,5 @@
 <template>
-  <q-dialog
-    v-model="isVisible"
-    class="log-details-dialog"
-    :maximized="$q.screen.lt.md"
-    :full-width="$q.screen.lt.md"
-  >
+  <q-dialog v-model="isVisible" class="log-details-dialog" :maximized="$q.screen.lt.md" :full-width="$q.screen.lt.md">
     <q-card class="log-details-card">
       <!-- Beautiful Modal Header -->
       <div class="modal-header">
@@ -12,20 +7,14 @@
           <q-icon name="history" class="q-mr-sm" />
           {{ t('logs.activityDetails') }}
         </div>
-        <q-btn
-          icon="close"
-          flat
-          round
-          v-close-popup
-          size="sm"
-        />
+        <q-btn icon="close" flat round v-close-popup size="sm" />
       </div>
 
       <q-card-section v-if="logData" class="q-pa-md">
         <!-- Activity Summary -->
         <div class="activity-summary q-mb-md">
           <div class="row q-col-gutter-md">
-            <div class="col-6">
+            <!-- <div class="col-6">
               <div class="summary-item">
                 <q-icon name="person" class="summary-icon text-primary" />
                 <div>
@@ -34,7 +23,7 @@
                   <div class="summary-subtitle">{{ logData.user?.username || '' }}</div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="col-6">
               <div class="summary-item">
                 <q-icon name="event" class="summary-icon text-blue" />
@@ -103,7 +92,7 @@
         <q-separator class="q-my-md" />
 
         <!-- Data Changes Section -->
-        <div class="changes-section q-mb-md">
+        <div class="changes-section q-mb-md" dir="ltr">
           <div class="text-subtitle1 text-weight-medium q-mb-md">
             <q-icon name="compare_arrows" class="q-mr-sm" />
             {{ t('logs.dataChanges') }}
@@ -117,7 +106,7 @@
                 {{ t('logs.oldData') }}
               </div>
               <div class="data-content">
-                <pre class="json-display">{{ formatJson(logData.old_data) }}</pre>
+                <pre class="json-display" v-html="colorizedJSON(formatJson(logData.old_data))"></pre>
               </div>
             </div>
           </div>
@@ -130,7 +119,7 @@
                 {{ t('logs.newData') }}
               </div>
               <div class="data-content">
-                <pre class="json-display">{{ formatJson(logData.new_data) }}</pre>
+                <pre class="json-display" v-html="colorizedJSON(formatJson(logData.new_data))"></pre>
               </div>
             </div>
           </div>
@@ -156,7 +145,7 @@
                 <q-icon name="badge" class="detail-icon text-primary" />
                 <div>
                   <div class="detail-label">{{ t('logs.name') }}</div>
-                  <div class="detail-value">{{ logData.new_data.name || t('common.notSet') }}</div>
+                  <div class="detail-value">{{ logData.user.name || t('common.notSet') }}</div>
                 </div>
               </div>
             </div>
@@ -165,7 +154,7 @@
                 <q-icon name="person" class="detail-icon text-blue" />
                 <div>
                   <div class="detail-label">{{ t('logs.username') }}</div>
-                  <div class="detail-value">{{ logData.new_data.username || t('common.notSet') }}</div>
+                  <div class="detail-value">{{ logData.user.username || t('common.notSet') }}</div>
                 </div>
               </div>
             </div>
@@ -174,34 +163,7 @@
                 <q-icon name="phone" class="detail-icon text-green" />
                 <div>
                   <div class="detail-label">{{ t('logs.phone') }}</div>
-                  <div class="detail-value">{{ logData.new_data.phone || t('common.notSet') }}</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="detail-item">
-                <q-icon name="admin_panel_settings" class="detail-icon text-purple" />
-                <div>
-                  <div class="detail-label">{{ t('logs.role') }}</div>
-                  <div class="detail-value">{{ logData.new_data.role || t('common.notSet') }}</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="detail-item">
-                <q-icon name="category" class="detail-icon text-orange" />
-                <div>
-                  <div class="detail-label">{{ t('logs.type') }}</div>
-                  <div class="detail-value">{{ logData.new_data.type || t('common.notSet') }}</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="detail-item">
-                <q-icon name="wc" class="detail-icon text-teal" />
-                <div>
-                  <div class="detail-label">{{ t('logs.gender') }}</div>
-                  <div class="detail-value">{{ logData.new_data.is_male ? t('logs.male') : t('logs.female') }}</div>
+                  <div class="detail-value">{{ logData.user.phone || t('common.notSet') }}</div>
                 </div>
               </div>
             </div>
@@ -217,12 +179,7 @@
       </q-card-section>
 
       <q-card-actions align="right" class="q-pa-md">
-        <q-btn
-          :label="t('common.close')"
-          color="primary"
-          flat
-          v-close-popup
-        />
+        <q-btn :label="t('common.close')" color="primary" flat v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -282,6 +239,21 @@ const formatJson = (data: any) => {
   } catch {
     return String(data)
   }
+}
+
+const colorizedJSON = (data: any) => {
+  const formattedData = data
+    .replace(/\{/g, "<span style='color: #999'>{</span>")
+    .replace(/\}/g, "<span style='color: #999'>}</span>")
+    .replace(/\[/g, "<span style='color: #8200db'>[</span>")
+    .replace(/\]/g, "<span style='color: #8200db'>]</span>")
+    .replace(/"(.*?)"(?=\s*:)/g, "<span style='color: #8b0836'>\"$1\"</span>") // Keys only
+    .replace(/(?<=:\s*)\d+(\.\d+)?/g, "<span style='color:#0069a8'>$&</span>") // Numbers only
+    .replace(/\b(true)/g, ": <span style='color: #5ea500'>$&</span>") // Boolean values
+    .replace(/\b(false)/g, ": <span style='color: #c70036'>$&</span>") // Boolean values
+    .replace(/: null/g, ": <span style='color: #fd9a00'>null</span>") // Null values
+
+  return formattedData
 }
 </script>
 
@@ -406,7 +378,7 @@ const formatJson = (data: any) => {
 }
 
 .data-header {
-  background: rgba(var(--q-primary-rgb), 0.1);
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.2), rgba(0, 123, 255, 0.1)) !important;
   padding: 12px 16px;
   font-weight: 600;
   font-size: 14px;
@@ -416,13 +388,15 @@ const formatJson = (data: any) => {
 }
 
 .data-content {
-  padding: 16px;
-  max-height: 200px;
+  padding: 3px;
+  max-height: 350px;
   overflow-y: auto;
+  background-color: #757575;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
 .json-display {
-  background: #f8f9fa;
+  background: #e9e9e9;
   border-radius: 4px;
   padding: 12px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
@@ -435,12 +409,12 @@ const formatJson = (data: any) => {
 }
 
 .old-data .data-header {
-  background: rgba(var(--q-negative-rgb), 0.1);
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(0, 123, 255, 0.1)) !important;
   color: var(--q-negative);
 }
 
 .new-data .data-header {
-  background: rgba(var(--q-positive-rgb), 0.1);
+  background: linear-gradient(135deg, rgba(0, 255, 64, 0.2), rgba(0, 123, 255, 0.1)) !important;
   color: var(--q-positive);
 }
 
@@ -531,13 +505,15 @@ const formatJson = (data: any) => {
       padding: 12px 16px;
     }
 
-    .summary-item, .detail-item {
+    .summary-item,
+    .detail-item {
       flex-direction: column;
       align-items: flex-start !important;
       text-align: left;
     }
 
-    .summary-icon, .detail-icon {
+    .summary-icon,
+    .detail-icon {
       margin-bottom: 8px;
     }
   }
@@ -584,4 +560,4 @@ const formatJson = (data: any) => {
     padding: 0 !important;
   }
 }
-</style> 
+</style>
