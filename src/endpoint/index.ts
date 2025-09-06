@@ -88,7 +88,7 @@ export const endPoints = {
   // Rename items to item to match our store naming convention
   item: {
     list: "/items",
-    topSold: "/items/get/top-sold",
+    // topSold: "/items/get/top-sold",
     create: "/items",
     details: (itemId: string | number) => `/items/${itemId}`,
     update: (itemId: string | number) => `/items/${itemId}`,
@@ -165,6 +165,7 @@ export const endPoints = {
     itemCategories: "/reports/get/item-categories",
     purchases: "/reports/get/purchases",
     sells: "/reports/get/sells",
+    topSold: '/reports/get/top-sold-items',
   },
 
   offer: {

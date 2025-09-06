@@ -87,8 +87,10 @@ const showBrowserNotification = (title, options:any = {}) => {
     // const wasFirstLoad = notifications.value.length === 0;
 
     try {
-      // request the permission on page load
-      await Notification.requestPermission();
+      // Request notification permission if not already granted
+      if (Notification.permission !== "granted") {
+        await Notification.requestPermission();
+      }
 
       // Fetch notifications
       const response = await api.get<ApiResponse<Notification[]>>(endPoints.notification.getUnreads);

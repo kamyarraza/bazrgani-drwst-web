@@ -12,12 +12,12 @@
     />
 
     <!-- Date Range Filter -->
-    <div class="q-mb-lg">
+    <!-- <div class="q-mb-lg">
       <DateRangeFilter
         v-model="dateFilters"
         @filter-applied="onDateFilterChanged"
       />
-    </div>
+    </div> -->
 
     <!-- Statistics Cards -->
     <div class="row q-col-gutter-sm q-mb-lg">
@@ -28,22 +28,8 @@
               <q-icon name="category" size="1.5rem" color="primary" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ reportStore.totalCategories }}</div>
+              <div class="stat-value text-h5">{{ formatNumber(reportStore.totalCategories) }}</div>
               <div class="stat-label text-caption">{{ $t('report.totalCategories') }}</div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col-6 col-sm-3 col-md-3 col-lg-3 col-xl-3">
-        <q-card class="stat-card">
-          <q-card-section class="stat-card-content">
-            <div class="stat-icon-wrapper">
-              <q-icon name="check_circle" size="1.5rem" color="positive" />
-            </div>
-            <div class="stat-text">
-              <div class="stat-value text-h5">{{ reportStore.activeCategories }}</div>
-              <div class="stat-label text-caption">{{ $t('report.activeCategories') }}</div>
             </div>
           </q-card-section>
         </q-card>
@@ -56,7 +42,7 @@
               <q-icon name="inventory_2" size="1.5rem" color="secondary" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ totalItems.toLocaleString() }}</div>
+              <div class="stat-value text-h5">{{ formatNumber(totalItems) }}</div>
               <div class="stat-label text-caption">{{ $t('report.totalItems') }}</div>
             </div>
           </q-card-section>
@@ -70,8 +56,8 @@
               <q-icon name="analytics" size="1.5rem" color="info" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ averageItemsPerCategory }}</div>
-              <div class="stat-label text-caption">{{ $t('report.avgItemsCategory') }}</div>
+              <div class="stat-value text-h5">{{ formatCurrency(totalItemsCost) }}</div>
+              <div class="stat-label text-caption">{{ $t('report.totalItemsCost') }}</div>
             </div>
           </q-card-section>
         </q-card>
@@ -85,7 +71,6 @@
       :columns="categoryColumns"
       :rows="filteredData"
       :loading="loading"
-      :menuItems="menuItems"
       @menu-action="handleAction"
       :pagination="pagination"
       @page-change="handlePageChange"
@@ -109,30 +94,22 @@ import { ref, computed, onMounted } from 'vue';
 import { useReportStore } from 'src/stores/reportStore';
 import Header from 'src/components/common/Header.vue';
 import QtableB from 'src/components/common/Qtable.vue';
-import DateRangeFilter from 'src/components/common/DateRangeFilter.vue';
 import { useI18n } from 'vue-i18n';
-import type { MenuItem, Column } from 'src/types';
+import type { MenuItem } from 'src/types';
+import { formatCurrency, formatNumber } from 'src/composables/useFormat';
 
 const reportStore = useReportStore();
 const { t } = useI18n();
 const loading = ref(false);
 const currentPage = ref(1);
-const dateFilters = ref<{ fromDate?: string | undefined; toDate?: string | undefined }>({});
 
 // Menu items for row actions
-const menuItems: MenuItem[] = [
-  { label: t('report.viewDetails'), icon: 'visibility', value: 'view' },
-  { label: t('report.exportCategory'), icon: 'download', value: 'export' }
-];
+// const menuItems: MenuItem[] = [
+//   { label: t('report.viewDetails'), icon: 'visibility', value: 'view' },
+//   { label: t('report.exportCategory'), icon: 'download', value: 'export' }
+// ];
 
-const categoryColumns: Column[] = [
-  {
-    name: 'no',
-    label: t('report.columns.no', 'No.'),
-    align: 'center',
-    field: 'no',
-    sortable: true
-  },
+const categoryColumns: any[] = [
   {
     name: 'name',
     label: t('report.columns.categoryName'),
@@ -141,28 +118,28 @@ const categoryColumns: Column[] = [
     sortable: true
   },
   {
-    name: 'items',
-    label: t('report.columns.itemsCount'),
+    name: 'items_count',
+    label: t('report.columns.items'),
     align: 'center',
-    field: 'items',
+    field: (row: Record<string, unknown>) => formatNumber(row.items ?? 0),
     sortable: true
   },
   {
-    name: 'status',
-    label: t('report.columns.status'),
+    name: 'items_cost',
+    label: t('report.columns.itemsCost'),
     align: 'center',
-    field: 'is_active',
-    sortable: true,
-    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
+    field: (row: Record<string, unknown>) => formatCurrency(Number(row.items_cost) || 0),
+    style: 'color: red',
+    sortable: true
   },
-  {
-    name: 'created_at',
-    label: t('report.columns.created'),
-    align: 'center',
-    field: 'created_at',
-    sortable: true,
-    format: (val: unknown) => new Date(val as string).toLocaleDateString()
-  }
+  // {
+  //   name: 'created_at',
+  //   label: t('report.columns.created'),
+  //   align: 'center',
+  //   field: 'created_at',
+  //   sortable: true,
+  //   format: (val: unknown) => new Date(val as string).toLocaleDateString()
+  // }
 ];
 
 // Computed properties
@@ -170,10 +147,8 @@ const totalItems = computed(() => {
   return (reportStore.categories || []).reduce((total, category) => total + (category.items || 0), 0);
 });
 
-const averageItemsPerCategory = computed(() => {
-  const categories = reportStore.categories || [];
-  if (categories.length === 0) return '0';
-  return Math.round(totalItems.value / categories.length).toLocaleString();
+const totalItemsCost = computed(() => {
+  return (reportStore.categories || []).reduce((total, category) => total + (category.items_cost || 0), 0);
 });
 
 const filteredData = computed(() => {
@@ -214,12 +189,6 @@ const refreshData = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const onDateFilterChanged = async (filters: { fromDate?: string | undefined; toDate?: string | undefined }) => {
-  dateFilters.value = filters;
-  currentPage.value = 1; // Reset to first page when filtering
-  await refreshData();
 };
 
 // Lifecycle hooks

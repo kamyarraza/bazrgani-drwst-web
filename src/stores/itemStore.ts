@@ -7,7 +7,6 @@ import type {
   Pagination,
   AddItemPayload,
   UpdateItemPayload,
-  TopSoldItem,
 } from "src/types/item";
 import type { ApiResponse as GenericApiResponse } from "src/types";
 import { endPoints } from "src/endpoint";
@@ -15,7 +14,7 @@ import { showNotify } from "src/composables/Notify";
 
 export const useItemStore = defineStore("item", () => {
   const items = ref<Product[]>([]);
-  const topSoldItems = ref<TopSoldItem[]>([]);
+  const itemNames = ref<{ name: string; sku: string; }[]>([]);
   const currentItem = ref<Product | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -394,21 +393,24 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
+  async function fetchItemNames() {
+    // If we already have item names, no need to fetch again
+    if (itemNames.value.length > 0) {
+      return;
+    }
 
-  async function fetchTopSoldItems(
-    // categoryId?: number | null,
-  ) {
     loading.value = true;
     error.value = null;
-    const url = `${endPoints.item.topSold}`;
+    // We only need names and SKUs
+    const url = `${endPoints.item.list}?only_names=true`;
 
     try {
       const { data } = await api.get<ApiResponse<Product[]>>(url);
 
-      topSoldItems.value = data.data as any;
+      itemNames.value = data.data.map(item => ({ name: item.name, sku: item.sku }));
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch items";
+        err instanceof Error ? err.message : "Failed to fetch item names";
       error.value = errorMessage;
       showNotify({
         type: "negative",
@@ -423,13 +425,14 @@ export const useItemStore = defineStore("item", () => {
 
   return {
     items,
-    topSoldItems,
+    itemNames,
     currentItem,
     loading,
     error,
     pagination,
     fetchItems,
     fetchItemsPaginated,
+    fetchItemNames,
     searchItems,
     createItem,
     getItemDetails,
@@ -438,7 +441,5 @@ export const useItemStore = defineStore("item", () => {
     archiveItem,
     fetchItemsByWarehouse,
     searchItemsByWarehouse,
-
-    fetchTopSoldItems,
   };
 });

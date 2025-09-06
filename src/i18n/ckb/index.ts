@@ -53,6 +53,7 @@ export default {
     expenseCategories: "جۆرەکانی خەرجی",
     expenseCategory: "جۆری خەرجی", // Singular form for employees
     expense: "خەرجی", // Singular form for employees
+    topSolds: "زۆر فرۆشراوەکان",
   },
 
   layout: {
@@ -375,7 +376,7 @@ export default {
 
     chartTitle: "ڕاپۆرتی زۆرترین فرۆشتنەکان",
     topSold: {
-      unitSold: "یەکەی فرۆشراو",
+      unitSold: "زۆرترین یەکەی فرۆشراو",
       chartTitle: "کاڵا زۆر فرۆشراوەکان",
       chartSubtitle: "{count} کاڵای زۆرترین فرۆشراو"
     }
@@ -994,6 +995,7 @@ export default {
     ellipsis: "...",
     available: "بەردەست",
     sku: "SKU",
+    export: "وەرگرتن",
   },
   error: {
     somethingWentWrong: "شتێک هەڵە ڕوویدا",
@@ -1410,6 +1412,7 @@ export default {
     averageSaleSubtitle: "تێکڕای بەهای فرۆشتن",
     totalProfit: "کۆی قازانج",
     totalProfitSubtitle: "کۆی قازانجی بەدەستهاتوو",
+    totalItemsCost: "کۆی نرخی کاڵاکان",
 
     // Table columns
     columns: {
@@ -1455,6 +1458,7 @@ export default {
       payment: "پارەدان",
       address: "ناونیشان",
       branch: "لق",
+      itemsCost: "تێچووی کاڵاکان",
     },
 
     // Table titles
@@ -1494,6 +1498,21 @@ export default {
       Good: "باش",
       Average: "مامناوەند",
       "Needs Improvement": "پێویستی بە باشترکردن هەیە",
+    },
+
+    chart: {
+      ChartType: "جۆری چارت",
+      ItemType: "جۆری کاڵا",
+      ItemCount: "ژمارەی کاڵا",
+
+      ExcludeKeywords: "وەرنەگرتنی کاڵاکان",
+      ExcludeKeywordsHint: "ناوی ئەو کاڵایانە دیاری بکە کە ناتەوێت لە لیستەکەدا بێت",
+
+      Bar: "بار",
+      Doughnut: "دونات",
+      PolarArea: "پولار",
+
+      exportTooltip: "وەرگرتنی چارتەکە بە فایلی وێنە",
     },
   },
 

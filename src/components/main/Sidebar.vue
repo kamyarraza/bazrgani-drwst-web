@@ -265,9 +265,11 @@ const allNavigationSections = [
     links: [
       { path: '/reports/branches', label: t('sidebar.branches'), icon: 'store', permission: 'reports' },
       { path: '/reports/warehouses', label: t('sidebar.warehouses'), icon: 'inventory', permission: 'reports' },
+      { path: '/reports/item-chart-report', label: t('sidebar.topSolds'), icon: 'trending_up', permission: 'reports' },
       { path: '/reports/categories', label: t('sidebar.categories'), icon: 'category', permission: 'reports' },
-      { path: '/reports/purchases', label: t('sidebar.purchases'), icon: 'shopping_cart', permission: 'reports' },
-      { path: '/reports/sells', label: t('sidebar.sells'), icon: 'point_of_sale', permission: 'reports' },
+
+      // { path: '/reports/purchases', label: t('sidebar.purchases'), icon: 'shopping_cart', permission: 'reports' },
+      // { path: '/reports/sells', label: t('sidebar.sells'), icon: 'point_of_sale', permission: 'reports' },
     ]
   },
   {

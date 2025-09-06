@@ -12,12 +12,12 @@
     />
 
     <!-- Date Range Filter -->
-    <div class="q-mb-lg">
+    <!-- <div class="q-mb-lg">
       <DateRangeFilter
         v-model="dateFilters"
         @filter-applied="onDateFilterChanged"
       />
-    </div>
+    </div> -->
 
     <!-- Statistics Cards -->
     <div class="row q-col-gutter-sm q-mb-lg">
@@ -109,7 +109,6 @@ import { ref, computed, onMounted } from 'vue';
 import { useReportStore } from 'src/stores/reportStore';
 import Header from 'src/components/common/Header.vue';
 import QtableB from 'src/components/common/Qtable.vue';
-import DateRangeFilter from 'src/components/common/DateRangeFilter.vue';
 import { useI18n } from 'vue-i18n';
 import type { MenuItem, Column } from 'src/types';
 
@@ -117,7 +116,6 @@ const reportStore = useReportStore();
 const { t } = useI18n();
 const loading = ref(false);
 const currentPage = ref(1);
-const dateFilters = ref<{ fromDate?: string | undefined; toDate?: string | undefined }>({});
 
 // Menu items for row actions
 const menuItems: MenuItem[] = [
@@ -145,7 +143,7 @@ const branchColumns: Column[] = [
     label: t('report.columns.location'),
     align: 'left',
     field: 'location',
-    sortable: true
+    sortable: false
   },
   {
     name: 'phone',
@@ -168,22 +166,22 @@ const branchColumns: Column[] = [
     field: 'users',
     sortable: true
   },
-  {
-    name: 'status',
-    label: t('report.columns.status'),
-    align: 'center',
-    field: 'is_active',
-    sortable: true,
-    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
-  },
-  {
-    name: 'created_at',
-    label: t('report.columns.created'),
-    align: 'center',
-    field: 'created_at',
-    sortable: true,
-    format: (val: unknown) => new Date(val as string).toLocaleDateString()
-  }
+  // {
+  //   name: 'status',
+  //   label: t('report.columns.status'),
+  //   align: 'center',
+  //   field: 'is_active',
+  //   sortable: true,
+  //   format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
+  // },
+  // {
+  //   name: 'created_at',
+  //   label: t('report.columns.created'),
+  //   align: 'center',
+  //   field: 'created_at',
+  //   sortable: true,
+  //   format: (val: unknown) => new Date(val as string).toLocaleDateString()
+  // }
 ];
 
 // Computed properties
@@ -232,12 +230,6 @@ const refreshData = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const onDateFilterChanged = async (filters: { fromDate?: string | undefined; toDate?: string | undefined }) => {
-  dateFilters.value = filters;
-  currentPage.value = 1; // Reset to first page when filtering
-  await refreshData();
 };
 
 // Lifecycle hooks

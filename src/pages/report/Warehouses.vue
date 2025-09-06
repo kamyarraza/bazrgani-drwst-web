@@ -1,23 +1,14 @@
 <template>
   <q-page class="q-pa-md">
     <!-- Warehouse Reports Header -->
-    <Header
-      :title="$t('report.warehouseReports')"
-      :subtitle="$t('report.warehouseSubtitle')"
-      icon="warehouse"
-      icon-size="3rem"
-      icon-color="white"
-      :show-waves="true"
-      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-    />
+    <Header :title="$t('report.warehouseReports')" :subtitle="$t('report.warehouseSubtitle')" icon="warehouse"
+      icon-size="3rem" icon-color="white" :show-waves="true"
+      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
 
     <!-- Date Range Filter -->
-    <div class="q-mb-lg">
-      <DateRangeFilter
-        v-model="dateFilters"
-        @filter-applied="onDateFilterChanged"
-      />
-    </div>
+    <!-- <div class="q-mb-lg">
+      <DateRangeFilter v-model="dateFilters" @filter-applied="onDateFilterChanged" />
+    </div> -->
 
     <!-- Statistics Cards -->
     <div class="row q-col-gutter-sm q-mb-lg">
@@ -79,25 +70,13 @@
     </div>
 
     <!-- Warehouse Table -->
-    <QtableB
-      show-bottom
-      :hasExpandableRows="false"
-      :columns="warehouseColumns"
-      :rows="filteredData"
-      :loading="loading"
-      :menuItems="menuItems"
-      @menu-action="handleAction"
-      :pagination="pagination"
-      @page-change="handlePageChange"
-      :top-right="false"
-    >
+    <QtableB show-bottom :hasExpandableRows="false" :columns="warehouseColumns" :rows="filteredData" :loading="loading"
+      :menuItems="menuItems" @menu-action="handleAction" :pagination="pagination" @page-change="handlePageChange"
+      :top-right="false">
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge
-            :color="props.row.is_active ? 'positive' : 'negative'"
-            :label="props.row.is_active ? $t('common.active') : $t('common.inactive')"
-            rounded
-          />
+          <q-badge :color="props.row.is_active ? 'positive' : 'negative'"
+            :label="props.row.is_active ? $t('common.active') : $t('common.inactive')" rounded />
         </q-td>
       </template>
     </QtableB>
@@ -109,15 +88,14 @@ import { ref, computed, onMounted } from 'vue';
 import { useReportStore } from 'src/stores/reportStore';
 import Header from 'src/components/common/Header.vue';
 import QtableB from 'src/components/common/Qtable.vue';
-import DateRangeFilter from 'src/components/common/DateRangeFilter.vue';
 import { useI18n } from 'vue-i18n';
-import type { MenuItem, Column } from 'src/types';
+import type { MenuItem } from 'src/types';
+import { formatCurrency, formatNumber } from 'src/composables/useFormat';
 
 const reportStore = useReportStore();
 const { t } = useI18n();
 const loading = ref(false);
 const currentPage = ref(1);
-const dateFilters = ref<{ fromDate?: string | undefined; toDate?: string | undefined }>({});
 
 // Menu items for row actions
 const menuItems: MenuItem[] = [
@@ -125,13 +103,13 @@ const menuItems: MenuItem[] = [
   { label: t('report.exportWarehouse'), icon: 'download', value: 'export' }
 ];
 
-const warehouseColumns: Column[] = [
+const warehouseColumns: any[] = [
   {
     name: 'name',
     label: t('report.columns.warehouseName'),
     align: 'left',
     field: 'name',
-    sortable: true
+    sortable: false
   },
   {
     name: 'branch',
@@ -145,46 +123,47 @@ const warehouseColumns: Column[] = [
     label: t('report.columns.address'),
     align: 'left',
     field: 'address',
-    sortable: true
+    sortable: false
   },
   {
     name: 'capacity',
-    label: t('report.columns.capacity'),
+    label: t('report.columns.capacity') + ' ㎡',
     align: 'center',
-    field: 'capacity',
+    field: (row: Record<string, unknown>) => formatNumber(row.capacity ?? 0),
+    style: 'color: orange',
     sortable: true
   },
   {
-    name: 'items',
+    name: 'items_count',
     label: t('report.columns.items'),
     align: 'center',
-    field: 'items',
+    field: (row: Record<string, unknown>) => formatNumber(row.items ?? 0),
     sortable: true
   },
   {
-    name: 'utilization',
-    label: t('report.columns.utilization'),
+    name: 'items_cost',
+    label: t('report.columns.itemsCost'),
     align: 'center',
-    field: 'utilization',
-    sortable: true,
-
+    field: (row: Record<string, unknown>) => formatCurrency(Number(row.items_cost) || 0),
+    style: 'color: red',
+    sortable: true
   },
-  {
-    name: 'status',
-    label: t('report.columns.status'),
-    align: 'center',
-    field: 'is_active',
-    sortable: true,
-    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
-  },
-  {
-    name: 'created_at',
-    label: t('report.columns.created'),
-    align: 'center',
-    field: 'created_at',
-    sortable: true,
-    format: (val: unknown) => new Date(val as string).toLocaleDateString()
-  }
+  // {
+  //   name: 'status',
+  //   label: t('report.columns.status'),
+  //   align: 'center',
+  //   field: 'is_active',
+  //   sortable: true,
+  //   format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
+  // },
+  // {
+  //   name: 'created_at',
+  //   label: t('report.columns.created'),
+  //   align: 'center',
+  //   field: 'created_at',
+  //   sortable: true,
+  //   format: (val: unknown) => new Date(val as string).toLocaleDateString()
+  // }
 ];
 
 // Computed properties
@@ -233,12 +212,6 @@ const refreshData = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const onDateFilterChanged = async (filters: { fromDate?: string | undefined; toDate?: string | undefined }) => {
-  dateFilters.value = filters;
-  currentPage.value = 1; // Reset to first page when filtering
-  await refreshData();
 };
 
 // Lifecycle hooks
@@ -314,6 +287,7 @@ onMounted(async () => {
     transform: translateY(10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;

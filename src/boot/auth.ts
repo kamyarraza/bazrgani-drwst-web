@@ -26,7 +26,6 @@ export default boot(async ({ router, store }) => {
       "admin-section",
       "accountant-section",
       "item-section",
-      "item-chart-report",
       "branch-section",
       "item-category-section",
       "employee-section",

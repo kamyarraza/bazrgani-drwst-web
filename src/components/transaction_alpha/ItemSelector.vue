@@ -151,21 +151,21 @@ watch(selectedCategoryId, () => {
 
 function onSearch() {
   if (searchTimeout) clearTimeout(searchTimeout);
-  console.log('onSearch called:', {
-    transactionType: props.transactionType,
-    warehouseId: props.warehouseId,
-    searchQuery: searchQuery.value,
-    categoryId: selectedCategoryId.value
-  });
+  // console.log('onSearch called:', {
+  //   transactionType: props.transactionType,
+  //   warehouseId: props.warehouseId,
+  //   searchQuery: searchQuery.value,
+  //   categoryId: selectedCategoryId.value
+  // });
 
   if (props.transactionType === 'sell') {
     if (!props.warehouseId) return; // Don't search if no warehouse selected
-    console.log('Searching warehouse items for sell transaction');
+    // console.log('Searching warehouse items for sell transaction');
     void itemStore.searchItemsByWarehouse((searchQuery.value || '').trim(), props.warehouseId, selectedCategoryId.value);
     return;
   }
   // For purchase, use regular search (not paginated for search results)
-  console.log('Searching all items for purchase transaction');
+  // console.log('Searching all items for purchase transaction');
   void itemStore.searchItems((searchQuery.value || '').trim(), selectedCategoryId.value);
 }
 

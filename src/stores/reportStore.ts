@@ -7,7 +7,9 @@ import type {
   Warehouse,
   Category,
   Purchase,
-  Sell
+  Sell,
+  Product,
+  TopSoldItem
 } from 'src/types/report';
 import type { ApiResponse } from 'src/types';
 import { showNotify } from 'src/composables/Notify';
@@ -19,6 +21,7 @@ export const useReportStore = defineStore('report', () => {
   const categories = ref<Category[]>([]);
   const purchases = ref<Purchase[]>([]);
   const sells = ref<Sell[]>([]);
+  const topSoldItems = ref<TopSoldItem[]>([]);
 
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -210,6 +213,49 @@ export const useReportStore = defineStore('report', () => {
     error.value = null;
   };
 
+  async function fetchTopSoldItems(
+    categoryId?: number | null,
+    itemCount: number = 3,
+    excludeKeywords: string = ''
+  ) {
+    loading.value = true;
+    error.value = null;
+    let url = `${endPoints.report.topSold}`;
+    const params = new URLSearchParams();
+
+    if (categoryId) {
+      params.append('category_id', categoryId.toString());
+    }
+
+    params.append('item_count', itemCount.toString());
+
+    if (excludeKeywords.length > 0) {
+      params.append('exclude_keywords', excludeKeywords);
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    try {
+      const { data } = await api.get<ApiResponse<Product[]>>(url);
+
+      topSoldItems.value = data.data as any;
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch items";
+      error.value = errorMessage;
+      showNotify({
+        type: "negative",
+        message: error.value,
+        position: "top",
+        duration: 3000,
+      });
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     // State
     branches,
@@ -218,6 +264,7 @@ export const useReportStore = defineStore('report', () => {
     purchases,
     sells,
     loading,
+    topSoldItems,
     error,
 
     // Computed
@@ -243,6 +290,7 @@ export const useReportStore = defineStore('report', () => {
     fetchPurchases,
     fetchSells,
     fetchAllReports,
-    clearData
+    clearData,
+    fetchTopSoldItems,
   };
 });
