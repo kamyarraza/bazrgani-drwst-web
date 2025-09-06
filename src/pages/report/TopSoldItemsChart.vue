@@ -235,7 +235,7 @@ const getExportableImageName = () => {
 }
 
 // Export chart as an image
-const exportChart = async () => {
+const exportChart = () => {
     // Create a temporary link element to trigger download
     const link = document.createElement('a')
     // generate the link
@@ -243,7 +243,7 @@ const exportChart = async () => {
     // set the download attribute with a filename
     link.download = getExportableImageName()
     // Automatically click the link to trigger the download
-    await link.click()
+    link.click()
     // Clean up the link element
     link.remove()
 }
@@ -312,11 +312,11 @@ const filterKeywords = (val, update) => {
 // Fetch data when component is mounted
 onMounted(async () => {
     // Fetch all item names for keyword suggestions
-    itemStore.fetchItemNames();
+    await itemStore.fetchItemNames();
 
     // Load categories for filtering
     if (categoryStore.itemCategories) {
-        categoryStore.fetchItemCategories();
+        await categoryStore.fetchItemCategories();
     }
 
     // Fetch top sold items from the store
