@@ -87,13 +87,31 @@ const contents = ref<Record<string, string>[]>([
         icon: 'visibility',
         iconColor: 'brown'
     },
+    {
+        question: 'ئایا داخستن و کردنەوەی صندوق گرنگە ؟',
+        answer: 'بەڵێ بەدڵنیاییەوە زۆر گرنگە، بۆ ئەوەی بتوانیت بە باشی کاری ژمێریاری خۆر ڕابپەڕێنیت و دڵنیابیت لە درووستی ژمارەکان و دڵنیابیت لە پارێزراوی صندوقەکەت پێویستە کرداری داخستن و کردنەوەی صندوقەکەت ئەنجام بدەیت.',
+        icon: 'lock_open',
+        iconColor: 'teal'
+    },
+    {
+        question: 'ئایا دراوی دیناری عێراقی دەبێت چۆن بێت ؟',
+        answer: 'دیناری عێراقی پێویستە بە یەکەی ڕێك تۆماربکرێت ئەوەی کە ئێستا لە بازاڕدا کاری پێدەکرێت بە پێچەوانەوە سیستەمەکە قبوڵی ناکات. واتە ٢٥٠ یان ٥٠٠ قبوڵ دەکات بەڵام ٤٥٠ قبوڵ ناکات.',
+        icon: 'payments',
+        iconColor: 'green'
+    },
+    {
+        question: 'ئایا دۆلار و یۆرۆ چەند خانەی دوای فاریزەیان هەیە ؟',
+        answer: 'دراوی دۆلاری ئەمریکی تەنها دوو خانەی ژمارەی دوای فاریزەی هەیە و دراوی یۆرۆ سێ خانەی ژمارەی دوای فاریزەی هەیە لە سیستەمەکەدا.',
+        icon: 'euro_symbol',
+        iconColor: 'blue'
+    },
 ])
 
 </script>
 
 <style lang="scss" scoped>
 .card-container, .box-card {
-    background: #e9e9e9;
+    background: #fff;
     border-radius: 8px;
     border-width: 2px;
     transition: all 0.3s ease;
@@ -101,13 +119,13 @@ const contents = ref<Record<string, string>[]>([
 }
 
 .card-container {
-    box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.1) !important;
 
     &:hover {
         background: "#fff";
-        box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.3) !important;
+        box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.15) !important;
         transform: translateY(-2px);
-        border-color: #b0b0b0;
+        border-color: #c0c0c0;
     }
 }
 </style>
