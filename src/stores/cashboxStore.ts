@@ -44,7 +44,7 @@ export const useCashboxStore = defineStore('cashbox', () => {
 
       showNotify({
         type: 'positive',
-        message: data?.message || 'Cashbox opened successfully',
+        message: data?.message || 'صندوقەکەت کردەوە بە سەرکەوتوویی',
         position: 'top',
         duration: 3000,
       });
@@ -78,7 +78,7 @@ export const useCashboxStore = defineStore('cashbox', () => {
 
       showNotify({
         type: 'positive',
-        message: data?.message || 'Cashbox closed successfully',
+        message: data?.message || 'صندوقەکەت داخست بە سەرکەوتوویی',
         position: 'top',
         duration: 3000,
       });

@@ -13,15 +13,22 @@
               {{ t('layout.title') }}
             </q-toolbar-title>
           </div>
+
+          <!-- Alert Section -->
+          <div v-if="alertMessage" class="alert-section q-ml-md">
+            <q-chip color="orange" text-color="white" icon="lock_open" class="alert-chip">
+              {{ alertMessage }}
+            </q-chip>
+          </div>
         </div>
 
         <!-- Right Section -->
         <div class="header-right flex items-center q-gutter-sm">
           <!-- Custom Route Button -->
-           <template v-if="!isAdmin">
-             <q-btn flat dense round color="orange-5" icon="receipt_long" :aria-label="t('layout.dashboard')" class="route-btn q-mr-sm"
-               @click="$router.push('/transaction-section')" />
-            </template>
+          <template v-if="!isAdmin">
+            <q-btn flat dense round color="orange-5" icon="receipt_long" :aria-label="t('layout.dashboard')"
+              class="route-btn q-mr-sm" @click="$router.push('/transaction-section')" />
+          </template>
           <!-- Language Selector -->
           <q-btn-dropdown flat dense icon="language" :aria-label="t('layout.languageSelector')" dropdown-icon="">
             <q-list class="language-menu">
@@ -124,7 +131,7 @@
                       <q-item-label caption>{{ t('branch.viewWarehouses', 'Warehouses') }}</q-item-label>
                     </q-item-section>
                   </q-item>
-  
+
                   <!-- View cashbox -->
                   <q-item clickable @click="$router.push('/branch-section?show-my-cashbox=true')" class="menu-item">
                     <q-item-section avatar>
@@ -207,6 +214,7 @@ import NotificationPopup from 'src/components/notfication/NotificationPopup.vue'
 import Qbtn from 'src/components/common/Qbtn.vue';
 import ErrorBoundary from 'src/components/common/ErrorBoundary.vue';
 import { useMeStore } from 'src/stores/meStore';
+import { useCashboxStore } from 'src/stores/cashboxStore';
 
 const { t } = useI18n();
 const { setLocale } = useLocale();
@@ -217,11 +225,40 @@ const notificationStore = useNotificationStore();
 const sidebarOpen = ref(false);
 const isMobile = ref(false);
 const router = useRouter();
+
+const cashboxStore = useCashboxStore();
+
 // Get user profile from store
 const userProfile = computed(() => profileStore.userProfile);
 
 // Check if user is admin to show top-right button
 const isAdmin = computed(() => meStore.me?.type === 'admin');
+
+const alertMessage = computed(() => {
+  // Get current date and time
+  const date = new Date();
+
+  // First check if user is not admin and cashbox data is available
+  if (!isAdmin.value && cashboxStore.cashbox) {
+    // Morning check between 6 AM and 12 PM
+    if (date.getHours() >= 6 && date.getHours() <= 12) {
+      // Check if cashbox is not opened, show alert to open it
+      if (!cashboxStore.cashbox?.is_opened) {
+        return t("cashbox.openYourCashbox");
+      }
+
+    // Evening check between 4 PM and 10 PM
+    } else if (date.getHours() >= 16 && date.getHours() <= 22) {
+      // Check if cashbox is still opened, show alert to close it
+      if (cashboxStore.cashbox?.is_opened) {
+        return t("cashbox.closeYourCashbox");
+      }
+    }
+  }
+
+  // No alert needed
+  return null;
+});
 
 const checkScreenSize = () => {
   isMobile.value = window.innerWidth <= 1024;
@@ -275,6 +312,12 @@ onMounted(async () => {
 
   // Start auto-refresh for notifications with 50-second interval
   notificationStore.startAutoRefresh();
+
+  if (!isAdmin.value) {
+    if (!cashboxStore.cashbox && meStore.me?.branch?.id) {
+      await cashboxStore.fetchCashbox(meStore.me.branch.id)
+    }
+  }
 });
 
 onUnmounted(() => {
@@ -344,7 +387,7 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .page-container-transition {
   transition: margin-left 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   will-change: margin-left;
@@ -847,6 +890,25 @@ watch(() => authStore.unauthorizedError, (errorMessage) => {
   .user-menu {
     min-width: 240px;
     max-width: 90vw;
+  }
+}
+
+.alert-section {
+  flex: 1;
+  animation: alert-pulse 5s infinite ease-in-out;
+}
+
+@keyframes alert-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
   }
 }
 </style>

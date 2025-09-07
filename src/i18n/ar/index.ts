@@ -2253,7 +2253,10 @@ export default {
     noSessions: "لا توجد جلسات",
     noSessionsDesc: "لم يتم تسجيل أي جلسات صندوق بعد",
     viewDetails: "عرض التفاصيل",
-  },
+
+    openYourCashbox: "يرجى عدم نسيان فتح صندوقك.",
+    closeYourCashbox: "يرجى عدم نسيان إغلاق صندوقك.",
+    },
 
   // قسم فئات المصروفات
   expenseCategory: {
