@@ -172,9 +172,9 @@
       </div>
 
       <!-- Financial Overview -->
-      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+      <!-- <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
         <PricesOverview :prices="dashboardStore.prices" :loading="dashboardStore.loading" @refresh="refreshDashboard" class="equal-height-card" />
-      </div>
+      </div> -->
     </div>
 
     <!-- Activity Logs - Full Width -->
@@ -195,18 +195,20 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Header from 'src/components/common/Header.vue';
 import BranchesPerformance from 'src/components/dashboard/BranchesPerformance.vue';
-import PricesOverview from 'src/components/dashboard/PricesOverview.vue';
 import ActivityLogs from 'src/components/dashboard/ActivityLogs.vue';
-import { useDashboardStore } from 'src/stores/dashboardStore';
+import { useAdminDashboardStore } from 'src/stores/adminDashboardStore';
 import { showNotify } from 'src/composables/Notify';
 import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 import { formatNumber } from 'src/composables/useFormat';
+import { useRouter } from 'vue-router';
 
 // Initialize i18n
 const { t } = useI18n();
 
+const router = useRouter();
+
 // Initialize dashboard store
-const dashboardStore = useDashboardStore();
+const dashboardStore = useAdminDashboardStore();
 
 const exchangeRateStore = useExchangeRateStore();
 
@@ -241,15 +243,8 @@ function viewBranchAnalytics() {
   });
 }
 
-function viewAllActivities() {
-  showNotify({
-    type: 'info',
-    message: 'Redirecting to activities page...',
-    position: 'top',
-    duration: 2000,
-  });
-  // TODO: Navigate to activities page
-  // router.push('/logs-section');
+async function viewAllActivities() {
+  await router.push('/logs-section');
 }
 
 // Lifecycle hooks
@@ -506,7 +501,7 @@ onUnmounted(() => {
 // Dashboard Cards
 .dashboard-card {
   border-radius: 16px;
-  overflow: hidden;
+  overflow: scroll;
   background: white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: none;

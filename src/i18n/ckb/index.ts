@@ -649,6 +649,8 @@ export default {
     warehouse: "کۆگا",
     warehouseItems: "کەلوپەلەکانی کۆگا",
     cashbox: "صندوق",
+    performance: "پێرفۆڕمانس",
+    capacity: "تواناداری",
     report: "ڕاپۆرت",
     viewCashbox: "بینینی صندوق",
     viewReport: "بینینی ڕاپۆرت",

@@ -691,6 +691,8 @@ export default {
     warehouse: "Warehouse",
     warehouseItems: "Warehouse Items",
     cashbox: "Cashbox",
+    performance: "Performance",
+    capacity: "Capacity",
     report: "Report",
     viewCashbox: "View Cashbox",
     viewReport: "View Report",

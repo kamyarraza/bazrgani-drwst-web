@@ -1166,6 +1166,8 @@ export default {
     warehouse: "المستودع",
     warehouseItems: "عناصر المستودع",
     cashbox: "الصندوق",
+    performance: "الأداء",
+    capacity: "السعة",
     report: "التقرير",
     viewCashbox: "عرض الصندوق",
     viewReport: "عرض التقرير",

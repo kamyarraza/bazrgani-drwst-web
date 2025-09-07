@@ -1,15 +1,8 @@
 <template>
   <q-page class="dashboard-page">
     <!-- Using the new reusable Header component -->
-    <Header
-      :title="$t('dashboard.title')"
-      :title-secondary="$t('dashboard.overview')"
-      :subtitle="$t('dashboard.subtitle')"
-      icon="dashboard"
-      icon-size="3rem"
-      icon-color="white"
-      :show-waves="true"
-    />
+    <Header :title="$t('dashboard.title')" :title-secondary="$t('dashboard.overview')"
+      :subtitle="$t('dashboard.subtitle')" icon="dashboard" icon-size="3rem" icon-color="white" :show-waves="true" />
 
     <!-- Users Breakdown Card Section -->
     <div class="stats-section q-pb-lg">
@@ -25,11 +18,7 @@
 
             <q-card-section>
               <div class="users-grid">
-                <div
-                  v-for="user in dashboardStore.usersBreakdown"
-                  :key="user.type"
-                  class="user-type-item"
-                >
+                <div v-for="user in dashboardStore.usersBreakdown" :key="user.type" class="user-type-item">
                   <div class="user-icon-wrapper">
                     <q-icon :name="user.icon" size="1.8rem" :color="user.color" />
                   </div>
@@ -49,46 +38,29 @@
     <div class="row q-col-gutter-lg q-mb-lg">
       <!-- Left column - Exchange Rate Chart (Hidden on mobile) -->
       <div class="col-lg-7 col-md-12 gt-sm">
-        <ExchangeRateChart
-          :data="dashboardStore.exchangeRatesArray"
-          :loading="dashboardStore.loading"
-          @refresh="refreshDashboard"
-          class="equal-height-card"
-        />
+        <ExchangeRateChart :data="dashboardStore.exchangeRatesArray" :loading="dashboardStore.loading"
+          @refresh="refreshDashboard" class="equal-height-card" />
       </div>
 
       <!-- Right column - Branch Performance (Full width on mobile) -->
       <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
-        <BranchesPerformance
-          :branches="dashboardStore.branchesArray"
-          :loading="dashboardStore.loading"
-          @analytics="viewBranchAnalytics"
-          class="equal-height-card"
-        />
+        <BranchesPerformance :branches="dashboardStore.branchesArray" :loading="dashboardStore.loading"
+          @analytics="viewBranchAnalytics" class="equal-height-card" />
       </div>
     </div>
 
     <!-- Prices Overview - Full Width -->
     <div class="row q-mb-lg">
       <div class="col-12">
-        <PricesOverview
-          :prices="dashboardStore.prices"
-          :loading="dashboardStore.loading"
-          @refresh="refreshDashboard"
-        />
+        <PricesOverview :prices="dashboardStore.prices" :loading="dashboardStore.loading" @refresh="refreshDashboard" />
       </div>
     </div>
 
     <!-- Activity Logs - Full Width -->
     <div class="row">
       <div class="col-12">
-        <ActivityLogs
-          :activities="dashboardStore.activityLogsArray"
-          :loading="dashboardStore.loading"
-          :max-items="8"
-          @refresh="refreshDashboard"
-          @view-all="viewAllActivities"
-        />
+        <ActivityLogs :activities="dashboardStore.activityLogsArray" :loading="dashboardStore.loading" :max-items="8"
+          @refresh="refreshDashboard" @view-all="viewAllActivities" />
       </div>
     </div>
 
@@ -105,7 +77,7 @@ import ExchangeRateChart from 'src/components/dashboard/ExchangeRateChart.vue';
 import BranchesPerformance from 'src/components/dashboard/BranchesPerformance.vue';
 import PricesOverview from 'src/components/dashboard/PricesOverview.vue';
 import ActivityLogs from 'src/components/dashboard/ActivityLogs.vue';
-import { useDashboardStore } from 'src/stores/dashboardStore';
+import { useDashboardStore } from 'src/stores/adminDashboardStore';
 import { showNotify } from 'src/composables/Notify';
 
 // Initialize i18n
@@ -256,6 +228,7 @@ onUnmounted(() => {
   &.stat-card-1 {
     .stat-icon-wrapper {
       background-color: rgba(42, 123, 155, 0.1);
+
       .stat-icon-circle {
         background-color: var(--q-primary);
       }
@@ -265,6 +238,7 @@ onUnmounted(() => {
   &.stat-card-2 {
     .stat-icon-wrapper {
       background-color: rgba(87, 199, 133, 0.1);
+
       .stat-icon-circle {
         background-color: var(--q-secondary);
       }
@@ -274,6 +248,7 @@ onUnmounted(() => {
   &.stat-card-3 {
     .stat-icon-wrapper {
       background-color: rgba(237, 221, 83, 0.1);
+
       .stat-icon-circle {
         background-color: var(--q-accent);
       }
@@ -283,6 +258,7 @@ onUnmounted(() => {
   &.stat-card-4 {
     .stat-icon-wrapper {
       background-color: rgba(87, 199, 133, 0.1);
+
       .stat-icon-circle {
         background-color: var(--q-positive);
       }
