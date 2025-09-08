@@ -10,7 +10,19 @@ export interface AdminDashboardData {
     accountants: number;
     employees: number;
     customers: number;
+    suppliers: number;
+    all: number;
   };
+  online_users: Record<string, {
+    image: string;
+    name: string;
+    type: string;
+    is_online: boolean;
+    last_activity_at: {
+      datetime: string;
+      humans: string;
+    };
+  }>;
   branches: Record<string, {
     id: number;
     name: string;
@@ -78,10 +90,22 @@ export const useAdminDashboardStore = defineStore('dashboard', () => {
 
   // Computed getters for easy access to specific dashboard sections
   const counters = computed(() => dashboardData.value?.users_count || null);
+  const online_users = computed(() => dashboardData.value?.online_users || {});
   const branches = computed(() => dashboardData.value?.branches || {});
-  // const prices = computed(() => dashboardData.value?.prices || null);
-  // const exchangeRates = computed(() => dashboardData.value?.exchange_rates || {});
   const activityLogs = computed(() => dashboardData.value?.last_activity_logs || {});
+
+  const onlineUsersArray = computed(() => {
+    if (!online_users.value) return [] as Array<any>;
+
+    return Object.entries(online_users.value).map(([id, user]) => ({
+      id,
+      name: user.name,
+      type: user.type,
+      image: user.image,
+      // is_online: user.is_online,
+      last_activity_at: user.last_activity_at,
+    }));
+  });
 
   // Computed for formatted exchange rates (for charts)
   // const exchangeRatesArray = computed(() => {
@@ -144,8 +168,10 @@ export const useAdminDashboardStore = defineStore('dashboard', () => {
     return [
       { type: 'accountants', count: counters.value.accountants, icon: 'account_balance', color: 'primary' },
       { type: 'admins', count: counters.value.admins, icon: 'admin_panel_settings', color: 'secondary' },
-      { type: 'customers', count: counters.value.customers, icon: 'person', color: 'accent' },
-      { type: 'employees', count: counters.value.employees, icon: 'work', color: 'positive' }
+      { type: 'customers', count: counters.value.customers, icon: 'people', color: 'accent' },
+      { type: 'suppliers', count: counters.value.suppliers, icon: 'local_shipping', color: 'warning' },
+      { type: 'employees', count: counters.value.employees, icon: 'badge', color: 'positive' },
+      { type: 'all', count: counters.value.all, icon: 'groups', color: 'info' }
     ];
   });
 
@@ -183,26 +209,6 @@ export const useAdminDashboardStore = defineStore('dashboard', () => {
     return await fetchDashboard();
   }
 
-  // Helper functions
-  // function formatCurrency(value: number): string {
-  //   if (value >= 1000000) {
-  //     return `$${(value / 1000000).toFixed(1)}M`;
-  //   } else if (value >= 1000) {
-  //     return `$${(value / 1000).toFixed(0)}k`;
-  //   }
-  //   return `$${value.toLocaleString()}`;
-  // }
-
-  // function formatDateForChart(dateString: string): string {
-  //   const date = new Date(dateString);
-  //   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  // }
-
-  // function calculateTrend(current: number, previous: number): number {
-  //   if (previous === 0) return 0;
-  //   return Math.round(((current - previous) / previous) * 100);
-  // }
-
   // Auto-refresh functionality
   let refreshInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -238,6 +244,7 @@ export const useAdminDashboardStore = defineStore('dashboard', () => {
     branchesArray,
     activityLogsArray,
     usersBreakdown,
+    onlineUsersArray,
 
     // Actions
     fetchDashboard,

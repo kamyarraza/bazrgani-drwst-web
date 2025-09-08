@@ -1920,6 +1920,8 @@ export default {
       "نرخی گۆڕینی دیناری عێراقی بۆ دۆلاری ئەمریکی بە پێی کات",
     refreshData: "نوێکردنەوەی داتا",
     viewAllBranches: "بینینی هەموو لقەکان",
+    onlineUsers: "بەکارهێنەران لەسەر هێڵ",
+    more: "زیاتر",
 
     // Exchange Rate Component
     exchangeRateComponent: {
@@ -1944,6 +1946,8 @@ export default {
       admins: "بەڕێوەبەران",
       customers: "کڕیاران",
       employees: "فەرمانبەران",
+      suppliers: "دابینکەران",
+      all: "هەموو",
     },
 
     // Prices Overview Section

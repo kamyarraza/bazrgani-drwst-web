@@ -239,15 +239,14 @@ function showAllBranches() {
 }
 
 .branch-item {
-  // background: linear-gradient(175deg, #ff9a9e, #fad0c4);
-  background: linear-gradient(175deg, #fbc2eb, #a6c1ee);
+  background: linear-gradient(175deg, #f9f9f9, #e3f2fd); /* soft pink to light blue */
   border: 1px solid #d1d9e6;
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
-    background: linear-gradient(105deg, #fbc2eb, #a6c1ee);
-    border: 1px solid #6c757d;
+    background: linear-gradient(105deg, #f9f9f9, #e3f2fd); /* slight tilt on hover */
+    border: 1px solid #adb5bd; /* lighter gray on hover */
   }
 }
 

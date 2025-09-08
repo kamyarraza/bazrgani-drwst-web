@@ -223,8 +223,10 @@ function viewAllActivities() {
     padding: 0.5rem 0;
 
     .activity-card {
-      background: linear-gradient(335deg, #fcf4ee 50%, #fcf5e2 100%);
-      box-shadow: -2px 6px 12px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(335deg, #fffaf6 50%, #f1f8ff 100%);
+      /* ultra-light pastel gradient */
+      box-shadow: -2px 6px 12px rgba(0, 0, 0, 0.08);
+      /* lighter shadow */
       border: 1px solid #e9ecef;
       border-radius: 12px;
       padding: 1.25rem;
@@ -234,16 +236,22 @@ function viewAllActivities() {
       gap: 1rem;
 
       &:hover {
-        background: linear-gradient(135deg, #fefefe 50%, #fcf4ee 100%);
-        box-shadow: -4px 8px 16px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #ffffff 50%, #fffaf6 100%);
+        /* subtle tilt with soft colors */
+        box-shadow: -4px 8px 16px rgba(0, 0, 0, 0.12);
+        /* slightly stronger on hover */
         transform: translateY(-3px);
-        border-color: #3498db;
+        border-color: #5dade2;
+        /* softer hover border color instead of harsh blue */
       }
 
       &.latest {
-        background: linear-gradient(335deg, #fff0e4 50%, #faecc6 100%);
-        border-left: 4px solid #3498db;
-        box-shadow: 0 4px 20px rgba(52, 152, 219, 0.15);
+        background: linear-gradient(335deg, #fff8f2 50%, #fffdeb 100%);
+        /* very soft gradient */
+        border-left: 4px solid #5dade2;
+        /* lighter blue for a modern feel */
+        box-shadow: 0 4px 20px rgba(93, 173, 226, 0.12);
+        /* softer shadow */
       }
 
       .activity-header {

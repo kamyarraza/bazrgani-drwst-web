@@ -9,14 +9,8 @@
     <div class="exchange-rate-section q-mb-xl">
       <div class="row justify-center">
         <div class="col-12 col-md-2 col-lg-3 flex justify-center items-center">
-          <q-img
-            src="/public/illustrations/dashboard-04.png"
-            alt="Dashboard Illustration"
-            class="dashboard-illustration"
-            fit="contain"
-            style="max-height: 200px; opacity: 0.5;"
-            loading="lazy"
-          />
+          <q-img src="/public/illustrations/dashboard-04.png" alt="Dashboard Illustration"
+            class="dashboard-illustration" fit="contain" style="max-height: 200px; opacity: 0.5;" loading="lazy" />
         </div>
         <div class="col-12 col-md-8 col-lg-6">
           <q-card flat bordered class="exchange-rate-card cute-card shadow-4 rounded-borders-xl">
@@ -42,7 +36,7 @@
                   <div class="currency-circle usd-circle shadow-6">
                     <div class="flag-emoji big-flag">🇺🇸</div>
                     <q-icon name="attach_money" size="1.6rem" color="green-5" class="currency-icon-overlay" />
-                    
+
                     <div class="pulse-ring usd-pulse"></div>
                   </div>
                   <div class="currency-info q-mt-sm text-bold">
@@ -106,14 +100,8 @@
           </q-card>
         </div>
         <div class="col-12 col-md-2 col-lg-3 flex justify-center items-center">
-          <q-img
-            src="/public/illustrations/dashboard-02.png"
-            alt="Dashboard Illustration"
-            class="dashboard-illustration"
-            fit="contain"
-            style="max-height: 200px; opacity: 0.5;"
-            loading="lazy"
-          />
+          <q-img src="/public/illustrations/dashboard-02.png" alt="Dashboard Illustration"
+            class="dashboard-illustration" fit="contain" style="max-height: 200px; opacity: 0.5;" loading="lazy" />
         </div>
       </div>
     </div>
@@ -121,8 +109,9 @@
 
     <!-- Users Breakdown Card Section -->
     <div class="stats-section q-pb-lg">
-      <div class="row justify-center">
-        <div class="col-12">
+      <div class="row q-col-gutter-lg">
+        <!-- user breakdown -->
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <q-card class="users-breakdown-card">
             <q-card-section class="q-pb-none">
               <div class="card-header">
@@ -160,6 +149,12 @@
             </q-card-section>
           </q-card>
         </div>
+
+        <!-- Current Online Users Card -->
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+          <CurrentOnlineUsers class="dashboard-card equal-height-card" :online_users="dashboardStore.onlineUsersArray"
+            :loading="dashboardStore.loading" />
+        </div>
       </div>
     </div>
 
@@ -170,11 +165,6 @@
         <BranchesPerformance :branches="dashboardStore.branchesArray" :loading="dashboardStore.loading"
           @analytics="viewBranchAnalytics" @goto-branches="showAllBranches" class="equal-height-card" />
       </div>
-
-      <!-- Financial Overview -->
-      <!-- <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-        <PricesOverview :prices="dashboardStore.prices" :loading="dashboardStore.loading" @refresh="refreshDashboard" class="equal-height-card" />
-      </div> -->
     </div>
 
     <!-- Activity Logs - Full Width -->
@@ -201,6 +191,7 @@ import { showNotify } from 'src/composables/Notify';
 import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 import { formatNumber } from 'src/composables/useFormat';
 import { useRouter } from 'vue-router';
+import CurrentOnlineUsers from 'src/components/dashboard/CurrentOnlineUsers.vue';
 
 // Initialize i18n
 const { t } = useI18n();
@@ -417,6 +408,7 @@ onUnmounted(() => {
   background: white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: none;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -549,6 +541,308 @@ onUnmounted(() => {
 
   .dashboard-right-column {
     gap: 1rem;
+  }
+}
+
+
+
+.online-users-card {
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fefefe 0%, #f1f1f1 100%);
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.1);
+  overflow: hidden;
+  height: 520px;
+}
+
+.header-icon-wrapper {
+  position: relative;
+  background-color: rgba(34, 197, 94, 0.1);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.online-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(34, 197, 94, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.live-badge {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.current-count-section {
+  position: relative;
+}
+
+.count-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+.count-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+
+.count-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+.online-pulse-ring {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border: 3px solid rgba(34, 197, 94, 0.4);
+  border-radius: 50%;
+  animation: pulse-ring 3s infinite;
+}
+
+.cute-emojis {
+  .emoji-bounce {
+    display: inline-block;
+    font-size: 1.5rem;
+    margin: 0 0.5rem;
+    animation: bounce 2s infinite;
+  }
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+}
+
+.avatars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.user-avatar-item,
+.more-users-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.user-avatar {
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &.avatar-1 {
+    border: 2px solid #ef4444;
+  }
+
+  &.avatar-2 {
+    border: 2px solid #3b82f6;
+  }
+
+  &.avatar-3 {
+    border: 2px solid #8b5cf6;
+  }
+
+  &.avatar-4 {
+    border: 2px solid #f59e0b;
+  }
+}
+
+.online-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: #22c55e;
+  border: 2px solid white;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+.user-name {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 0.3rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.more-avatar {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.more-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.activity-status {
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &.active-dot {
+    background-color: #22c55e;
+    animation: blink 1.5s infinite;
+  }
+
+  &.idle-dot {
+    background-color: #f59e0b;
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-10px);
+  }
+
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+  }
+
+  to {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .avatars-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .count-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .count-number {
+    font-size: 1.8rem;
   }
 }
 </style>
