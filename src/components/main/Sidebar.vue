@@ -47,7 +47,7 @@
 
       <!-- Footer Area with version info -->
       <div class="sidebar-footer">
-        <div class="app-version">{{ t('layout.version') }}</div>
+        <div class="app-version">{{ t('layout.version', { version }) }}</div>
       </div>
     </div>
 
@@ -63,6 +63,8 @@ import { useRouter } from 'vue-router';
 import { usePermissions } from 'src/composables/usePermissions';
 import { useMeStore } from 'src/stores/meStore';
 import NotificationSenderModal from 'src/components/common/NotificationSenderModal.vue';
+
+const version = import.meta.env.VITE_APP_VERSION || '1.0.0';
 
 const { t, locale } = useI18n();
 const router = useRouter();

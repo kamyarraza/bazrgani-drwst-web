@@ -59,7 +59,7 @@ export default {
     title: "Bazrgani drwst",
     toggleSidebar: "Toggle Sidebar",
     languageSelector: "Language",
-    version: "v1.0.0",
+    version: "Version {version}",
     essentialLinks: "Essential Links",
     docs: "Docs",
     github: "Github",

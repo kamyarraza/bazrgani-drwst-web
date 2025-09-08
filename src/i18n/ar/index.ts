@@ -392,7 +392,7 @@ export default {
     title: "بازرگانی درووست",
     toggleSidebar: "تبديل الشريط الجانبي",
     languageSelector: "اختيار اللغة",
-    version: "الإصدار 1.0.0",
+    version: "الإصدار {version}",
     essentialLinks: "روابط أساسية",
     docs: "الوثائق",
     github: "جيثب",

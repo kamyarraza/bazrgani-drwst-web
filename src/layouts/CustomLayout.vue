@@ -193,6 +193,8 @@
       <ExchangeForm v-model="showExchangeForm" @submit="handleExchangeSubmit" />
       <div class="q-mb-4rem"></div>
     </q-page-container>
+
+    <WhatsNewDialog />
   </q-layout>
 </template>
 
@@ -215,6 +217,7 @@ import Qbtn from 'src/components/common/Qbtn.vue';
 import ErrorBoundary from 'src/components/common/ErrorBoundary.vue';
 import { useMeStore } from 'src/stores/meStore';
 import { useCashboxStore } from 'src/stores/cashboxStore';
+import WhatsNewDialog from 'src/components/WhatsNewDialog.vue';
 
 const { t } = useI18n();
 const { setLocale } = useLocale();

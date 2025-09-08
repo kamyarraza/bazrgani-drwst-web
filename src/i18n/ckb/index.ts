@@ -52,16 +52,16 @@ export default {
     expenses: "خەرجیەکان", // Add this new section
     expenseCategories: "جۆرەکانی خەرجی",
     expenseCategory: "جۆری خەرجی", // Singular form for employees
-    expense: "خەرجی", // Singular form for employees
+    // Singular form for employees
     topSolds: "زۆر فرۆشراوەکان",
-  },
+    },
 
-  layout: {
+    layout: {
     title: "بازرگانی درووست",
     dashboard: "داشبۆرد",
     toggleSidebar: "کردنەوە/داخستنی لاتەنیشت",
     languageSelector: "زمان",
-    version: "وەشانی ١.٠.٠",
+    version: "وەشانی {version}",
     essentialLinks: "بەستەرە گرنگەکان",
     docs: "بەڵگەنامە",
     github: "گەیت هەب",
@@ -71,6 +71,13 @@ export default {
     facebook: "فەیسبووک",
     awesome: "ئاوەسۆم",
     community: "کۆمەڵگە",
+  },
+  version: {
+    whatsNew: "چی نوێ هەیە ؟!",
+    subtitle: "وەشانی \u00A0\u00A0\u00A0 ___{version}___ \u00A0\u00A0\u00A0 بەرزکرایەوە \u00A0 🎉",
+    changelog: "گۆڕانکاریەکان",
+    gotItThanks: "تێگەیشتم، سوپاس!",
+    noChanges: "هیچ گۆڕانکاریەک نەنووسراوە بۆ ئەم وەشانە",
   },
   navigation: {
     home: "ماڵەوە",
