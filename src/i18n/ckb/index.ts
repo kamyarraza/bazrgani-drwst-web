@@ -1912,6 +1912,7 @@ export default {
     exchangeRateSubtitle:
       "نرخی گۆڕینی دیناری عێراقی بۆ دۆلاری ئەمریکی بە پێی کات",
     refreshData: "نوێکردنەوەی داتا",
+    viewAllBranches: "بینینی هەموو لقەکان",
 
     // Exchange Rate Component
     exchangeRateComponent: {

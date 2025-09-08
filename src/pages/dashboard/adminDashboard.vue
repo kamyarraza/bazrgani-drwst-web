@@ -166,9 +166,9 @@
     <!-- Main Dashboard Content -->
     <div class="row q-col-gutter-lg q-mb-lg">
       <!-- Branch Performance -->
-      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-12 col-sm-12 col-xs-12">
         <BranchesPerformance :branches="dashboardStore.branchesArray" :loading="dashboardStore.loading"
-          @analytics="viewBranchAnalytics" class="equal-height-card" />
+          @analytics="viewBranchAnalytics" @goto-branches="showAllBranches" class="equal-height-card" />
       </div>
 
       <!-- Financial Overview -->
@@ -234,13 +234,12 @@ async function refreshDashboard() {
   }
 }
 
-function viewBranchAnalytics() {
-  showNotify({
-    type: 'info',
-    message: 'Branch analytics feature coming soon!',
-    position: 'top',
-    duration: 2000,
-  });
+async function viewBranchAnalytics() {
+  await router.push('/reports/branches');
+}
+
+async function showAllBranches() {
+  await router.push('/branch-section');
 }
 
 async function viewAllActivities() {
@@ -401,7 +400,7 @@ onUnmounted(() => {
 
 // Equal height cards
 .equal-height-card {
-  height: 500px;
+  height: 720px;
   display: flex;
   flex-direction: column;
 
@@ -501,7 +500,7 @@ onUnmounted(() => {
 // Dashboard Cards
 .dashboard-card {
   border-radius: 16px;
-  overflow: scroll;
+  overflow: auto;
   background: white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: none;

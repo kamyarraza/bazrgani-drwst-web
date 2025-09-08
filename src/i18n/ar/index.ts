@@ -2115,6 +2115,7 @@ export default {
     exchangeRateSubtitle:
       "سعر صرف الدينار العراقي إلى الدولار الأمريكي عبر الزمن",
     refreshData: "تحديث البيانات",
+    viewAllBranches: "عرض جميع الفروع",
 
     // Exchange Rate Component
     exchangeRateComponent: {
