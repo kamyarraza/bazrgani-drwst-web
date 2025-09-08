@@ -282,7 +282,7 @@ const handleLogin = async () => {
     // Check if login was successful by checking both token and user data
     if (authStore.token && authStore.currentUser && authStore.loggedIn) {
       // Use router navigation instead of window.location for smoother transition
-      await router.replace('/')
+      await router.replace('/dashboard')
     } 
     
     // else {

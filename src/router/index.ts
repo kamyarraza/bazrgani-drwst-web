@@ -35,7 +35,7 @@ export default defineRouter(function () {
     }
 
     if (to.path.startsWith('/auth/login') && isAuthenticated) {
-      return { path: '/' };
+      return { path: '/dashboard' };
     }
 
     return true;

@@ -218,7 +218,7 @@ const allNavigationSections = [
     title: t('sidebar.overview'),
     isOpen: true, // Default open
     links: [
-      { path: '/', label: t('sidebar.dashboard'), icon: 'dashboard', permission: null },
+      { path: '/dashboard', label: t('sidebar.dashboard'), icon: 'dashboard', permission: null },
     ]
   },
   {

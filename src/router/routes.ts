@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
     path: "/",
     component: () => import("layouts/CustomLayout.vue"),
     children: [
-      { path: "", component: () => import("src/pages/dashboard/Index.vue") },
+      { path: "/dashboard", component: () => import("src/pages/dashboard/Index.vue") },
       {
         path: "admin-section",
         component: () => import("src/pages/admin/Index.vue"),

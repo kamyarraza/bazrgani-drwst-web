@@ -23,6 +23,7 @@ export default boot(async ({ router, store }) => {
 
   const userTypePermissions: Record<string, string[]> = {
     admin: [
+      "dashboard",
       "admin-section",
       "accountant-section",
       "item-section",
@@ -44,6 +45,7 @@ export default boot(async ({ router, store }) => {
     ],
     accountant: [],
     employee: [
+      "dashboard",
       "item-section",
       "transfer-request-section",
       "warehouse-transfer-section",
@@ -77,10 +79,10 @@ export default boot(async ({ router, store }) => {
   router.beforeEach((to, _from, next) => {
     const isAuthenticated = !!authStore.token;
     if (isAuthenticated && authStore.currentUser?.type) {
-      if (to.path === "/" || to.path === "") return next();
+      if (to.path === "/" || to.path === "") return next({path: "/dashboard"});
       const userType = authStore.currentUser.type;
       if (!hasPermission(userType, to.path)) {
-        return next({ path: "/", query: { error: "unauthorized" } });
+        return next({ path: "/404", query: { error: "unauthorized" } });
       }
     }
     return next();
