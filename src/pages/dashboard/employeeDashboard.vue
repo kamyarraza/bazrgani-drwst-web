@@ -226,41 +226,6 @@
 
     <!-- Recent Activities Row -->
     <div class="row q-col-gutter-lg q-mb-lg">
-      <!-- Recent Expenses -->
-      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-        <q-card class="dashboard-card">
-          <q-card-section>
-            <div class="text-h6 q-mb-md">
-              <q-icon name="receipt" size="1.2rem" color="orange" class="q-mr-sm" />
-              {{ t('branch.employeeDashboard.recentExpenses') }}
-            </div>
-            <div v-if="loading" class="text-center q-pa-md">
-              <q-spinner-dots size="2rem" color="primary" />
-            </div>
-            <div v-else-if="expensesArray.length === 0" class="text-center q-pa-md text-grey-6">
-              {{ t('branch.employeeDashboard.noExpenses') }}
-            </div>
-            <div v-else class="row">
-              <div v-for="expense in expensesArray" :key="expense.id" class="expense-item col-12">
-                <div class="expense-info">
-                  <div class="expense-title">{{ expense.title }}</div>
-                  <div class="expense-category">{{ expense.category }}</div>
-                  <div class="expense-date">{{ expense.paid_at }}</div>
-                </div>
-                <div class="expense-amount">
-                  <div v-if="expense.total_usd > 0" class="amount-usd" style="color: red;">
-                    {{ formatCurrency(expense.total_usd) }}
-                  </div>
-                  <div v-if="expense.total_iqd > 0" class="amount-iqd" style="color: red;">
-                    {{ formatCurrency(expense.total_iqd, ' د.ع') }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-
       <!-- Recent Purchases -->
       <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
         <q-card class="dashboard-card">
@@ -291,10 +256,7 @@
           </q-card-section>
         </q-card>
       </div>
-    </div>
 
-    <!-- Recent Sells and Activity Logs Row -->
-    <div class="row q-col-gutter-lg q-mb-lg">
       <!-- Recent Sells -->
       <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
         <q-card class="dashboard-card">
@@ -319,6 +281,44 @@
                 <div class="sell-details">
                   <div class="sell-items">{{ sell.items }} {{ t('branch.employeeDashboard.item') }}</div>
                   <div class="sell-amount" style="color: teal;">${{ formatNumber(sell.total_usd) }}</div>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+
+    <!-- Recent Sells and Activity Logs Row -->
+    <div class="row q-col-gutter-lg q-mb-lg">
+      <!-- Recent Expenses -->
+      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <q-card class="dashboard-card">
+          <q-card-section>
+            <div class="text-h6 q-mb-md">
+              <q-icon name="receipt" size="1.2rem" color="orange" class="q-mr-sm" />
+              {{ t('branch.employeeDashboard.recentExpenses') }}
+            </div>
+            <div v-if="loading" class="text-center q-pa-md">
+              <q-spinner-dots size="2rem" color="primary" />
+            </div>
+            <div v-else-if="expensesArray.length === 0" class="text-center q-pa-md text-grey-6">
+              {{ t('branch.employeeDashboard.noExpenses') }}
+            </div>
+            <div v-else class="row">
+              <div v-for="expense in expensesArray" :key="expense.id" class="expense-item col-12">
+                <div class="expense-info">
+                  <div class="expense-title">{{ expense.title }}</div>
+                  <div class="expense-category">{{ expense.category }}</div>
+                  <div class="expense-date">{{ expense.paid_at }}</div>
+                </div>
+                <div class="expense-amount">
+                  <div v-if="expense.total_usd > 0" class="amount-usd" style="color: red;">
+                    {{ formatCurrency(expense.total_usd) }}
+                  </div>
+                  <div v-if="expense.total_iqd > 0" class="amount-iqd" style="color: red;">
+                    {{ formatCurrency(expense.total_iqd, ' د.ع') }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -591,7 +591,7 @@ onUnmounted(() => {
 
   &:hover {
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .expense-info,
