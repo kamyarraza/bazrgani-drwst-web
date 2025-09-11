@@ -1048,6 +1048,7 @@ export default {
 
     columns: {
       id: "ژمارە",
+      code: "کۆدی",
       type: "جۆر",
       customer: "کڕیار",
       warehouse: "کۆگا",
@@ -1058,6 +1059,7 @@ export default {
       remainingPrice: "نرخی ماوە",
       refundStatus: "دۆخی گەڕاندنەوە",
       createdAt: "بەرواری دروستکردن",
+      is_editable: "دەستکاریکردن",
       actions: "کردارەکان",
     },
 
@@ -2053,6 +2055,7 @@ export default {
       notSpecified: "دیاری نەکراوە",
 
       totalPrice: "کۆی نرخ",
+      totalIQDPrice: "کۆی نرخ (دینار)",
       discountRate: "ڕێژەی داشکاندن",
       discountedPrice: "نرخی داشکێندراو",
       newBorrowedPrice: "نرخی قەرزی نوێ",

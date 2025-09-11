@@ -353,14 +353,15 @@ function handleSearchChange(_searchValue: any) {
 }
 
 const columns = computed(() => {
-  const baseColumns = [
-    // {
-    //   name: 'warehouse',
-    //   label: t('transaction.columns.warehouse'),
-    //   align: "left" as const,
-    //   field: (row: any) => row.warehouse?.name || 'N/A',
-    //   sortable: true
-    // },
+  const baseColumns: any = [
+    {
+      name: 'id',
+      label: t('transaction.columns.id'),
+      align: "left" as const,
+      field: 'id',
+      style: "color: #1976d2; font-weight: 600;",
+      sortable: true
+    },
     {
       name: 'customer',
       label: transactionType.value === 'purchase' ? t('customer.supplier') : t('transaction.columns.customer'),
@@ -418,13 +419,14 @@ const columns = computed(() => {
 
   // Add remaining columns
   baseColumns.push(
-    // {
-    //   name: 'created_at',
-    //   label: t('transaction.columns.createdAt'),
-    //   align: "left" as const,
-    //   field: (row: any) => row.created_at,
-    //   sortable: true
-    // },
+    {
+      name: 'is_editable',
+      label: t('transaction.columns.is_editable'),
+      align: "center" as const,
+      field: (row: any) => row.is_editable ? "✅" : "✗",
+      style:  (row: any) => row.is_editable ? " text-shadow: 0 0 10px green" : "color: red; fornt-weight: 900; text-shadow: 0 0 10px red",
+      sortable: false
+    },
 
     {
       name: 'actions',

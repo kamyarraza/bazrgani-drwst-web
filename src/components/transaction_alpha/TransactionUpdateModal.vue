@@ -407,7 +407,7 @@ watch(
     await customerStore.fetchCustomers(1, customerType as any);
 
     // Branch default from user (if not employee hidden)
-    selectedBranchId.value = (authStore.user as any)?.branch?.id || selectedBranchId.value || null;
+    selectedBranchId.value = props.transactionData?.warehouse?.branch_id || (authStore.user as any)?.branch?.id || null;
 
     // For sell, once warehouse is known, ensure items list is fetched so user can add/change items
     if (isSell.value && selectedWarehouseId.value) {
@@ -511,8 +511,8 @@ async function handleSubmit() {
         item_id: sel.item.id,
         quantity: Number(sel.quantity || 0),
         unit_price: Number(sel.unit_cost || 0),
-        solo_unit_price: Number(sel.solo_unit_cost || sel.unit_cost || 0),
-        bulk_unit_price: Number(sel.bulk_unit_cost || sel.unit_cost || 0)
+        // solo_unit_price: Number(sel.solo_unit_cost || sel.unit_cost || 0),
+        // bulk_unit_price: Number(sel.bulk_unit_cost || sel.unit_cost || 0)
       }))
     };
 
@@ -524,6 +524,11 @@ async function handleSubmit() {
     const endpoint = isSell.value
       ? `/transactions/update/sell/${props.transactionData.id}`
       : `/transactions/update/purchase/${props.transactionData.id}`;
+
+      // console.log('Updating transaction with payload:', payload);
+      // console.log('Endpoint:', endpoint);
+      
+      // await Promise.resolve(); // Simulate async operation
 
     await itemTransactionStore.updateTransaction(endpoint, payload);
 

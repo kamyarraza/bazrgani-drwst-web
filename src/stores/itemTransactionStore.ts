@@ -454,7 +454,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       // Add details array with validation
       transactionData.details.forEach((detail: any, index: number) => {
         if (!detail.item_id || !detail.quantity || !detail.unit_price) {
-          throw new Error(`Invalid detail at index ${index}: missing item_id, quantity, or unit_price`);
+          // throw new Error(`Invalid detail at index ${index}: missing item_id, quantity, or unit_price`);
         }
         formData.append(`details[${index}][item_id]`, Number(detail.item_id).toString());
         formData.append(`details[${index}][quantity]`, Number(detail.quantity).toString());

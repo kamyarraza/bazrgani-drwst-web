@@ -88,14 +88,14 @@
                 <b style="color: #f54a00;">{{ formatCurrency((transactionData as any).discounted_price) }}</b>
               </div>
               <div class="price-row">
-                <span>{{ t('invoice.payment.totalPrice') }}:</span>
+                <span>{{ t('invoice.payment.totalIQDPrice') }}:</span>
                 &nbsp;&nbsp;
                 <b style="color: #090909">{{ formatCurrency(totalIQDprice, ' IQD') }}</b>
               </div>
               <div class="price-row">
                 <span>{{ t('invoice.paidAmount') }}:</span>
                 &nbsp;&nbsp;
-                <b style="color: #090909">{{ formatCurrency(paidWith, ' IQD') }}</b>
+                <b style="color: #090909">{{ formatCurrency((transactionData as any)?.paid_price) }}</b>
               </div>
               <div class="price-row highlight" v-if="(transactionData as any)?.old_borrowed_price > 0">
                 <span>{{ t('invoice.oldBorrowedPrice') }}:</span>
@@ -191,14 +191,6 @@ const totalIQDprice = computed(() => {
   let iqdPrice = (props.transaction?.total_price || 0) * (props.transaction?.usd_iqd_rate || 1);
   iqdPrice = Math.round(iqdPrice / 250) * 250;
   return iqdPrice;
-})
-
-const paidWith = computed(() => {
-  const payment = (transactionData.value as any)?.payment;
-  const paid_usd = (payment?.total_usd_in || 0) - (payment?.total_usd_out || 0);
-  const paid_iqd = (payment?.total_iqd_in || 0) - (payment?.total_iqd_out || 0);
-
-  return paid_iqd + (paid_usd * (transactionData.value?.usd_iqd_rate || 1));
 })
 
 const transactionDetails = computed(() => [
