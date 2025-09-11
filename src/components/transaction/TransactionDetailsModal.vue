@@ -90,7 +90,7 @@
                             <div class="info-card">
                                 <q-icon name="phone" class="info-icon text-orange" />
                                 <div class="info-label">{{ t('transaction.phone') }}</div>
-                                <div class="info-value">{{ transactionData.customer?.fphone || t('common.notSet') }}
+                                <div class="info-value" dir="ltr">{{ formatPhoneNumber(transactionData.customer?.fphone) || t('common.notSet') }}
                                 </div>
                             </div>
                         </div>
@@ -374,7 +374,7 @@
 <script setup lang="ts">
 import { computed, defineProps, defineEmits } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatCurrency, formatNumber } from 'src/composables/useFormat'
+import { formatCurrency, formatNumber, formatPhoneNumber } from 'src/composables/useFormat'
 import { date } from 'quasar'
 import type { List } from 'src/types/item_transaction'
 

@@ -77,3 +77,23 @@ export function formatNumber(value: any): string {
   }
   return (isNaN(value) ? 0 : value).toLocaleString();
 }
+
+export function formatPhoneNumber(value: any): string {
+  if (!value) return "";
+
+  // Remove non-digit characters
+  const digits = ("" + value).replace(/\D/g, "");
+
+  // If it starts with 0, keep it for local format
+  if (digits.startsWith("0")) {
+    return digits.replace(/^(\d{4})(\d{3})(\d{4})/, "$1 $2 $3");
+  }
+
+  // If it starts with 964, format as international
+  if (digits.startsWith('964')) {
+    // Example: 9647708621991 → +964 770 862 1991
+    return digits.replace(/^964(\d{3})(\d{3})(\d{4})$/, '+964 $1 $2 $3')
+  }
+
+  return digits;   // fallback (if format not matched)
+}

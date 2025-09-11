@@ -113,7 +113,7 @@
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <div class="progress-container">
                 <q-linear-progress :value="col.value / 100" color="primary" track-color="grey-3" rounded size="8px"
-                  class="progress-bar cute-wave-progress" animation-speed="800" stripe />
+                  class="progress-bar cute-wave-progress" stripe />
                 <span class="progress-label q-ml-sm">{{ col.value }}%</span>
               </div>
             </slot>

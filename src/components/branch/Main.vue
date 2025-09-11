@@ -24,6 +24,7 @@ import Filter from 'src/components/common/Filter.vue';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
 import { useRoute } from 'vue-router';
+import { formatPhoneNumber } from 'src/composables/useFormat';
 
 const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch', 'view-cashbox', 'view-report']);
 
@@ -164,8 +165,9 @@ const columns = [
     required: true,
     label: t('branch.phone', 'Phone Number'),
     align: 'left' as const,
-    field: 'phone',
+    field: (row: any) => formatPhoneNumber(row.phone) || 'N/A',
     sortable: true,
+    style: "direction: ltr;"
   },
   {
     name: 'is_active',
