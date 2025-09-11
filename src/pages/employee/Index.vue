@@ -36,6 +36,7 @@ import { useEmployeeStore } from 'src/stores/employeeStore'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from 'src/types'
 import type { Employee } from 'src/types/employee'
+import { formatPhoneNumber } from 'src/composables/useFormat'
 
 // declarations
 const employeeStore = useEmployeeStore()
@@ -78,7 +79,11 @@ const columns = computed(() => [
     { name: 'username', align: 'left' as const, label: t('employee.username'), field: 'username', sortable: true },
     { name: 'last_activity', align: 'left' as const, label: t('employee.lastActivity'), field: 'last_activity', sortable: true },
     // { name: 'role', align: 'left' as const, label: t('employee.role'), field: 'role', sortable: true },
-    { name: 'phone', align: 'left' as const, label: t('employee.phone'), field: 'phone', sortable: true },
+    {
+        name: 'phone', align: 'left' as const, label: t('employee.phone'), field: (row: any) => formatPhoneNumber(row.phone) || 'N/A',
+        sortable: true,
+        style: "direction: ltr;"
+    },
     {
         name: 'branch',
         align: 'left' as const,

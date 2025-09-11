@@ -63,6 +63,7 @@ import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 import Note from 'src/components/common/Note.vue'
 import type { AdminForm } from 'src/types/admin'
 import { useMeStore } from 'src/stores/meStore'
+import { formatPhoneNumber } from 'src/composables/useFormat'
 const { me } = useMeStore()
 // decleration
 const adminStore = useAdminStore()
@@ -191,8 +192,9 @@ const columns = [
     name: 'phone',
     label: t('admin.columns.phone'),
     align: "left" as const,
-    field: 'phone',
-    sortable: false
+    field: (row: any) => formatPhoneNumber(row.phone) || 'N/A',
+    sortable: true,
+    style: "direction: ltr;"
 },
 {
     name: 'actions',

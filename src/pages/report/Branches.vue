@@ -1,15 +1,9 @@
 <template>
   <q-page class="q-pa-md">
     <!-- Branch Reports Header -->
-    <Header
-      :title="$t('report.branchReports')"
-      :subtitle="$t('report.branchSubtitle')"
-      icon="store"
-      icon-size="3rem"
-      icon-color="white"
-      :show-waves="true"
-      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-    />
+    <Header :title="$t('report.branchReports')" :subtitle="$t('report.branchSubtitle')" icon="store" icon-size="3rem"
+      icon-color="white" :show-waves="true"
+      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
 
     <!-- Date Range Filter -->
     <!-- <div class="q-mb-lg">
@@ -79,25 +73,13 @@
     </div>
 
     <!-- Branch Table -->
-    <QtableB
-      show-bottom
-      :hasExpandableRows="false"
-      :columns="branchColumns"
-      :rows="filteredData"
-      :loading="loading"
-      :menuItems="menuItems"
-      @menu-action="handleAction"
-      :pagination="pagination"
-      @page-change="handlePageChange"
-      :top-right="false"
-    >
+    <QtableB show-bottom :hasExpandableRows="false" :columns="branchColumns" :rows="filteredData" :loading="loading"
+      :menuItems="menuItems" @menu-action="handleAction" :pagination="pagination" @page-change="handlePageChange"
+      :top-right="false">
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge
-            :color="props.row.is_active ? 'positive' : 'negative'"
-            :label="props.row.is_active ? $t('common.active') : $t('common.inactive')"
-            rounded
-          />
+          <q-badge :color="props.row.is_active ? 'positive' : 'negative'"
+            :label="props.row.is_active ? $t('common.active') : $t('common.inactive')" rounded />
         </q-td>
       </template>
     </QtableB>
@@ -110,7 +92,8 @@ import { useReportStore } from 'src/stores/reportStore';
 import Header from 'src/components/common/Header.vue';
 import QtableB from 'src/components/common/Qtable.vue';
 import { useI18n } from 'vue-i18n';
-import type { MenuItem, Column } from 'src/types';
+import type { MenuItem } from 'src/types';
+import { formatPhoneNumber } from 'src/composables/useFormat';
 
 const reportStore = useReportStore();
 const { t } = useI18n();
@@ -123,7 +106,7 @@ const menuItems: MenuItem[] = [
   { label: t('report.exportBranch'), icon: 'download', value: 'export' }
 ];
 
-const branchColumns: Column[] = [
+const branchColumns: any[] = [
   {
     name: 'code',
     label: t('report.columns.branchCode'),
@@ -149,8 +132,9 @@ const branchColumns: Column[] = [
     name: 'phone',
     label: t('report.columns.phone'),
     align: 'left',
-    field: 'phone',
-    sortable: false
+    field: (row: any) => formatPhoneNumber(row.phone) || 'N/A',
+    sortable: true,
+    style: "direction: ltr;"
   },
   {
     name: 'warehouse_count',
@@ -305,6 +289,7 @@ onMounted(async () => {
     transform: translateY(10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
