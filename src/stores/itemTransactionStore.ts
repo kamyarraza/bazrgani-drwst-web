@@ -443,9 +443,6 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       formData.append('forgiven_price', Number(transactionData.forgiven_price || 0).toString());
       formData.append('_method', "PUT");
 
-      console.log(transactionData.iqd_price);
-      
-
       // Add sell-specific fields if present
       if (transactionData.discounted_rate !== undefined) {
         formData.append('discounted_rate', Number(transactionData.discounted_rate || 0).toString());

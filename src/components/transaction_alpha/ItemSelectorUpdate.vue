@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, computed, defineExpose } from 'vue';
+import { ref, watch, computed, defineExpose } from 'vue';
 import { useItemStore } from 'src/stores/itemStore';
 import { useItemCategoryStore } from 'src/stores/itemCategoryStore';
 import { storeToRefs } from 'pinia';
@@ -58,27 +58,36 @@ const lastChangedField = ref('');
 
 const { t } = useI18n();
 
-// Watch for prop changes to sync with parent (for update modal)
-watch(() => props.selectedItems, (newItems) => {
-  if (newItems && Array.isArray(newItems) && newItems.length > 0) {
-    internalSelectedItems.value = [...newItems as SelectedItem[]];
-  }
-}, { immediate: true, deep: true });
-
-// Emit changes to parent
-watch(internalSelectedItems, (val) => {
-  emit('update:selectedItems', val);
-}, { deep: true });
-
-onMounted(async () => {
-  // Load categories for filtering
-  await categoryStore.fetchItemCategories();
-
-  if (props.transactionType === 'purchase') {
-    await loadInitialItems();
-  }
-  // For sell, do not fetch items until warehouse is selected
-});
+/**
+ * Note on Recursive Update Bug:
+ * Date: 2025-09-11
+ * Context: While I selected a new item, I encountered a "Maximum recursive updates exceeded" error.
+ * Cause: This was due to a feedback loop between the parent and child components via v-model and watchers.
+ * Solution: I resolved it by ensuring that updates only occur when there are actual changes,
+ * thus preventing unnecessary recursive calls.
+ * Fixed By: Kamyar Raza Muhammad
+ */
+// Sync *down* when prop changes (but only overwrite if different)
+watch(
+  () => props.selectedItems,
+  (newItems) => {
+    if (JSON.stringify(newItems) !== JSON.stringify(internalSelectedItems.value)) {
+      internalSelectedItems.value = [...(newItems as any || [])];
+    }
+  },
+  { immediate: true, deep: true }
+);
+//...
+// Sync *up* only when you know internal changes (avoid loop by comparing)
+watch(
+  internalSelectedItems,
+  (val) => {
+    if (JSON.stringify(val) !== JSON.stringify(props.selectedItems)) {
+      emit('update:selectedItems', val);
+    }
+  },
+  { deep: true }
+);
 
 async function loadInitialItems() {
   currentPage.value = 1;
@@ -512,7 +521,8 @@ defineExpose({
             <q-icon name="shopping_cart" size="20px" />
           </div>
           <h3 class="section-title">🛒 {{ t('transactionAlpha.selectedItems') }}</h3>
-          <div class="section-badge selected-badge">{{ internalSelectedItems.length }} {{ t('transactionAlpha.selected') }}
+          <div class="section-badge selected-badge">{{ internalSelectedItems.length }} {{ t('transactionAlpha.selected')
+            }}
           </div>
         </div>
 
@@ -1317,8 +1327,15 @@ defineExpose({
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .clear-all-container {
@@ -1422,8 +1439,15 @@ defineExpose({
 }
 
 @keyframes fadeInOut {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Cute button container styles */

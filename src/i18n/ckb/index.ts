@@ -2926,6 +2926,7 @@ export default {
     enterUsdAmount: "بڕی دۆلار بنووسە",
     enterIqdReturnAmount: "بڕی گەڕاندنەوەی دینار بنووسە",
     enterUsdReturnAmount: "بڕی گەڕاندنەوەی دۆلار بنووسە",
+    enterDiscount: "ڕێژەی داشکان بنووسە",
     forgivenPrice: "بڕی لێبڕین",
     enterForgivenAmount: "بڕی لێبڕین بنووسە",
     forgivenPriceHint: "بڕی لێبڕین ئەگەر کڕیار پارە نەدات",
