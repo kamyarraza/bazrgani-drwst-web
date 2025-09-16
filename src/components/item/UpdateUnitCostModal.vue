@@ -163,10 +163,8 @@ async function submitForm() {
 
   loading.value = true
   try {
-    let success = false
-
     // Admin can update directly
-    success = await itemStore.updateItemUnitCost(props.item.id, form.unit_cost)
+    await itemStore.updateItemUnitCost(props.item.id, form.unit_cost)
 
   } finally {
     loading.value = false

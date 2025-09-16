@@ -822,7 +822,7 @@ async function handleSubmit() {
         },
         payment_type: apiData.payment_type || selectedPaymentType.value,
         payment_type_value: apiData.payment_type_value || selectedPaymentType.value,
-        items: selectedItems.value.map((sel) => ({
+        items: (selectedItems as any).value.map((sel) => ({
           id: sel.item.id,
           name: sel.item.name,
           quantity: sel.quantity,
