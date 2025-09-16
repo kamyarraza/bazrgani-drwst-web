@@ -381,6 +381,13 @@ export default {
     searchToBegin: "گەڕان بۆ دەستپێکردن",
     browseAllItems: "گەڕان لە هەموو کاڵاکان",
 
+    updateUnitCost: "نوێکردنەوەی تێچووی یەکە",
+    itemInfo: "زانیاری کاڵا",
+    currentUnitCost: "تێچووی یەکەی ئێستا",
+    newUnitCost: "تێچووی یەکەی نوێ",
+    updateCost: "نوێکردنەوەی تێچووی یەکە",
+    requestUpdate: "داواکاری نوێکردنەوەی تێچووی یەکە",
+
     chartTitle: "ڕاپۆرتی زۆرترین فرۆشتنەکان",
     topSold: {
       unitSold: "زۆرترین یەکەی فرۆشراو",
@@ -1005,6 +1012,8 @@ export default {
     available: "بەردەست",
     sku: "SKU",
     export: "وەرگرتن",
+    warning: "ئاگادارکردنەوە",
+    approvalRequired: "داواکاریەکەت پێویستە لە لایەن بەڕێوەبەرەکان پەسند بکرێت"
   },
   error: {
     somethingWentWrong: "شتێک هەڵە ڕوویدا",
@@ -2068,6 +2077,7 @@ export default {
       title: "کاڵاکان",
       serialNumber: "ژ.ز",
       description: "وەسف",
+      sku: "کۆد",
       quantity: "بڕ",
       unitPrice: "نرخی یەکە",
       unitPriceUSD: "نرخی یەکە (دۆلار)",

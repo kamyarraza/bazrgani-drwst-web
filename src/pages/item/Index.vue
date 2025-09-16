@@ -42,6 +42,8 @@
         <Update v-model="showUpdateModal" v-if="itemToUpdate" :item="itemToUpdate"></Update>
         <Update v-model="showUpdateModal" v-else></Update>
 
+        <UpdateUnitCostModal v-model="showUpdateUnitCostModal" :item="itemToUpdate" @close-modal="showUpdateUnitCostModal = false" />
+
         <!-- Item Details Modal -->
         <ItemDetailsModal v-model="showDetailsModal" :item-data="itemToView" />
 
@@ -64,6 +66,7 @@ import type { Product } from 'src/types/item'
 import { useI18n } from 'vue-i18n'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 import { formatCurrency } from 'src/composables/useFormat'
+import UpdateUnitCostModal from 'src/components/item/UpdateUnitCostModal.vue'
 
 // declarations
 const itemStore = useItemStore()
@@ -75,6 +78,7 @@ const pagination = computed(() => itemStore.pagination)
 const currentPage = ref(1)
 const showModal = ref(false)
 const showUpdateModal = ref(false)
+const showUpdateUnitCostModal = ref(false)
 const showDetailsModal = ref(false)
 const showArchiveModal = ref(false)
 const itemToUpdate = ref<Product>()
@@ -95,27 +99,27 @@ const isSearching = computed(() => {
     return filters.value.search?.trim() !== ''
 })
 
-// Get color for category badge
-function _getCategoryColor(categoryName?: string): string {
-    if (!categoryName) return 'grey'
+// // Get color for category badge
+// function _getCategoryColor(categoryName?: string): string {
+//     if (!categoryName) return 'grey'
 
-    const categoryColors = {
-        'Electronics': 'blue',
-        'Clothing': 'purple',
-        'Food & Beverages': 'green',
-        'Home & Garden': 'orange'
-    }
+//     const categoryColors = {
+//         'Electronics': 'blue',
+//         'Clothing': 'purple',
+//         'Food & Beverages': 'green',
+//         'Home & Garden': 'orange'
+//     }
 
-    return categoryColors[categoryName] || 'grey'
-}
+//     return categoryColors[categoryName] || 'grey'
+// }
 
-// Get class for profit margin display
-function _getProfitClass(margin: number): string {
-    if (margin >= 30) return 'text-positive font-weight-bold'
-    if (margin >= 20) return 'text-primary'
-    if (margin >= 10) return 'text-warning'
-    return 'text-negative'
-}
+// // Get class for profit margin display
+// function _getProfitClass(margin: number): string {
+//     if (margin >= 30) return 'text-positive font-weight-bold'
+//     if (margin >= 20) return 'text-primary'
+//     if (margin >= 10) return 'text-warning'
+//     return 'text-negative'
+// }
 
 // Sample statistics for dashboard
 
@@ -144,6 +148,7 @@ const categoryOptions = computed(() => {
 // Menu items for row actions
 const menuItems = [
     { label: t('item.update'), icon: 'edit', value: 'update' },
+    { label: t('item.updateUnitCost'), icon: 'attach_money', value: 'update-unit-cost' },
     { label: t('item.details'), icon: 'visibility', value: 'view' },
     { label: t('item.archive'), icon: 'archive', value: 'archive' },
     // { label: t('item.delete'), icon: 'delete', value: 'delete' }
@@ -264,7 +269,7 @@ const columns = [
 
     {
         name: 'solo_unit_price',
-        label: t('item.cost', 'Cost'),
+        label: t('item.soloUnitPrice', 'Cost'),
         align: "right" as const,
         field: 'solo_unit_price',
         format: val => formatCurrency(val),
@@ -273,7 +278,7 @@ const columns = [
 
     {
         name: 'bulk_unit_price',
-        label: t('item.cost', 'Cost'),
+        label: t('item.bulkUnitPrice', 'Cost'),
         align: "right" as const,
         field: 'bulk_unit_price',
         format: val => formatCurrency(val),
@@ -308,6 +313,11 @@ const handleAction = (payload: { item: MenuItem; rowId: number }) => {
         case 'update':
             itemToUpdate.value = selectedItem(payload.rowId)
             showUpdateModal.value = true
+            break
+            
+        case 'update-unit-cost':
+            itemToUpdate.value = selectedItem(payload.rowId)
+            showUpdateUnitCostModal.value = true
             break
 
         case 'delete':

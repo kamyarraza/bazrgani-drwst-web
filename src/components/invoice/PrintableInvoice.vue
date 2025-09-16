@@ -54,6 +54,7 @@
                 <tr>
                   <th>#</th>
                   <th>{{ t('invoice.items.description') }}</th>
+                  <th>{{ t('invoice.items.sku') }}</th>
                   <th>{{ t('invoice.items.quantity') }}</th>
                   <th>{{ t('invoice.items.unitPrice') }}</th>
                   <th>{{ t('invoice.items.total') }}</th>
@@ -63,6 +64,7 @@
                 <tr v-for="(item, index) in transactionData?.items" :key="item.id">
                   <td>{{ index + 1 }}</td>
                   <td>{{ item.name }}</td>
+                  <td>{{ item.sku }}</td>
                   <td>{{ item.quantity }}</td>
                   <td>{{ formatCurrencyDisplay(item.unit_price) }}</td>
                   <td>{{ formatCurrencyDisplay(item.quantity * item.unit_price) }}</td>

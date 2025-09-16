@@ -896,6 +896,13 @@ export default {
     searchToBegin: "ابدأ البحث",
     browseAllItems: "تصفح جميع المنتجات",
 
+    updateUnitCost: "تحديث تكلفة الوحدة",
+    itemInfo: "معلومات الصنف",
+    currentUnitCost: "تكلفة الوحدة الحالية",
+    newUnitCost: "تكلفة الوحدة الجديدة",
+    updateCost: "تحديث تكلفة الوحدة",
+    requestUpdate: "طلب تحديث تكلفة الوحدة",
+
     chartTitle: "تقرير المبيعات",
     topSold: {
       unitSold: "وحدة مباعة",
@@ -1502,6 +1509,8 @@ export default {
     creating: "جاري الإنشاء...",
     updating: "جاري التحديث...",
     ellipsis: "...",
+    warning: "تحذير",
+    approvalRequired: "طلبك يحتاج إلى موافقة من المديرين"
   },
   invoice: {
     information: "معلومات الفاتورة",
@@ -1698,6 +1707,7 @@ export default {
       title: "المنتجات",
       serialNumber: "ر.ت",
       description: "الوصف",
+      sku: "کود",
       quantity: "الكمية",
       unitPrice: "سعر الوحدة",
       unitPriceUSD: "سعر الوحدة (دولار)",

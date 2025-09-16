@@ -95,11 +95,11 @@ export const useItemStore = defineStore("item", () => {
           headers:
             itemData instanceof FormData
               ? {
-                  "Content-Type": "multipart/form-data",
-                }
+                "Content-Type": "multipart/form-data",
+              }
               : {
-                  "Content-Type": "application/json",
-                },
+                "Content-Type": "application/json",
+              },
         }
       );
 
@@ -175,6 +175,52 @@ export const useItemStore = defineStore("item", () => {
           itemData
         );
       }
+      const { data } = response;
+
+      // Update the local item data
+      const index = items.value.findIndex((item) => item.id === Number(itemId));
+      if (index !== -1) {
+        items.value[index] = data.data;
+      }
+
+      showNotify({
+        type: "positive",
+        message: data?.message || "Item updated successfully",
+        position: "top",
+        duration: 3000,
+      });
+
+      // Refresh the item list to get updated data
+      // await fetchItems();
+      return true;
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update item";
+      error.value = errorMessage;
+      showNotify({
+        type: "negative",
+        message: error.value,
+        position: "top",
+        duration: 3000,
+      });
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function updateItemUnitCost(itemId: number | string, unitCost: number) {
+    loading.value = true;
+    error.value = null;
+
+    const formData = { "_method": "PUT", unit_cost: unitCost };
+
+    try {
+      const response = await api.post<ApiResponse<Product>>(
+        endPoints.item.updateUnitCost(itemId),
+        formData
+      );
+      
       const { data } = response;
 
       // Update the local item data
@@ -437,6 +483,7 @@ export const useItemStore = defineStore("item", () => {
     createItem,
     getItemDetails,
     updateItem,
+    updateItemUnitCost,
     deleteItem,
     archiveItem,
     fetchItemsByWarehouse,

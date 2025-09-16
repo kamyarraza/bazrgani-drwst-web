@@ -79,6 +79,7 @@ export interface List {
   payment_type_value: string;
   items?: {
     id: number;
+    sku: string;
     name: string;
     quantity: number;
     unit_price: number;
