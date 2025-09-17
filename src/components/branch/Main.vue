@@ -24,7 +24,7 @@ import Filter from 'src/components/common/Filter.vue';
 import { useBranchStore } from 'src/stores/branchStore';
 import { useMeStore } from 'src/stores/meStore';
 import { useRoute } from 'vue-router';
-import { formatPhoneNumber } from 'src/composables/useFormat';
+import { formatCurrency } from 'src/composables/useFormat';
 
 const emit = defineEmits(['edit-branch', 'toggle-active', 'view-warehouses', 'add-branch', 'view-cashbox', 'view-report']);
 
@@ -151,32 +151,31 @@ const columns = [
     field: 'code',
     sortable: true,
   },
-  // {
-  //   name: 'location',
-  //   required: true,
-  //   label: t('branch.location', 'Location'),
-  //   align: 'left' as const,
-  //   field: (row: any) => row.location?.name || 'N/A',
-  //   sortable: true,
-  // },
-
   {
-    name: 'phone',
+    name: 'purchase_borrow',
     required: true,
-    label: t('branch.phone', 'Phone Number'),
+    label: t('branch.purchaseBorrow', 'Purchase Borrow'),
     align: 'left' as const,
-    field: (row: any) => formatPhoneNumber(row.phone) || 'N/A',
+    field: (row: any) => formatCurrency(row.purchase_borrow) || 'N/A',
     sortable: true,
-    style: "direction: ltr;"
+    style: (val: any) => ({
+      color: val.purchase_borrow > 0 ? '#dc2626' : '#374151',
+      fontWeight: val.purchase_borrow > 0 ? '600' : '400',
+      textShadow: val.purchase_borrow > 0 ? '0 0 8px rgba(239, 68, 68, 0.3)' : 'none'
+    })
   },
   {
-    name: 'is_active',
+    name: 'sell_borrow',
     required: true,
-    label: t('branch.status', 'Status'),
+    label: t('branch.sellBorrow', 'Sell Borrow'),
     align: 'center' as const,
-    field: 'is_active',
+    field: (row: any) => formatCurrency(row.sell_borrow) || 'N/A',
     sortable: true,
-    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
+    style: (val: any) => ({
+      color: val.sell_borrow > 0 ? '#8b5cf6' : '#374151',
+      fontWeight: val.sell_borrow > 0 ? '600' : '400',
+      textShadow: val.sell_borrow > 0 ? '0 0 6px rgba(139, 92, 246, 0.4)' : 'none'
+    })
   },
   {
     name: 'warehouses',

@@ -58,7 +58,7 @@
 
           <q-separator class="tab-separator" />
 
-          <q-tab-panels v-model="activeTab" animated  class="enhanced-tab-panels">   <!-- swipeable -->
+          <q-tab-panels v-model="activeTab" animated class="enhanced-tab-panels"> <!-- swipeable -->
             <!-- Branches Tab -->
             <q-tab-panel name="branches" class="enhanced-tab-panel">
               <Main @edit-branch="openUpdateModal" @toggle-active="toggleBranchActive" @view-warehouses="viewWarehouses"
@@ -68,7 +68,8 @@
             <!-- Warehouse Tab -->
             <q-tab-panel name="warehouse" class="enhanced-tab-panel">
               <WarehouseComponent :branch="selectedBranch" :selected-warehouse="selectedWarehouse"
-                @view-items="handleViewItems" @view-item-movements="handleViewItemMovements" @go-back="activeTab = 'branches'" />
+                @view-items="handleViewItems" @view-item-movements="handleViewItemMovements"
+                @go-back="activeTab = 'branches'" />
             </q-tab-panel>
 
             <!-- Warehouse Items Tab -->
