@@ -54,9 +54,9 @@ export default {
     expenseCategory: "جۆری خەرجی", // Singular form for employees
     // Singular form for employees
     topSolds: "زۆر فرۆشراوەکان",
-    },
+  },
 
-    layout: {
+  layout: {
     title: "بازرگانی درووست",
     dashboard: "داشبۆرد",
     toggleSidebar: "کردنەوە/داخستنی لاتەنیشت",
@@ -945,6 +945,8 @@ export default {
         message: "تکایە دووبارە هەوڵ بدەرەوە یان پەیوەندی بە پشتگیری بکە",
       },
     },
+
+    borrowPerBranch: 'بڕی قەرز بۆ هەر لقێک',
   },
   common: {
     details: "وردەکاریەکان",
@@ -2981,7 +2983,7 @@ export default {
     verifyBranchSelection:
       "تکایە هەڵبژاردنی لقەکەت بپشکنە و دووبارە هەوڵ بدەرەوە",
     cashboxStatusCheckFailed: "پشکنینی دۆخی صندوق شکستی هێنا",
-    checkConnectionAndTryAgain:"تکایە پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە",
+    checkConnectionAndTryAgain: "تکایە پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە",
     forgivenPriceTooltip: "ئەو بڕە پارەیەی کە بڕدراوە یان بەخشراوە واتە وەرنەگیراوە لە کڕیار"
   },
 
@@ -3225,24 +3227,24 @@ export default {
     status: "دۆخ",
     requestedAt: "کاتی داواکردن",
     actions: "کردارەکان",
-    
+
     // Status translations
     "status.pending": "چاوەڕوان",
-    "status.approved": "پەسەندکراو", 
+    "status.approved": "پەسەندکراو",
     "status.rejected": "ڕەتکراوە",
     pending: "چاوەڕوان",
     approved: "پەسەندکراو",
     rejected: "ڕەتکراوە",
-    
+
     // Filter functionality
     filterByStatus: "فلتەرکردن بەپێی دۆخ",
     clearFilters: "پاککردنەوەی فلتەرەکان",
-    
+
     // Actions
     viewDetails: "بینینی وردەکاریەکان",
     approve: "پەسەندکردن",
     reject: "ڕەتکردنەوە",
-    
+
     // Details Modal
     updateRequestDetails: "وردەکاریەکانی داواکاری نوێکردنەوە",
     viewRequestInformation: "بینینی زانیاری وردی ئەم داواکاریە نوێکردنەوەیە",
@@ -3253,7 +3255,7 @@ export default {
     fieldChanges: "گۆڕانکاری خانەکان",
     requestedChanges: "گۆڕانکاری داواکراوەکان",
     noChangesRequested: "هیچ گۆڕانکاریەک داوا نەکراوە",
-    
+
     // Approve Modal
     approveRequest: "پەسەندکردنی داواکاری نوێکردنەوە",
     confirmApprovalAction: "دڵنیابوونەوە کە دەتەوێت ئەم داواکاری نوێکردنەوەیە پەسەند بکەیت",
@@ -3263,9 +3265,9 @@ export default {
     approvalWarning2: "ئەم کردارە ناتوانرێت بگەڕێندرێتەوە کاتێک پەسندت کرد",
     approvalWarning3: "فەرمانبەری داواکار ئاگادار دەکرێتەوە لە پەسەندکردنەکە",
     approveNow: "پەسەندکردنی داواکاری",
-    
+
     // Reject Modal
-    rejectRequest: "ڕەتکردنەوەی داواکاری نوێکردنەوە", 
+    rejectRequest: "ڕەتکردنەوەی داواکاری نوێکردنەوە",
     provideRejectionReason: "تکایە هۆکارێک بۆ ڕەتکردنەوەی ئەم داواکاریە پێشکەش بکە",
     rejectionReason: "هۆکاری ڕەتکردنەوە",
     rejectionReasonLabel: "بۆچی ئەم داواکاریە ڕەت دەکەیتەوە؟",

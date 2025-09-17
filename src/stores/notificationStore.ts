@@ -23,7 +23,6 @@ export const useNotificationStore = defineStore('notification', () => {
   const previousUnreadCount = ref(0);
 
   const router = useRouter();
-  const { t } = useI18n();
 
   // Basic audio: no preload/permission gymnastics
   const playNotificationSound = async () => {
@@ -134,6 +133,7 @@ const showBrowserNotification = (title, options:any = {}) => {
                          error.value?.toLowerCase().includes('unauthenticated') ||
                          error.value?.toLowerCase().includes('unauthorized');
       if (!isAuthError) {
+        const { t } = useI18n();
         Notify.create({ type: 'warning', message: t('notifications.fetchError') });
       }
       if (isAuthError) stopAutoRefresh();

@@ -903,14 +903,20 @@ export default {
     updateCost: "تحديث تكلفة الوحدة",
     requestUpdate: "طلب تحديث تكلفة الوحدة",
 
+    updatePrices: "تحديث أسعار البيع",
+    currentPrices: "الأسعار الحالية",
+    newPrices: "السعر الجديد",
+    currentStock: "المخزون الحالي",
+    pieces: "قطعة",
+
     chartTitle: "تقرير المبيعات",
     topSold: {
       unitSold: "وحدة مباعة",
       chartTitle: "المنتجات الأكثر مبيعًا",
       chartSubtitle: "{count} منتج الأكثر مبيعًا"
     }
-  },
-  warehouse: {
+    },
+    warehouse: {
     title: "إدارة المستودع",
     description: "إدارة عناصر المستودع والمخزون",
     dashboardTitle: "لوحة تحكم المستودعات",
@@ -1443,7 +1449,9 @@ export default {
         title: "فشل في إنشاء الدين",
         message: "يرجى المحاولة مرة أخرى أو الاتصال بالدعم"
       }
-    }
+    },
+
+    borrowPerBranch: 'مبلغ الدين لكل فرع',
   },
   common: {
     edit: "تعديل",

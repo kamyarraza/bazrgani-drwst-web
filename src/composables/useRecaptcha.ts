@@ -32,7 +32,7 @@ export const useRecaptcha = () => {
         return
       }
 
-      console.log('🔄 Loading reCAPTCHA script...')
+      // console.log('🔄 Loading reCAPTCHA script...')
 
       const script = document.createElement('script')
       script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`
@@ -40,7 +40,7 @@ export const useRecaptcha = () => {
       script.defer = true
 
       script.onload = () => {
-        console.log('✅ reCAPTCHA script loaded successfully')
+        // console.log('✅ reCAPTCHA script loaded successfully')
         isScriptLoaded.value = true
         resolve()
       }
@@ -64,7 +64,7 @@ export const useRecaptcha = () => {
           if (window.grecaptcha) {
             window.grecaptcha.ready(() => {
               isReady.value = true
-              console.log('✅ reCAPTCHA v3 initialized successfully')
+              // console.log('✅ reCAPTCHA v3 initialized successfully')
               resolve()
             })
           } else {
@@ -89,8 +89,8 @@ export const useRecaptcha = () => {
 
     try {
       const token = await window.grecaptcha.execute(siteKey, { action })
-      console.log('✅ reCAPTCHA token generated for action:', action)
-      console.log('🔑 Token (first 20 chars):', token.substring(0, 20) + '...')
+      // console.log('✅ reCAPTCHA token generated for action:', action)
+      // console.log('🔑 Token (first 20 chars):', token.substring(0, 20) + '...')
       return token
     } catch (error) {
       console.error('❌ reCAPTCHA execution failed:', error)

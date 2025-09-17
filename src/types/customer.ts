@@ -24,6 +24,8 @@ export interface Customer {
   created_at: string; // ISO date string
   sell_borrow?: number; // Amount owed to supplier
   purchase_borrow?: number; // Amount customer owes us
+  purchase_borrow_per_branch?: Array<any>,
+  sell_borrow_per_branch?: Array<any>,
   has_borrowed_price?: number | boolean; // Flag indicating if customer has ever borrowed
 }
 export interface CustomerPayload {
