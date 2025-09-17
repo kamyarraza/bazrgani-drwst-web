@@ -5,6 +5,7 @@ import { endPoints } from 'src/endpoint';
 import type { Notification, ApiResponse } from 'src/types/notfication';
 import { Notify } from 'quasar';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 export const useNotificationStore = defineStore('notification', () => {
   const isOpenNotfication = ref(false);
@@ -22,6 +23,7 @@ export const useNotificationStore = defineStore('notification', () => {
   const previousUnreadCount = ref(0);
 
   const router = useRouter();
+  const { t } = useI18n();
 
   // Basic audio: no preload/permission gymnastics
   const playNotificationSound = async () => {
@@ -132,7 +134,7 @@ const showBrowserNotification = (title, options:any = {}) => {
                          error.value?.toLowerCase().includes('unauthenticated') ||
                          error.value?.toLowerCase().includes('unauthorized');
       if (!isAuthError) {
-        Notify.create({ type: 'negative', message: error.value || 'Failed to fetch notifications' });
+        Notify.create({ type: 'warning', message: t('notifications.fetchError') });
       }
       if (isAuthError) stopAutoRefresh();
     } finally {

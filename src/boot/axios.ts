@@ -21,7 +21,7 @@ const api = axios.create({
    baseURL: import.meta.env.VITE_API_URL || "https://warehouse-api.bazrganidrwst.com/api",
 
   withCredentials: true,
-  timeout: 7000, // 7 seconds timeout for all requests mr kamyar you needed only this line
+  timeout: 10000, // 10 seconds timeout for all requests
   headers: {
     Accept: "application/json",
     "Accept-Language": localStorage.getItem("locale") || "ckb",
@@ -236,12 +236,14 @@ api.interceptors.response.use(
         });
       }
     } else {
-      message =
-        "شتێکی هەڵەت ڕوویدا، تکایە دڵنیاببەرەوە لە پەیوەندی ئینتەرنێتەکەت و دووبارە هەوڵبدەرەوە.";
-      void Notify.create({
-        type: "negative",
-        message,
-      });
+      // message =
+      //   "شتێکی هەڵەت ڕوویدا، تکایە دڵنیاببەرەوە لە پەیوەندی ئینتەرنێتەکەت و دووبارە هەوڵبدەرەوە.";
+      // void Notify.create({
+      //   type: "negative",
+      //   message,
+      // });
+
+      // Just ignore if no response (network error, CORS issue, etc.)
     }
 
     return Promise.reject(new Error(message));
