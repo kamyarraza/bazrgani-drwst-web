@@ -255,6 +255,52 @@ export const useItemStore = defineStore("item", () => {
     }
   }
 
+  async function updateItemPrices(itemId: number | string, prices: { solo_unit_price: number; bulk_unit_price: number }) {
+    loading.value = true;
+    error.value = null;
+
+    const formData = { "_method": "PUT", ...prices };
+
+    try {
+      const response = await api.post<ApiResponse<Product>>(
+        endPoints.item.updatePrices(itemId),
+        formData
+      );
+      
+      const { data } = response;
+
+      // Update the local item data
+      const index = items.value.findIndex((item) => item.id === Number(itemId));
+      if (index !== -1) {
+        items.value[index] = data.data;
+      }
+
+      showNotify({
+        type: "positive",
+        message: data?.message || "Item updated successfully",
+        position: "top",
+        duration: 3000,
+      });
+
+      // Refresh the item list to get updated data
+      // await fetchItems();
+      return true;
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update item";
+      error.value = errorMessage;
+      showNotify({
+        type: "negative",
+        message: error.value,
+        position: "top",
+        duration: 3000,
+      });
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function deleteItem(itemId: number | string) {
     loading.value = true;
     error.value = null;
@@ -484,6 +530,7 @@ export const useItemStore = defineStore("item", () => {
     getItemDetails,
     updateItem,
     updateItemUnitCost,
+    updateItemPrices,
     deleteItem,
     archiveItem,
     fetchItemsByWarehouse,

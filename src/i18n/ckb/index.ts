@@ -388,6 +388,12 @@ export default {
     updateCost: "نوێکردنەوەی تێچووی یەکە",
     requestUpdate: "داواکاری نوێکردنەوەی تێچووی یەکە",
 
+    updatePrices: "نوێکردنەوەی نرخەکانی فرۆشتن",
+    currentPrices: "نرخەکانی ئێستا",
+    newPrices: "نرخی نوێ",
+    currentStock: "کۆگای ئێستا",
+    pieces: "دانە",
+
     chartTitle: "ڕاپۆرتی زۆرترین فرۆشتنەکان",
     topSold: {
       unitSold: "زۆرترین یەکەی فرۆشراو",

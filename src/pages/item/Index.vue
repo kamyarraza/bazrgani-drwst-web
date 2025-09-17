@@ -44,6 +44,8 @@
 
         <UpdateUnitCostModal v-model="showUpdateUnitCostModal" :item="itemToUpdate" @close-modal="showUpdateUnitCostModal = false" />
 
+        <UpdatePricesModal v-model="showUpdatePricesModal" :item="itemToUpdate" @close-modal="showUpdatePricesModal = false" />
+
         <!-- Item Details Modal -->
         <ItemDetailsModal v-model="showDetailsModal" :item-data="itemToView" />
 
@@ -67,6 +69,7 @@ import { useI18n } from 'vue-i18n'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 import { formatCurrency } from 'src/composables/useFormat'
 import UpdateUnitCostModal from 'src/components/item/UpdateUnitCostModal.vue'
+import UpdatePricesModal from 'src/components/item/UpdatePricesModal.vue'
 
 // declarations
 const itemStore = useItemStore()
@@ -79,6 +82,7 @@ const currentPage = ref(1)
 const showModal = ref(false)
 const showUpdateModal = ref(false)
 const showUpdateUnitCostModal = ref(false)
+const showUpdatePricesModal = ref(false)
 const showDetailsModal = ref(false)
 const showArchiveModal = ref(false)
 const itemToUpdate = ref<Product>()
@@ -147,9 +151,10 @@ const categoryOptions = computed(() => {
 
 // Menu items for row actions
 const menuItems = [
+    { label: t('item.details'), icon: 'visibility', value: 'view' },
     { label: t('item.update'), icon: 'edit', value: 'update' },
     { label: t('item.updateUnitCost'), icon: 'attach_money', value: 'update-unit-cost' },
-    { label: t('item.details'), icon: 'visibility', value: 'view' },
+    { label: t('item.updatePrices'), icon: 'price_change', value: 'update-unit-prices' },
     { label: t('item.archive'), icon: 'archive', value: 'archive' },
     // { label: t('item.delete'), icon: 'delete', value: 'delete' }
 ]
@@ -318,6 +323,11 @@ const handleAction = (payload: { item: MenuItem; rowId: number }) => {
         case 'update-unit-cost':
             itemToUpdate.value = selectedItem(payload.rowId)
             showUpdateUnitCostModal.value = true
+            break
+
+        case 'update-unit-prices':
+            itemToUpdate.value = selectedItem(payload.rowId)
+            showUpdatePricesModal.value = true
             break
 
         case 'delete':

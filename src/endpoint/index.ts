@@ -93,6 +93,7 @@ export const endPoints = {
     details: (itemId: string | number) => `/items/${itemId}`,
     update: (itemId: string | number) => `/items/${itemId}`,
     updateUnitCost: (itemId: string | number) => `/items/${itemId}/cost-unit/update`,
+    updatePrices: (itemId: string | number) => `/items/${itemId}/prices/update`,
     delete: (itemId: string | number) => `/items/${itemId}`,
     archive: (itemId: string | number) => `/items/${itemId}/archive`,
   },
