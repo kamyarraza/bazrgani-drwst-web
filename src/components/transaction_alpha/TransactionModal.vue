@@ -357,10 +357,19 @@
                       suffix="USD" class="payment-input" :placeholder="t('transactionAlpha.enterUsdReturnAmount')" />
                   </div>
 
-                  <div class="payment-item forgiven-price-item">
-                    <label class="form-label forgiven-label">
-                      <q-icon name="heart_broken" color="negative" size="16px" />
-                      {{ t('transactionAlpha.forgivenPrice') }}
+                  <div class="payment-item forgiven-price-item" v-if="selectedPaymentType === 'cash'">
+                    <label class="form-label forgiven-label flex items-center gap-x-2">
+                      <q-icon name="heart_broken" color="negative" size="18px" />
+
+                      <span class="text-body1">
+                        {{ t('transactionAlpha.forgivenPrice') }}
+                      </span>
+
+                      <q-icon name="help_outline" color="grey" size="18px" class="cursor-pointer">
+                        <q-tooltip class="bg-grey text-white text-body2 shadow-2 rounded-md">
+                          {{ t('transactionAlpha.forgivenPriceTooltip') }}
+                        </q-tooltip>
+                      </q-icon>
                     </label>
                     <q-input v-model.number="forgivenPrice" type="number" min="0" dense outlined suffix="IQD"
                       class="payment-input forgiven-input" :placeholder="t('transactionAlpha.enterForgivenAmount')"
@@ -1733,6 +1742,8 @@ async function checkCashboxStatus() {
   position: relative;
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-radius: 15px;
+  margin-top: 1rem;
+  ;
   padding: 16px;
   border: 2px solid rgba(245, 158, 11, 0.3);
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
@@ -1786,7 +1797,7 @@ async function checkCashboxStatus() {
 }
 
 .forgiven-input {
-  background: rgba(255, 255, 255, 0.8) !important;
+  background: linear-gradient(235deg, #fef3c7 0%, #fde68a 100%);
   border-radius: 12px !important;
 }
 

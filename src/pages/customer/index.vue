@@ -25,14 +25,14 @@
                 <div class="text-h6 text-weight-light">{{ t('customer.purchaseBorrow') }}</div>
                 <div class="countup text-weight-bold">
                   <!-- Show loader if not loaded -->
-                   <transition name="fade" mode="out-in">
-                     <span v-if="customerStore.loading">
-                       <q-skeleton type="QSlider" animated width="150px" />
-                     </span>
-                     <span v-else>
-                       {{ formatCurrency(totalBorrows.purchase_borrow || 0) }}
-                     </span>
-                   </transition>
+                  <transition name="fade" mode="out-in">
+                    <span v-if="customerStore.loading">
+                      <q-skeleton type="QSlider" animated width="150px" />
+                    </span>
+                    <span v-else>
+                      {{ formatCurrency(totalBorrows.purchase_borrow || 0) }}
+                    </span>
+                  </transition>
                 </div>
               </div>
             </div>
@@ -54,14 +54,14 @@
                 <div class="text-h6 text-weight-light">{{ t('customer.sellBorrow') }}</div>
                 <div class="countup text-weight-bold">
                   <!-- Show loader if not loaded -->
-                   <transition name="fade" mode="out-in">
-                     <span v-if="customerStore.loading">
-                       <q-skeleton type="QSlider" animated width="150px" />
-                     </span>
-                     <span v-else>
-                       {{ formatCurrency(totalBorrows.sell_borrow || 0) }}
-                     </span>
-                   </transition>
+                  <transition name="fade" mode="out-in">
+                    <span v-if="customerStore.loading">
+                      <q-skeleton type="QSlider" animated width="150px" />
+                    </span>
+                    <span v-else>
+                      {{ formatCurrency(totalBorrows.sell_borrow || 0) }}
+                    </span>
+                  </transition>
                 </div>
               </div>
             </div>
@@ -125,11 +125,17 @@ import Filter, { type FilterState } from 'src/components/common/Filter.vue'
 // import Note from 'src/components/common/Note.vue'
 import { formatCurrency } from 'src/composables/useFormat'
 import { useBranchStore } from 'src/stores/branchStore'
+import { useMeStore } from 'src/stores/meStore'
 
 // declaration
 const customerStore = useCustomerStore()
 const { t } = useI18n()
 const branchStore = useBranchStore()
+
+const meStore = useMeStore()
+
+// Check if user is employee
+const isEmployee = computed(() => meStore.me?.type === 'employee');
 
 // variables
 const data = computed<Customer[]>(() => customerStore.customers)
@@ -177,26 +183,33 @@ const filters = ref<FilterState>({
 })
 
 // Filter options for the Filter component
-const filterOptions = computed(() => [
-  {
-    field: 'type',
-    label: t('customer.typeFilter'),
-    options: [
-      { label: t('customer.customer'), value: 'customer' },
-      { label: t('customer.supplier'), value: 'supplier' }
-    ],
-    icon: 'filter_list'
-  },
-  {
-    field: 'borrowed_from_branch',
-    label: t('customer.borrowedFromBranchFilter'),
-    options: branchStore.allBranches.map(branch => ({
-      label: branch.name,
-      value: branch.id
-    })),
-    icon: 'filter_list'
-  }
-])
+const filterOptions = computed(() => {
+  const options = [
+    {
+      field: 'type',
+      label: t('customer.typeFilter'),
+      options: [
+        { label: t('customer.customer'), value: 'customer' },
+        { label: t('customer.supplier'), value: 'supplier' }
+      ],
+      icon: 'filter_list'
+    },
+    {
+      field: 'borrowed_from_branch',
+      label: t('customer.borrowedFromBranchFilter'),
+      options: branchStore.allBranches.map(branch => ({
+        label: branch.name,
+        value: branch.id
+      })),
+      icon: 'filter_list'
+    }
+  ]
+
+  // Remove second filter if employee
+  return isEmployee.value
+    ? options.filter(opt => opt.field !== 'borrowed_from_branch')
+    : options
+})
 
 // Menu items for row actions - function to generate menu items based on customer
 const getMenuItems = (customer: Customer) => {
@@ -629,9 +642,9 @@ async function loadCustomers(page?: number, type?: any, search?: string, borrowe
 .fade-leave-active {
   transition: opacity 0.6s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
-
 </style>
