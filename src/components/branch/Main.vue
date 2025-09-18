@@ -156,7 +156,7 @@ const columns = [
     required: true,
     label: t('branch.purchaseBorrow', 'Purchase Borrow'),
     align: 'left' as const,
-    field: (row: any) => formatCurrency(row.purchase_borrow) || 'N/A',
+    field: (row: any) => parseFloat(row.purchase_borrow) > 0 ? formatCurrency(row.purchase_borrow) : '🌱',
     sortable: true,
     style: (val: any) => ({
       color: val.purchase_borrow > 0 ? '#dc2626' : '#374151',
@@ -169,7 +169,7 @@ const columns = [
     required: true,
     label: t('branch.sellBorrow', 'Sell Borrow'),
     align: 'center' as const,
-    field: (row: any) => formatCurrency(row.sell_borrow) || 'N/A',
+    field: (row: any) => parseFloat(row.sell_borrow) > 0 ? formatCurrency(row.sell_borrow) : '🌷',
     sortable: true,
     style: (val: any) => ({
       color: val.sell_borrow > 0 ? '#8b5cf6' : '#374151',

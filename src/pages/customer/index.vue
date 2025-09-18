@@ -12,6 +12,68 @@
       </div>
     </div> -->
     <!-- Filters Section -->
+
+    <!-- Statistics Cards Section -->
+    <div class="row q-col-gutter-md q-mb-lg">
+      <!-- Purchase Borrow Card -->
+      <div class="col-12 col-sm-6">
+        <q-card class="gradient-card purchase-card text-white">
+          <q-card-section class="text-center">
+            <div class="flex items-center justify-center q-mb-sm">
+              <q-icon name="shopping_cart" size="2.5rem" class="q-mr-sm" />
+              <div>
+                <div class="text-h6 text-weight-light">{{ t('customer.purchaseBorrow') }}</div>
+                <div class="countup text-weight-bold">
+                  <!-- Show loader if not loaded -->
+                   <transition name="fade" mode="out-in">
+                     <span v-if="customerStore.loading">
+                       <q-skeleton type="QSlider" animated width="150px" />
+                     </span>
+                     <span v-else>
+                       {{ formatCurrency(totalBorrows.purchase_borrow || 0) }}
+                     </span>
+                   </transition>
+                </div>
+              </div>
+            </div>
+            <div class="text-caption opacity-80">{{ t('customer.totalPurchaseDebt') }}</div>
+          </q-card-section>
+          <q-card-section class="card-sparkle">
+            <div class="sparkle-effect"></div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- Sell Borrow Card -->
+      <div class="col-12 col-sm-6">
+        <q-card class="gradient-card sell-card text-white">
+          <q-card-section class="text-center">
+            <div class="flex items-center justify-center q-mb-sm">
+              <q-icon name="sell" size="2.5rem" class="q-mr-sm" />
+              <div>
+                <div class="text-h6 text-weight-light">{{ t('customer.sellBorrow') }}</div>
+                <div class="countup text-weight-bold">
+                  <!-- Show loader if not loaded -->
+                   <transition name="fade" mode="out-in">
+                     <span v-if="customerStore.loading">
+                       <q-skeleton type="QSlider" animated width="150px" />
+                     </span>
+                     <span v-else>
+                       {{ formatCurrency(totalBorrows.sell_borrow || 0) }}
+                     </span>
+                   </transition>
+                </div>
+              </div>
+            </div>
+            <div class="text-caption opacity-80">{{ t('customer.totalSellDebt') }}</div>
+          </q-card-section>
+          <q-card-section class="card-sparkle">
+            <div class="sparkle-effect"></div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+
     <Filter v-model:filters="filters" :filter-options="filterOptions"
       :search-label="t('customer.searchLabel', 'Search by name or phone')"
       :reset-label="t('customer.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
@@ -76,6 +138,7 @@ const currentPage = ref(1)
 const showModal = ref(false)
 const showUpdateModal = ref(false)
 const customerToUpdate = ref<Customer>()
+const totalBorrows = computed(() => customerStore.totalBorrows)
 
 // Customer details modal state
 const showDetailsModal = ref(false)
@@ -218,7 +281,7 @@ const columns = [{
   align: "center" as const,
   field: 'purchase_borrow',
   sortable: true,
-  format: (val: number) => formatCurrency(val),
+  format: (val: any) => parseFloat(val) > 0 ? formatCurrency(val) : '🌷',
   style: (val: any) => ({
     color: val.purchase_borrow > 0 ? 'red' : 'black',
     fontWeight: val.purchase_borrow > 0 ? 'bold' : 'normal',
@@ -231,7 +294,7 @@ const columns = [{
   align: "center" as const,
   field: 'sell_borrow',
   sortable: true,
-  format: (val: any) => formatCurrency(val),
+  format: (val: any) => parseFloat(val) > 0 ? formatCurrency(val) : '🌱',
   style: (val: any) => ({
     color: val.sell_borrow > 0 ? 'purple' : 'black',
     fontWeight: val.sell_borrow > 0 ? 'bold' : 'normal',
@@ -499,4 +562,76 @@ async function loadCustomers(page?: number, type?: any, search?: string, borrowe
     font-weight: 500;
   }
 }
+
+.gradient-card {
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.gradient-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Purchase Borrow Card Gradient */
+.purchase-card {
+  background: linear-gradient(135deg, #ab47bc, #e91e63);
+}
+
+/* Sell Borrow Card Gradient */
+.sell-card {
+  background: linear-gradient(135deg, #00695c, #3f51b5);
+}
+
+/* Sparkle effect overlay */
+.card-sparkle {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.sparkle-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  animation: sparkleMove 15s linear infinite;
+}
+
+@keyframes sparkleMove {
+  0% {
+    transform: translate(-20%, -20%) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(20%, 20%) rotate(360deg);
+  }
+
+  100% {
+    transform: translate(0%, 0%) rotate(0deg);
+  }
+}
+
+/* Count-up numbers */
+.countup {
+  font-size: 1.75rem;
+  letter-spacing: -0.5px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.6s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>

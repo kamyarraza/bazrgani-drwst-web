@@ -743,8 +743,8 @@ export default {
       lastUpdated: "دوایین نوێکردنەوە",
     },
 
-    purchaseBorrow: "باڵانسی قەرزی کڕیار",
-    sellBorrow: "باڵانسی قەرزی ئێمە",
+    purchaseBorrow: "باڵانسی قەرزی ئێمە",
+    sellBorrow: "باڵانسی قەرزی کڕیار",
   },
   branchReport: {
     title: "ڕاپۆرتی لق",
@@ -952,6 +952,11 @@ export default {
     borrowPerBranch: 'بڕی قەرز بۆ هەر لقێک',
 
     borrowedFromBranchFilter: 'قەرزار لە لقی',
+
+    purchaseBorrow: "قەرزی کڕین",
+    totalPurchaseDebt: "کۆی قەرزی کڕین",
+    sellBorrow: "قەرزی فروشتن",
+    totalSellDebt: "کۆی قەرزی فروشتن",
   },
   common: {
     details: "وردەکاریەکان",

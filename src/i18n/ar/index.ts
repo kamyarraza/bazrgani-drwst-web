@@ -1466,6 +1466,11 @@ export default {
     borrowPerBranch: 'مبلغ الدين لكل فرع',
 
     borrowedFromBranchFilter: 'تصفية حسب الفرع',
+
+    purchaseBorrow: "قرض الشراء",
+    totalPurchaseDebt: "إجمالي دين الشراء",
+    sellBorrow: "قرض البيع",
+    totalSellDebt: "إجمالي دين البيع"
   },
   common: {
     edit: "تعديل",

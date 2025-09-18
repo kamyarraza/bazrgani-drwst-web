@@ -1450,6 +1450,11 @@ export default {
     borrowPerBranch: 'Debt Amount Per Branch',
 
     borrowedFromBranchFilter: 'Borrowed From Branch',
+
+    purchaseBorrow: "Purchase Borrow",
+    totalPurchaseDebt: "Total Purchase Debt",
+    sellBorrow: "Sell Borrow",
+    totalSellDebt: "Total Sell Debt"
   },
   common: {
     edit: "Edit",

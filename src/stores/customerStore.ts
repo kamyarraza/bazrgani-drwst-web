@@ -8,6 +8,7 @@ import { showNotify } from 'src/composables/Notify';
 
 export const useCustomerStore = defineStore('customer', () => {
   const customers = ref<Customer[]>([]);
+  const totalBorrows = ref<{ purchase_borrow: number; sell_borrow: number }>({ purchase_borrow: 0, sell_borrow: 0 });
   const currentCustomer = ref<Customer | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -30,7 +31,12 @@ export const useCustomerStore = defineStore('customer', () => {
     }
 
     try {
-      const { data } = await api.get<ApiResponse<Customer[]>>(`${endPoints.customer.list}${parameter}&paginate=true&relations=location`);
+      // Fetch customers with relations to location
+      const { data, headers } = await api.get<ApiResponse<Customer[]>>(`${endPoints.customer.list}${parameter}&paginate=true&relations=location`);
+
+      // Parse total borrows from headers
+      totalBorrows.value = JSON.parse(headers['x-total-borrows'] || '{}');
+
       customers.value = data.data;
       pagination.value = data.pagination || null;
     } catch (err: unknown) {
@@ -383,6 +389,7 @@ export const useCustomerStore = defineStore('customer', () => {
 
   return {
     customers,
+    totalBorrows,
     currentCustomer,
     loading,
     error,
