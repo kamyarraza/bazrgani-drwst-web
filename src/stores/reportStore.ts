@@ -30,6 +30,9 @@ export const useReportStore = defineStore('report', () => {
   const totalItemsQuantity = computed(() => branches.value?.reduce((sum, b) => sum + (b.total_items_quantity || 0), 0) || 0);
   const totalItemsCost = computed(() => branches.value?.reduce((sum, b) => sum + (b.total_items_cost || 0), 0) || 0);
   const totalPurchaseBorrow = computed(() => branches.value?.reduce((sum, b) => sum + (b.purchase_borrow || 0), 0) || 0);
+  const totalWarehouses = computed(() => warehouses.value?.length || 0);
+  const activeWarehouses = computed(() => warehouses.value?.filter(w => w.is_active).length || 0);
+  const totalCategories = computed(() => categories.value?.length || 0);
   const totalSellBorrow = computed(() => branches.value?.reduce((sum, b) => sum + (b.sell_borrow || 0), 0) || 0);
 
   // Purchase statistics
@@ -269,6 +272,9 @@ export const useReportStore = defineStore('report', () => {
     totalItemsCost,
     totalItemsQuantity,
     totalPurchaseBorrow,
+    totalWarehouses,
+    activeWarehouses,
+    totalCategories,
     totalSellBorrow,
     totalPurchases,
     totalPurchaseAmount,
