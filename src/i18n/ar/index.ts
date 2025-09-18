@@ -195,11 +195,11 @@ export default {
     refundedAmounts: "المبالغ المستردة",
     refunded: "مسترد",
     refundId: "رقم الاسترداد",
-    refundDate: "تاريخ الاسترداد", 
+    refundDate: "تاريخ الاسترداد",
     refundedItems: "العناصر المستردة",
     usdIn: "دولار داخل",
     iqdIn: "دينار داخل",
-    usdOut: "دولار خارج", 
+    usdOut: "دولار خارج",
     iqdOut: "دينار خارج",
     viewRefundDetails: "عرض تفاصيل الاسترداد",
     reason: "السبب",
@@ -579,6 +579,9 @@ export default {
     averageSaleSubtitle: "متوسط قيمة البيع",
     totalProfit: "إجمالي الربح",
     totalProfitSubtitle: "إجمالي الأرباح المحققة",
+    totalItemsQuantity: "إجمالي كمية العناصر",
+    totalPurchaseBorrow: "إجمالي قروض الشراء",
+    totalSellBorrow: "إجمالي قروض البيع",
 
     // Table columns
     columns: {
@@ -624,6 +627,12 @@ export default {
       payment: "الدفع",
       address: "العنوان",
       branch: "الفرع",
+
+      totalItemsCount: "إجمالي عدد العناصر",
+      totalItemsQuantity: "إجمالي كمية العناصر",
+      totalItemsCost: "إجمالي تكلفة العناصر",
+      purchaseBorrow: "إجمالي قروض الشراء",
+      sellBorrow: "إجمالي قروض البيع"
     },
 
     // Table titles
@@ -915,8 +924,8 @@ export default {
       chartTitle: "المنتجات الأكثر مبيعًا",
       chartSubtitle: "{count} منتج الأكثر مبيعًا"
     }
-    },
-    warehouse: {
+  },
+  warehouse: {
     title: "إدارة المستودع",
     description: "إدارة عناصر المستودع والمخزون",
     dashboardTitle: "لوحة تحكم المستودعات",
@@ -1078,8 +1087,8 @@ export default {
     branchRequiredForSelection: "الفرع مطلوب لاختيار المستودع",
     warehouseSelectionDisabled: "اختيار المستودع معطل",
     items: "العناصر",
-    },
-    StockMovement: {
+  },
+  StockMovement: {
     title: "حركة المخزون",
     name: "المنتج",
     oldQuantity: "الكمية السابقة",
@@ -1087,8 +1096,8 @@ export default {
     newQuantity: "الكمية الجديدة",
     reason: "السبب",
     createdAt: "التاريخ",
-    },
-    employee: {
+  },
+  employee: {
     image: "صورة",
     addNew: "إضافة موظف جديد",
     updateEmployee: "تحديث الموظف",
@@ -1250,7 +1259,10 @@ export default {
       usdToIqdRate: "سعر الدولار إلى الدينار",
       euroToUsdRate: "سعر اليورو إلى الدولار",
       lastUpdated: "آخر تحديث",
-    }
+    },
+
+    purchaseBorrow: "قرض الشراء",
+    sellBorrow: "قرض البيع",
   },
   branchReport: {
     title: "تقرير الفرع",
@@ -1267,7 +1279,7 @@ export default {
     exportPDF: "تصدير PDF",
     pdfError: "خطأ في إنشاء ملف PDF. يرجى المحاولة مرة أخرى أو استخدام تصدير CSV.",
     noDataAvailable: "لا توجد بيانات متاحة لهذا الفرع",
-    
+
     columns: {
       itemName: "اسم العنصر",
       categoryName: "اسم الفئة",
@@ -1281,7 +1293,7 @@ export default {
       packetUnits: "وحدات الحزمة",
       packageUnits: "وحدات العبوة",
     },
-    
+
     actions: {
       viewDetails: "عرض التفاصيل",
       exportItem: "تصدير العنصر",
@@ -2277,7 +2289,7 @@ export default {
 
     openYourCashbox: "يرجى عدم نسيان فتح صندوقك.",
     closeYourCashbox: "يرجى عدم نسيان إغلاق صندوقك.",
-    },
+  },
 
   // قسم فئات المصروفات
   expenseCategory: {
@@ -2443,24 +2455,24 @@ export default {
     status: "الحالة",
     requestedAt: "تاريخ الطلب",
     actions: "الإجراءات",
-    
+
     // Status translations
     "status.pending": "معلق",
-    "status.approved": "موافق عليه", 
+    "status.approved": "موافق عليه",
     "status.rejected": "مرفوض",
     pending: "معلق",
     approved: "موافق عليه",
     rejected: "مرفوض",
-    
+
     // Filter functionality
     filterByStatus: "تصفية حسب الحالة",
     clearFilters: "مسح المرشحات",
-    
+
     // Actions
     viewDetails: "عرض التفاصيل",
     approve: "موافقة",
     reject: "رفض",
-    
+
     // Details Modal
     updateRequestDetails: "تفاصيل طلب التحديث",
     viewRequestInformation: "عرض معلومات مفصلة حول طلب التحديث هذا",
@@ -2471,7 +2483,7 @@ export default {
     fieldChanges: "تغييرات الحقول",
     requestedChanges: "التغييرات المطلوبة",
     noChangesRequested: "لم يتم طلب أي تغييرات",
-    
+
     // Approve Modal
     approveRequest: "الموافقة على طلب التحديث",
     confirmApprovalAction: "تأكيد أنك تريد الموافقة على طلب التحديث هذا",
@@ -2481,9 +2493,9 @@ export default {
     approvalWarning2: "لا يمكن التراجع عن هذا الإجراء بمجرد التأكيد",
     approvalWarning3: "سيتم إشعار الموظف المطالب بالموافقة",
     approveNow: "الموافقة على الطلب",
-    
+
     // Reject Modal
-    rejectRequest: "رفض طلب التحديث", 
+    rejectRequest: "رفض طلب التحديث",
     provideRejectionReason: "يرجى تقديم سبب لرفض هذا الطلب",
     rejectionReason: "سبب الرفض",
     rejectionReasonLabel: "لماذا ترفض هذا الطلب؟",

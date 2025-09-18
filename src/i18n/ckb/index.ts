@@ -741,7 +741,10 @@ export default {
       usdToIqdRate: "ڕێژەی دۆلار بۆ دینار",
       euroToUsdRate: "ڕێژەی یۆرۆ بۆ دۆلار",
       lastUpdated: "دوایین نوێکردنەوە",
-    }
+    },
+
+    purchaseBorrow: "باڵانسی قەرزی کڕیار",
+    sellBorrow: "باڵانسی قەرزی ئێمە",
   },
   branchReport: {
     title: "ڕاپۆرتی لق",
@@ -1441,6 +1444,9 @@ export default {
     totalProfit: "کۆی قازانج",
     totalProfitSubtitle: "کۆی قازانجی بەدەستهاتوو",
     totalItemsCost: "کۆی نرخی کاڵاکان",
+    totalItemsQuantity: "کۆی ژمارەی کاڵاکان",
+    totalPurchaseBorrow: "کۆی قەرزی کڕین",
+    totalSellBorrow: "کۆی قەرزی فرۆشتن",
 
     // Table columns
     columns: {
@@ -1487,6 +1493,12 @@ export default {
       address: "ناونیشان",
       branch: "لق",
       itemsCost: "تێچووی کاڵاکان",
+
+      totalItemsCount: "کۆی کاڵاکان",
+      totalItemsQuantity: "کۆی عەدەد",
+      totalItemsCost: "کۆی نرخی کاڵاکان",
+      purchaseBorrow: "قەرزی کڕین",
+      sellBorrow: "قەرزی فرۆشتن"
     },
 
     // Table titles

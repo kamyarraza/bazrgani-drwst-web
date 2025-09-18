@@ -27,12 +27,10 @@ export const useReportStore = defineStore('report', () => {
   const error = ref<string | null>(null);
 
   // Computed
-  const totalBranches = computed(() => branches.value?.length || 0);
-  const activeBranches = computed(() => branches.value?.filter(b => b.is_active).length || 0);
-  const totalWarehouses = computed(() => warehouses.value?.length || 0);
-  const activeWarehouses = computed(() => warehouses.value?.filter(w => w.is_active).length || 0);
-  const totalCategories = computed(() => categories.value?.length || 0);
-  const activeCategories = computed(() => categories.value?.filter(c => c.is_active).length || 0);
+  const totalItemsQuantity = computed(() => branches.value?.reduce((sum, b) => sum + (b.total_items_quantity || 0), 0) || 0);
+  const totalItemsCost = computed(() => branches.value?.reduce((sum, b) => sum + (b.total_items_cost || 0), 0) || 0);
+  const totalPurchaseBorrow = computed(() => branches.value?.reduce((sum, b) => sum + (b.purchase_borrow || 0), 0) || 0);
+  const totalSellBorrow = computed(() => branches.value?.reduce((sum, b) => sum + (b.sell_borrow || 0), 0) || 0);
 
   // Purchase statistics
   const totalPurchases = computed(() => purchases.value?.length || 0);
@@ -108,7 +106,7 @@ export const useReportStore = defineStore('report', () => {
 
     try {
       const { data } = await api.get<ApiResponse<Category[]>>(endPoints.report.itemCategories);
-      categories.value = data  as unknown as Category[];
+      categories.value = data as unknown as Category[];
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch categories';
       error.value = errorMessage;
@@ -144,7 +142,7 @@ export const useReportStore = defineStore('report', () => {
       }
 
       const { data } = await api.get<ApiResponse<Purchase[]>>(url);
-      purchases.value = data  as unknown as Purchase[];
+      purchases.value = data as unknown as Purchase[];
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch purchases';
       error.value = errorMessage;
@@ -179,7 +177,7 @@ export const useReportStore = defineStore('report', () => {
       }
 
       const { data } = await api.get<ApiResponse<Sell[]>>(url);
-      sells.value = data   as unknown as Sell[];
+      sells.value = data as unknown as Sell[];
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch sells';
       error.value = errorMessage;
@@ -268,12 +266,10 @@ export const useReportStore = defineStore('report', () => {
     error,
 
     // Computed
-    totalBranches,
-    activeBranches,
-    totalWarehouses,
-    activeWarehouses,
-    totalCategories,
-    activeCategories,
+    totalItemsCost,
+    totalItemsQuantity,
+    totalPurchaseBorrow,
+    totalSellBorrow,
     totalPurchases,
     totalPurchaseAmount,
     totalPaidAmount,

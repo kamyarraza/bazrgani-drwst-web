@@ -6,6 +6,11 @@ export interface Branch {
   warehouses: number;
   users: number;
   is_active: boolean;
+  total_items_count: number;
+  total_items_quantity: number;
+  total_items_cost: number;
+  purchase_borrow: number;
+  sell_borrow: number;
   created_at: string; // ISO date string
 }
 

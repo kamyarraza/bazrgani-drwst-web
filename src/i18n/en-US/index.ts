@@ -562,6 +562,9 @@ export default {
     averageSaleSubtitle: "Average sale value",
     totalProfit: "Total Profit",
     totalProfitSubtitle: "Total earned profits",
+    totalItemsQuantity: "Total Items Quantity",
+    totalPurchaseBorrow: "Total Purchase Borrow",
+    totalSellBorrow: "Total Sell Borrow",
 
     // Table columns
     columns: {
@@ -607,6 +610,12 @@ export default {
       payment: "Payment",
       address: "Address",
       branch: "Branch",
+
+      totalItemsCount: "Total Items Count",
+      totalItemsQuantity: "Total Items Quantity",
+      totalItemsCost: "Total Items Cost",
+      purchaseBorrow: "Total Purchase Borrow",
+      sellBorrow: "Total Sell Borrow"
     },
 
     // Table titles
@@ -647,9 +656,9 @@ export default {
       Average: "Average",
       "Needs Improvement": "Needs Improvement",
     },
-    },
+  },
 
-    admin: {
+  admin: {
     dashboardTitle: "Admin Dashboard",
     managingAdmins: "Managing System Admins",
     addNew: "Add New Admin",
@@ -733,8 +742,8 @@ export default {
     imagePreview: "Image Preview",
     newImagePreview: "New Image Preview",
     currentImage: "Current Image"
-    },
-    accountant: {
+  },
+  accountant: {
     dashboardTitle: "Accountant Dashboard",
     managingUsers: "Managing System Accountants",
     addNew: "Add New Accountant",
@@ -761,8 +770,8 @@ export default {
     role: "Accountant",
     personalInfo: "Personal Information",
     accountDetails: "Account Details"
-    },
-    item: {
+  },
+  item: {
     dashboardTitle: "Items Dashboard",
     managingItems: "Managing Product Inventory",
     addNew: "Add New Item",
@@ -897,8 +906,8 @@ export default {
       chartTitle: "Top Selling Items",
       chartSubtitle: "{count} top selling items"
     }
-    },
-    warehouse: {
+  },
+  warehouse: {
     title: "Warehouse Management",
     description: "Manage warehouse items and inventory",
     dashboardTitle: "Warehouse Dashboard",
@@ -955,8 +964,8 @@ export default {
     noWarehousesAvailable: "No warehouses available for this branch",
     branchRequiredForSelection: "Branch selection is required to choose a warehouse",
     warehouseSelectionDisabled: "Warehouse selection is currently disabled"
-    },
-    warehouseItem: {
+  },
+  warehouseItem: {
     title: "Warehouse Items",
     warehouseName: "Warehouse Name",
     addNew: "Add New Item",
@@ -1060,8 +1069,8 @@ export default {
     branchRequiredForSelection: "Branch is required to select a warehouse",
     warehouseSelectionDisabled: "Warehouse selection is disabled",
     items: "Items"
-    },
-    StockMovement: {
+  },
+  StockMovement: {
     title: "Stock Movement",
     name: "Item",
     oldQuantity: "Previous Quantity",
@@ -1069,8 +1078,8 @@ export default {
     newQuantity: "New Quantity",
     reason: "Reason",
     createdAt: "Date",
-    },
-    employee: {
+  },
+  employee: {
     image: "Image",
     addNew: "Add New Employee",
     updateEmployee: "Update Employee",
@@ -1110,8 +1119,8 @@ export default {
       title: "Permissions",
       adjustments: "Stock Adjustments",
     },
-    },
-    location: {
+  },
+  location: {
     title: "Location Management",
     subtitle: "Manage geographical locations in the system",
     dashboardTitle: "Location Dashboard",
@@ -1147,8 +1156,8 @@ export default {
     city: "City",
     district: "District",
     area: "Area",
-    },
-    branch: {
+  },
+  branch: {
     title: "Branch Management",
     subtitle: "Manage branches and warehouses",
     myBranch: "My Branch",
@@ -1232,7 +1241,10 @@ export default {
       usdToIqdRate: "USD to IQD Rate",
       euroToUsdRate: "EUR to USD Rate",
       lastUpdated: "Last Updated",
-    }
+    },
+
+    purchaseBorrow: "Purchase Borrow",
+    sellBorrow: "Sell Borrow",
   },
   branchReport: {
     title: "Branch Report",

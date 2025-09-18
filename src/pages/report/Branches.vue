@@ -19,11 +19,11 @@
         <q-card class="stat-card">
           <q-card-section class="stat-card-content">
             <div class="stat-icon-wrapper">
-              <q-icon name="store" size="1.5rem" color="primary" />
+              <q-icon name="inventory_2" size="1.5rem" color="grey" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ reportStore.totalBranches }}</div>
-              <div class="stat-label text-caption">{{ $t('report.totalBranches') }}</div>
+              <div class="stat-value text-h5">{{ formatNumber(reportStore.totalItemsQuantity) }}</div>
+              <div class="stat-label text-caption">{{ $t('report.totalItemsQuantity') }}</div>
             </div>
           </q-card-section>
         </q-card>
@@ -33,11 +33,11 @@
         <q-card class="stat-card">
           <q-card-section class="stat-card-content">
             <div class="stat-icon-wrapper">
-              <q-icon name="check_circle" size="1.5rem" color="positive" />
+              <q-icon name="attach_money" size="1.5rem" color="orange" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ reportStore.activeBranches }}</div>
-              <div class="stat-label text-caption">{{ $t('report.activeBranches') }}</div>
+              <div class="stat-value text-h5">{{ formatCurrency(reportStore.totalItemsCost) }}</div>
+              <div class="stat-label text-caption">{{ $t('report.totalItemsCost') }}</div>
             </div>
           </q-card-section>
         </q-card>
@@ -47,11 +47,11 @@
         <q-card class="stat-card">
           <q-card-section class="stat-card-content">
             <div class="stat-icon-wrapper">
-              <q-icon name="warehouse" size="1.5rem" color="secondary" />
+              <q-icon name="credit_card" size="1.5rem" color="warning" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ totalWarehouses }}</div>
-              <div class="stat-label text-caption">{{ $t('report.totalWarehouses') }}</div>
+              <div class="stat-value text-h5">{{ formatCurrency(reportStore.totalPurchaseBorrow) }}</div>
+              <div class="stat-label text-caption">{{ $t('report.totalPurchaseBorrow') }}</div>
             </div>
           </q-card-section>
         </q-card>
@@ -61,11 +61,11 @@
         <q-card class="stat-card">
           <q-card-section class="stat-card-content">
             <div class="stat-icon-wrapper">
-              <q-icon name="people" size="1.5rem" color="accent" />
+                <q-icon name="receipt" size="1.5rem" color="positive" />
             </div>
             <div class="stat-text">
-              <div class="stat-value text-h5">{{ totalUsers }}</div>
-              <div class="stat-label text-caption">{{ $t('report.totalUsers') }}</div>
+              <div class="stat-value text-h5">{{ formatCurrency(reportStore.totalSellBorrow) }}</div>
+              <div class="stat-label text-caption">{{ $t('report.totalSellBorrow') }}</div>
             </div>
           </q-card-section>
         </q-card>
@@ -76,12 +76,12 @@
     <QtableB show-bottom :hasExpandableRows="false" :columns="branchColumns" :rows="filteredData" :loading="loading"
       :menuItems="menuItems" @menu-action="handleAction" :pagination="pagination" @page-change="handlePageChange"
       :top-right="false">
-      <template v-slot:body-cell-status="props">
+      <!-- <template v-slot:body-cell-status="props">
         <q-td :props="props">
           <q-badge :color="props.row.is_active ? 'positive' : 'negative'"
             :label="props.row.is_active ? $t('common.active') : $t('common.inactive')" rounded />
         </q-td>
-      </template>
+      </template> -->
     </QtableB>
   </q-page>
 </template>
@@ -93,7 +93,7 @@ import Header from 'src/components/common/Header.vue';
 import QtableB from 'src/components/common/Qtable.vue';
 import { useI18n } from 'vue-i18n';
 import type { MenuItem } from 'src/types';
-import { formatPhoneNumber } from 'src/composables/useFormat';
+import { formatCurrency, formatNumber } from 'src/composables/useFormat';
 
 const reportStore = useReportStore();
 const { t } = useI18n();
@@ -122,19 +122,39 @@ const branchColumns: any[] = [
     sortable: true
   },
   {
-    name: 'location',
-    label: t('report.columns.location'),
-    align: 'left',
-    field: 'location',
-    sortable: false
+    name: 'total_items_count',
+    label: t('report.columns.totalItemsCount'),
+    align: 'center',
+    field: (row: any) => formatNumber(row.total_items_count || 0),
+    sortable: true
   },
   {
-    name: 'phone',
-    label: t('report.columns.phone'),
-    align: 'left',
-    field: (row: any) => formatPhoneNumber(row.phone) || 'N/A',
-    sortable: true,
-    style: "direction: ltr;"
+    name: 'total_items_quantity',
+    label: t('report.columns.totalItemsQuantity'),
+    align: 'center',
+    field: (row: any) => formatNumber(row.total_items_quantity || 0),
+    sortable: true
+  },
+  {
+    name: 'total_items_cost',
+    label: t('report.columns.totalItemsCost'),
+    align: 'center',
+    field: (row: any) => formatCurrency(row.total_items_cost || 0),
+    sortable: true
+  },
+  {
+    name: 'purchase_borrow',
+    label: t('report.columns.purchaseBorrow'),
+    align: 'center',
+    field: (row: any) => formatCurrency(row.purchase_borrow || 0),
+    sortable: true
+  },
+  {
+    name: 'sell_borrow',
+    label: t('report.columns.sellBorrow'),
+    align: 'center',
+    field: (row: any) => formatCurrency(row.sell_borrow || 0),
+    sortable: true
   },
   {
     name: 'warehouse_count',
@@ -150,33 +170,9 @@ const branchColumns: any[] = [
     field: 'users',
     sortable: true
   },
-  // {
-  //   name: 'status',
-  //   label: t('report.columns.status'),
-  //   align: 'center',
-  //   field: 'is_active',
-  //   sortable: true,
-  //   format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
-  // },
-  // {
-  //   name: 'created_at',
-  //   label: t('report.columns.created'),
-  //   align: 'center',
-  //   field: 'created_at',
-  //   sortable: true,
-  //   format: (val: unknown) => new Date(val as string).toLocaleDateString()
-  // }
 ];
 
 // Computed properties
-const totalWarehouses = computed(() => {
-  return (reportStore.branches || []).reduce((total, branch) => total + (branch.warehouses || 0), 0);
-});
-
-const totalUsers = computed(() => {
-  return (reportStore.branches || []).reduce((total, branch) => total + (branch.users || 0), 0);
-});
-
 const filteredData = computed(() => {
   return [...(reportStore.branches || [])];
 });
