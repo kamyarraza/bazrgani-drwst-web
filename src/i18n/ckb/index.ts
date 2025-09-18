@@ -950,6 +950,8 @@ export default {
     },
 
     borrowPerBranch: 'بڕی قەرز بۆ هەر لقێک',
+
+    borrowedFromBranchFilter: 'قەرزار لە لقی',
   },
   common: {
     details: "وردەکاریەکان",

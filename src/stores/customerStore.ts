@@ -13,7 +13,7 @@ export const useCustomerStore = defineStore('customer', () => {
   const error = ref<string | null>(null);
   const pagination = ref<Pagination | null>(null);
 
-  async function fetchCustomers(page: number = 1, type?: 'supplier' | 'customer', query?: string) {
+  async function fetchCustomers(page: number = 1, type?: 'supplier' | 'customer', query?: string, borrowedFromBranch?: number) {
     loading.value = true;
     error.value = null;
     let parameter = page ? '?page=' + page : '?page=1';
@@ -23,6 +23,10 @@ export const useCustomerStore = defineStore('customer', () => {
 
     if (query) {
       parameter += `&query=${query}`;
+    }
+
+    if (borrowedFromBranch) {
+      parameter += `&borrowed_from_branch=${borrowedFromBranch}`;
     }
 
     try {

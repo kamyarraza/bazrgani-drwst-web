@@ -1448,6 +1448,8 @@ export default {
     },
 
     borrowPerBranch: 'Debt Amount Per Branch',
+
+    borrowedFromBranchFilter: 'Borrowed From Branch',
   },
   common: {
     edit: "Edit",

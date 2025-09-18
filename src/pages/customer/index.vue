@@ -5,12 +5,12 @@
       icon-size="3rem" icon-color="white" :show-waves="true"
       background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
     <!-- Sticky Notes Overlay (absolute, not in normal flow) -->
-    <div class="sticky-notes-overlay">
+    <!-- <div class="sticky-notes-overlay">
       <div v-for="(note, idx) in notes" :key="note.id" style="margin-bottom: 12px;">
         <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }"
           @close="removeNote(note.id)" />
       </div>
-    </div>
+    </div> -->
     <!-- Filters Section -->
     <Filter v-model:filters="filters" :filter-options="filterOptions"
       :search-label="t('customer.searchLabel', 'Search by name or phone')"
@@ -55,17 +55,19 @@ import BorrowModal from 'src/components/customer/BorrowModal.vue'
 import BulkPaymentModal from 'src/components/customer/BulkPaymentModal.vue'
 import PaymentInvoice from 'src/components/customer/PaymentInvoice.vue'
 import { useCustomerStore } from 'src/stores/customerStore'
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { MenuItem } from 'src/types'
 import type { Customer } from 'src/types/customer'
 import { useI18n } from 'vue-i18n'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
-import Note from 'src/components/common/Note.vue'
+// import Note from 'src/components/common/Note.vue'
 import { formatCurrency } from 'src/composables/useFormat'
+import { useBranchStore } from 'src/stores/branchStore'
 
 // declaration
 const customerStore = useCustomerStore()
 const { t } = useI18n()
+const branchStore = useBranchStore()
 
 // variables
 const data = computed<Customer[]>(() => customerStore.customers)
@@ -107,7 +109,8 @@ const customerForBulkPayment = ref<Customer | null>(null)
 // Filter states
 const filters = ref<FilterState>({
   search: '',
-  type: null
+  type: null,
+  borrowedFromBranch: null
 })
 
 // Filter options for the Filter component
@@ -119,6 +122,15 @@ const filterOptions = computed(() => [
       { label: t('customer.customer'), value: 'customer' },
       { label: t('customer.supplier'), value: 'supplier' }
     ],
+    icon: 'filter_list'
+  },
+  {
+    field: 'borrowed_from_branch',
+    label: t('customer.borrowedFromBranchFilter'),
+    options: branchStore.allBranches.map(branch => ({
+      label: branch.name,
+      value: branch.id
+    })),
     icon: 'filter_list'
   }
 ])
@@ -175,12 +187,12 @@ function resetFilters() {
 let filterTimeout: ReturnType<typeof setTimeout>;
 
 // Handle filter changes from Filter component
-function handleFilterChange(_newFilters: { search?: string; type?: string | null }) {
+function handleFilterChange(_newFilters: { search?: string; type?: string | null; borrowed_from_branch?: number }) {
   clearTimeout(filterTimeout); // clear previous timeout
 
   // Apply new filters after a short delay (debounce)
   filterTimeout = setTimeout(() => {
-    loadCustomers(currentPage.value, _newFilters.type, _newFilters.search).catch(err => {
+    loadCustomers(currentPage.value, _newFilters.type, _newFilters.search, _newFilters.borrowed_from_branch).catch(err => {
       console.error(t('customer.fetchError'), err)
     });
   }, 750);  // 750ms delay
@@ -357,13 +369,13 @@ function handleBulkPaymentSuccess(payloadData: any) {
 }
 
 // Notes state
-const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
+// const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
 
 
-function removeNote(id: number) {
-  const idx = notes.findIndex(n => n.id === id)
-  if (idx !== -1) notes.splice(idx, 1)
-}
+// function removeNote(id: number) {
+//   const idx = notes.findIndex(n => n.id === id)
+//   if (idx !== -1) notes.splice(idx, 1)
+// }
 
 // Handle page change for pagination
 async function handlePageChange(page: number) {
@@ -382,11 +394,14 @@ async function handlePageChange(page: number) {
 onMounted(async () => {
   // Fetch customer data when the component is mounted
   await loadCustomers();
+
+  // Fetch all branches for filter options
+  await branchStore.fetchAllBranches();
 })
 
-async function loadCustomers(page?: number, type?: any, search?: string) {
+async function loadCustomers(page?: number, type?: any, search?: string, borrowedFromBranch?: number) {
   // Fetch customer data when the component is mounted
-  await customerStore.fetchCustomers(page, type, search)
+  await customerStore.fetchCustomers(page, type, search, borrowedFromBranch);
 
   // Set current page from pagination if available
   if (customerStore.pagination) {

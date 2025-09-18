@@ -1464,6 +1464,8 @@ export default {
     },
 
     borrowPerBranch: 'مبلغ الدين لكل فرع',
+
+    borrowedFromBranchFilter: 'تصفية حسب الفرع',
   },
   common: {
     edit: "تعديل",

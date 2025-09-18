@@ -28,6 +28,7 @@ function singularizeBranchName(name: string): string {
 
 export const useBranchStore = defineStore('branch', () => {
   const branches = ref<Branch[]>([]);
+  const allBranches = ref<Branch[]>([]);
   const currentBranch = ref<Branch | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -64,6 +65,36 @@ export const useBranchStore = defineStore('branch', () => {
 
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch branches';
+      error.value = errorMessage;
+      showNotify({
+        type: 'negative',
+        message: error.value,
+        position: 'top',
+        duration: 3000,
+      });
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchAllBranches() {
+    if (allBranches.value.length > 0) {
+      return true; // Already fetched
+    }
+
+    loading.value = true;
+    error.value = null;
+
+    try {
+      // For employees, the endpoint will return only their branch data
+      // For admins, the endpoint will return all branches
+      const { data } = await api.get<ApiResponse<Branch[]>>(`${endPoints.branch.list}`);
+
+      allBranches.value = data.data;
+
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch all branches';
       error.value = errorMessage;
       showNotify({
         type: 'negative',
@@ -229,12 +260,14 @@ export const useBranchStore = defineStore('branch', () => {
 
   return {
     branches,
+    allBranches,
     currentBranch,
     loading,
     error,
     pagination,
     isEmployee,
     fetchBranches,
+    fetchAllBranches,
     createBranch,
     getBranchDetails,
     updateBranch,
