@@ -121,3 +121,82 @@ html[dir="rtl"],
     padding: 16px;
   }
 }
+
+/* ===============================
+   Global Font Scaling
+   =============================== */
+html, body {
+  font-size: 17px; /* Default base */
+  line-height: 1.6;
+}
+
+/* Typography overrides */
+.text-caption     { font-size: 0.9rem !important; }
+.text-body2       { font-size: 1rem !important; }
+.text-body1       { font-size: 1.05rem !important; }
+.text-subtitle2   { font-size: 1.1rem !important; }
+.text-subtitle1   { font-size: 1.2rem !important; }
+.text-h6          { font-size: 1.4rem !important; }
+.text-h5          { font-size: 1.6rem !important; }
+.text-h4          { font-size: 1.8rem !important; }
+.text-h3          { font-size: 2rem !important; }
+.text-h2          { font-size: 2.4rem !important; }
+.text-h1          { font-size: 3rem !important; }
+
+/* Quasar component font scaling */
+.q-btn {
+  font-size: 1rem !important;
+}
+
+.q-input__control,
+.q-field__native,
+.q-field__label {
+  font-size: 1rem !important;
+}
+
+.q-badge,
+.q-chip {
+  font-size: 0.95rem !important;
+}
+
+.q-table {
+  font-size: 1rem !important;
+}
+
+.q-item {
+  font-size: 1rem !important;
+}
+
+.q-dialog__title {
+  font-size: 1.4rem !important;
+}
+
+.q-card__section {
+  font-size: 1.05rem !important;
+}
+
+.q-tooltip,
+.q-field__bottom {
+  font-size: 0.9rem !important;
+}
+
+/* ===============================
+   Responsive Adjustments
+   =============================== */
+@media (max-width: 1024px) { /* Tablets */
+  html, body {
+    font-size: 15.5px;
+  }
+  .text-h1 { font-size: 2.6rem !important; }
+  .text-h2 { font-size: 2.1rem !important; }
+  .text-h3 { font-size: 1.8rem !important; }
+}
+
+@media (max-width: 768px) { /* Phones */
+  html, body {
+    font-size: 14px;
+  }
+  .text-h1 { font-size: 2.2rem !important; }
+  .text-h2 { font-size: 1.9rem !important; }
+  .text-h3 { font-size: 1.6rem !important; }
+}
