@@ -844,6 +844,7 @@ export default {
       sellBorrow: "باڵانسی قەرزی ئێمە",
       purchaseBorrow: "باڵانسی قەرزی کڕیار",
       actions: "کردارەکان",
+      lastBorrowDate: "دوایین بەرواری قەرز",
     },
 
     // Customer Details Modal
@@ -1031,7 +1032,7 @@ export default {
     sku: "SKU",
     export: "وەرگرتن",
     warning: "ئاگادارکردنەوە",
-    approvalRequired: "داواکاریەکەت پێویستە لە لایەن بەڕێوەبەرەکان پەسند بکرێت"
+    approvalRequired: "داواکاریەکەت پێویستە لە لایەن بەڕێوەبەرەکان پەسند بکرێت",
   },
   error: {
     somethingWentWrong: "شتێک هەڵە ڕوویدا",

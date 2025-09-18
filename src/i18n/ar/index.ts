@@ -1361,6 +1361,7 @@ export default {
       sellBorrow: "رصيد الائتمان الخاص بنا",
       purchaseBorrow: "رصيد ائتمان العميل",
       actions: "الإجراءات",
+      lastBorrowDate: "تاريخ آخر دين",
     },
 
     // Customer Details Modal
@@ -1537,7 +1538,7 @@ export default {
     updating: "جاري التحديث...",
     ellipsis: "...",
     warning: "تحذير",
-    approvalRequired: "طلبك يحتاج إلى موافقة من المديرين"
+    approvalRequired: "طلبك يحتاج إلى موافقة من المديرين",
   },
   invoice: {
     information: "معلومات الفاتورة",

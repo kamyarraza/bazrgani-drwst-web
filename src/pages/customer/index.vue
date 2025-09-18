@@ -316,10 +316,10 @@ const columns = [{
 //   sortable: false
 // },
 {
-  name: 'created_at',
-  label: t('customer.columns.createdAt'),
+  name: 'last_borrow_date',
+  label: t('customer.columns.lastBorrowDate'),
   align: "center" as const,
-  field: 'created_at',
+  field: 'last_borrow_date',
 
   sortable: true
 },

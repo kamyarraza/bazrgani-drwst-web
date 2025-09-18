@@ -1345,6 +1345,7 @@ export default {
       sellBorrow: "Our Credit Balance",
       purchaseBorrow: "Customer Credit Balance",
       actions: "Actions",
+      lastBorrowDate: "Last Borrow Date",
     },
 
     // Customer Details Modal
@@ -1521,7 +1522,7 @@ export default {
     updating: "Updating...",
     ellipsis: "...",
     warning: "Warning",
-    approvalRequired: "Your request requires manager approval"
+    approvalRequired: "Your request requires manager approval",
   },
 
   invoice: {
