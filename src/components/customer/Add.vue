@@ -108,6 +108,22 @@
                                     <q-icon name="place" color="primary" />
                                 </template>
                             </Qinput>
+
+                            <Qinput
+                                v-if="form.type === 'customer'"
+                                v-model.number="form.payment_cycle_days"
+                                :label="t('customer.paymentCycleDays')"
+                                :rules="[val => !val || (Number(val) >= 1 && Number(val) <= 365) || t('validation.paymentCycleRange')]"
+                                outlined
+                                class="enhanced-input"
+                                type="number"
+                                min="1"
+                                max="365"
+                            >
+                                <template #before>
+                                    <q-icon name="schedule" color="primary" />
+                                </template>
+                            </Qinput>
                         </div>
                     </div>
 
@@ -171,7 +187,8 @@ const form = reactive<CustomerPayload>({
     place: '',
     fphone: '',
     sphone: '',
-    note: ''
+    note: '',
+    payment_cycle_days: 0
 })
 
 // Load locations
@@ -199,6 +216,7 @@ function resetForm() {
     form.fphone = ''
     form.sphone = ''
     form.note = ''
+    form.payment_cycle_days = 0
 }
 
 async function submitForm() {

@@ -252,6 +252,39 @@
                     </div>
                   </div>
 
+                  <!-- Last borrow date -->
+                    <div class="col-6" v-if="customer.last_borrow_date">
+                    <div class="detail-item">
+                      <div class="detail-label">{{ t('customer.lastBorrowDate') }}</div>
+                      <q-badge color="blue-6" outline class="detail-badge">
+                      <q-icon name="history" size="xs" class="q-mr-xs" />
+                      {{ customer.last_borrow_date }}
+                      </q-badge>
+                    </div>
+                    </div>
+
+                    <!-- Payment Cycle Info -->
+                    <div class="col-6" v-if="customer.payment_cycle_days !== null">
+                    <div class="detail-item">
+                      <div class="detail-label">{{ t('customer.paymentCycleDays') }}</div>
+                      <q-badge color="amber-6" outline class="detail-badge">
+                      <q-icon name="sync" size="xs" class="q-mr-xs" />
+                      {{ customer.payment_cycle_days }} {{ t('common.day') }}
+                      </q-badge>
+                    </div>
+                    </div>
+
+                    <!-- Next payment date -->
+                    <div class="col-6" v-if="customer.next_payment_date">
+                    <div class="detail-item">
+                      <div class="detail-label">{{ t('customer.nextPaymentDate') }}</div>
+                      <q-badge color="green-6" outline class="detail-badge">
+                      <q-icon name="event" size="xs" class="q-mr-xs" />
+                      {{ customer.next_payment_date }}
+                      </q-badge>
+                    </div>
+                    </div>
+
                   <!-- Customer Notes -->
                   <div class="col-12" v-if="customer.note">
                     <div class="detail-item">

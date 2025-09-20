@@ -423,7 +423,8 @@ function handleBulkPaymentSuccess(payloadData: any) {
         remained_borrowed_price: payloadData.data.remained_borrowed_price,
         total_price: usdPaid + remainingBorrowed,
         payment: payloadData.data.payment, // Keep original payment array
-        exchange_rate: payloadData.data.exchange_rate
+        exchange_rate: payloadData.data.exchange_rate,
+        next_payment_date: payloadData.data.next_payment_date,
       },
       customer: payloadData.data.customer,
       payment: {

@@ -4,6 +4,8 @@ export interface Customer {
   fname: string;
   password?: string;
   sname: string;
+  payment_cycle_days: number | null; // Payment cycle in days
+  next_payment_date?: string | null; // ISO date string or null
   type: string;
   type_value: 'supplier' | 'customer';
   location: {
@@ -21,6 +23,7 @@ export interface Customer {
     username: string;
     phone: string;
   };
+  last_borrow_date?: string; // ISO date string
   created_at: string; // ISO date string
   sell_borrow?: number; // Amount owed to supplier
   purchase_borrow?: number; // Amount customer owes us
@@ -37,6 +40,7 @@ export interface CustomerPayload {
   fphone: string;
   sphone: string;
   note?: string;
+  payment_cycle_days: number;
 }
 
 export interface Pagination {

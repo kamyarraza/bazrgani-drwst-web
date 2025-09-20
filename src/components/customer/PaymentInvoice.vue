@@ -65,6 +65,10 @@
                           <td colspan="2">{{ t('transaction.date') }}</td>
                           <td class="fw-bold">{{ transaction?.created_at }}</td>
                         </tr>
+                        <tr v-if="transaction?.next_payment_date">
+                          <td colspan="2">{{ t('transaction.nextPaymentDate') }}</td>
+                          <td class="fw-bold">{{ transaction?.next_payment_date }}</td>
+                        </tr>
                         <tr>
                           <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
                           <td class=" text-danger fw-bold">{{ formatCurrency(transaction?.remained_borrowed_price ?? 0) }}
@@ -116,9 +120,9 @@
                           <td>{{ t('customer.columns.place') }}</td>
                           <td colspan="2" class="fw-bold">{{ customerPlace }}</td>
                         </tr>
-                        <tr>
-                          <td>{{ t('customer.columns.createdAt') }}</td>
-                          <td colspan="2" class="fw-bold">{{ customerCreatedAt }}</td>
+                        <tr v-if="customerPaymentCycleDays !== '—'">
+                          <td>{{ t('customer.columns.paymentCycleDays') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerPaymentCycleDays }} {{ t('common.day') }}</td>
                         </tr>
                         <tr>
                           <td>{{ t('customer.columns.purchaseBorrow') }}</td>
@@ -238,6 +242,7 @@ interface PaymentPayloadTransaction {
   id?: number | string
   paid_transactions?: number | string
   remained_borrowed_price?: number
+  next_payment_date?: string
   payment_id?: number | string
   payment_type?: string
   total_price?: number
@@ -309,10 +314,10 @@ const customerPurchaseBorrow = computed(() => {
   return c.purchase_borrow || '—'
 })
 
-const customerCreatedAt = computed(() => {
+const customerPaymentCycleDays = computed(() => {
   const c = customer.value
   if (!c) return '—'
-  return c.created_at || '—'
+  return c.payment_cycle_days || '—'
 })
 
 const printInvoice = () => {

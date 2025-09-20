@@ -109,6 +109,22 @@
                                     <q-icon name="place" color="primary" />
                                 </template>
                             </Qinput>
+
+                            <Qinput
+                                v-if="form.type === 'customer'"
+                                v-model.number="form.payment_cycle_days"
+                                :label="t('customer.paymentCycleDays')"
+                                :rules="[val => !val || (Number(val) >= 1 && Number(val) <= 365) || t('validation.paymentCycleRange')]"
+                                outlined
+                                class="enhanced-input"
+                                type="number"
+                                min="1"
+                                max="365"
+                            >
+                                <template #before>
+                                    <q-icon name="schedule" color="primary" />
+                                </template>
+                            </Qinput>
                         </div>
                     </div>
 
@@ -171,7 +187,8 @@ const form = reactive<CustomerPayload>({
     place: '',
     fphone: '',
     sphone: '',
-    note: ''
+    note: '',
+    payment_cycle_days: 0
 })
 
 // Load locations
@@ -183,7 +200,7 @@ onMounted(async () => {
     }))
 
     if (props.customer) {
-        updateFormFromCustomer(props.customer)
+        updateFormCustomer(props.customer)
     }
 })
 
@@ -197,11 +214,11 @@ watch(model, (newVal) => {
 // Watch for customer prop changes to update form
 watch(() => props.customer, (newCustomer) => {
     if (newCustomer) {
-        updateFormFromCustomer(newCustomer)
+        updateFormCustomer(newCustomer)
     }
 }, { immediate: true })
 
-function updateFormFromCustomer(customer: Customer) {
+function updateFormCustomer(customer: Customer) {
     form.fname = customer.fname || '';
     form.sname = customer.sname || '';
     form.type = customer.type_value || 'customer';
@@ -210,11 +227,12 @@ function updateFormFromCustomer(customer: Customer) {
     form.fphone = customer.fphone || '';
     form.sphone = customer.sphone || '';
     form.note = customer.note || '';
+    form.payment_cycle_days = customer.payment_cycle_days || 0;
 }
 
 function resetForm() {
     if (props.customer) {
-        updateFormFromCustomer(props.customer)
+        updateFormCustomer(props.customer)
     } else {
         form.fname = '';
         form.sname = '';
@@ -224,6 +242,7 @@ function resetForm() {
         form.fphone = '';
         form.sphone = '';
         form.note = '';
+        form.payment_cycle_days = 0;
     }
 }
 

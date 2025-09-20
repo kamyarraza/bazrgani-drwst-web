@@ -89,6 +89,10 @@
                           <td class=" text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0) }}
                           </td>
                         </tr>
+                        <tr v-if="transaction?.next_payment_date">
+                          <td colspan="2">{{ t('transaction.nextPaymentDate') }}</td>
+                          <td class="fw-bold">{{ transaction?.next_payment_date }}</td>
+                        </tr>
                         <tr>
                           <td><span style="padding: 0 2rem;"></span></td>
                           <td><span style="padding: 0 2rem;"></span></td>
@@ -135,9 +139,9 @@
                           <td>{{ t('customer.columns.place') }}</td>
                           <td colspan="2" class="fw-bold">{{ customerPlace }}</td>
                         </tr>
-                        <tr>
-                          <td>{{ t('customer.columns.createdAt') }}</td>
-                          <td colspan="2" class="fw-bold">{{ customerCreatedAt }}</td>
+                        <tr v-if="customerPaymentCycleDays !== '—'">
+                          <td>{{ t('customer.columns.paymentCycleDays') }}</td>
+                          <td colspan="2" class="fw-bold">{{ customerPaymentCycleDays }} {{ t('common.day') }}</td>
                         </tr>
                         <tr>
                           <td>{{ t('customer.columns.purchaseBorrow') }}</td>
@@ -261,7 +265,8 @@ interface PaymentPayloadTransaction {
   total_price?: number
   paid_price?: number
   remaining?: number
-  created_at?: string
+  created_at?: string,
+  next_payment_date?: string,
 }
 
 interface PaymentPayload {
@@ -318,17 +323,23 @@ const customerPlace = computed(() => {
   return c.place || '—'
 })
 
+const customerPaymentCycleDays = computed(() => {
+  const c = customer.value
+  if (!c) return '—'
+  return c.payment_cycle_days || '—'
+})
+
 const customerPurchaseBorrow = computed(() => {
   const c = customer.value
   if (!c) return '—'
   return c.purchase_borrow || '—'
 })
 
-const customerCreatedAt = computed(() => {
-  const c = customer.value
-  if (!c) return '—'
-  return c.created_at || '—'
-})
+// const customerCreatedAt = computed(() => {
+//   const c = customer.value
+//   if (!c) return '—'
+//   return c.created_at || '—'
+// })
 
 const printInvoice = () => {
   printJS({ printable: 'payment-invoice-container', type: 'html', targetStyles: ['*'] })

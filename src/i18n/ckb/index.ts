@@ -845,6 +845,8 @@ export default {
       purchaseBorrow: "باڵانسی قەرزی کڕیار",
       actions: "کردارەکان",
       lastBorrowDate: "دوایین بەرواری قەرز",
+      nextPaymentDate: "پارەدانی داهاتوو",
+      paymentCycleDays: "ڕۆژەکانی پارەدان",
     },
 
     // Customer Details Modal
@@ -958,8 +960,13 @@ export default {
     totalPurchaseDebt: "کۆی قەرزی کڕین",
     sellBorrow: "قەرزی فروشتن",
     totalSellDebt: "کۆی قەرزی فروشتن",
+
+    paymentCycleDays: "جیاوازی ڕۆژەکانی پارەدان",
+    lastBorrowDate: "بەرواری قەرزی پێشوو",
+    nextPaymentDate: "بەرواری پارەدانی داهاتوو"
   },
   common: {
+    day: "ڕۆژ",
     details: "وردەکاریەکان",
     edit: "دەستکاری",
     branch: "لق",
@@ -1073,6 +1080,7 @@ export default {
     paymentFilter: "فلتەر بە جۆری پارەدان",
     count: "کۆی مامەڵەکان",
     editNotAllowed: "مامەڵەکە قفڵە و ناتوانرێت دەستکاری بکرێت",
+    nextPaymentDate: "پارەدانی داهاتوو",
 
     columns: {
       id: "کۆد",
@@ -3233,6 +3241,7 @@ export default {
     integerRequired: "دەبێت ژمارەیەکی تەواو بێت",
     minLength: "دەبێت بەلایەنی کەمەوە {min} پیت بێت",
     passwordMatch: "وشە نهێنییەکان دەبێت وەک یەک بن",
+    paymentCycleRange: "دەبێت نێوان 1 و 365 بێت",
   },
 
 
