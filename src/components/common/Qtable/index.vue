@@ -6,7 +6,7 @@
 
   <!-- Show table when not loading -->
   <q-table v-else :rows-per-page-options="[paginationNumber]" class="beautiful-table"
-    :class="{ 'grid-mode': isGridMode }" :columns="(internalColumns as any)" :rows="rows" :loading="false"
+    :class="{ 'grid-mode': isGridMode }" :columns="(finalInternalColumns as any)" :rows="rows" :loading="false"
     :grid="isGridMode" :grid-header="isGridMode" :hide-header="isGridMode" separator="horizontal" hide-pagination flat
     bordered dense>
 
@@ -139,6 +139,23 @@
             </span>
           </template>
 
+          <!-- Custom cell for due_after -->
+          <template v-else-if="col.name === 'due_after'">
+            <div class="flex items-center justify-center">
+              <!-- Colored chip, show if not null -->
+              <q-chip v-if="props.row.due_after" dense square :style="{ backgroundColor: props.row.due_color, color: 'white' }">
+                <small>
+                  {{ props.row.due_after }}
+                </small>
+
+                <q-tooltip>
+                  <small>{{ props.row.due_date }}</small>
+                </q-tooltip>
+              </q-chip>
+              <span v-else>༄˖°.🍂.ೃ࿔*:･</span>
+            </div>
+          </template>
+
           <!-- Actions Column -->
           <template v-else-if="col.name === 'actions'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
@@ -164,8 +181,8 @@
                 <q-btn flat round icon="visibility" size="sm" color="primary" class="view_action-btn"
                   @click="handleViewActionClick(props.row)">
                   <q-tooltip class="bg-primary text-white shadow-2" anchor="top middle" self="bottom middle"
-                  :offset="[0, 8]">
-                  View
+                    :offset="[0, 8]">
+                    View
                   </q-tooltip>
                 </q-btn>
               </div>
@@ -291,6 +308,14 @@ const {
   getMenuItemsForRow
 } = useTableLogic(props);
 
+// Remove index column from internal columns
+const filteredColumns = computed(() => {
+  return internalColumns.value.filter(col => col.name !== 'index');
+});
+
+// Override internalColumns to use filtered version
+const finalInternalColumns = computed(() => filteredColumns.value);
+
 const meStore = useMeStore();
 
 // Check if user is admin
@@ -314,7 +339,7 @@ function handleItemClick(data: any, row?: any) {
 
 function handleViewActionClick(row: any) {
   selectedRowId.value = row.id;
-  emit('view-action', {item: row, rowId: selectedRowId.value});
+  emit('view-action', { item: row, rowId: selectedRowId.value });
   selectedRowId.value = null;
 }
 

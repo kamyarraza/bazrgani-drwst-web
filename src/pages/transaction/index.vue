@@ -383,20 +383,17 @@ const columns = computed(() => {
       field: 'payment_type',
       sortable: true
     },
-    // {
-    //   name: 'total_price',
-    //   label: t('transaction.columns.totalPrice'),
-    //   align: "center" as const,
-    //   field: (row: any) => formatCurrency(Number(row.total_price)),
-    //   sortable: true
-    // },
-    // {
-    //   name: 'paid_price',
-    //   label: t('transaction.columns.paidPrice'),
-    //   align: "center" as const,
-    //   field: (row: any) => formatCurrency(Number(row.paid_price)),
-    //   sortable: true
-    // },
+    {
+      name: 'due_after',
+      label: t('transaction.columns.dueAfter'),
+      align: "center" as const,
+      field: (row: any) => row.due_after, // shows "in 3 days", etc.
+      sortable: true,
+      style: (row: any) => {
+        return `color: ${row.due_color}`;
+      }
+    },
+    
     {
       name: 'remaining_price',
       label: t('transaction.columns.remainingPrice'),
@@ -419,14 +416,14 @@ const columns = computed(() => {
 
   // Add remaining columns
   baseColumns.push(
-    {
-      name: 'is_editable',
-      label: t('transaction.columns.is_editable'),
-      align: "center" as const,
-      field: (row: any) => row.is_editable ? "✅" : "✗",
-      style:  (row: any) => row.is_editable ? " text-shadow: 0 0 10px green" : "color: red; fornt-weight: 900; text-shadow: 0 0 10px red",
-      sortable: false
-    },
+    // {
+    //   name: 'is_editable',
+    //   label: t('transaction.columns.is_editable'),
+    //   align: "center" as const,
+    //   field: (row: any) => row.is_editable ? "✅" : "✗",
+    //   style: (row: any) => row.is_editable ? " text-shadow: 0 0 10px green" : "color: red; fornt-weight: 900; text-shadow: 0 0 10px red",
+    //   sortable: false
+    // },
 
     {
       name: 'actions',

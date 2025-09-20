@@ -308,81 +308,115 @@
                   </span>
                 </div>
 
-                <div class="payment-grid">
-                  <div class="payment-item">
-                    <label class="form-label" :class="{ 'required-field': selectedPaymentType === 'cash' }">
-                      <q-icon name="currency_exchange" color="primary" size="16px" />
-                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdAmountWePay' :
-                        'iqdAmountCustomerPays'}`) }}
-                      <span v-if="selectedPaymentType === 'cash'" class="required-asterisk">*</span>
-                    </label>
-                    <q-input v-model.number="iqdPrice" type="number" min="0" dense outlined suffix="IQD"
-                      class="payment-input" :placeholder="t('transactionAlpha.enterIqdAmount')"
-                      :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || usdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
-                      :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
-                      :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
+                <div class="row q-col-gutter-md items-start">
+                  <!-- Left side: 2x2 grid -->
+                  <div class="col-md-6 col-sm-12">
+                    <div class="row q-col-gutter-md">
+                      <!-- First row: IQD & USD -->
+                      <div class="col-md-6 col-sm-12">
+                        <label class="form-label" :class="{ 'required-field': selectedPaymentType === 'cash' }">
+                          <q-icon name="currency_exchange" color="primary" size="16px" />
+                          {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdAmountWePay' :
+                          'iqdAmountCustomerPays'}`) }}
+                          <span v-if="selectedPaymentType === 'cash'" class="required-asterisk">*</span>
+                        </label>
+                        <q-input v-model.number="iqdPrice" type="number" min="0" dense outlined suffix="IQD"
+                          class="payment-input" :placeholder="t('transactionAlpha.enterIqdAmount')"
+                          :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || usdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
+                          :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
+                          :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
+                      </div>
+
+                      <div class="col-md-6 col-sm-12">
+                        <label class="form-label" :class="{ 'required-field': selectedPaymentType === 'cash' }">
+                          <q-icon name="attach_money" color="primary" size="16px" />
+                          {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdAmountWePay' :
+                          'usdAmountCustomerPays'}`) }}
+                          <span v-if="selectedPaymentType === 'cash'" class="required-asterisk">*</span>
+                        </label>
+                        <q-input v-model.number="usdPrice" type="number" min="0" step="0.01" dense outlined suffix="USD"
+                          class="payment-input" :placeholder="t('transactionAlpha.enterUsdAmount')"
+                          :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || iqdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
+                          :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
+                          :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
+                      </div>
+
+                      <!-- Second row: IQD Return & USD Return -->
+                      <div class="col-md-6 col-sm-12 q-mt-md">
+                        <label class="form-label">
+                          <q-icon name="keyboard_return" color="warning" size="16px" />
+                          {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdReturnFromSupplier' :
+                          'iqdReturnToCustomer'}`)
+                          }}
+                        </label>
+                        <q-input v-model.number="iqdReturnAmount" type="number" min="0" dense outlined suffix="IQD"
+                          class="payment-input" :placeholder="t('transactionAlpha.enterIqdReturnAmount')" />
+                      </div>
+
+                      <div class="col-md-6 col-sm-12 q-mt-md">
+                        <label class="form-label">
+                          <q-icon name="keyboard_return" color="warning" size="16px" />
+                          {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdReturnFromSupplier' :
+                          'usdReturnToCustomer'}`)
+                          }}
+                        </label>
+                        <q-input v-model.number="usdReturnAmount" type="number" min="0" step="0.01" dense outlined
+                          suffix="USD" class="payment-input"
+                          :placeholder="t('transactionAlpha.enterUsdReturnAmount')" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="payment-item">
-                    <label class="form-label" :class="{ 'required-field': selectedPaymentType === 'cash' }">
-                      <q-icon name="attach_money" color="primary" size="16px" />
-                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdAmountWePay' :
-                        'usdAmountCustomerPays'}`) }}
-                      <span v-if="selectedPaymentType === 'cash'" class="required-asterisk">*</span>
-                    </label>
-                    <q-input v-model.number="usdPrice" type="number" min="0" step="0.01" dense outlined suffix="USD"
-                      class="payment-input" :placeholder="t('transactionAlpha.enterUsdAmount')"
-                      :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || iqdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
-                      :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
-                      :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
-                  </div>
-
-                  <div class="payment-item">
-                    <label class="form-label">
-                      <q-icon name="keyboard_return" color="warning" size="16px" />
-                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'iqdReturnFromSupplier' :
-                        'iqdReturnToCustomer'}`) }}
-                    </label>
-                    <q-input v-model.number="iqdReturnAmount" type="number" min="0" dense outlined suffix="IQD"
-                      class="payment-input" :placeholder="t('transactionAlpha.enterIqdReturnAmount')" />
-                  </div>
-
-                  <div class="payment-item">
-                    <label class="form-label">
-                      <q-icon name="keyboard_return" color="warning" size="16px" />
-                      {{ t(`transactionAlpha.${transactionType === 'purchase' ? 'usdReturnFromSupplier' :
-                        'usdReturnToCustomer'}`) }}
-                    </label>
-                    <q-input v-model.number="usdReturnAmount" type="number" min="0" step="0.01" dense outlined
-                      suffix="USD" class="payment-input" :placeholder="t('transactionAlpha.enterUsdReturnAmount')" />
-                  </div>
-
-                  <div class="payment-item forgiven-price-item" v-if="selectedPaymentType === 'cash'">
-                    <label class="form-label forgiven-label flex items-center gap-x-2">
+                  <!-- Right side: Forgiven Price (spanning both rows) -->
+                  <div class="col-md-6 col-sm-12 d-flex flex-column justify-between">
+                    <div class="forgiven-price-item" v-if="selectedPaymentType === 'cash'">
+                      <label class="form-label forgiven-label flex items-center gap-x-2">
                       <q-icon name="heart_broken" color="negative" size="18px" />
-
-                      <span class="text-body1">
-                        {{ t('transactionAlpha.forgivenPrice') }}
-                      </span>
-
+                      <span class="text-body1">{{ t('transactionAlpha.forgivenPrice') }}</span>
                       <q-icon name="help_outline" color="grey" size="18px" class="cursor-pointer">
                         <q-tooltip class="bg-grey text-white text-body2 shadow-2 rounded-md">
-                          {{ t('transactionAlpha.forgivenPriceTooltip') }}
+                        {{ t('transactionAlpha.forgivenPriceTooltip') }}
                         </q-tooltip>
                       </q-icon>
-                    </label>
-                    <q-input v-model.number="forgivenPrice" type="number" min="0" dense outlined suffix="IQD"
+                      </label>
+                      <q-input v-model.number="forgivenPrice" type="number" min="0" dense outlined suffix="IQD"
                       class="payment-input forgiven-input" :placeholder="t('transactionAlpha.enterForgivenAmount')"
                       :rules="[val => !val || val >= 0 || t('transactionAlpha.forgivenPriceMustBePositive')]">
                       <template v-slot:hint>
                         <div class="forgiven-hint">
-                          <q-icon name="info" size="12px" />
-                          {{ t('transactionAlpha.forgivenPriceHint') }}
+                        <q-icon name="info" size="12px" />
+                        {{ t('transactionAlpha.forgivenPriceHint') }}
                         </div>
                       </template>
-                    </q-input>
+                      </q-input>
+                    </div>
+                    <div class="due-date-item" v-else-if="selectedPaymentType === 'borrow'">
+                      <label class="form-label due-date-label flex items-center gap-x-2">
+                      <q-icon name="schedule" color="amber" size="18px" />
+                      <span class="text-body1">{{ t('transactionAlpha.dueDate') }}</span>
+                      <q-icon name="info" color="grey" size="18px">
+                        <q-tooltip class="bg-grey text-white text-body2 shadow-2 rounded-md">
+                        {{ t('transactionAlpha.dueDateTooltip') }}
+                        </q-tooltip>
+                      </q-icon>
+                      <q-badge color="grey-6" style="opacity: 0.5;" text-color="white" :label="t('common.optional')" rounded />
+                      </label>
+                      <q-input v-model="dueDate" type="date" dense outlined
+                      class="payment-input due-date-input" :placeholder="t('transactionAlpha.selectDueDate')">
+                      <template v-slot:prepend>
+                        <q-icon name="event" class="cursor-pointer" />
+                      </template>
+                      <template v-slot:hint>
+                        <div class="due-date-hint">
+                        <q-icon name="info" size="12px" />
+                        {{ t('transactionAlpha.dueDateHint') }}
+                        </div>
+                      </template>
+                      </q-input>
+                    </div>
                   </div>
                 </div>
+
               </div>
 
               <!-- Note Section -->
@@ -511,6 +545,7 @@ const usdPrice = ref(0);
 const iqdReturnAmount = ref(0);
 const usdReturnAmount = ref(0);
 const forgivenPrice = ref(0);
+const dueDate = ref<string | null>(null);
 
 const statusOptions = [
   { label: t('transaction.statusTypes.completed'), value: 'completed' },
@@ -708,6 +743,7 @@ function clearModalData() {
   iqdReturnAmount.value = 0;
   usdReturnAmount.value = 0;
   forgivenPrice.value = 0;
+  dueDate.value = null;
 
   // Reset child selectors if possible
   void nextTick(() => {
@@ -794,7 +830,8 @@ async function handleSubmit() {
       usd_price: usdPrice.value || 0,
       iqd_return_amount: iqdReturnAmount.value || 0,
       usd_return_amount: usdReturnAmount.value || 0,
-      forgiven_price: forgivenPrice.value || 0
+      forgiven_price: forgivenPrice.value || 0,
+      due_date: dueDate.value || null
     };
 
     // Add sell-specific fields
@@ -869,6 +906,7 @@ async function handleSubmit() {
     iqdReturnAmount.value = 0;
     usdReturnAmount.value = 0;
     forgivenPrice.value = 0;
+    dueDate.value = null;
 
     $q.notify({
       type: 'positive',
@@ -1395,8 +1433,8 @@ async function checkCashboxStatus() {
 }
 
 .payment-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  /* display: grid; */
+  /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
   gap: 20px;
   margin-top: 16px;
 }
@@ -1743,7 +1781,6 @@ async function checkCashboxStatus() {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-radius: 15px;
   margin-top: 1rem;
-  ;
   padding: 16px;
   border: 2px solid rgba(245, 158, 11, 0.3);
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);

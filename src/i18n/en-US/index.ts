@@ -2093,7 +2093,10 @@ export default {
     verifyBranchSelection: "Please verify branch selection and try again",
     cashboxStatusCheckFailed: "Failed to check cashbox status",
     checkConnectionAndTryAgain: "Please check your connection and try again",
-    forgivenPriceTooltip: "Amount forgiven if customer does not pay"
+    forgivenPriceTooltip: "Amount forgiven if customer does not pay",
+
+    dueDate: "Due Date",
+    dueDateTooltip: "Due date for determining and collecting payment for this transaction",
   },
   dashboard: {
     title: "Dashboard",

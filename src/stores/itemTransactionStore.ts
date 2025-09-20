@@ -169,6 +169,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
       formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
       formData.append('forgiven_price', (transactionData.forgiven_price || 0).toString());
+      formData.append('due_date', (transactionData.due_date || null).toString());
 
       // Add details array
       transactionData.details.forEach((detail: any, index: number) => {
