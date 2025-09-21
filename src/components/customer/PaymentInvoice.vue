@@ -69,7 +69,7 @@
                           <td colspan="2">{{ t('transaction.nextPaymentDate') }}</td>
                           <td class="fw-bold">{{ transaction?.next_payment_date }}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="(transaction as any)?.remained_borrowed_price !== 0">
                           <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
                           <td class=" text-danger fw-bold">{{ formatCurrency(transaction?.remained_borrowed_price ?? 0) }}
                           </td>
@@ -81,11 +81,11 @@
                         </tr>
   
                         <!-- Fully Paid Badge -->
-                        <tr v-if="(transaction as any)?.is_fully_paid">
+                        <tr v-if="(transaction as any)?.remained_borrowed_price === 0">
                           <td colspan="3">
                             <div class="text-center">
                               <span class="cute-badge">
-                                ✅ fully paid
+                                ✅ {{ t('payment.receiveFromCustomer.fullyPaid') }}
                               </span>
                             </div>
   
@@ -310,8 +310,8 @@ const customerPlace = computed(() => {
 
 const customerPurchaseBorrow = computed(() => {
   const c = customer.value
-  if (!c) return '—'
-  return c.purchase_borrow || '—'
+  if (!c) return 0
+  return c.purchase_borrow || 0
 })
 
 const customerPaymentCycleDays = computed(() => {
@@ -665,8 +665,8 @@ const close = () => {
 
 .cute-badge {
   display: inline-block;
-  width: 200px;
-  padding: 0.35rem 0.9rem;
+  width: 300px;
+  padding: 0.65rem 0.9rem;
   background: linear-gradient(135deg, #4caf50, #81c784);
   color: white;
   font-size: 0.85rem;

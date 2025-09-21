@@ -54,6 +54,7 @@ export default {
     expenseCategory: "جۆری خەرجی", // Singular form for employees
     // Singular form for employees
     topSolds: "زۆر فرۆشراوەکان",
+    expense: "خەرجی",
   },
 
   layout: {
@@ -2197,6 +2198,7 @@ export default {
       receivePayment: "وەرگرتنی پارە",
       exchangeRateRefreshed: "ڕێژەی ئاڵوگۆڕ بە سەرکەوتووی نوێکرایەوە",
       exchangeRateRefreshError: "نوێکردنەوەی ڕێژەی ئاڵوگۆڕ سەرکەوتوو نەبوو",
+      fullyPaid: "بە تەواوی پارە وەرگیراوە",
       success: {
         paymentSuccessful: "پارە بە سەرکەوتووی وەرگیرا",
       },
@@ -2210,6 +2212,10 @@ export default {
         customerIdMissing: "ناسنامەی کڕیار لە داتای مامەڵەدا نەدۆزرایەوە",
         transactionIdRequired: "ناسنامەی مامەڵە پێویستە",
       },
+
+      fullPaymentLabel: "وەرگرتنی تەواوی پارەکە",
+      fullPaymentTooltip: "وەرگرتنی تەواوی پارەی ئەم پسوڵەیە و سفرکردنەوەی حسابی قەرزی ئەم پسوڵەیە",
+      fullPaymentDescription: "وەرگرتنی تەواوی قەرزی ئەم پسوڵەیە.",
     },
     paySupplier: {
       title: "پارەدان بە دابینکەر",
@@ -2286,8 +2292,8 @@ export default {
       processRefund: "پرۆسەی گەڕاندنەوە",
     },
     bulkPayment: {
-      title: "پارەدانی کۆمەڵی لە کڕیار",
-      subtitle: "پرۆسەی پارەدانی کۆمەڵی وەرگیراو لە کڕیار",
+      title: "وەرگرتنی پارە",
+      subtitle: "پرۆسەی پارەدانی یان وەرگرتنی پارەی مامەڵەکان لە کڕیار",
       customerDetails: "زانیاریەکانی کڕیار",
       customerName: "ناوی کڕیار",
       customerPhone: "ژمارەی تەلەفۆن",
@@ -2313,6 +2319,9 @@ export default {
       processPayment: "پرۆسەی پارەدان",
       exchangeRateRefreshed: "ڕێژەی ئاڵوگۆڕ بە سەرکەوتووی نوێکرایەوە",
       exchangeRateRefreshError: "نوێکردنەوەی ڕێژەی ئاڵوگۆڕ سەرکەوتوو نەبوو",
+      fullPaymentLabel: "وەرگرتنی تەواوی قەرز",
+      fullPaymentTooltip: "وەرگرتنی تەواوی قەرزەکانی کڕیار و هیچ بڕێك قەرزی لەلا نامێنێت واتە بە تەواوی حسابەکەی سفر دەکرێتەوە.",
+      fullPaymentDescription: "وەرگرتنی تەواوی قەرزەکانی کڕیار.",
       success: {
         paymentSuccessful: "پارەدانی کۆمەڵی بە سەرکەوتووی پرۆسە کرا",
       },
@@ -3019,6 +3028,8 @@ export default {
 
     dueDate: "بەرواری پارەدان",
     dueDateTooltip: "بەروارێك بۆ دیاریکردن و بیرخستنەوەی پارەدان بۆ ئەم مامەڵەیە",
+
+    selectDueDate: "بەرواری پارەدان هەڵبژێرە",
   },
 
   // بەڕێوەبردنی صندوق

@@ -67,7 +67,7 @@
                           <td colspan="2">{{ t('invoice.details.date') }}</td>
                           <td class=" fw-bold">{{ (transaction as any)?.transaction_date || '-' }}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="((transaction as any)?.unpaid_price ?? 0) != 0">
                           <td colspan="2">{{ t('invoice.payment.totalPrice') }}</td>
                           <td class=" text-primary fw-bold">{{ formatCurrency(transaction?.total_price ?? 0) }}</td>
                         </tr>
@@ -84,7 +84,7 @@
                           <td colspan="2">{{ t('invoice.paidAmount') }}</td>
                           <td class=" text-success fw-bold">{{ formatCurrency(transaction?.paid_price ?? 0) }}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="((transaction as any)?.unpaid_price ?? 0) != 0">
                           <td colspan="2">{{ t('invoice.unpaidAmount') }}</td>
                           <td class=" text-danger fw-bold">{{ formatCurrency((transaction as any)?.unpaid_price ?? 0) }}
                           </td>
@@ -101,10 +101,10 @@
   
                         <!-- Fully Paid Badge -->
                         <tr v-if="(transaction as any)?.is_fully_paid">
-                          <td colspan="3">
+                          <td colspan="4">
                             <div class="text-center">
                               <span class="cute-badge">
-                                ✅ fully paid
+                                ✅ {{ t('payment.receiveFromCustomer.fullyPaid') }}
                               </span>
                             </div>
   
@@ -686,8 +686,8 @@ const close = () => {
 
 .cute-badge {
   display: inline-block;
-  width: 200px;
-  padding: 0.35rem 0.9rem;
+  width: 300px;
+  padding: 0.65rem 0.9rem;
   background: linear-gradient(135deg, #4caf50, #81c784);
   color: white;
   font-size: 0.85rem;

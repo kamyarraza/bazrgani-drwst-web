@@ -307,13 +307,13 @@ const menuItems = computed(() => {
     // Show context-specific payment actions only when payment_type is exactly 'Borrow' or Kurdish 'نەقد'
     const paymentTypeExact = (row as any).payment_type
     if (paymentTypeExact === 'Borrow' || paymentTypeExact === 'قەرز') {
-      if (transactionType.value === 'purchase') {
+      if (transactionType.value === 'purchase' && row.unpaid_price > 0) {
         baseItems.push({
           label: t('transaction.paySupplier'),
           icon: 'payment',
           value: 'pay_supplier'
         });
-      } else if (transactionType.value === 'sell') {
+      } else if (transactionType.value === 'sell' && row.unpaid_price > 0) {
         baseItems.push({
           label: t('transaction.receiveFromCustomer'),
           icon: 'account_balance_wallet',

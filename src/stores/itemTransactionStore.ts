@@ -309,7 +309,8 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       usd_price: number;
       iqd_return_amount: number;
       usd_return_amount: number;
-      note: string
+      note: string,
+      full_payment: boolean
     }
   ) => {
     try {

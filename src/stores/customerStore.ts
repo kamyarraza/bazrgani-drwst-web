@@ -344,7 +344,8 @@ export const useCustomerStore = defineStore('customer', () => {
     usd_price: number; 
     iqd_return_amount: number; 
     usd_return_amount: number; 
-    note: string 
+    note: string;
+    full_payment: boolean;
   }) {
     loading.value = true;
     error.value = null;

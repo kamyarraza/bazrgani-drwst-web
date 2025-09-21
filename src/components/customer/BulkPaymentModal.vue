@@ -78,7 +78,7 @@
                                 </label>
                                 <q-input v-model.number="form.iqd_price" type="number" min="0" step="250" outlined dense
                                     suffix="IQD" :placeholder="t('payment.bulkPayment.enterIqdAmount')"
-                                    class="form-input payment-input" @input="onIqdAmountChange" @wheel.prevent>
+                                    class="form-input payment-input" @input="onIqdAmountChange" @focus="(e) => (e.target as HTMLInputElement)?.select()" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="currency_exchange" color="primary" />
                                     </template>
@@ -92,7 +92,7 @@
                                 </label>
                                 <q-input v-model.number="form.usd_price" type="number" min="0" step="0.01" outlined
                                     dense suffix="USD" :placeholder="t('payment.bulkPayment.enterUsdAmount')"
-                                    class="form-input payment-input" @input="onUsdAmountChange" @wheel.prevent>
+                                    class="form-input payment-input" @input="onUsdAmountChange" @focus="(e) => (e.target as HTMLInputElement)?.select()" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="attach_money" color="primary" />
                                     </template>
@@ -106,7 +106,7 @@
                                 </label>
                                 <q-input v-model.number="form.iqd_return_amount" type="number" min="0" step="250"
                                     outlined dense suffix="IQD" :placeholder="t('payment.bulkPayment.enterIqdReturn')"
-                                    class="form-input return-input" @wheel.prevent>
+                                    class="form-input return-input" @focus="(e) => (e.target as HTMLInputElement)?.select()" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="keyboard_return" color="warning" />
                                     </template>
@@ -120,7 +120,7 @@
                                 </label>
                                 <q-input v-model.number="form.usd_return_amount" type="number" min="0" step="0.01"
                                     outlined dense suffix="USD" :placeholder="t('payment.bulkPayment.enterUsdReturn')"
-                                    class="form-input return-input" @wheel.prevent>
+                                    class="form-input return-input" @focus="(e) => (e.target as HTMLInputElement)?.select()" @wheel.prevent>
                                     <template v-slot:prepend>
                                         <q-icon name="keyboard_return" color="warning" />
                                     </template>
@@ -150,6 +150,28 @@
                                 <span class="summary-value net-total">${{ formatCurrency(netPaymentAmount) }}</span>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Full Payment Checkbox -->
+                    <div class="form-group">
+                        <div class="checkbox-wrapper">
+                            <q-checkbox 
+                                v-model="form.is_full_payment" 
+                                :label="t('payment.bulkPayment.fullPaymentLabel')"
+                                color="primary"
+                                class="full-payment-checkbox"
+                            />
+                            <q-icon 
+                                name="help_outline" 
+                                size="18px" 
+                                color="grey-6"
+                                class="help-icon"
+                                :title="t('payment.bulkPayment.fullPaymentTooltip')"
+                            />
+                        </div>
+                        <small class="checkbox-description">
+                            {{ t('payment.bulkPayment.fullPaymentDescription') }}
+                        </small>
                     </div>
 
                     <!-- Note Section -->
@@ -207,6 +229,7 @@ const refreshingRate = ref(false);
 
 const form = ref({
     note: '',
+    is_full_payment: false,
     iqd_price: 0,
     usd_price: 0,
     iqd_return_amount: 0,
@@ -304,6 +327,7 @@ const close = () => {
 const resetForm = () => {
     form.value = {
         note: '',
+        is_full_payment: false,
         iqd_price: 0,
         usd_price: 0,
         iqd_return_amount: 0,
@@ -341,7 +365,8 @@ const handleSubmit = async () => {
             usd_price: form.value.usd_price || 0,
             iqd_return_amount: form.value.iqd_return_amount || 0,
             usd_return_amount: form.value.usd_return_amount || 0,
-            note: form.value.note || ''
+            note: form.value.note || '',
+            full_payment: form.value.is_full_payment || false
         };
 
         const response = await customerStore.bulkPaymentReceive(props.customer.id, paymentData);
@@ -349,11 +374,11 @@ const handleSubmit = async () => {
 
         // Only emit success if we have a valid response (not false)
         if (response && typeof response === 'object') {
-            $q.notify({
-                type: 'positive',
-                message: t('payment.bulkPayment.success.paymentSuccessful'),
-                position: 'top'
-            });
+            // $q.notify({
+            //     type: 'positive',
+            //     message: t('payment.bulkPayment.success.paymentSuccessful'),
+            //     position: 'top'
+            // });
 
             // console.log('BulkPaymentModal - Emitting success with:', response);
             emit('success', response);
