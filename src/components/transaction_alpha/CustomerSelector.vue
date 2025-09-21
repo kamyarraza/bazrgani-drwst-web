@@ -151,9 +151,9 @@ function onBlur() {
 onMounted(async () => {
   // Only fetch customers if we have a pre-selected value or if the user starts typing
   // This prevents auto-loading and auto-selecting on mount
-  if (props.modelValue !== null && props.modelValue !== undefined) {
+  // if (props.modelValue !== null && props.modelValue !== undefined) {
     await fetchCustomers('', props.customerType as 'customer' | 'supplier');
-  }
+  // }
 });
 
 watch(() => props.modelValue, (val) => {

@@ -721,7 +721,7 @@ async function handleSelectBranch(branch) {
     }
   }
 
-  console.log('Selected branch:', branch);
+  // console.log('Selected branch:', branch);
 }
 
 function clearModalData() {

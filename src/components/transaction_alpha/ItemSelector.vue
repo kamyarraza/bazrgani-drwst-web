@@ -534,21 +534,21 @@ defineExpose({
               <div class="col-auto">
                 <q-input v-if="selected.item.package_units > 0" v-model.number="selected.packages"
                   :label="t('transactionAlpha.packages')" type="number" dense outlined min="0" style="max-width:90px;"
-                  @update:model-value="val => onPackagesChange(selected, val)" />
+                  @update:model-value="val => onPackagesChange(selected, val)" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                 <div v-if="selected.item.package_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
                   t('transactionAlpha.packageHint', { n: selected.item.package_units }) }}</div>
               </div>
               <div class="col-auto">
                 <q-input v-if="selected.item.packet_units > 0" v-model.number="selected.packets"
                   :label="t('transactionAlpha.packets')" type="number" dense outlined min="0" style="max-width:90px;"
-                  @update:model-value="val => onPacketsChange(selected, val)" />
+                  @update:model-value="val => onPacketsChange(selected, val)" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                 <div v-if="selected.item.packet_units > 0" class="text-caption text-grey-7 q-mt-xs">{{
                   t('transactionAlpha.packetHint', { n: selected.item.packet_units }) }}</div>
               </div>
               <div class="col-auto">
                 <q-input v-model.number="selected.quantity" :label="t('transactionAlpha.quantity')" type="number" dense
                   outlined min="0" style="max-width:90px;"
-                  @update:model-value="val => onQuantityChange(selected, val)" />
+                  @update:model-value="val => onQuantityChange(selected, val)" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                 <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', {
                   n: selected.quantity
                 }) }}
@@ -558,11 +558,11 @@ defineExpose({
                 <!-- For Purchase Transactions: Show all 3 price fields -->
                 <template v-if="props.transactionType === 'purchase'">
                   <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.unitCost')" type="number"
-                    dense outlined min="0" style="max-width:110px;" />
+                    dense outlined min="0" style="max-width:110px;" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                   <q-input v-model.number="selected.solo_unit_cost" :label="t('transactionAlpha.soloUnitCost')"
-                    type="number" dense outlined min="0" style="max-width:110px;" />
+                    type="number" dense outlined min="0" style="max-width:110px;" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                   <q-input v-model.number="selected.bulk_unit_cost" :label="t('transactionAlpha.bulkUnitCost')"
-                    type="number" dense outlined min="0" style="max-width:110px;" />
+                    type="number" dense outlined min="0" style="max-width:110px;" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                 </template>
 
                 <!-- For Sell Transactions: Show only ONE selling price input -->
@@ -570,7 +570,7 @@ defineExpose({
                   <div class="cute-price-container">
                     <!-- Single selling price input -->
                     <q-input v-model.number="selected.unit_cost" :label="t('transactionAlpha.sellingPrice')"
-                      type="number" dense outlined min="0" step="0.01" class="cute-price-input">
+                      type="number" dense outlined min="0" step="0.01" class="cute-price-input" @focus="(e) => (e.target as HTMLInputElement)?.select()">
                       <template v-slot:prepend>
                         <q-icon name="attach_money" color="positive" />
                       </template>

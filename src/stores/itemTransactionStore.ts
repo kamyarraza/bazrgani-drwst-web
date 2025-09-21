@@ -53,7 +53,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       }
 
       const response = await api.get<ApiResponse<BranchWithWarehouses>>(
-           endPoints.branchWarehouses(branchId)
+        endPoints.branchWarehouses(branchId)
       );
 
       if (response.data.status === 'success') {
@@ -150,8 +150,8 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       loading.value = true;
 
       // Debug: Log the forgiven_price value
-      console.log('🔍 Debug - forgiven_price value:', transactionData.forgiven_price);
-      console.log('🔍 Debug - full transactionData:', transactionData);
+      // console.log('🔍 Debug - forgiven_price value:', transactionData.forgiven_price);
+      // console.log('🔍 Debug - full transactionData:', transactionData);
 
       // Create FormData for the new endpoints
       const formData = new FormData();
@@ -169,7 +169,10 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       formData.append('iqd_return_amount', transactionData.iqd_return_amount.toString());
       formData.append('usd_return_amount', transactionData.usd_return_amount.toString());
       formData.append('forgiven_price', (transactionData.forgiven_price || 0).toString());
-      formData.append('due_date', (transactionData.due_date || null).toString());
+      formData.append(
+        'due_date',
+        transactionData.due_date ? transactionData.due_date.toString() : ''
+      );
 
       // Add details array
       transactionData.details.forEach((detail: any, index: number) => {
@@ -189,10 +192,10 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
       }
 
       // Debug: Log FormData contents
-      console.log('🔍 FormData contents:');
-      for (const [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value);
-      }
+      // console.log('🔍 FormData contents:');
+      // for (const [key, value] of formData.entries()) {
+      // console.log(`  ${key}:`, value);
+      // }
 
       const response = await api.post<ApiResponse<any>>(
         endpoint,
