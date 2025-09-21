@@ -1,10 +1,7 @@
 <template>
-    <QModalForm
-        v-model="model"
-        :title="t('customer.addNew')"
-        :show-user-info="true"
-        :user-name="(form.fname) + ' ' + (form.sname)"
-        :default-user-name="t('customer.newCustomer')" :user-role="form.type === 'supplier' ? t('customer.supplier') : t('customer.customer')">
+    <QModalForm v-model="model" :title="t('customer.addNew')" :show-user-info="true"
+        :user-name="(form.fname) + ' ' + (form.sname)" :default-user-name="t('customer.newCustomer')"
+        :user-role="form.type === 'supplier' ? t('customer.supplier') : t('customer.customer')">
         <template #default>
             <q-form @submit.prevent="submitForm">
                 <div class="q-pa-md">
@@ -14,55 +11,37 @@
                         <div class="col-12 col-md-6">
                             <div class="text-subtitle1 text-primary q-mb-sm">{{ t('customer.customerInfo') }}</div>
 
-                            <Qinput
-                                v-model="form.fname"
-                                :label="t('customer.firstName')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input"
-                            >
+                            <Qinput v-model="form.fname" :label="t('customer.firstName')"
+                                :rules="[val => !!val || t('validation.required')]" outlined class="enhanced-input">
                                 <template #before>
                                     <q-icon name="person" color="primary" />
                                 </template>
                             </Qinput>
 
-                            <Qinput
-                                v-model="form.fphone"
-                                :label="t('customer.primaryPhone')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input"
-                            >
+                            <!-- Alert for the input -->
+                            <div v-if="fPhoneExists" class="phone-exists-alert q-mt-xs flex items-center">
+                                <q-icon name="warning" color="negative" size="16px" class="q-mr-xs" />
+                                <span class="text-caption text-negative">{{ t('customer.phoneExists') }}</span>
+                            </div>
+                            <Qinput v-model="form.fphone" :label="t('customer.primaryPhone')"
+                                :rules="[val => !!val || t('validation.required')]" outlined class="enhanced-input"
+                                @update:model-value="val => checkPhoneExistence(val as string, 1)" @clear="fPhoneExists = false">
                                 <template #before>
                                     <q-icon name="phone" color="primary" />
                                 </template>
                             </Qinput>
 
-                            <q-select
-                                v-model="form.location_id"
-                                :options="locationOptions"
-                                :label="t('customer.location')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input q-mb-md"
-                                emit-value
-                                map-options
-                            >
+                            <q-select v-model="form.location_id" :options="locationOptions"
+                                :label="t('customer.location')" :rules="[val => !!val || t('validation.required')]"
+                                outlined class="enhanced-input q-mb-md" emit-value map-options>
                                 <template #before>
                                     <q-icon name="location_on" color="primary" />
                                 </template>
                             </q-select>
 
-                            <q-select
-                                v-model="form.type"
-                                :options="typeOptions"
-                                :label="t('customer.type')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input"
-                                emit-value
-                                map-options
-                            >
+                            <q-select v-model="form.type" :options="typeOptions" :label="t('customer.type')"
+                                :rules="[val => !!val || t('validation.required')]" outlined class="enhanced-input"
+                                emit-value map-options>
                                 <template #before>
                                     <q-icon name="category" color="primary" />
                                 </template>
@@ -73,53 +52,37 @@
                         <div class="col-12 col-md-6">
                             <div class="text-subtitle1 text-primary q-mb-sm">{{ t('customer.locationInfo') }}</div>
 
-                            <Qinput
-                                v-model="form.sname"
-                                :label="t('customer.lastName')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input"
-                            >
+                            <Qinput v-model="form.sname" :label="t('customer.lastName')"
+                                :rules="[val => !!val || t('validation.required')]" outlined class="enhanced-input">
                                 <template #before>
                                     <q-icon name="person" color="primary" />
                                 </template>
                             </Qinput>
 
-                            <Qinput
-                                v-model="form.sphone"
-                                :label="t('customer.secondPhone', 'Second Phone Number')"
-                                :rules="[]"
-                                outlined
-                                class="enhanced-input"
-                            >
+                            <!-- Alert for the input -->
+                            <div v-if="sPhoneExists" class="phone-exists-alert q-mt-xs flex items-center">
+                                <q-icon name="warning" color="negative" size="16px" class="q-mr-xs" />
+                                <span class="text-caption text-negative">{{ t('customer.phoneExists') }}</span>
+                            </div>
+                            <Qinput v-model="form.sphone" :label="t('customer.secondPhone', 'Second Phone Number')"
+                                :rules="[]" outlined class="enhanced-input"
+                                @update:model-value="val => checkPhoneExistence(val as string, 2)" @clear="sPhoneExists = false">
                                 <template #before>
                                     <q-icon name="phone" color="secondary" />
                                 </template>
                             </Qinput>
 
-                            <Qinput
-                                v-model="form.place"
-                                :label="t('customer.place')"
-                                :rules="[val => !!val || t('validation.required')]"
-                                outlined
-                                class="enhanced-input"
-                            >
+                            <Qinput v-model="form.place" :label="t('customer.place')"
+                                :rules="[val => !!val || t('validation.required')]" outlined class="enhanced-input">
                                 <template #before>
                                     <q-icon name="place" color="primary" />
                                 </template>
                             </Qinput>
 
-                            <Qinput
-                                v-if="form.type === 'customer'"
-                                v-model.number="form.payment_cycle_days"
+                            <Qinput v-if="form.type === 'customer'" v-model.number="form.payment_cycle_days"
                                 :label="t('customer.paymentCycleDays')"
                                 :rules="[val => !val || (Number(val) >= 1 && Number(val) <= 365) || t('validation.paymentCycleRange')]"
-                                outlined
-                                class="enhanced-input"
-                                type="number"
-                                min="1"
-                                max="365"
-                            >
+                                outlined class="enhanced-input" type="number" min="1" max="365">
                                 <template #before>
                                     <q-icon name="schedule" color="primary" />
                                 </template>
@@ -131,24 +94,12 @@
 
                     <div class="row q-col-gutter-md">
                         <div class="col">
-                            <Qbtn
-                                :btn-label="t('common.cancel')"
-                                color="negative"
-                                :is-flat="true"
-                                :no-caps="true"
-                                @click="model = false"
-                                class="full-width"
-                            />
+                            <Qbtn :btn-label="t('common.cancel')" color="negative" :is-flat="true" :no-caps="true"
+                                @click="model = false" class="full-width" />
                         </div>
                         <div class="col">
-                            <Qbtn
-                                type="submit"
-                                :btn-label="t('customer.addBtn')"
-                                color="primary"
-                                :is-rounded="false"
-                                :no-caps="true"
-                                class="full-width"
-                            />
+                            <Qbtn type="submit" :btn-label="t('customer.addBtn')" color="primary" :is-rounded="false"
+                                :no-caps="true" class="full-width" />
                         </div>
                     </div>
                 </div>
@@ -172,11 +123,14 @@ const model = defineModel<boolean>({ default: false })
 const customerStore = useCustomerStore()
 const locationStore = useLocationStore()
 const emit = defineEmits(['submit'])
-const locationOptions = ref<Array<{label: string, value: number}>>([])
-const typeOptions = ref<Array<{label: string, value: string}>>([
+const locationOptions = ref<Array<{ label: string, value: number }>>([])
+const typeOptions = ref<Array<{ label: string, value: string }>>([
     { label: t('customer.customer'), value: 'customer' },
     { label: t('customer.supplier'), value: 'supplier' }
 ])
+const fPhoneExists = ref(false)
+const sPhoneExists = ref(false)
+let phoneCheckTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Form structure
 const form = reactive<CustomerPayload>({
@@ -207,6 +161,31 @@ watch(model, (newVal) => {
     }
 })
 
+const checkPhoneExistence = (phone: string, nPhone: number) => {
+  // Clear the previous timeout if it exists
+  if (phoneCheckTimeout) clearTimeout(phoneCheckTimeout)
+
+  // Set a new timeout
+  phoneCheckTimeout = setTimeout(() => {
+    if (!phone.trim()) return
+
+    customerStore.checkExistence(phone).then(exists => {
+      if (exists) {
+        if (nPhone === 1) fPhoneExists.value = true
+        if (nPhone === 2) sPhoneExists.value = true
+      } else {
+        if (nPhone === 1) fPhoneExists.value = false
+        if (nPhone === 2) sPhoneExists.value = false
+      }
+    }).catch(error => {
+      console.error('Error checking phone existence:', error)
+      // Reset phone existence flags on error
+      if (nPhone === 1) fPhoneExists.value = false
+      if (nPhone === 2) sPhoneExists.value = false
+    })
+  }, 500) // wait 500ms after the last keystroke
+}
+
 function resetForm() {
     form.fname = ''
     form.sname = ''
@@ -236,3 +215,9 @@ async function submitForm() {
     }
 }
 </script>
+
+<style>
+.phone-exists-alert {
+    font-size: 0.85rem;
+}
+</style>

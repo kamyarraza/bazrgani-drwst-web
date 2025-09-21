@@ -13,6 +13,7 @@ export const useCustomerStore = defineStore('customer', () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const pagination = ref<Pagination | null>(null);
+  const phoneExists = ref<boolean>(false);
 
   async function fetchCustomers(page: number = 1, type?: 'supplier' | 'customer', query?: string, borrowedFromBranch?: number) {
     loading.value = true;
@@ -254,6 +255,29 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   }
 
+  async function checkExistence(phone: string): Promise<boolean> {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const { data } = await api.get<ApiResponse<{ exists: boolean }>>(endPoints.customer.checkExistence(phone));
+      phoneExists.value = data.data.exists;
+      return data.data.exists;
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to check customer existence';
+      error.value = errorMessage;
+      showNotify({
+        type: 'negative',
+        message: error.value,
+        position: 'top',
+        duration: 3000,
+      });
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function createBorrow(customerId: number, borrowData: { borrowed_usd: number }) {
     loading.value = true;
     error.value = null;
@@ -394,12 +418,14 @@ export const useCustomerStore = defineStore('customer', () => {
     loading,
     error,
     pagination,
+    phoneExists,
     fetchCustomers,
     createCustomer,
     getCustomerDetails,
     updateCustomer,
     createCustomerAccount,
     searchCustomers,
+    checkExistence,
     createBorrow,
     bulkPaymentReceive
   };

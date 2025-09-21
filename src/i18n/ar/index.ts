@@ -121,14 +121,20 @@ export default {
   transaction: {
     paySupplier: "دفع للمورد",
     receiveFromCustomer: "استلام من العميل",
+    title: "المعاملات",
     modalTitle: "تفاصيل المعاملة",
+    header: "لوحة إدارة المعاملات",
+    subtitle: "إدارة معاملات شراء وبيع البضائع",
+    viewInvoice: "عرض الفاتورة",
     addNew: "إضافة معاملة جديدة",
-    searchLabel: "البحث بالاسم العميل أو الملاحظة",
-    resetFilters: "إعادة تعيين المرشحات",
+    searchLabel: "البحث باسم العميل أو الملاحظة",
+    resetFilters: "إعادة تعيين الفلاتر",
     typeFilter: "تصفية حسب نوع المعاملة",
+    paymentType: "طريقة الدفع",
     paymentFilter: "تصفية حسب نوع الدفع",
-    paymentType: "نوع الدفع",
-    count: "عدد المعاملات",
+    count: "إجمالي المعاملات",
+    editNotAllowed: "المعاملة مقفلة ولا يمكن تعديلها",
+    nextPaymentDate: "الدفع القادم",
 
     columns: {
       id: "المعرف",
@@ -1362,6 +1368,8 @@ export default {
       purchaseBorrow: "رصيد ائتمان العميل",
       actions: "الإجراءات",
       lastBorrowDate: "تاريخ آخر دين",
+      nextPaymentDate: "تاريخ الدفع القادم",
+      paymentCycleDays: "دورة أيام الدفع",
     },
 
     // Customer Details Modal
@@ -1471,9 +1479,16 @@ export default {
     purchaseBorrow: "قرض الشراء",
     totalPurchaseDebt: "إجمالي دين الشراء",
     sellBorrow: "قرض البيع",
-    totalSellDebt: "إجمالي دين البيع"
+    totalSellDebt: "إجمالي دين البيع",
+
+    paymentCycleDays: "دورة أيام الدفع",
+    lastBorrowDate: "تاريخ آخر دين",
+    nextPaymentDate: "تاريخ الدفع القادم",
+    
+    phoneExists: "رقم الهاتف هذا مسجل مسبقاً!",
   },
   common: {
+    day: "يوم",
     edit: "تعديل",
     delete: "حذف",
     cancel: "إلغاء",
@@ -1936,12 +1951,18 @@ export default {
     },
 
     validation: {
-      customerRequired: "العميل مطلوب",
-      warehouseRequired: "المستودع مطلوب",
-      itemsRequired: "على الأقل منتج واحد مطلوب",
-      invalidQuantity: "كمية غير صحيحة",
-      insufficientStock: "مخزون غير كافٍ",
-      validQuantity: "أدخل كمية صحيحة",
+      required: "هذه الخانة مطلوبة",
+      nameRequired: "الاسم مطلوب",
+      customerRequired: "اختيار العميل مطلوب",
+      branchRequired: "اختيار الفرع مطلوب",
+      warehouseRequired: "اختيار المستودع مطلوب",
+      paymentTypeRequired: "اختيار طريقة الدفع مطلوب",
+      discountRateInvalid: "يجب أن تكون نسبة الخصم بين 0 و 100",
+      positiveNumber: "يجب أن يكون رقماً موجباً",
+      integerRequired: "يجب أن يكون رقماً صحيحاً",
+      minLength: "يجب أن يكون على الأقل {min} حرفاً",
+      passwordMatch: "يجب أن تتطابق كلمات المرور",
+      paymentCycleRange: "يجب أن تكون بين 1 و 365"
     },
 
     error: {

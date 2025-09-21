@@ -57,6 +57,7 @@ export const endPoints = {
     borrow: (id: string) => `/customers/${id}/borrowing`,
     bulkPaymentReceive: (id: string) =>
       `/transactions/${id}/bulk-payment/receive/customer`,
+    checkExistence: (phone: string) => `/customers/check/existence/${phone}`
   },
   // Using locations instead of location for consistency
   // location endpoint removed as it's duplicated by the more complete locations endpoint

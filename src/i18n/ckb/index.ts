@@ -963,7 +963,9 @@ export default {
 
     paymentCycleDays: "جیاوازی ڕۆژەکانی پارەدان",
     lastBorrowDate: "بەرواری قەرزی پێشوو",
-    nextPaymentDate: "بەرواری پارەدانی داهاتوو"
+    nextPaymentDate: "بەرواری پارەدانی داهاتوو",
+
+    phoneExists: "ئەم ژمارە موبایلە تۆمارکراوە پێشتر!",
   },
   common: {
     day: "ڕۆژ",

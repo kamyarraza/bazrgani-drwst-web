@@ -122,14 +122,20 @@ export default {
   transaction: {
     paySupplier: "Pay Supplier",
     receiveFromCustomer: "Receive from Customer",
+    title: "Transactions",
     modalTitle: "Transaction Details",
+    header: "Transactions Dashboard",
+    subtitle: "Managing buying and selling transactions",
+    viewInvoice: "View Invoice",
     addNew: "Add New Transaction",
     searchLabel: "Search by customer name or note",
     resetFilters: "Reset Filters",
     typeFilter: "Filter by transaction type",
+    paymentType: "Payment Method",
     paymentFilter: "Filter by payment type",
-    paymentType: "Payment Type",
-    count: "Transaction Count",
+    count: "Total Transactions",
+    editNotAllowed: "Transaction is locked and cannot be edited",
+    nextPaymentDate: "Next Payment",
 
     columns: {
       id: "ID",
@@ -1346,6 +1352,8 @@ export default {
       purchaseBorrow: "Customer Credit Balance",
       actions: "Actions",
       lastBorrowDate: "Last Borrow Date",
+      nextPaymentDate: "Next Payment Date",
+      paymentCycleDays: "Payment Cycle Days",
     },
 
     // Customer Details Modal
@@ -1455,9 +1463,16 @@ export default {
     purchaseBorrow: "Purchase Borrow",
     totalPurchaseDebt: "Total Purchase Debt",
     sellBorrow: "Sell Borrow",
-    totalSellDebt: "Total Sell Debt"
+    totalSellDebt: "Total Sell Debt",
+
+    paymentCycleDays: "Payment Cycle Days",
+    lastBorrowDate: "Last Borrow Date",
+    nextPaymentDate: "Next Payment Date",
+
+    phoneExists: "This mobile number is already registered!",
   },
   common: {
+    day: "Day",
     edit: "Edit",
     delete: "Delete",
     cancel: "Cancel",
@@ -1910,12 +1925,18 @@ export default {
     },
 
     validation: {
-      customerRequired: "Customer is required",
-      warehouseRequired: "Warehouse is required",
-      itemsRequired: "At least one item is required",
-      invalidQuantity: "Invalid quantity",
-      insufficientStock: "Insufficient stock",
-      validQuantity: "Enter a valid quantity",
+      required: "This field is required",
+      nameRequired: "Name is required",
+      customerRequired: "Customer selection is required",
+      branchRequired: "Branch selection is required",
+      warehouseRequired: "Warehouse selection is required",
+      paymentTypeRequired: "Payment type selection is required",
+      discountRateInvalid: "Discount rate must be between 0 and 100",
+      positiveNumber: "Must be a positive number",
+      integerRequired: "Must be an integer",
+      minLength: "Must be at least {min} characters",
+      passwordMatch: "Passwords must match",
+      paymentCycleRange: "Must be between 1 and 365"
     },
 
     error: {
