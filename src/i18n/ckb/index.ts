@@ -3256,6 +3256,8 @@ export default {
     minLength: "دەبێت بەلایەنی کەمەوە {min} پیت بێت",
     passwordMatch: "وشە نهێنییەکان دەبێت وەک یەک بن",
     paymentCycleRange: "دەبێت نێوان 1 و 365 بێت",
+
+    refundNoteLength: "دەبێت زیاتر لە 5 پیت بنووسیت",
   },
 
 

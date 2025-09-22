@@ -194,7 +194,7 @@
               <q-icon name="note" class="label-icon" />
               {{ t('payment.refund.noteLabel') }}
             </label>
-            <q-input v-model="form.reason" type="textarea" outlined dense rows="3" :placeholder="t('payment.refund.notePlaceholder')" class="form-input" @wheel.prevent />
+            <q-input v-model="form.reason" type="textarea" outlined dense rows="3" :placeholder="t('payment.refund.notePlaceholder')" class="form-input" @wheel.prevent :hint="t('validation.refundNoteLength')" />
           </div>
         </q-form>
       </q-card-section>
@@ -317,7 +317,7 @@ const isFormValid = computed(() => {
   // console.log(calculatedRefundAmount.value, form.value.reason.length, hasItemsToRefund.value, isAmountsMatching.value);
   
   return calculatedRefundAmount.value > 0 &&
-         form.value.reason.length >= 10 &&
+         form.value.reason.length >= 5 &&
          hasItemsToRefund.value
         //  isAmountsMatching.value
 })

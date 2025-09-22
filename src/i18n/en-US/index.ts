@@ -2442,6 +2442,8 @@ export default {
     integerRequired: "Must be an integer",
     minLength: "Must be at least {min} characters",
     passwordMatch: "Passwords must match",
+
+    refundNoteLength: "You must write more than 5 characters",
   },
 
   // Pending Updates Section

@@ -908,31 +908,31 @@ async function handleSubmit() {
     forgivenPrice.value = 0;
     dueDate.value = null;
 
-    $q.notify({
-      type: 'positive',
-      message: `🎉 ${props.transactionType === 'purchase' ? 'Purchase' : 'Sale'} completed successfully!`,
-      caption: `Transaction total: ${formatCurrency(totalAfterDiscount.value)}`,
-      timeout: 4000,
-      position: 'top',
-      avatar: props.transactionType === 'purchase' ? '🛒' : '💰',
-      actions: [
-        { icon: 'close', color: 'white', round: true, size: 'sm' }
-      ]
-    });
+    // $q.notify({
+    //   type: 'positive',
+    //   message: `🎉 ${props.transactionType === 'purchase' ? 'Purchase' : 'Sale'} completed successfully!`,
+    //   caption: `Transaction total: ${formatCurrency(totalAfterDiscount.value)}`,
+    //   timeout: 4000,
+    //   position: 'top',
+    //   avatar: props.transactionType === 'purchase' ? '🛒' : '💰',
+    //   actions: [
+    //     { icon: 'close', color: 'white', round: true, size: 'sm' }
+    //   ]
+    // });
     show.value = false;
   } catch (error) {
     console.error('Transaction submission error:', error);
-    $q.notify({
-      type: 'negative',
-      message: '😔 Transaction failed to process',
-      caption: 'Please check your data and try again',
-      timeout: 4000,
-      position: 'top',
-      avatar: '⚠️',
-      actions: [
-        { icon: 'close', color: 'white', round: true, size: 'sm' }
-      ]
-    });
+    // $q.notify({
+    //   type: 'negative',
+    //   message: '😔 Transaction failed to process',
+    //   caption: 'Please check your data and try again',
+    //   timeout: 4000,
+    //   position: 'top',
+    //   avatar: '⚠️',
+    //   actions: [
+    //     { icon: 'close', color: 'white', round: true, size: 'sm' }
+    //   ]
+    // });
   } finally {
     submitting.value = false;
   }

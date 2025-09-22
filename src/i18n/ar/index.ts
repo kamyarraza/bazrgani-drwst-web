@@ -1963,7 +1963,9 @@ export default {
       integerRequired: "يجب أن يكون رقماً صحيحاً",
       minLength: "يجب أن يكون على الأقل {min} حرفاً",
       passwordMatch: "يجب أن تتطابق كلمات المرور",
-      paymentCycleRange: "يجب أن تكون بين 1 و 365"
+      paymentCycleRange: "يجب أن تكون بين 1 و 365",
+
+      refundNoteLength: "يجب أن تكتب أكثر من 5 أحرف",
     },
 
     error: {
