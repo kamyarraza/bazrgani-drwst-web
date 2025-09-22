@@ -17,7 +17,7 @@
 
         <q-card>
           <q-card-section style="display: flex; flex-direction: column; justify-content: space-between; height: 297mm;">
-            <div class="invoice-header">
+            <div class="invoice-header" :class="{ 'canceled-invoice': transactionData?.canceled_at }">
               <div class="header-left">
                 <img :src="brandLogo" alt="Brand Logo" class="brand-logo" />
                 <div class="company-info">
@@ -319,6 +319,27 @@ const close = () => {
   border-bottom: 3px solid #4CAF50;
   background-color: #f9fdf9;
   border-radius: 8px;
+
+  position: relative;
+  width: 100%;
+}
+
+.canceled-invoice::after {
+  content: "هەڵوەشێندراوە";
+  position: absolute;
+  top: 0;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(255, 50, 50, 0.7);
+  border-radius: 5px;
+  padding: 4px 5px 1px 5px;
+  margin: 0px;
+  font-size: 11px;
+  width: 200px;
+  text-align: center;
+  color: #fac85d;
+  text-shadow: 1px 1px 2px #fd0000;
+  opacity: 0.9;
 }
 
 .q-card {

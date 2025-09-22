@@ -257,7 +257,8 @@ export default {
     statusTypes: {
       completed: "مكتملة",
       reserved: "محجوزة",
-      cancelled: "ملغية"
+      canceled: "ملغية",
+      refunded: "مستردة",
     },
     customer: "العميل",
     status: "الحالة",

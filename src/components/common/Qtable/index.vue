@@ -33,7 +33,10 @@
 
     <!-- Table Body -->
     <template #body="props">
-      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true }"
+      <!-- 
+      canceled_at will come from backend and it is belongs to the item-transactions only.
+       -->
+      <q-tr :props="props" :class="{ 'row-expanded': expanded[getRowKey(props.row)], 'table-row': true, 'canceled-row': props.row.canceled_at }"
         :style="props.rowIndex % 2 === 0 ? 'background-color: #e6e6e6;' : ''">
         <q-td v-for="col in props.cols" :key="col.name" :props="props" class="table-cell">
           <!-- Image Avatar -->
@@ -441,5 +444,13 @@ function handlePageChangeWrapper(page: number) {
   opacity: 0.89;
   border: 1px solid #bfbfbf;
   z-index: 999;
+}
+
+.canceled-row {
+  text-decoration: line-through !important;
+  opacity: 0.7 !important;
+  background: linear-gradient(135deg, #ffeef3 0%, #ffe0e9 100%) !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 </style>

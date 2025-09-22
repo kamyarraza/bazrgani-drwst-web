@@ -1212,7 +1212,8 @@ export default {
     statusTypes: {
       completed: "تەواو",
       reserved: "حجزکراو",
-      cancelled: "هەڵوەشێندراوە",
+      canceled: "هەڵوەشێندراوە",
+      refunded: "گەڕێندراوە",
     },
     customer: "کڕیار",
     status: "دۆخ",

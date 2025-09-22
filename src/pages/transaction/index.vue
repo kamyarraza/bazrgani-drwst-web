@@ -33,9 +33,8 @@
     <!-- Search Section -->
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-md-4 col-sm-4 col-xs-12">
-        <q-input v-model="filters.id" outlined dense clearable
-          :label="t('transaction.searchByIdLabel', 'Search by ID')" class="full-width"
-          @update:model-value="handleSearchChange" type="number">
+        <q-input v-model="filters.id" outlined dense clearable :label="t('transaction.searchByIdLabel', 'Search by ID')"
+          class="full-width" @update:model-value="handleSearchChange" type="number">
           <template v-slot:prepend>
             <q-icon name="tag" />
           </template>
@@ -283,8 +282,12 @@ const menuItems = computed(() => {
     const baseItems = [
       { label: t('transaction.viewDetails'), icon: 'visibility', value: 'view_details' },
       { label: t('transaction.viewInvoice'), icon: 'receipt', value: 'view_invoice' },
-      { label: t('transaction.updateTransaction'), icon: 'edit', value: 'edit_transaction' }
     ];
+
+    // continue if the transaction was canceled
+    if (row.canceled_at) {
+      return baseItems;
+    }
 
     // Add refund-related options only for sell transactions
     if (transactionType.value === 'sell') {
@@ -303,6 +306,15 @@ const menuItems = computed(() => {
           value: 'refund_transaction'
         });
       }
+    }
+
+    // Append update button if is editable
+    if (row.is_editable) {
+      baseItems.push({
+        label: t('transaction.updateTransaction'),
+        icon: 'edit',
+        value: 'edit_transaction'
+      });
 
       // Only show freeding (remove from reservation) option if status is not completed
       if (row.status !== 'completed') {
@@ -404,7 +416,7 @@ const columns = computed(() => {
         return `color: ${row.due_color}`;
       }
     },
-    
+
     {
       name: 'remaining_price',
       label: t('transaction.columns.remainingPrice'),

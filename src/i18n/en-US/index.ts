@@ -255,7 +255,8 @@ export default {
     statusTypes: {
       completed: "Completed",
       reserved: "Reserved",
-      cancelled: "Cancelled"
+      canceled: "Canceled",
+      refunded: "Refunded"
     },
     customer: "Customer",
     status: "Status",

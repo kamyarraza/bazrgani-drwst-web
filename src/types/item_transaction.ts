@@ -119,6 +119,7 @@ export interface List {
     refunded_amounts?:any;
     created_at: string;
   };
+  canceled_at?: string; // Timestamp of when the transaction was canceled
 }
 export interface RefundTransaction {
   transaction_id: number;
