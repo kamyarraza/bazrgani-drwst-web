@@ -1228,12 +1228,13 @@ defineExpose({
 }
 
 .reference-badges .q-badge {
-  font-size: 0.7rem;
-  padding: 4px 8px;
-  border-radius: 12px;
+  font-size: 0.75rem !important;
+  padding: 6px 8px;
+  border-radius: 8px;
   font-weight: 500;
   opacity: 0.9;
   transition: opacity 0.2s ease;
+  text-shadow: 2px 2px 6px rgba(200, 0, 0, 0.7);
 }
 
 .reference-badges .q-badge:hover {
