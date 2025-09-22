@@ -33,9 +33,9 @@
                 :class="cashboxStore.cashbox.is_opened ? 'status-open' : 'status-closed'" size="3rem" />
             </div>
             <div class="status-text">
-              <h6>{{ t('cashbox.status', 'Status') }}</h6>
+              <!-- <h6>{{ t('cashbox.status', 'Status') }}</h6> -->
               <q-chip :color="cashboxStore.cashbox.is_opened ? 'positive' : 'negative'" text-color="white" size="lg"
-                :icon="cashboxStore.cashbox.is_opened ? 'lock_open' : 'lock'" class="status-chip">
+                :icon="cashboxStore.cashbox.is_opened ? 'lock_open' : 'lock'" class="status-chip" style="height: 48px;">
                 {{ cashboxStore.cashbox.is_opened ? t('cashbox.opened', 'Opened') : t('cashbox.closed',
                   'Closed') }}
               </q-chip>
@@ -251,12 +251,12 @@
             <div class="amount-input">
               <q-input v-model.number="depositIqdAmount" type="number" :label="t('cashbox.iqdAmount', 'IQD Amount')"
                 outlined suffix="IQD" :step="250" :min="0" class="transaction-input iqd-input"
-                @input="(val) => depositIqdAmount = val ? Math.round(val / 250) * 250 : null" />
+                @input="(val) => depositIqdAmount = val ? Math.round(val / 250) * 250 : null" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
             </div>
 
             <div class="amount-input">
               <q-input v-model.number="depositUsdAmount" type="number" :label="t('cashbox.usdAmount', 'USD Amount')"
-                outlined suffix="USD" :step="0.01" :min="0" class="transaction-input usd-input" />
+                outlined suffix="USD" :step="0.01" :min="0" class="transaction-input usd-input" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
             </div>
           </div>
 
@@ -269,7 +269,7 @@
         <q-card-actions align="right">
           <q-btn flat :label="t('common.cancel', 'Cancel')" @click="closeDepositDialog" />
           <q-btn color="green-6" :label="t('cashbox.deposit', 'Deposit')" @click="handleDeposit"
-            :disable="(!depositIqdAmount || depositIqdAmount <= 0) && (!depositUsdAmount || depositUsdAmount <= 0)" />
+            :disable="((!depositIqdAmount || depositIqdAmount <= 0) && (!depositUsdAmount || depositUsdAmount <= 0)) || cashboxStore.loading" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -289,12 +289,12 @@
             <div class="amount-input">
               <q-input v-model.number="withdrawIqdAmount" type="number" :label="t('cashbox.iqdAmount', 'IQD Amount')"
                 outlined suffix="IQD" :step="250" :min="0" class="transaction-input iqd-input"
-                @input="(val) => withdrawIqdAmount = val ? Math.round(val / 250) * 250 : null" />
+                @input="(val) => withdrawIqdAmount = val ? Math.round(val / 250) * 250 : null" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
             </div>
 
             <div class="amount-input">
               <q-input v-model.number="withdrawUsdAmount" type="number" :label="t('cashbox.usdAmount', 'USD Amount')"
-                outlined suffix="USD" :step="0.01" :min="0" class="transaction-input usd-input" />
+                outlined suffix="USD" :step="0.01" :min="0" class="transaction-input usd-input" @focus="(e) => (e.target as HTMLInputElement)?.select()" />
             </div>
           </div>
 
@@ -307,7 +307,7 @@
         <q-card-actions align="right">
           <q-btn flat :label="t('common.cancel', 'Cancel')" @click="closeWithdrawDialog" />
           <q-btn color="red-6" :label="t('cashbox.withdraw', 'Withdraw')" @click="handleWithdraw"
-            :disable="(!withdrawIqdAmount || withdrawIqdAmount <= 0) && (!withdrawUsdAmount || withdrawUsdAmount <= 0)" />
+            :disable="((!withdrawIqdAmount || withdrawIqdAmount <= 0) && (!withdrawUsdAmount || withdrawUsdAmount <= 0)) || cashboxStore.loading" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -496,15 +496,15 @@ async function refreshCashbox() {
 // Dialog management functions
 function closeDepositDialog() {
   showDepositDialog.value = false;
-  depositIqdAmount.value = null;
-  depositUsdAmount.value = null;
+  depositIqdAmount.value = 0;
+  depositUsdAmount.value = 0;
   depositNote.value = '';
 }
 
 function closeWithdrawDialog() {
   showWithdrawDialog.value = false;
-  withdrawIqdAmount.value = null;
-  withdrawUsdAmount.value = null;
+  withdrawIqdAmount.value = 0;
+  withdrawUsdAmount.value = 0;
   withdrawNote.value = '';
 }
 
@@ -701,6 +701,10 @@ async function handleWithdraw() {
         color: #ef4444;
         animation: locking 2s ease-in-out infinite;
       }
+    }
+
+    .status-text {
+      height: 48px;
     }
 
     .status-text h6 {
