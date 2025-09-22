@@ -120,6 +120,7 @@ export default {
   },
 
   transaction: {
+    searchByIdLabel: "Search by ID",
     paySupplier: "Pay Supplier",
     receiveFromCustomer: "Receive from Customer",
     title: "Transactions",

@@ -1068,6 +1068,7 @@ export default {
     },
   },
   transaction: {
+    searchByIdLabel: "گەڕان بە ID",
     paySupplier: "پارەدان بۆ دابینکەر",
     receiveFromCustomer: "وەرگرتن لە کڕیار",
     title: "مامەڵەکان",

@@ -119,6 +119,7 @@ export default {
     confirmDeleteItem: "هل أنت متأكد من رغبتك في حذف العنصر '{name}'؟",
   },
   transaction: {
+    searchByIdLabel: "البحث عن طريق المعرف",
     paySupplier: "دفع للمورد",
     receiveFromCustomer: "استلام من العميل",
     title: "المعاملات",

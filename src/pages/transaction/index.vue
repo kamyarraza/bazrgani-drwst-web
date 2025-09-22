@@ -23,16 +23,25 @@
     </q-card>
 
     <!-- Sticky Notes Overlay (absolute, not in normal flow) -->
-    <div class="sticky-notes-overlay">
+    <!-- <div class="sticky-notes-overlay">
       <div v-for="(note, idx) in notes" :key="note.id" style="margin-bottom: 12px;">
         <Note :model-value="note" @update:model-value="val => { notes[idx] = { ...notes[idx], ...val } }"
           @close="removeNote(note.id)" />
       </div>
-    </div>
+    </div> -->
 
     <!-- Search Section -->
     <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-md-8 col-sm-8 col-xs-12">
+      <div class="col-md-4 col-sm-4 col-xs-12">
+        <q-input v-model="filters.id" outlined dense clearable
+          :label="t('transaction.searchByIdLabel', 'Search by ID')" class="full-width"
+          @update:model-value="handleSearchChange" type="number">
+          <template v-slot:prepend>
+            <q-icon name="tag" />
+          </template>
+        </q-input>
+      </div>
+      <div class="col-md-5 col-sm-5 col-xs-12">
         <q-input v-model="filters.search" outlined dense clearable
           :label="t('transaction.searchLabel', 'Search by customer name or note')" class="full-width"
           @update:model-value="handleSearchChange">
@@ -41,7 +50,7 @@
           </template>
         </q-input>
       </div>
-      <div class="col-md-4 col-sm-4 col-xs-12">
+      <div class="col-md-3 col-sm-3 col-xs-12">
         <q-btn color="primary" class="full-width elegant-reset-btn" icon="refresh" outline
           :label="t('transaction.resetFilters', 'Reset')" @click="resetFilters" />
       </div>
@@ -174,10 +183,10 @@
 import Header from 'src/components/common/Header.vue'
 import QtableB from 'src/components/common/Qtable.vue'
 import { useItemTransactionStore } from 'src/stores/itemTransactionStore'
-import { ref, computed, onMounted, onUnmounted, reactive, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import type { MenuItem } from 'src/types'
 import { useI18n } from 'vue-i18n'
-import Note from 'src/components/common/Note.vue'
+// import Note from 'src/components/common/Note.vue'
 import type { List } from 'src/types/item_transaction'
 import { useRouter } from 'vue-router'
 import PrintableInvoice from 'src/components/invoice/PrintableInvoice.vue'
@@ -264,6 +273,7 @@ const paymentInvoicePayload = ref<{ [key: string]: any } | null>(null)
 
 // Filter states
 const filters = ref({
+  id: '',
   search: ''
 })
 
@@ -334,6 +344,7 @@ const filteredData = computed(() => {
 // Reset search filter
 async function resetFilters() {
   filters.value = {
+    id: '',
     search: ''
   }
 
@@ -348,7 +359,7 @@ function handleSearchChange(_searchValue: any) {
   if (searchTimeout) clearTimeout(searchTimeout);
 
   searchTimeout = setTimeout(() => {
-    void loadTransactions(_searchValue);
+    void loadTransactions(filters.value.search || undefined, filters.value.id ? Number(filters.value.id) : undefined);
   }, 750);
 }
 
@@ -598,12 +609,12 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
 }
 
 // Notes state
-const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
+// const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
 
-function removeNote(id: number) {
-  const idx = notes.findIndex(n => n.id === id)
-  if (idx !== -1) notes.splice(idx, 1)
-}
+// function removeNote(id: number) {
+//   const idx = notes.findIndex(n => n.id === id)
+//   if (idx !== -1) notes.splice(idx, 1)
+// }
 
 // Handle payment success - refresh data
 const handlePaymentSuccess = async (payload?: any) => {
@@ -766,8 +777,8 @@ const handlePrintShortcut = (event: KeyboardEvent) => {
 };
 
 // Load transactions
-async function loadTransactions(query?: string) {
-  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value, query);
+async function loadTransactions(query?: string, id?: number) {
+  await transactionStore.fetchTransactionList(transactionType.value, currentPage.value, query, id);
 }
 
 // hooks
