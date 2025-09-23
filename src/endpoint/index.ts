@@ -84,6 +84,7 @@ export const endPoints = {
     receiveCustomer: (transactionId: string) =>
       `/transactions/${transactionId}/payment/receive/customer/normal`,
     refund: "/transactions/refund/items",
+    cancel: (transactionId: string) => `/transactions/${transactionId}/cancel`,
   },
 
   // Rename items to item to match our store naming convention

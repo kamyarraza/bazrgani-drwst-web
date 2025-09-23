@@ -137,6 +137,38 @@ export default {
     editNotAllowed: "المعاملة مقفلة ولا يمكن تعديلها",
     nextPaymentDate: "الدفع القادم",
 
+    cancel: "إلغاء",
+    cancelConfirmation: {
+      title: "إلغاء المعاملة",
+      subtitle: "تأكيد إلغاء المعاملة",
+      transactionDetails: "تفاصيل المعاملة",
+      transactionId: "رمز المعاملة",
+      customer: "العميل",
+      createdAt: "تم الإنشاء في",
+      totalAmount: "المبلغ الكلي",
+      paidAmount: "المبلغ المدفوع",
+      warningTitle: "تحذير هام",
+      warningMessage: "إلغاء هذه المعاملة سيؤدي إلى إزالة جميع تأثيراتها، وإرجاع جميع البضائع إلى المستودع، وخصمها من حساب العميل. بمجرد تنفيذ هذا الإجراء لا يمكن التراجع عنه. يرجى التأكد قبل المتابعة.",
+      passwordLabel: "كلمة المرور",
+      passwordPlaceholder: "أدخل كلمة المرور للتأكيد",
+      passwordRequired: "كلمة المرور مطلوبة للتأكيد",
+      confirmationLabel: "التأكيد",
+      confirmationRequired: "يجب تحديد هذا الخيار للتأكيد",
+      confirmationDescription: "أنا متأكد أنني أريد إلغاء هذه المعاملة.",
+      cancelButton: "رجوع",
+      confirmCancelButton: "تأكيد الإلغاء",
+
+      errors: {
+        formInvalid: "النموذج غير صالح",
+        transactionIdRequired: "رمز المعاملة مطلوب",
+        cancellationFailed: "فشل إلغاء المعاملة. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.",
+      },
+
+      success: {
+        transactionCancelled: "تم إلغاء المعاملة بنجاح",
+      }
+    },
+
     columns: {
       id: "المعرف",
       type: "النوع",
@@ -1486,7 +1518,7 @@ export default {
     paymentCycleDays: "دورة أيام الدفع",
     lastBorrowDate: "تاريخ آخر دين",
     nextPaymentDate: "تاريخ الدفع القادم",
-    
+
     phoneExists: "رقم الهاتف هذا مسجل مسبقاً!",
   },
   common: {

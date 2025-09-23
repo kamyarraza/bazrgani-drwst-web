@@ -138,6 +138,38 @@ export default {
     editNotAllowed: "Transaction is locked and cannot be edited",
     nextPaymentDate: "Next Payment",
 
+    cancel: "Cancel",
+    cancelConfirmation: {
+      title: "Cancel Transaction",
+      subtitle: "Confirm Transaction Cancellation",
+      transactionDetails: "Transaction Details",
+      transactionId: "Transaction ID",
+      customer: "Customer",
+      createdAt: "Created At",
+      totalAmount: "Total Amount",
+      paidAmount: "Paid Amount",
+      warningTitle: "Important Warning",
+      warningMessage: "Cancelling this transaction will remove all its effects, return all items back to the warehouse, and deduct it from the customer's account. Once performed, this action cannot be undone. Please be certain before proceeding.",
+      passwordLabel: "Password",
+      passwordPlaceholder: "Enter your password to confirm",
+      passwordRequired: "Password is required for confirmation",
+      confirmationLabel: "Confirmation",
+      confirmationRequired: "You must check this box to confirm",
+      confirmationDescription: "I am sure that I want to cancel this transaction.",
+      cancelButton: "Back",
+      confirmCancelButton: "Confirm Cancellation",
+
+      errors: {
+        formInvalid: "The form is invalid",
+        transactionIdRequired: "Transaction ID is required",
+        cancellationFailed: "Transaction cancellation failed. Please try again or contact support.",
+      },
+
+      success: {
+        transactionCancelled: "Transaction was cancelled successfully",
+      }
+    },
+
     columns: {
       id: "ID",
       type: "Type",

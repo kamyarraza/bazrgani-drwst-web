@@ -1086,6 +1086,38 @@ export default {
     editNotAllowed: "مامەڵەکە قفڵە و ناتوانرێت دەستکاری بکرێت",
     nextPaymentDate: "پارەدانی داهاتوو",
 
+    cancel: "هەڵوەشاندنەوە",
+    cancelConfirmation: {
+      title: "هەڵوەشاندنەوەی مامەڵە",
+      subtitle: "دووپاتکردنەوەی هەڵوەشاندنەوەی مامەڵە",
+      transactionDetails: "وردەکارییەکانی مامەڵە",
+      transactionId: "کۆدی مامەڵە",
+      customer: "کڕیار",
+      createdAt: "دروستکراو لە",
+      totalAmount: "کۆی پارە",
+      paidAmount: "پارەی وەرگیراو",
+      warningTitle: "ئاگادارکردنەوەی گرنگ",
+      warningMessage: "هەڵوەشاندنەوەی ئەم مامەڵەیە هەموو کاریگەرییەکانی دەسڕدرێتەوە و سەرجەم کاڵاکان دەگەڕێندرێنەوە بۆ کۆگا و حسابی کڕیارەکەی لا دەچێت. پاش ئەنجامدانی ئەم کردارە ناتوانیت بگەڕێیتەوە، تکایە دڵنیابەرەوە لە ئەنجامدانی ئەم کردارە.",
+      passwordLabel: "وشەی نهێنی",
+      passwordPlaceholder: "وشەی نهێنی بنووسە بۆ پشتڕاستکردنەوە",
+      passwordRequired: "وشەی نهێنی پێویستە بۆ پشتڕاستکردنەوە",
+      confirmationLabel: "دووپاتکردنەوە",
+      confirmationRequired: "پێویستە ئەم خانەیە چێك بکرێت بۆ پشتڕاستکردنەوە",
+      confirmationDescription: "دڵنیام کە دەمەوێت ئەم مامەڵەیە هەڵبوەشێنمەوە.",
+      cancelButton: "پاشگەزبوومەوە",
+      confirmCancelButton: "هەڵیبوەشێنەرەوە",
+
+      errors: {
+        formInvalid: "فۆرم نادروستە",
+        transactionIdRequired: "پێویستە کۆدی مامەڵە دیاری بکرێت",
+        cancellationFailed: "هەڵوەشاندنەوەی مامەڵەکە سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەوە یان پەیوەندی بە پشتگیری بکە.",
+      },
+
+      success: {
+        transactionCancelled: "مامەڵە بە سەرکەوتوویی هەڵوەشێندرایەوە",
+      }
+    },
+
     columns: {
       id: "کۆد",
       code: "کۆدی",
@@ -1095,7 +1127,7 @@ export default {
       paymentProgress: "پارەدان",
       paymentType: "جۆری پارەدان",
       totalPrice: "کۆی نرخ",
-      paidPrice: "نرخی پێدراو",
+      paidPrice: "نرخی وەرگیراو",
       remainingPrice: "نرخی ماوە",
       refundStatus: "دۆخی گەڕاندنەوە",
       createdAt: "بەرواری دروستکردن",
@@ -1106,10 +1138,10 @@ export default {
 
     labels: {
       total: "کۆ",
-      paid: "پێدراو",
+      paid: "وەرگیراو",
       remaining: "ماوە",
       complete: "تەواو",
-      fullyPaid: "بە تەواوی پێدراوە",
+      fullyPaid: "بە تەواوی وەرگیراوە",
     },
 
     types: {
@@ -1218,7 +1250,7 @@ export default {
     customer: "کڕیار",
     status: "دۆخ",
     totalPrice: "کۆی نرخ",
-    paidPrice: "نرخی پێدراو",
+    paidPrice: "نرخی وەرگیراو",
     unpaidPrice: "نرخی پێنەدراو",
     date: "بەروار",
     type: "جۆر",
@@ -2172,7 +2204,7 @@ export default {
       subtitle: "وەرگرتنی پارەی قەرزی مامەڵەکان",
       transactionDetails: "وردەکاریەکانی مامەڵە",
       totalAmount: "کۆی گشتی",
-      paidAmount: "بڕی پێدراو",
+      paidAmount: "بڕی وەرگیراو",
       remainingAmount: "بڕی ماوە",
       customerLabel: "کڕیار",
       customerRequired: "کڕیار پێویستە",
@@ -2224,7 +2256,7 @@ export default {
       subtitle: "پارەدان بە دابینکەر بۆ مامەڵەی قەرز",
       transactionDetails: "وردەکاریەکانی مامەڵە",
       totalAmount: "کۆی گشتی",
-      paidAmount: "بڕی پێدراو",
+      paidAmount: "بڕی وەرگیراو",
       remainingAmount: "بڕی ماوە",
       supplierLabel: "دابینکەر",
       supplierRequired: "دابینکەر پێویستە",
@@ -2252,7 +2284,7 @@ export default {
       maxAmount: "بەرزترین ڕێژە",
       amountRequired: "بڕی پارە پێویستە",
       amountMustBeGreater: "بڕی پارە دەبێت لە ٠ زیاتر بێت",
-      amountPlaceholder: "بڕی پارەی پێدراو بنووسە",
+      amountPlaceholder: "بڕی پارەی وەرگیراو بنووسە",
       amountExceedsRemaining: "بڕی پارە لە بڕی ماوە زیاترە (زۆرترین: {max})",
       payAll: "پارەدانی هەموو",
       noteLabel: "تێبینی",

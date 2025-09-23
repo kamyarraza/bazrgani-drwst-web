@@ -332,6 +332,25 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     }
   };
 
+  const cancelTransaction = async (transactionId: string, data: any) => {
+    try {
+      loading.value = true;
+      const response = await api.post<ApiResponse<any>>(
+        endPoints.transaction.cancel(transactionId),
+        data
+      );
+
+      if (response.data.status === 'success') {
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Error processing refund:', error);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const refundTransaction = async (refundData: RefundTransaction) => {
     try {
       loading.value = true;
@@ -524,6 +543,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
     resetForm,
     paySupplier,
     receiveFromCustomer,
+    cancelTransaction,
     refundTransaction,
     feedingTransaction,
     searchItems,

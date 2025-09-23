@@ -175,6 +175,11 @@
     <!-- Transaction Details Modal -->
     <TransactionDetailsModal v-model="showTransactionDetailsModal" :transaction-data="selectedTransactionDetails"
       @view-invoice="handleViewInvoiceFromDetails" />
+
+    <!-- Canceling Confirmation Modal -->
+    <CancelingConfirmationModel v-model="showCancelingConfirmationModal" :transaction-data="selectedTransactionData"
+      @success="handleCancelSuccess" />
+
   </q-page>
 </template>
 
@@ -200,6 +205,7 @@ import TransactionUpdateModal from 'src/components/transaction_alpha/Transaction
 import { useAuthStore } from 'src/stores/authStore'
 import { useQuasar } from 'quasar'
 import { formatCurrency } from 'src/composables/useFormat'
+import CancelingConfirmationModel from 'src/components/transaction/CancelingConfirmationModel.vue'
 
 const { user } = useAuthStore()
 const $q = useQuasar()
@@ -224,6 +230,7 @@ const showRefundDetailsModal = ref(false)
 const showInvoiceModal = ref(false)
 const showPaymentInvoiceModal = ref(false)
 const showTransactionDetailsModal = ref(false)
+const showCancelingConfirmationModal = ref(false)
 
 // Selected transaction data for modals
 const selectedTransactionData = ref<{
@@ -291,6 +298,7 @@ const menuItems = computed(() => {
 
     // Add refund-related options only for sell transactions
     if (transactionType.value === 'sell') {
+      // Check refund status
       if (row.refunded) {
         // If transaction is already refunded, show refund details option
         baseItems.push({
@@ -343,6 +351,9 @@ const menuItems = computed(() => {
         });
       }
     }
+
+    // Always show cancel option for sell transactions
+    baseItems.push({ label: t('transaction.cancel'), icon: 'cancel', value: 'cancel' });
 
     return baseItems;
   };
@@ -570,6 +581,16 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
     }
 
     showReceiveCustomerModal.value = true
+  } else if (payload.item.value === 'cancel') {
+    try {
+      const transactionData = await transactionStore.fetchSingleTransaction(payload.rowId)
+      if (transactionData) {
+        selectedTransactionData.value = transactionData as any
+        showCancelingConfirmationModal.value = true
+      }
+    } catch {
+      // ignore
+    }
   } else if (payload.item.value === 'refund_transaction') {
     // Find the selected transaction for refund
     const transaction = data.value.find(t => t.id === Number(payload.rowId))
@@ -620,14 +641,6 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
   }
 }
 
-// Notes state
-// const notes = reactive<Array<{ id: number; title: string; content: string }>>([])
-
-// function removeNote(id: number) {
-//   const idx = notes.findIndex(n => n.id === id)
-//   if (idx !== -1) notes.splice(idx, 1)
-// }
-
 // Handle payment success - refresh data
 const handlePaymentSuccess = async (payload?: any) => {
   // Refresh transaction list after successful payment
@@ -641,6 +654,16 @@ const handlePaymentSuccess = async (payload?: any) => {
     paymentInvoicePayload.value = payload;
     showPaymentInvoiceModal.value = true;
   }
+}
+
+// Handle cancel success - refresh data
+const handleCancelSuccess = async () => {
+  // Refresh transaction list after successful cancel
+  await loadTransactions();
+
+  // Reset selected cancel transaction data
+  showCancelingConfirmationModal.value = false;
+  selectedTransactionData.value = null;
 }
 
 // Handle refund success - refresh data
