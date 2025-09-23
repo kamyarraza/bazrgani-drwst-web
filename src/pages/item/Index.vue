@@ -13,14 +13,15 @@
             :reset-label="t('item.resetFilters', 'Reset')" @filter-change="handleFilterChange" @reset="resetFilters" />
 
         <!-- Search Results Info -->
-        <div v-if="isSearching" class="q-mb-md">
+        <div v-if="filters.search?.length || filters.category" class="q-mb-md">
             <q-card flat class="bg-blue-1 q-pa-md">
                 <div class="row items-center">
                     <q-icon name="search" color="primary" class="q-mr-sm" />
                     <span class="text-body2">
                         {{ t('item.searchResults', 'Search results for') }}:
                         <strong>"{{ filters.search }}"</strong>
-                        ({{ items.length }} {{ t('item.itemsFound', 'items found') }})
+                        &nbsp;&nbsp;&nbsp;
+                        <span v-if="!loadingSearch">({{ formatNumber(pagination?.total) }} {{ t('item.itemsFound', 'items found') }})</span>
                     </span>
                     <q-space />
                     <q-btn flat round icon="close" size="sm" @click="clearSearch"
@@ -30,7 +31,7 @@
         </div>
 
         <!-- Item Table with Enhanced UI -->
-        <QtableB :show-bottom="!isSearching" :hasExpandableRows="false" @menu-action="handleAction" :columns="columns"
+        <QtableB :show-bottom="true" :hasExpandableRows="false" @menu-action="handleAction" :columns="columns"
             :rows="filteredItems" @top-right-action="() => showModal = !showModal"
             :top-right-title="t('item.addNew', 'Add New Item')" :menuItems="menuItems" :loading="itemStore.loading"
             :pagination="pagination" @page-change="handlePageChange">
@@ -42,9 +43,11 @@
         <Update v-model="showUpdateModal" v-if="itemToUpdate" :item="itemToUpdate"></Update>
         <Update v-model="showUpdateModal" v-else></Update>
 
-        <UpdateUnitCostModal v-model="showUpdateUnitCostModal" :item="itemToUpdate" @close-modal="showUpdateUnitCostModal = false" />
+        <UpdateUnitCostModal v-model="showUpdateUnitCostModal" :item="itemToUpdate"
+            @close-modal="showUpdateUnitCostModal = false" />
 
-        <UpdatePricesModal v-model="showUpdatePricesModal" :item="itemToUpdate" @close-modal="showUpdatePricesModal = false" />
+        <UpdatePricesModal v-model="showUpdatePricesModal" :item="itemToUpdate"
+            @close-modal="showUpdatePricesModal = false" />
 
         <!-- Item Details Modal -->
         <ItemDetailsModal v-model="showDetailsModal" :item-data="itemToView" />
@@ -67,7 +70,7 @@ import type { MenuItem } from 'src/types'
 import type { Product } from 'src/types/item'
 import { useI18n } from 'vue-i18n'
 import Filter, { type FilterState } from 'src/components/common/Filter.vue'
-import { formatCurrency } from 'src/composables/useFormat'
+import { formatCurrency, formatNumber } from 'src/composables/useFormat'
 import UpdateUnitCostModal from 'src/components/item/UpdateUnitCostModal.vue'
 import UpdatePricesModal from 'src/components/item/UpdatePricesModal.vue'
 
@@ -99,31 +102,7 @@ const filters = ref<FilterState>({
 let searchTimeout: NodeJS.Timeout | null = null
 
 // Check if we're currently in search mode
-const isSearching = computed(() => {
-    return filters.value.search?.trim() !== ''
-})
-
-// // Get color for category badge
-// function _getCategoryColor(categoryName?: string): string {
-//     if (!categoryName) return 'grey'
-
-//     const categoryColors = {
-//         'Electronics': 'blue',
-//         'Clothing': 'purple',
-//         'Food & Beverages': 'green',
-//         'Home & Garden': 'orange'
-//     }
-
-//     return categoryColors[categoryName] || 'grey'
-// }
-
-// // Get class for profit margin display
-// function _getProfitClass(margin: number): string {
-//     if (margin >= 30) return 'text-positive font-weight-bold'
-//     if (margin >= 20) return 'text-primary'
-//     if (margin >= 10) return 'text-warning'
-//     return 'text-negative'
-// }
+const loadingSearch = ref<boolean>(false)
 
 // Sample statistics for dashboard
 
@@ -181,6 +160,9 @@ function handleFilterChange(newFilters: { search?: string; category?: string | n
             clearTimeout(searchTimeout)
         }
 
+        // Set is searching state
+        loadingSearch.value = true
+
         // Set new timeout for search
         searchTimeout = setTimeout(() => {
             void handleSearch()
@@ -194,11 +176,14 @@ async function handleSearch() {
     if (searchQuery) {
         // Use dedicated search function for queries
         await itemStore.searchItems(searchQuery)
+        currentPage.value = 1
     } else {
         // If search is empty, fetch normal paginated items
         currentPage.value = 1
         await itemStore.fetchItemsPaginated(1)
     }
+
+    loadingSearch.value = false
 }
 
 function resetFilters() {
@@ -225,7 +210,10 @@ function clearSearch() {
         searchTimeout = null
     }
 
-    filters.value.search = ''
+    filters.value = {
+        search: '',
+        category: null
+    };
 
     // Reset to first page and fetch normal items
     currentPage.value = 1;
@@ -319,7 +307,7 @@ const handleAction = (payload: { item: MenuItem; rowId: number }) => {
             itemToUpdate.value = selectedItem(payload.rowId)
             showUpdateModal.value = true
             break
-            
+
         case 'update-unit-cost':
             itemToUpdate.value = selectedItem(payload.rowId)
             showUpdateUnitCostModal.value = true
@@ -357,11 +345,7 @@ const handleAction = (payload: { item: MenuItem; rowId: number }) => {
 // Handle successful item archiving
 async function handleItemArchived() {
     // Refresh the items list to reflect the archived item is no longer visible
-    if (isSearching.value) {
-        await handleSearch()
-    } else {
-        await itemStore.fetchItemsPaginated(currentPage.value)
-    }
+    await itemStore.fetchItemsPaginated(currentPage.value, null, false, filters.value.search?.trim() || null)
 
     // Close the archive modal
     showArchiveModal.value = false
@@ -386,17 +370,9 @@ onUnmounted(() => {
 
 // Handle page change for pagination
 async function handlePageChange(page: number) {
-    // Only allow pagination if we're not in search mode
-    const searchQuery = filters.value.search?.trim()
-
-    if (searchQuery) {
-        // If we're in search mode, don't paginate
-        // You could show a message or disable pagination during search
-        return
-    }
-
     currentPage.value = page;
-    await itemStore.fetchItemsPaginated(page);
+    const searchQuery = filters.value.search?.trim();
+    await itemStore.fetchItemsPaginated(page, null, false, searchQuery);
 
     // Scroll to top when changing pages for better UX
     window.scrollTo({

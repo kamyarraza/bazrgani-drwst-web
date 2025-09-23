@@ -221,7 +221,7 @@
   </q-table>
 
   <!-- Pagination -->
-  <TablePagination :show-bottom="showBottom" :current-page="currentPage" :max-page="maxPage"
+  <TablePagination :show-bottom="showBottom" :current-page="pagination?.current_page as any" :max-page="maxPage"
     :total="pagination?.total || 0" :is-rtl="isRTL" @page-change="handlePageChangeWrapper" />
 </template>
 
@@ -290,7 +290,7 @@ const emit = defineEmits<{
 
 // Use table logic composable
 const {
-  currentPage,
+  // currentPage,
   expanded,
   selectedGridItems,
   selectedRowId,

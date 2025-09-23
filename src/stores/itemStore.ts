@@ -55,18 +55,16 @@ export const useItemStore = defineStore("item", () => {
     try {
       let url = `${endPoints.item.list}?query=${encodeURIComponent(
         searchQuery
-      )}&relations=category`;
+      )}&relations=category&paginate=true`;
 
       if (categoryId) {
         url += `&category_id=${categoryId}`;
       }
 
-      console.log("Searching items with URL:", url);
       const { data } = await api.get<ApiResponse<Product[]>>(url);
-      console.log("Search response:", data);
       items.value = data.data;
-      // Clear pagination when searching since we're not using paginated search
-      pagination.value = null;
+      
+      pagination.value = data.pagination || null;
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to search items";
@@ -448,7 +446,8 @@ export const useItemStore = defineStore("item", () => {
   async function fetchItemsPaginated(
     page: number = 1,
     categoryId?: number | null,
-    append: boolean = false
+    append: boolean = false,
+    searchQuery?: string | null
   ) {
     loading.value = true;
     error.value = null;
@@ -456,6 +455,10 @@ export const useItemStore = defineStore("item", () => {
 
     if (categoryId) {
       url += `&category_id=${categoryId}`;
+    }
+
+    if (searchQuery) {
+      url += `&query=${encodeURIComponent(searchQuery)}`;
     }
 
     try {
