@@ -1,45 +1,30 @@
 <template>
   <q-page class="q-pa-md">
     <!-- Transfer Requests Dashboard Header Card -->
-    <Header
-      :title="t('transferRequest.title')"
-      :subtitle="t('transferRequest.subtitle')"
-      icon="swap_horizontal_circle"
-      icon-size="3rem"
-      icon-color="white"
-      :show-waves="true"
-      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)"
-    />
+    <Header :title="t('transferRequest.title')" :subtitle="t('transferRequest.subtitle')" icon="swap_horizontal_circle"
+      icon-size="3rem" icon-color="white" :show-waves="true"
+      background-color="linear-gradient(135deg, var(--q-primary) 0%, #1565c0 100%)" />
 
     <!-- Tab Panel for different views -->
     <div class="row items-center justify-between q-mb-md">
       <q-tabs v-model="activeTab" class="text-primary" align="left">
-        <q-tab name="requests" icon="swap_horiz" :label="t('transferRequest.myRequests', 'My Requests')" />
-        <q-tab name="incoming" icon="move_to_inbox" :label="t('transferRequest.incomingRequests', 'Incoming Requests')" />
+        <!-- <q-tab name="requests" icon="swap_horiz" :label="t('transferRequest.myRequests', 'My Requests')" /> -->
+        <q-tab name="incoming" icon="move_to_inbox"
+          :label="t('transferRequest.incomingRequests', 'Incoming Requests')" />
       </q-tabs>
 
       <!-- Create Transfer Request/Transfer Buttons -->
       <div class="q-gutter-sm">
-        <q-btn
-          color="positive"
-          icon="move_to_inbox"
-          :label="t('transferRequest.createRequest')"
-          @click="openTransferModal('request')"
-          unelevated
-        />
-        <q-btn
-          color="primary"
-          icon="swap_horiz"
-          :label="t('transferRequest.createTransfer')"
-          @click="openTransferModal('transfer')"
-          unelevated
-        />
+        <!-- <q-btn color="positive" icon="move_to_inbox" :label="t('transferRequest.createRequest')"
+          @click="openTransferModal('request')" unelevated /> -->
+        <q-btn color="primary" icon="swap_horiz" :label="t('transferRequest.createTransfer')"
+          @click="openTransferModal('transfer')" unelevated />
       </div>
     </div>
 
     <q-tab-panels v-model="activeTab" style="background-color: #f7f9fc;" animated keep-alive>
       <!-- My Transfer Requests Tab -->
-      <q-tab-panel name="requests" >
+      <q-tab-panel name="requests" v-if="false">
         <div class="row q-col-gutter-md q-mb-md">
           <div class="col-12">
             <div class="text-h6 q-mb-md">
@@ -48,39 +33,21 @@
             </div>
 
             <!-- Filters Section -->
-            <Filter
-              v-model:filters="requestFilters"
-              :filter-options="requestFilterOptions"
+            <Filter v-model:filters="requestFilters" :filter-options="requestFilterOptions"
               :search-label="t('transferRequest.searchRequests', 'Search requests by note or warehouse')"
-              :reset-label="t('common.reset', 'Reset')"
-              @filter-change="handleRequestFilterChange"
-              @reset="resetRequestFilters"
-            />
+              :reset-label="t('common.reset', 'Reset')" @filter-change="handleRequestFilterChange"
+              @reset="resetRequestFilters" />
 
             <!-- Requests Table -->
-            <QtableB
-              :top-right="false"
-              show-bottom
-              :user-type="me?.type!"
-              :allowed-types="['admin', 'employee']"
-              :hasExpandableRows="false"
-              @menu-action="handleRequestAction"
-              :columns="requestColumns"
-              :rows="filteredRequests"
-              :loading="transferStore.loading"
-              :menuItems="requestMenuItems"
-              :pagination="transferStore.requestsPagination"
-              @page-change="handleRequestPageChange"
-            >
+            <QtableB :top-right="false" show-bottom :user-type="me?.type!" :allowed-types="['admin', 'employee']"
+              :hasExpandableRows="false" @menu-action="handleRequestAction" :columns="requestColumns"
+              :rows="filteredRequests" :loading="transferStore.loading" :menuItems="requestMenuItems"
+              :pagination="transferStore.requestsPagination" @page-change="handleRequestPageChange">
               <!-- Status column template -->
               <template #body-cell-status="props">
                 <q-td :props="props">
-                  <q-chip
-                    :color="getStatusColor(props.value)"
-                    text-color="white"
-                    size="sm"
-                    :icon="getStatusIcon(props.value)"
-                  >
+                  <q-chip :color="getStatusColor(props.value)" text-color="white" size="sm"
+                    :icon="getStatusIcon(props.value)">
                     {{ getStatusLabel(props.value) }}
                   </q-chip>
                 </q-td>
@@ -93,7 +60,8 @@
                     <q-tooltip v-if="props.value && props.value.length > 50" class="bg-indigo">
                       {{ props.value }}
                     </q-tooltip>
-                    {{ props.value && props.value.length > 50 ? props.value.substring(0, 50) + '...' : (props.value || t('common.noNote', 'No note')) }}
+                    {{ props.value && props.value.length > 50 ? props.value.substring(0, 50) + '...' : (props.value ||
+                      t('common.noNote', 'No note')) }}
                   </div>
                 </q-td>
               </template>
@@ -109,8 +77,10 @@
                     <q-list separator>
                       <q-item v-for="detail in row.details" :key="detail.id">
                         <q-item-section>
-                          <q-item-label>{{ detail.item?.name || t('common.unknownItem', 'Unknown Item') }}</q-item-label>
-                          <q-item-label caption>SKU: {{ detail.item?.sku || t('common.notAvailable', 'N/A') }}</q-item-label>
+                          <q-item-label>{{ detail.item?.name || t('common.unknownItem', 'Unknown Item')
+                            }}</q-item-label>
+                          <q-item-label caption>SKU: {{ detail.item?.sku || t('common.notAvailable', 'N/A')
+                            }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
                           <q-chip color="info" text-color="white" size="sm">
@@ -137,39 +107,21 @@
             </div>
 
             <!-- Filters Section -->
-            <Filter
-              v-model:filters="incomingFilters"
-              :filter-options="incomingFilterOptions"
+            <Filter v-model:filters="incomingFilters" :filter-options="incomingFilterOptions"
               :search-label="t('transferRequest.searchIncoming', 'Search incoming requests')"
-              :reset-label="t('common.reset', 'Reset')"
-              @filter-change="handleIncomingFilterChange"
-              @reset="resetIncomingFilters"
-            />
+              :reset-label="t('common.reset', 'Reset')" @filter-change="handleIncomingFilterChange"
+              @reset="resetIncomingFilters" />
 
             <!-- Incoming Requests Table -->
-            <QtableB
-              show-bottom
-              :top-right="false"
-              :user-type="me?.type!"
-              :allowed-types="['admin', 'employee']"
-              :hasExpandableRows="false"
-              @menu-action="handleIncomingAction"
-              :columns="incomingColumns"
-              :rows="filteredIncomingRequests"
-              :loading="transferStore.loading"
-              :menuItems="incomingMenuItems"
-              :pagination="transferStore.incomingPagination"
-              @page-change="handleIncomingPageChange"
-            >
+            <QtableB show-bottom :top-right="false" :user-type="me?.type!" :allowed-types="['admin', 'employee']"
+              :hasExpandableRows="false" @menu-action="handleIncomingAction" :columns="incomingColumns"
+              :rows="filteredIncomingRequests" :loading="transferStore.loading" :menuItems="incomingMenuItems"
+              :pagination="transferStore.incomingPagination" @page-change="handleIncomingPageChange">
               <!-- Status column template -->
               <template #body-cell-status="props">
                 <q-td :props="props">
-                  <q-chip
-                    :color="getStatusColor(props.value)"
-                    text-color="white"
-                    size="sm"
-                    :icon="getStatusIcon(props.value)"
-                  >
+                  <q-chip :color="getStatusColor(props.value)" text-color="white" size="sm"
+                    :icon="getStatusIcon(props.value)">
                     {{ getStatusLabel(props.value) }}
                   </q-chip>
                 </q-td>
@@ -182,7 +134,8 @@
                     <q-tooltip v-if="props.value && props.value.length > 50" class="bg-indigo">
                       {{ props.value }}
                     </q-tooltip>
-                    {{ props.value && props.value.length > 50 ? props.value.substring(0, 50) + '...' : (props.value || t('common.noNote', 'No note')) }}
+                    {{ props.value && props.value.length > 50 ? props.value.substring(0, 50) + '...' : (props.value ||
+                      t('common.noNote', 'No note')) }}
                   </div>
                 </q-td>
               </template>
@@ -198,8 +151,10 @@
                     <q-list separator>
                       <q-item v-for="detail in row.details" :key="detail.id">
                         <q-item-section>
-                          <q-item-label>{{ detail.item?.name || t('common.unknownItem', 'Unknown Item') }}</q-item-label>
-                          <q-item-label caption>SKU: {{ detail.item?.sku || t('common.notAvailable', 'N/A') }}</q-item-label>
+                          <q-item-label>{{ detail.item?.name || t('common.unknownItem', 'Unknown Item')
+                            }}</q-item-label>
+                          <q-item-label caption>SKU: {{ detail.item?.sku || t('common.notAvailable', 'N/A')
+                            }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
                           <q-chip color="info" text-color="white" size="sm">
@@ -218,19 +173,12 @@
     </q-tab-panels>
 
     <!-- Transfer Request Modal -->
-    <TransferRequestModal
-      v-model="showTransferModal"
-      :initial-transfer-type="transferModalType"
-      @transfer-created="handleTransferCreated"
-    />
+    <TransferRequestModal v-model="showTransferModal" :initial-transfer-type="transferModalType"
+      @transfer-created="handleTransferCreated" />
 
     <!-- Transfer Request Details Modal -->
-    <q-dialog
-      v-model="showDetailsModal"
-      class="transfer-details-dialog"
-      :maximized="$q.screen.lt.md"
-      :full-width="$q.screen.lt.md"
-    >
+    <q-dialog v-model="showDetailsModal" class="transfer-details-dialog" :maximized="$q.screen.lt.md"
+      :full-width="$q.screen.lt.md">
       <q-card class="transfer-details-card">
         <!-- Beautiful Modal Header -->
         <div class="modal-header">
@@ -238,13 +186,7 @@
             <q-icon name="swap_horizontal_circle" class="q-mr-sm" />
             {{ t('transferRequest.requestDetails', 'Transfer Request Details') }}
           </div>
-          <q-btn
-            icon="close"
-            flat
-            round
-            v-close-popup
-            size="sm"
-          />
+          <q-btn icon="close" flat round v-close-popup size="sm" />
         </div>
 
         <q-card-section v-if="selectedRequest" class="q-pa-md">
@@ -266,12 +208,8 @@
                   <div>
                     <div class="summary-label">{{ t('transferRequest.status', 'Status') }}</div>
                     <div class="summary-value">
-                      <q-chip
-                        :color="getStatusColor(selectedRequest.status)"
-                        text-color="white"
-                        size="sm"
-                        :icon="getStatusIcon(selectedRequest.status)"
-                      >
+                      <q-chip :color="getStatusColor(selectedRequest.status)" text-color="white" size="sm"
+                        :icon="getStatusIcon(selectedRequest.status)">
                         {{ getStatusLabel(selectedRequest.status) }}
                       </q-chip>
                     </div>
@@ -313,7 +251,8 @@
                 <div class="warehouse-card source-warehouse">
                   <q-icon name="logout" class="warehouse-icon text-negative" />
                   <div class="warehouse-label">{{ t('transferRequest.fromWarehouse', 'From Warehouse') }}</div>
-                  <div class="warehouse-value text-negative">{{ selectedRequest.source?.name || t('common.notAvailable', 'N/A') }}</div>
+                  <div class="warehouse-value text-negative">{{ selectedRequest.source?.name || t('common.notAvailable',
+                    'N/A') }}</div>
                   <div class="warehouse-subtitle">{{ t('transferRequest.source', 'Source') }}</div>
                 </div>
               </div>
@@ -321,7 +260,8 @@
                 <div class="warehouse-card target-warehouse">
                   <q-icon name="login" class="warehouse-icon text-positive" />
                   <div class="warehouse-label">{{ t('transferRequest.toWarehouse', 'To Warehouse') }}</div>
-                  <div class="warehouse-value text-positive">{{ selectedRequest.target?.name || t('common.notAvailable', 'N/A') }}</div>
+                  <div class="warehouse-value text-positive">{{ selectedRequest.target?.name || t('common.notAvailable',
+                    'N/A') }}</div>
                   <div class="warehouse-subtitle">{{ t('transferRequest.destination', 'Destination') }}</div>
                 </div>
               </div>
@@ -336,16 +276,16 @@
               <q-icon name="inventory" class="q-mr-sm" />
               {{ t('transferRequest.itemsToTransfer', 'Items to Transfer') }}
               <q-chip color="info" text-color="white" size="sm" class="q-ml-sm">
-                {{ (selectedRequest.items?.length || selectedRequest.details?.length || 0) }} {{ t('common.items', 'items') }}
+                {{ (selectedRequest.items?.length || selectedRequest.details?.length || 0) }} {{ t('common.items',
+                'items')
+                }}
               </q-chip>
             </div>
 
-            <div class="items-list" v-if="(selectedRequest.items && selectedRequest.items.length > 0) || (selectedRequest.details && selectedRequest.details.length > 0)">
-              <div
-                v-for="(requestItem, index) in (selectedRequest.items || selectedRequest.details)"
-                :key="index"
-                class="item-card"
-              >
+            <div class="items-list"
+              v-if="(selectedRequest.items && selectedRequest.items.length > 0) || (selectedRequest.details && selectedRequest.details.length > 0)">
+              <div v-for="(requestItem, index) in (selectedRequest.items || selectedRequest.details)" :key="index"
+                class="item-card">
                 <div class="item-avatar">
                   <q-avatar color="primary" text-color="white" size="48px">
                     <q-icon name="inventory_2" />
@@ -400,43 +340,18 @@
 
         <!-- Modal Actions -->
         <q-card-actions class="modal-actions">
-          <q-btn
-            flat
-            :label="t('common.close', 'Close')"
-            color="grey-7"
-            v-close-popup
-            class="close-btn"
-          />
+          <q-btn flat :label="t('common.close', 'Close')" color="grey-7" v-close-popup class="close-btn" />
 
           <!-- Action buttons based on status and user permissions -->
           <div class="action-buttons" v-if="selectedRequest && canPerformActions(selectedRequest)">
-            <q-btn
-              v-if="selectedRequest.status === 'pending' && activeTab === 'incoming'"
-              unelevated
-              :label="t('transferRequest.approve', 'Approve')"
-              color="positive"
-              icon="check_circle"
-              @click="handleApproveFromModal"
-              class="action-btn approve-btn"
-            />
-            <q-btn
-              v-if="selectedRequest.status === 'approved' && activeTab === 'incoming'"
-              unelevated
-              :label="t('transferRequest.complete', 'Complete')"
-              color="info"
-              icon="done_all"
-              @click="handleCompleteFromModal"
-              class="action-btn complete-btn"
-            />
-            <q-btn
-              v-if="selectedRequest.status === 'pending'"
-              unelevated
-              :label="t('transferRequest.reject', 'Reject')"
-              color="negative"
-              icon="cancel"
-              @click="handleRejectFromModal"
-              class="action-btn reject-btn"
-            />
+            <q-btn v-if="selectedRequest.status === 'pending' && activeTab === 'incoming'" unelevated
+              :label="t('transferRequest.approve', 'Approve')" color="positive" icon="check_circle"
+              @click="handleApproveFromModal" class="action-btn approve-btn" />
+            <q-btn v-if="selectedRequest.status === 'approved' && activeTab === 'incoming'" unelevated
+              :label="t('transferRequest.complete', 'Complete')" color="info" icon="done_all"
+              @click="handleCompleteFromModal" class="action-btn complete-btn" />
+            <q-btn v-if="selectedRequest.status === 'pending'" unelevated :label="t('transferRequest.reject', 'Reject')"
+              color="negative" icon="cancel" @click="handleRejectFromModal" class="action-btn reject-btn" />
           </div>
         </q-card-actions>
       </q-card>
@@ -465,7 +380,7 @@ const meStore = useMeStore();
 const me = computed(() => meStore.me);
 
 // State
-const activeTab = ref('requests');
+const activeTab = ref('incoming');
 const requestFilters = ref({});
 const incomingFilters = ref({});
 const showDetailsModal = ref(false);
@@ -771,8 +686,8 @@ const resetIncomingFilters = () => {
   incomingFilters.value = {};
 };
 
-const handleRequestPageChange = (page: number) => {
-  void transferStore.fetchTransferRequests(page);
+const handleRequestPageChange = (_page: number) => {
+  // void transferStore.fetchTransferRequests(page);
 };
 
 const handleIncomingPageChange = (page: number) => {
@@ -782,14 +697,14 @@ const handleIncomingPageChange = (page: number) => {
 // Removed handleTransferPageChange and handleCreateDirectTransfer
 
 // Transfer Modal Methods
-const openTransferModal = (type: 'request' | 'transfer') => {
+const openTransferModal = (type: 'transfer') => {
   transferModalType.value = type;
   showTransferModal.value = true;
 };
 
 const handleTransferCreated = (_data: any) => {
   // Refresh the appropriate data
-  void transferStore.fetchTransferRequests();
+  // void transferStore.fetchTransferRequests();
   void transferStore.fetchIncomingTransfers();
 
   // Show success message is handled in the modal
@@ -846,7 +761,7 @@ onMounted(async () => {
 
   // Load transfer requests data
   await Promise.all([
-    transferStore.fetchTransferRequests(),
+    // transferStore.fetchTransferRequests(),
     transferStore.fetchIncomingTransfers()
   ]);
 });
@@ -898,7 +813,9 @@ onMounted(async () => {
     border-radius: 12px;
   }
 
-  .bg-blue-1, .bg-green-1, .bg-orange-1 {
+  .bg-blue-1,
+  .bg-green-1,
+  .bg-orange-1 {
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.08);
   }
@@ -1243,7 +1160,9 @@ onMounted(async () => {
 // Responsive improvements
 @media (max-width: 768px) {
   :deep(.q-table) {
-    .q-td, .q-th {
+
+    .q-td,
+    .q-th {
       padding: 8px 4px;
       font-size: 0.875rem;
     }
@@ -1275,7 +1194,8 @@ onMounted(async () => {
       max-width: 100% !important;
     }
 
-    .summary-item, .warehouse-card {
+    .summary-item,
+    .warehouse-card {
       margin-bottom: 12px;
     }
 
@@ -1326,7 +1246,8 @@ onMounted(async () => {
       font-size: 1.1rem;
     }
 
-    .summary-value, .warehouse-value {
+    .summary-value,
+    .warehouse-value {
       font-size: 14px;
     }
 

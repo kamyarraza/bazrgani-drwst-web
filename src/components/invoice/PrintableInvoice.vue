@@ -94,7 +94,7 @@
                 &nbsp;&nbsp;
                 <b style="color: #090909">{{ formatCurrency(totalIQDprice, ' IQD') }}</b>
               </div>
-              <div class="price-row">
+              <div class="price-row" v-if="(transactionData as any)?.payment_type_value !== 'cash'">
                 <span>{{ t('invoice.paidAmount') }}:</span>
                 &nbsp;&nbsp;
                 <b style="color: #090909">{{ formatCurrency((transactionData as any)?.paid_price) }}</b>
