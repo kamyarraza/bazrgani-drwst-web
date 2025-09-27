@@ -327,9 +327,9 @@ export const useWarehouseStore = defineStore("warehouse", () => {
 
       if (data.status === "success") {
         // If we have the branch warehouses loaded, refresh them
-        if (selectedBranchId.value) {
-          void fetchBranchWarehouses(selectedBranchId.value);
-        }
+        // if (selectedBranchId.value) {
+        //   void fetchBranchWarehouses(selectedBranchId.value);
+        // }
 
         showNotify({
           type: "positive",
