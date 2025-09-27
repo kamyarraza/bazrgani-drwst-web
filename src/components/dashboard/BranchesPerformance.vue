@@ -77,10 +77,10 @@
                 <div class="metric-inline cashbox-inline">
                   <q-icon name="account_balance_wallet" size="15px" color="blue" class="q-mr-xs" />
                   <q-chip size="xs" color="orange" text-color="white" dense class="q-mr-xs metric-chip">
-                    {{ formatCurrency(branch.cashbox.iqd_balance, ' IQD') }}
+                    {{ formatCurrency(branch.cashbox?.iqd_balance || 0, ' IQD') }}
                   </q-chip>
                   <q-chip size="xs" color="teal" text-color="white" dense class="metric-chip">
-                    {{ formatCurrency(branch.cashbox.usd_balance, ' USD') }}
+                    {{ formatCurrency(branch.cashbox?.usd_balance || 0, ' USD') }}
                   </q-chip>
                 </div>
 

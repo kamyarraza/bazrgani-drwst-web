@@ -139,9 +139,14 @@ export const useAdminDashboardStore = defineStore('dashboard', () => {
       performance: (
         (branchData.items_cost / Math.max(branchData.capacity, 1)) * 0.35 + // Revenue efficiency
         (branchData.items_quantity / Math.max(branchData.capacity, 1)) * 0.25 + // Inventory utilization
-        ((branchData.cashbox.iqd_balance + parseFloat(branchData.cashbox.usd_balance || '0') * 1320) / 1000000) * 0.20 + // Cash flow score
+        (
+          (
+            (branchData.cashbox?.iqd_balance || 0) +
+            (parseFloat(branchData.cashbox?.usd_balance || '0') * 1320)
+          ) / 1_000_000
+        ) * 0.20 + // Cash flow score
         (branchData.items_count / Math.max(branchData.warehouses, 1)) * 0.15 + // Warehouse efficiency
-        (branchData.users > 0 ? 1 : 0) * 0.05 // Active branch bonus
+        ((branchData.users > 0 ? 1 : 0) * 0.05) // Active branch bonus
       )
     })).sort((a, b) => b.performance - a.performance);
   });
