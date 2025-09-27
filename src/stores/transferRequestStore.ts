@@ -182,7 +182,7 @@ export const useTransferRequestStore = defineStore('transferRequest', () => {
     error.value = null;
 
     try {
-      const response = await api.get<ApiResponse<TransferRequest[]>>(`${endPoints.warehouseItemTransfer.getRequests}?page=${page}&relations=fromWarehouse,toWarehouse&type=transfer`);
+      const response = await api.get<ApiResponse<TransferRequest[]>>(`${endPoints.warehouseItemTransfer.getIncomingTransfers}?page=${page}&relations=fromWarehouse,toWarehouse&type=transfer`);
 
       if (response.data.status === 'success') {
         transfers.value = response.data.data;
