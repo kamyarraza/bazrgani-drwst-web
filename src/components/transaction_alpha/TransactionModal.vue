@@ -435,7 +435,7 @@
               <div class="action-buttons cute-buttons">
                 <q-btn flat :label="'❌ ' + t('common.cancel')" @click="close" class="cancel-btn cute-cancel" />
                 <q-btn color="primary" :label="'🚀 ' + t('transactionAlpha.submitTransaction')" :loading="submitting"
-                  :disable="!canSubmit" unelevated class="submit-btn cute-submit" @click="handleSubmit" />
+                  :disable="!canSubmit || submitting" unelevated class="submit-btn cute-submit" @click="handleSubmit" />
               </div>
             </div>
           </transition>
@@ -786,30 +786,30 @@ async function handleSubmit() {
   }
 
   // Final cashbox status check before proceeding with transaction
-  const cashboxOk = await checkCashboxStatus();
-  if (!cashboxOk) {
-    $q.notify({
-      type: 'negative',
-      message: '🚫 ' + t('transactionAlpha.cannotProcessTransaction'),
-      caption: t('transactionAlpha.cashboxMustBeOpened'),
-      timeout: 5000,
-      position: 'top',
-      avatar: '💼',
-      actions: [
-        { icon: 'close', color: 'white', round: true, size: 'sm' }
-      ]
-    });
-    return;
-  }
+  // const cashboxOk = await checkCashboxStatus();
+  // if (!cashboxOk) {
+  //   $q.notify({
+  //     type: 'negative',
+  //     message: '🚫 ' + t('transactionAlpha.cannotProcessTransaction'),
+  //     caption: t('transactionAlpha.cashboxMustBeOpened'),
+  //     timeout: 5000,
+  //     position: 'top',
+  //     avatar: '💼',
+  //     actions: [
+  //       { icon: 'close', color: 'white', round: true, size: 'sm' }
+  //     ]
+  //   });
+  //   return;
+  // }
 
   submitting.value = true;
   try {
     // Check cashbox status before proceeding
-    const cashboxStatus = await checkCashboxStatus();
-    if (!cashboxStatus) {
-      submitting.value = false;
-      return;
-    }
+    // const cashboxStatus = await checkCashboxStatus();
+    // if (!cashboxStatus) {
+    //   submitting.value = false;
+    //   return;
+    // }
 
     // Prepare data for the new endpoints
     const transactionData: any = {
