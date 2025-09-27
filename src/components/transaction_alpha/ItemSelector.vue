@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n';
 import { formatNumber } from 'src/composables/useFormat';
 
 interface SelectedItem {
+  warehouse_id: number | string | null;
   item: any;
   last_unit_cost?: number; // To show previous cost price if available
   unit_cost: number;
@@ -200,6 +201,7 @@ function selectItem(item) {
     : (Number(item.unit_cost) || 0);
 
   selectedItems.value.push({
+    warehouse_id: props.warehouseId || null,
     item,
     last_unit_cost: Number(item.last_unit_cost) || 0, // Store previous cost price if available
     unit_cost: defaultPrice, // This will be the editable selling price
@@ -275,6 +277,7 @@ function selectAll() {
       : (Number(item.unit_cost) || 0);
 
     selectedItems.value.push({
+      warehouse_id: props.warehouseId || null,
       item,
       unit_cost: defaultPrice, // This will be the editable selling price
       solo_unit_cost: Number(item.solo_unit_price) || 0, // Reference only

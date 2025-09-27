@@ -177,6 +177,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
 
       // Add details array
       transactionData.details.forEach((detail: any, index: number) => {
+        formData.append(`details[${index}][warehouse_id]`, detail.warehouse_id.toString());
         formData.append(`details[${index}][item_id]`, detail.item_id.toString());
         formData.append(`details[${index}][quantity]`, detail.quantity.toString());
         formData.append(`details[${index}][unit_price]`, detail.unit_price.toString());

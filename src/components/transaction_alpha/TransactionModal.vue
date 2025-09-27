@@ -503,6 +503,7 @@ import type { List } from 'src/types/item_transaction';
 const { t } = useI18n();
 
 interface SelectedItem {
+  warehouse_id: number | string | null;
   item: { id: number; name: string };
   quantity: number;
   unit_cost: number;
@@ -820,6 +821,7 @@ async function handleSubmit() {
       note: note.value || '',
       created_at: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
       details: selectedItems.value.map(sel => ({
+        warehouse_id: sel.warehouse_id,
         item_id: sel.item.id,
         quantity: sel.quantity,
         unit_price: sel.unit_cost,
