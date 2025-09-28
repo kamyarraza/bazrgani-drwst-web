@@ -198,14 +198,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useQuasar } from 'quasar';
+// import { useQuasar } from 'quasar';
 import { storeToRefs } from 'pinia';
 import { useExpenseStore } from 'src/stores/expenseStore';
 import { useExpenseCategoryStore } from 'src/stores/expenseCategoryStore';
 import type { Expense } from 'src/types/expense';
 
 const { t } = useI18n();
-const $q = useQuasar();
+// const $q = useQuasar();
 const expenseStore = useExpenseStore();
 const expenseCategoryStore = useExpenseCategoryStore();
 
@@ -239,13 +239,11 @@ const categoryOptions = computed(() => {
 });
 
 const paymentMethodOptions = [
-  'Cash',
-  'Bank Transfer',
-  'Credit Card',
-  'Debit Card',
-  'Check',
-  'Digital Wallet',
-  'Other'
+  'کاش',
+  'حەواڵە',
+  'کریدیت',
+  'دێبیت',
+  'هیتر',
 ];
 
 // Form data
@@ -259,7 +257,7 @@ const form = ref<Expense>({
   usd_return_amount: 0,
   payee: '',
   paid_at: '',
-  payment_method: 'Cash',
+  payment_method: 'کاش',
   reference_number: ''
 });
 
@@ -295,13 +293,13 @@ async function onSubmit() {
     }
 
     // Show success notification
-    $q.notify({
-      type: 'positive',
-      message: 'Expense created successfully! 🎉',
-      position: 'top',
-      timeout: 3000,
-      actions: [{ icon: 'close', color: 'white' }]
-    });
+    // $q.notify({
+    //   type: 'positive',
+    //   message: '🎉🎉🎉',
+    //   position: 'top',
+    //   timeout: 3000,
+    //   actions: [{ icon: 'close', color: 'white' }]
+    // });
 
     onReset();
 
@@ -311,13 +309,13 @@ async function onSubmit() {
     }, 800);
   } catch (error) {
     console.error('Error creating expense:', error);
-    $q.notify({
-      type: 'negative',
-      message: 'Failed to create expense. Please try again.',
-      position: 'top',
-      timeout: 3000,
-      actions: [{ icon: 'close', color: 'white' }]
-    });
+    // $q.notify({
+    //   type: 'negative',
+    //   message: 'Failed to create expense. Please try again.',
+    //   position: 'top',
+    //   timeout: 3000,
+    //   actions: [{ icon: 'close', color: 'white' }]
+    // });
   }
 }
 

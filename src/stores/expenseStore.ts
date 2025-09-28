@@ -124,24 +124,24 @@ export const useExpenseStore = defineStore("expense", () => {
         expenseData
       );
 
-      showNotify({
-        type: "positive",
-        message: "Expense created successfully",
-        position: "top",
-        duration: 3000,
-      });
+      // showNotify({
+      //   type: "positive",
+      //   message: "Expense created successfully",
+      //   position: "top",
+      //   duration: 3000,
+      // });
 
       return data.data;
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to create expense";
       error.value = errorMessage;
-      showNotify({
-        type: "negative",
-        message: error.value,
-        position: "top",
-        duration: 3000,
-      });
+      // showNotify({
+      //   type: "negative",
+      //   message: error.value,
+      //   position: "top",
+      //   duration: 3000,
+      // });
       throw err;
     } finally {
       loading.value = false;
