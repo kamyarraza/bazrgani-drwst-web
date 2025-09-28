@@ -46,7 +46,8 @@
                 <q-card class="summary-card">
                     <q-card-section class="text-center">
                         <q-icon name="account_balance_wallet" size="2rem" color="deep-orange" />
-                        <div class="text-h6 q-mt-sm">{{ formatCurrency(summary.total_value * usdIqdRate, ' IQD') }}</div>
+                        <div class="text-h6 q-mt-sm">{{ formatCurrency(summary.total_value * usdIqdRate, ' IQD') }}
+                        </div>
                         <div class="text-caption text-grey-6">{{ t('branchReport.totalUnitCostIQD') }}</div>
                     </q-card-section>
                 </q-card>
@@ -73,7 +74,7 @@
                             </div>
 
                             <!-- Category Filter -->
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-3">
                                 <q-select v-model="selectedCategory" :options="categoryOptions"
                                     :label="t('branchReport.filters.categoryPlaceholder', 'Filter by category')"
                                     outlined dense clearable option-value="value" option-label="label" emit-value
@@ -82,6 +83,11 @@
                                         <q-icon name="category" />
                                     </template>
                                 </q-select>
+                            </div>
+
+                            <div class="col-12 col-md-3">
+                                <q-btn color="primary" class="full-width elegant-reset-btn" icon="refresh" outline
+                                    :label="t('report.refresh', 'Refresh')" @click="refresh" />
                             </div>
                         </div>
 
@@ -101,9 +107,9 @@
             <QtableB :columns="columns" :rows="reportItems" :loading="loading" :menuItems="getMenuItems"
                 :hasExpandableRows="false" show-bottom :pagination="pagination" @page-change="handlePageChange"
                 @menu-action="handleAction" :top-right-title="t('branchReport.exportCSV')"
-                :top-right-icon="'file_download'" @top-right-action="exportReportAsCSV"
-                :top-right-secondary-title="t('branchReport.exportPDF')" :top-right-secondary-icon="'picture_as_pdf'"
-                @top-right-secondary-action="exportReportAsPDF">
+                :top-right-icon="'file_download'" @top-right-action="exportReportAsCSV">
+                <!-- :top-right-secondary-title="t('branchReport.exportPDF')" :top-right-secondary-icon="'picture_as_pdf'"
+                @top-right-secondary-action="exportReportAsPDF"> -->
                 <!-- Custom slot for quantity with progress bar -->
                 <template #body-cell-total_quantity="props">
                     <q-td :props="props">
@@ -165,8 +171,8 @@ import QtableB from 'src/components/common/Qtable.vue';
 import { formatCurrency } from 'src/composables/useFormat';
 import type { MenuItem } from 'src/types';
 import type { Branch } from 'src/types/branch';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
 import { useExchangeRateStore } from 'src/stores/exchangeRateStore';
 
 interface Props {
@@ -204,9 +210,9 @@ const categoryOptions = computed(() => {
 });
 
 onMounted(async () => {
-  if (!exchangeRateStore.activeRate) {
-    await exchangeRateStore.fetchActiveExchangeRate();
-  }
+    if (!exchangeRateStore.activeRate) {
+        await exchangeRateStore.fetchActiveExchangeRate();
+    }
 });
 
 const usdIqdRate = computed(() => exchangeRateStore.activeRate?.usd_iqd_rate || 0);
@@ -371,6 +377,15 @@ const clearFilters = async () => {
     }
 };
 
+const refresh = async () => {
+    searchQuery.value = '';
+    selectedCategory.value = null;
+
+    if (props.branch?.id) {
+        await branchReportStore.fetchBranchReport(props.branch.id, 1);
+    }
+};
+
 const handleAction = (payload: { item: MenuItem; rowId: string | number }) => {
     const item = reportItems.value.find(report => report.item_id === Number(payload.rowId));
     if (!item) return;
@@ -423,133 +438,133 @@ const exportReportAsCSV = () => {
     document.body.removeChild(link);
 };
 
-// Helper functions for RTL text processing
-const cleanTextForPDF = (text: string): string => {
-    return text.replace(/[\u200E\u200F\u202A-\u202E]/g, '');
-};
+// // Helper functions for RTL text processing
+// const cleanTextForPDF = (text: string): string => {
+//     return text.replace(/[\u200E\u200F\u202A-\u202E]/g, '');
+// };
 
-const prepareRTLText = (text: string): string => {
-    // Simple text reversal for RTL - works for basic Arabic text
-    return text.split('').reverse().join('');
-};
+// const prepareRTLText = (text: string): string => {
+//     // Simple text reversal for RTL - works for basic Arabic text
+//     return text.split('').reverse().join('');
+// };
 
-// Use built-in fonts with Unicode support
-const setupPDFForArabic = (doc: jsPDF) => {
-    // Use helvetica which has better Unicode support
-    doc.setFont("helvetica", "normal");
-};
+// // Use built-in fonts with Unicode support
+// const setupPDFForArabic = (doc: jsPDF) => {
+//     // Use helvetica which has better Unicode support
+//     doc.setFont("helvetica", "normal");
+// };
 
 // Not wupporting Arabic Characters. I must be fixed later
-const exportReportAsPDF = () => {
-    const rows = reportItems?.value;
-    if (!rows || !rows.length) return;
+// const exportReportAsPDF = () => {
+//     const rows = reportItems?.value;
+//     if (!rows || !rows.length) return;
 
-    try {
-        const doc = new jsPDF();
+//     try {
+//         const doc = new jsPDF();
 
-        // Setup PDF for Arabic text with built-in fonts
-        setupPDFForArabic(doc);
-        doc.setFontSize(16);
+//         // Setup PDF for Arabic text with built-in fonts
+//         setupPDFForArabic(doc);
+//         doc.setFontSize(16);
 
-        // Title
-        const title = cleanTextForPDF(`${t('branchReport.title')} - ${props.branch?.name || ''}`);
-        const rtlTitle = prepareRTLText(title);
-        doc.text(rtlTitle, 200, 20, { align: "right" });
+//         // Title
+//         const title = cleanTextForPDF(`${t('branchReport.title')} - ${props.branch?.name || ''}`);
+//         const rtlTitle = prepareRTLText(title);
+//         doc.text(rtlTitle, 200, 20, { align: "right" });
 
-        // Summary
-        let startY = 40;
-        if (summary.value) {
-            doc.setFontSize(12);
+//         // Summary
+//         let startY = 40;
+//         if (summary.value) {
+//             doc.setFontSize(12);
 
-            const summaryItems = [
-                cleanTextForPDF(`${t('branchReport.totalItems')}: ${summary.value.total_items}`),
-                cleanTextForPDF(`${t('branchReport.totalQuantity')}: ${formatNumber(summary.value.total_quantity)}`),
-                cleanTextForPDF(`${t('branchReport.totalValue')}: ${formatCurrency(summary.value.total_value)}`),
-                cleanTextForPDF(`${t('branchReport.totalReservations')}: ${formatNumber(summary.value.total_reservations)}`)
-            ];
+//             const summaryItems = [
+//                 cleanTextForPDF(`${t('branchReport.totalItems')}: ${summary.value.total_items}`),
+//                 cleanTextForPDF(`${t('branchReport.totalQuantity')}: ${formatNumber(summary.value.total_quantity)}`),
+//                 cleanTextForPDF(`${t('branchReport.totalValue')}: ${formatCurrency(summary.value.total_value)}`),
+//                 cleanTextForPDF(`${t('branchReport.totalReservations')}: ${formatNumber(summary.value.total_reservations)}`)
+//             ];
 
-            summaryItems.forEach((item, index) => {
-                const rtlItem = prepareRTLText(item);
-                doc.text(rtlItem, 200, startY + (index * 10), { align: "right" });
-            });
+//             summaryItems.forEach((item, index) => {
+//                 const rtlItem = prepareRTLText(item);
+//                 doc.text(rtlItem, 200, startY + (index * 10), { align: "right" });
+//             });
 
-            startY = 90;
-        }
+//             startY = 90;
+//         }
 
-        // Table headers
-        const tableHeaders = [
-            t('branchReport.columns.itemName'),
-            t('branchReport.columns.quantity'),
-            t('branchReport.columns.reservations'),
-            t('branchReport.columns.unitCost'),
-            t('branchReport.columns.soloPrice'),
-            t('branchReport.columns.bulkPrice'),
-            t('branchReport.columns.packetUnits'),
-            t('branchReport.columns.packageUnits')
-        ].map(header => prepareRTLText(cleanTextForPDF(header)));
+//         // Table headers
+//         const tableHeaders = [
+//             t('branchReport.columns.itemName'),
+//             t('branchReport.columns.quantity'),
+//             t('branchReport.columns.reservations'),
+//             t('branchReport.columns.unitCost'),
+//             t('branchReport.columns.soloPrice'),
+//             t('branchReport.columns.bulkPrice'),
+//             t('branchReport.columns.packetUnits'),
+//             t('branchReport.columns.packageUnits')
+//         ].map(header => prepareRTLText(cleanTextForPDF(header)));
 
-        // Table rows
-        const tableData = rows.map(row => [
-            prepareRTLText(cleanTextForPDF(row.name || "")),
-            formatNumber(parseInt(row.total_quantity || "0")),
-            formatNumber(parseInt(row.total_reservations || "0")),
-            formatCurrency(row.unit_cost || 0),
-            formatCurrency(row.solo_unit_price || 0),
-            formatCurrency(row.bulk_unit_price || 0),
-            row.packet_units || "",
-            row.package_units || ""
-        ]);
+//         // Table rows
+//         const tableData = rows.map(row => [
+//             prepareRTLText(cleanTextForPDF(row.name || "")),
+//             formatNumber(parseInt(row.total_quantity || "0")),
+//             formatNumber(parseInt(row.total_reservations || "0")),
+//             formatCurrency(row.unit_cost || 0),
+//             formatCurrency(row.solo_unit_price || 0),
+//             formatCurrency(row.bulk_unit_price || 0),
+//             row.packet_units || "",
+//             row.package_units || ""
+//         ]);
 
-        // AutoTable with helvetica font
-        autoTable(doc, {
-            head: [tableHeaders],
-            body: tableData,
-            startY: startY,
-            styles: {
-                font: "helvetica",
-                fontSize: 9,
-                cellPadding: 3,
-                halign: "right", // RTL alignment for body cells
-                textColor: [0, 0, 0],
-                fillColor: [255, 255, 255]
-            },
-            headStyles: {
-                font: "helvetica",
-                fontStyle: "bold",
-                fontSize: 10,
-                halign: "center",
-                fillColor: [63, 81, 181],
-                textColor: [255, 255, 255]
-            },
-            columnStyles: {
-                0: { cellWidth: 45, halign: "right" }, // Item name
-                1: { cellWidth: 20, halign: "center" },
-                2: { cellWidth: 20, halign: "center" },
-                3: { cellWidth: 25, halign: "right" },
-                4: { cellWidth: 25, halign: "right" },
-                5: { cellWidth: 25, halign: "right" },
-                6: { cellWidth: 20, halign: "center" },
-                7: { cellWidth: 20, halign: "center" }
-            },
-            tableWidth: "auto",
-            margin: { top: 20, right: 14, bottom: 20, left: 14 },
-            theme: "striped",
-            alternateRowStyles: {
-                fillColor: [245, 245, 245]
-            }
-        });
+//         // AutoTable with helvetica font
+//         autoTable(doc, {
+//             head: [tableHeaders],
+//             body: tableData,
+//             startY: startY,
+//             styles: {
+//                 font: "helvetica",
+//                 fontSize: 9,
+//                 cellPadding: 3,
+//                 halign: "right", // RTL alignment for body cells
+//                 textColor: [0, 0, 0],
+//                 fillColor: [255, 255, 255]
+//             },
+//             headStyles: {
+//                 font: "helvetica",
+//                 fontStyle: "bold",
+//                 fontSize: 10,
+//                 halign: "center",
+//                 fillColor: [63, 81, 181],
+//                 textColor: [255, 255, 255]
+//             },
+//             columnStyles: {
+//                 0: { cellWidth: 45, halign: "right" }, // Item name
+//                 1: { cellWidth: 20, halign: "center" },
+//                 2: { cellWidth: 20, halign: "center" },
+//                 3: { cellWidth: 25, halign: "right" },
+//                 4: { cellWidth: 25, halign: "right" },
+//                 5: { cellWidth: 25, halign: "right" },
+//                 6: { cellWidth: 20, halign: "center" },
+//                 7: { cellWidth: 20, halign: "center" }
+//             },
+//             tableWidth: "auto",
+//             margin: { top: 20, right: 14, bottom: 20, left: 14 },
+//             theme: "striped",
+//             alternateRowStyles: {
+//                 fillColor: [245, 245, 245]
+//             }
+//         });
 
-        // Safe filename
-        const safeBranchName = props.branch?.name?.replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, '') || 'branch_report';
-        const filename = `branch-report-${safeBranchName}-${new Date().toISOString().split('T')[0]}.pdf`;
+//         // Safe filename
+//         const safeBranchName = props.branch?.name?.replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, '') || 'branch_report';
+//         const filename = `branch-report-${safeBranchName}-${new Date().toISOString().split('T')[0]}.pdf`;
 
-        doc.save(filename);
+//         doc.save(filename);
 
-    } catch (error) {
-        console.error("Error generating PDF:", error);
-        alert(t("branchReport.pdfError", "Error generating PDF. Please try again or use CSV export."));
-    }
-};
+//     } catch (error) {
+//         console.error("Error generating PDF:", error);
+//         alert(t("branchReport.pdfError", "Error generating PDF. Please try again or use CSV export."));
+//     }
+// };
 
 // Watchers
 watch(() => props.branch?.id, async (newBranchId) => {
