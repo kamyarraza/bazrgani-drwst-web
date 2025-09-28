@@ -144,6 +144,7 @@
                             color="primary"
                             :is-rounded="false"
                             :no-caps="true"
+                            :loading="isSubmitting" :disabled="isSubmitting"
                         />
                     </div>
                 </div>
@@ -153,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch, onMounted, ref } from 'vue'
+import { reactive, watch, onMounted, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Qinput from 'src/components/common/Qinput.vue'
 import Qbtn from 'src/components/common/Qbtn.vue'
@@ -188,7 +189,7 @@ const form = reactive<CustomerPayload>({
     fphone: '',
     sphone: '',
     note: '',
-    payment_cycle_days: 0
+    payment_cycle_days: ''
 })
 
 // Load locations
@@ -218,16 +219,18 @@ watch(() => props.customer, (newCustomer) => {
     }
 }, { immediate: true })
 
+const isSubmitting = computed(() => customerStore.loading)
+
 function updateFormCustomer(customer: Customer) {
     form.fname = customer.fname || '';
     form.sname = customer.sname || '';
     form.type = customer.type_value || 'customer';
-    form.location_id = customer.location?.id || 0;
+    form.location_id = customer.location_id || customer.location?.id || 0;
     form.place = customer.place || '';
     form.fphone = customer.fphone || '';
     form.sphone = customer.sphone || '';
     form.note = customer.note || '';
-    form.payment_cycle_days = customer.payment_cycle_days || 0;
+    form.payment_cycle_days = customer.payment_cycle_days || '';
 }
 
 function resetForm() {

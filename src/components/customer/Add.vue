@@ -64,6 +64,7 @@
                                 <q-icon name="warning" color="negative" size="16px" class="q-mr-xs" />
                                 <span class="text-caption text-negative">{{ t('customer.phoneExists') }}</span>
                             </div>
+
                             <Qinput v-model="form.sphone" :label="t('customer.secondPhone', 'Second Phone Number')"
                                 :rules="[]" outlined class="enhanced-input"
                                 @update:model-value="val => checkPhoneExistence(val as string, 2)" @clear="sPhoneExists = false">
@@ -81,8 +82,8 @@
 
                             <Qinput v-if="form.type === 'customer'" v-model.number="form.payment_cycle_days"
                                 :label="t('customer.paymentCycleDays')"
-                                :rules="[val => !val || (Number(val) >= 1 && Number(val) <= 365) || t('validation.paymentCycleRange')]"
-                                outlined class="enhanced-input" type="number" min="1" max="365">
+                                :rules="[val => !val || (Number(val) >= 0 && Number(val) <= 365) || t('validation.paymentCycleRange')]"
+                                outlined class="enhanced-input" type="number" min="0" max="365">
                                 <template #before>
                                     <q-icon name="schedule" color="primary" />
                                 </template>
@@ -99,7 +100,7 @@
                         </div>
                         <div class="col">
                             <Qbtn type="submit" :btn-label="t('customer.addBtn')" color="primary" :is-rounded="false"
-                                :no-caps="true" class="full-width" />
+                                :no-caps="true" class="full-width" :loading="isSubmitting" :disabled="isSubmitting" />
                         </div>
                     </div>
                 </div>
@@ -109,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch, ref, onMounted } from 'vue'
+import { reactive, watch, ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Qinput from 'src/components/common/Qinput.vue'
 import Qbtn from 'src/components/common/Qbtn.vue'
@@ -142,7 +143,7 @@ const form = reactive<CustomerPayload>({
     fphone: '',
     sphone: '',
     note: '',
-    payment_cycle_days: 0
+    payment_cycle_days: ''
 })
 
 // Load locations
@@ -160,6 +161,8 @@ watch(model, (newVal) => {
         resetForm()
     }
 })
+
+const isSubmitting = computed(() => customerStore.loading)
 
 const checkPhoneExistence = (phone: string, nPhone: number) => {
   // Clear the previous timeout if it exists

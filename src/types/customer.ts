@@ -12,6 +12,7 @@ export interface Customer {
     id: number;
     name: string;
   } | null;
+  location_id: number | null;
   place: string;
   fphone: string;
   sphone?: string; // Secondary phone (optional)
@@ -40,7 +41,7 @@ export interface CustomerPayload {
   fphone: string;
   sphone: string;
   note?: string;
-  payment_cycle_days: number;
+  payment_cycle_days: number | string;
 }
 
 export interface Pagination {
