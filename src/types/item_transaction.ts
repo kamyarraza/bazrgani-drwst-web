@@ -114,6 +114,7 @@ export interface List {
       quantity: number;
       reason: string;
     }[];
+    reason: string;
     refund_price: number;
     usd_iqd_rate: number;
     refunded_amounts?:any;

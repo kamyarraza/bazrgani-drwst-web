@@ -617,7 +617,7 @@ const handleAction = async (payload: { item: MenuItem; rowId: string | number })
         id: transaction.refunded.id,
         refund_price: transaction.refunded.refund_price,
         usd_iqd_rate: transaction.refunded.usd_iqd_rate,
-        reason: '', // This might need to be fetched from the actual refund API
+        reason: transaction.refunded.reason || '',
         items: transaction.refunded.items.map(item => ({
           id: item.id,
           name: item.name,
