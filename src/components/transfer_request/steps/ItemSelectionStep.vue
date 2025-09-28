@@ -96,59 +96,59 @@
         <div class="search-results-container">
           <q-list separator class="rounded-borders item-search-list" style="max-height: 500px; overflow-y: auto;">
             <q-item
-              v-for="item in searchResults"
+              v-for="item in searchResults.filter(item => item.quantity > 0)"
               :key="`item-${item.id}`"
               clickable
               v-ripple
               @click="addItemToTransfer(item)"
               class="item-list-item"
               :class="{
-                'item-selected': isItemSelected(item.id)
+              'item-selected': isItemSelected(item.id)
               }"
             >
               <q-item-section avatar>
-                <q-avatar size="56px" rounded class="item-avatar-enhanced">
-                  <q-icon name="inventory_2" size="28px" color="blue-grey-5" />
-                </q-avatar>
+              <q-avatar size="56px" rounded class="item-avatar-enhanced">
+                <q-icon name="inventory_2" size="28px" color="blue-grey-5" />
+              </q-avatar>
               </q-item-section>
 
               <q-item-section>
-                <q-item-label class="item-name">
-                  {{ item.name }}
-                  <q-chip
-                    v-if="isItemSelected(item.id)"
-                    size="sm"
-                    color="positive"
-                    text-color="white"
-                    icon="check"
-                    class="q-ml-sm"
-                  >
-                    {{ t('transferRequest.added') }}
-                  </q-chip>
-                </q-item-label>
+              <q-item-label class="item-name">
+                {{ item.name }}
+                <q-chip
+                v-if="isItemSelected(item.id)"
+                size="sm"
+                color="positive"
+                text-color="white"
+                icon="check"
+                class="q-ml-sm"
+                >
+                {{ t('transferRequest.added') }}
+                </q-chip>
+              </q-item-label>
 
-                <q-item-label caption class="item-details">
-                  <div class="text-caption text-grey-6">
-                    ID: {{ item.id }}
-                  </div>
-                  <div class="text-caption text-grey-6" v-if="item.volume">
-                    {{ t('transferRequest.volume') }}: {{ item.volume }}
-                  </div>
-                  <div class="text-caption text-positive q-mt-xs">
-                    {{ t('transferRequest.available') }}: {{ formatNumber(item.quantity) }} {{ t('common.units') }}
-                  </div>
-                </q-item-label>
+              <q-item-label caption class="item-details">
+                <div class="text-caption text-grey-6">
+                ID: {{ item.id }}
+                </div>
+                <div class="text-caption text-grey-6" v-if="item.volume">
+                {{ t('transferRequest.volume') }}: {{ item.volume }}
+                </div>
+                <div class="text-caption text-positive q-mt-xs">
+                {{ t('transferRequest.available') }}: {{ formatNumber(item.quantity) }} {{ t('common.units') }}
+                </div>
+              </q-item-label>
               </q-item-section>
 
               <q-item-section side class="item-action-section">
-                <q-btn
-                  round
-                  :color="isItemSelected(item.id) ? 'positive' : 'primary'"
-                  :icon="isItemSelected(item.id) ? 'check' : 'add'"
-                  size="sm"
-                  @click.stop="addItemToTransfer(item)"
-                  :disable="item.quantity === 0 || isItemSelected(item.id)"
-                />
+              <q-btn
+                round
+                :color="isItemSelected(item.id) ? 'positive' : 'primary'"
+                :icon="isItemSelected(item.id) ? 'check' : 'add'"
+                size="sm"
+                @click.stop="addItemToTransfer(item)"
+                :disable="isItemSelected(item.id)"
+              />
               </q-item-section>
             </q-item>
           </q-list>

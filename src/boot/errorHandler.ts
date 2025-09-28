@@ -83,7 +83,7 @@ export default boot(({ app }) => {
 
   // Global error event handler for JavaScript errors
   window.addEventListener('error', (event) => {
-    console.error('Global JavaScript Error:', event.error);
+    // console.error('Global JavaScript Error:', event.error);
 
     // Handle auth-related JavaScript errors
     if (event.error &&

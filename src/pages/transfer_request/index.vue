@@ -78,9 +78,9 @@
                       <q-item v-for="detail in row.details" :key="detail.id">
                         <q-item-section>
                           <q-item-label>{{ detail.item?.name || t('common.unknownItem', 'Unknown Item')
-                            }}</q-item-label>
+                          }}</q-item-label>
                           <q-item-label caption>SKU: {{ detail.item?.sku || t('common.notAvailable', 'N/A')
-                            }}</q-item-label>
+                          }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
                           <q-chip color="info" text-color="white" size="sm">
@@ -152,9 +152,9 @@
                       <q-item v-for="detail in row.details" :key="detail.id">
                         <q-item-section>
                           <q-item-label>{{ detail.item?.name || t('common.unknownItem', 'Unknown Item')
-                            }}</q-item-label>
+                          }}</q-item-label>
                           <q-item-label caption>SKU: {{ detail.item?.sku || t('common.notAvailable', 'N/A')
-                            }}</q-item-label>
+                          }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
                           <q-chip color="info" text-color="white" size="sm">
@@ -247,22 +247,35 @@
             </div>
 
             <div class="row q-col-gutter-md">
+              <!-- Source Warehouse -->
               <div class="col-6">
-                <div class="warehouse-card source-warehouse">
-                  <q-icon name="logout" class="warehouse-icon text-negative" />
-                  <div class="warehouse-label">{{ t('transferRequest.fromWarehouse', 'From Warehouse') }}</div>
-                  <div class="warehouse-value text-negative">{{ selectedRequest.source?.name || t('common.notAvailable',
-                    'N/A') }}</div>
-                  <div class="warehouse-subtitle">{{ t('transferRequest.source', 'Source') }}</div>
+                <div
+                  class="warehouse-card source-warehouse q-pa-md q-mb-sm bg-primary-light text-primary shadow-2 rounded-lg flex flex-col items-center">
+                  <q-icon name="exit_to_app" size="36px" class="warehouse-icon mb-2" />
+                  <div class="warehouse-label text-subtitle2 q-mb-xs q-mr-sm">{{ t('transferRequest.fromWarehouse',
+                    'FromWarehouse') }}</div>
+                  <div class="warehouse-value text-h6 q-mb-xs">{{ selectedRequest.source?.name ||
+                    t('common.notAvailable',
+                      'N/A') }}</div>
+                  <div class="warehouse-subtitle text-caption q-mt-auto">{{ t('transferRequest.source', 'Source') }}
+                  </div>
                 </div>
               </div>
+
+              <!-- Target Warehouse -->
               <div class="col-6">
-                <div class="warehouse-card target-warehouse">
-                  <q-icon name="login" class="warehouse-icon text-positive" />
-                  <div class="warehouse-label">{{ t('transferRequest.toWarehouse', 'To Warehouse') }}</div>
-                  <div class="warehouse-value text-positive">{{ selectedRequest.target?.name || t('common.notAvailable',
-                    'N/A') }}</div>
-                  <div class="warehouse-subtitle">{{ t('transferRequest.destination', 'Destination') }}</div>
+                <div
+                  class="warehouse-card target-warehouse q-pa-md q-mb-sm bg-positive-light text-positive shadow-2 rounded-lg flex flex-col items-center">
+                  <q-icon name="input" size="36px" class="warehouse-icon mb-2" />
+                  <div class="warehouse-label text-subtitle2 q-mb-xs q-mr-sm">{{ t('transferRequest.toWarehouse',
+                    'ToWarehouse') }}
+                  </div>
+                  <div class="warehouse-value text-h6 q-mb-xs">{{ selectedRequest.target?.name ||
+                    t('common.notAvailable',
+                      'N/A') }}</div>
+                  <div class="warehouse-subtitle text-caption q-mt-auto">{{ t('transferRequest.destination',
+                    'Destination')
+                  }}</div>
                 </div>
               </div>
             </div>
@@ -277,7 +290,7 @@
               {{ t('transferRequest.itemsToTransfer', 'Items to Transfer') }}
               <q-chip color="info" text-color="white" size="sm" class="q-ml-sm">
                 {{ (selectedRequest.items?.length || selectedRequest.details?.length || 0) }} {{ t('common.items',
-                'items')
+                  'items')
                 }}
               </q-chip>
             </div>
@@ -299,20 +312,16 @@
 
                   <div class="item-details">
                     <div class="detail-row" v-if="requestItem.item?.sku">
-                      <q-chip size="xs" color="grey-6" text-color="white" icon="qr_code" dense>
-                        {{ t('transferRequest.sku', 'SKU') }}: {{ requestItem.item.sku }}
+                      <q-chip size="sm" color="blue-grey-4" text-color="white" icon="qr_code" dense square
+                        class="sku-chip">
+                        {{ requestItem.item.sku }}
                       </q-chip>
                     </div>
-                    <div class="detail-row">
-                      <q-chip size="xs" color="blue-grey" text-color="white" icon="tag" dense>
-                        {{ t('transferRequest.itemId', 'ID') }}: {{ requestItem.item?.id || requestItem.item }}
-                      </q-chip>
-                    </div>
-                    <div class="detail-row" v-if="requestItem.item?.category">
+                    <!-- <div class="detail-row" v-if="requestItem.item?.category">
                       <q-chip size="xs" color="teal" text-color="white" icon="category" dense>
                         {{ requestItem.item.category.name }}
                       </q-chip>
-                    </div>
+                    </div> -->
                   </div>
 
                   <div class="item-description" v-if="requestItem.item?.description">
@@ -500,21 +509,21 @@ const incomingColumns = [
     field: (row: any) => row.target?.name || row.toWarehouse?.name || 'N/A',
     sortable: true,
   },
-  {
-    name: 'status',
-    required: true,
-    label: t('transferRequest.status', 'Status'),
-    align: 'center' as const,
-    field: 'status',
-    sortable: true,
-  },
+  // {
+  //   name: 'status',
+  //   required: true,
+  //   label: t('transferRequest.status', 'Status'),
+  //   align: 'center' as const,
+  //   field: 'status',
+  //   sortable: true,
+  // },
   {
     name: 'created_at',
     required: true,
     label: t('common.createdAt', 'Created At'),
     align: 'left' as const,
     field: 'created_at',
-    format: (val: unknown) => val ? date.formatDate(val as string, 'dddd, MMMM D, YYYY • h:mm A') : '',
+    format: (val: unknown) => val,
     sortable: true,
   },
   {
@@ -955,55 +964,46 @@ onMounted(async () => {
 }
 
 .warehouse-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+  min-height: 140px;
   text-align: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s;
-  border: 2px solid transparent;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .warehouse-icon {
+    border-radius: 50%;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    transform: scaleX(-1);
   }
 
   &.source-warehouse {
-    border-color: rgba(var(--q-negative-rgb), 0.2);
-    background: linear-gradient(135deg, rgba(var(--q-negative-rgb), 0.05) 0%, white 100%);
+    background: #e3f2fd; // soft blue
+    color: #1e88e5;
   }
 
   &.target-warehouse {
-    border-color: rgba(var(--q-positive-rgb), 0.2);
-    background: linear-gradient(135deg, rgba(var(--q-positive-rgb), 0.05) 0%, white 100%);
+    background: #e8f5e9; // soft green
+    color: #43a047;
+  }
+
+  .warehouse-label {
+    font-weight: 500;
+  }
+
+  .warehouse-value {
+    font-weight: 700;
+  }
+
+  .warehouse-subtitle {
+    font-weight: 400;
   }
 }
 
-.warehouse-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
-}
-
-.warehouse-label {
-  font-size: 12px;
-  opacity: 0.7;
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
-}
-
-.warehouse-value {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.warehouse-subtitle {
-  font-size: 14px;
-  opacity: 0.6;
-  font-style: italic;
-}
 
 // Items Section
 .items-section {
@@ -1065,6 +1065,24 @@ onMounted(async () => {
   .q-chip {
     font-size: 11px;
     height: 22px;
+  }
+
+  .sku-chip {
+    border-radius: 8px;
+    padding: 0 6px;
+    padding-top: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #42a4f5, #1e88e5);
+    cursor: default;
+
+    &:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s;
+    }
   }
 }
 

@@ -73,9 +73,9 @@ const showErrorDetails = ref(false);
 onErrorCaptured((err: Error, instance, info) => {
   console.error('Error captured by ErrorBoundary:', err, info);
 
-  error.value = err;
-  errorMessage.value = err.message || 'Unknown error';
-  errorStack.value = err.stack || '';
+  // error.value = err;
+  // errorMessage.value = err.message || 'Unknown error';
+  // errorStack.value = err.stack || '';
 
   // Prevent the error from propagating further
   return false;

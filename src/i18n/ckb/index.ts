@@ -2927,6 +2927,25 @@ export default {
     to: "بۆ",
     employeeFromBranchHint: "خۆکارانە بۆ لقەکەت دانراوە بۆ گواستنەوەکان",
     employeeToBranchHint: "خۆکارانە بۆ لقەکەت دانراوە بۆ داواکاریەکان",
+
+    reject: "ڕەتکردنەوە",
+    complete: "تەواوکردن",
+    approve: "پەسەندکردن",
+    note: "تێبینی",
+    status: "دۆخ",
+    pending: "چاوەڕوان",
+    completed: "تەواوکراو",
+    rejected: "ڕەتکراو",
+    approved: "پەسەندکراو",
+
+    confirmComplete: "دڵنیابوونەوە",
+    confirmCompleteMessage: "دڵنیایت ئەو گواستنەوەیە وەرگیراوە ؟! دڵنیاببەرەوە چونکە دواتر ناتوانیت بگەڕێیتەوە !",
+
+    source: "سەرچاوە",
+    destination: "مەبەست",
+
+    warehouseInfo: "زانیاری کۆگا",
+    requestDetails: "وردەکارییەکانی گواستنەوە",
   },
   transactionAlpha: {
     searchItems: "گەڕان بۆ کاڵاکان",
