@@ -55,6 +55,8 @@
                                 :is-rounded="false"
                                 :no-caps="true"
                                 class="full-width"
+                                :loading="categoryStore.loading"
+                                :disable="categoryStore.loading"
                             />
                         </div>
                     </div>

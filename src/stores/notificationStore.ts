@@ -168,7 +168,7 @@ const showBrowserNotification = (title, options:any = {}) => {
       );
       if (response.data.status === 'success') {
         notifications.value = notifications.value.map(n => ({ ...n, read: true }));
-        Notify.create({ type: 'positive', message: 'All notifications marked as read' });
+        Notify.create({ type: 'positive', message: 'هەموو ئاگادارییەکان خوێندرانەوە' });
       } else {
         Notify.create({ type: 'negative', message: response.data.message || 'Failed to mark all notifications as read' });
       }

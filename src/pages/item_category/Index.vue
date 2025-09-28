@@ -180,7 +180,7 @@ const columns: Column[] = [
 
 const menuItems: MenuItem[] = [
   { label: t('common.edit'), icon: 'edit', value: 'edit' },
-    { label: t('itemCategory.toggleStatus', 'Toggle Active'), icon: 'toggle_on', value: 'toggleStatus' }
+    // { label: t('itemCategory.toggleStatus', 'Toggle Active'), icon: 'toggle_on', value: 'toggleStatus' }
 ];
 
 const categories = computed(() => categoryStore.itemCategories);

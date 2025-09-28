@@ -51,6 +51,8 @@
                             color="primary"
                             :is-rounded="false"
                             :no-caps="true"
+                            :loading="categoryStore.loading"
+                            :disable="categoryStore.loading"
                         />
                     </div>
                 </div>

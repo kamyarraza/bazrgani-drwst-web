@@ -69,10 +69,6 @@
                                     <q-icon name="schedule" color="primary" />
                                 </template>
                             </q-select>
-
-                            <div class="text-caption text-grey-7 q-mt-md">
-                                {{ t('common.lastUpdated', 'Last Updated') }}: {{ formatDate(form.updated_at) }}
-                            </div>
                         </div>
                     </div>
 
@@ -89,6 +85,8 @@
                             :label="t('common.save', 'Save')"
                             type="submit"
                             color="primary"
+                            :loading="locationStore.loading"
+                            :disable="locationStore.loading"
                         />
                     </div>
                 </div>
@@ -180,12 +178,6 @@ async function submitForm() {
         // Emit success event
         emit('submit', { ...form });
     }
-}
-
-// Format date for display
-function formatDate(dateString: string) {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString();
 }
 </script>
 

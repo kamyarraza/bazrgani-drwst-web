@@ -92,6 +92,8 @@
                                 color="primary"
                                 no-caps
                                 class="full-width"
+                                :loading="locationStore.loading"
+                                :disable="locationStore.loading"
                             />
                         </div>
                     </div>
