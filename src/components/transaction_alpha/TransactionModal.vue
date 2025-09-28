@@ -324,7 +324,8 @@
                           class="payment-input" :placeholder="t('transactionAlpha.enterIqdAmount')"
                           :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || usdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
                           :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
-                          :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
+                          :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''"
+                          @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                       </div>
 
                       <div class="col-md-6 col-sm-12">
@@ -338,7 +339,8 @@
                           class="payment-input" :placeholder="t('transactionAlpha.enterUsdAmount')"
                           :rules="selectedPaymentType === 'cash' ? [(val) => val > 0 || iqdPrice > 0 || t('transactionAlpha.paymentAmountRequired')] : []"
                           :error="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice"
-                          :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" />
+                          :error-message="selectedPaymentType === 'cash' && !iqdPrice && !usdPrice ? t('transactionAlpha.paymentAmountRequired') : ''" 
+                          @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                       </div>
 
                       <!-- Second row: IQD Return & USD Return -->
@@ -350,7 +352,8 @@
                           }}
                         </label>
                         <q-input v-model.number="iqdReturnAmount" type="number" min="0" dense outlined suffix="IQD"
-                          class="payment-input" :placeholder="t('transactionAlpha.enterIqdReturnAmount')" />
+                          class="payment-input" :placeholder="t('transactionAlpha.enterIqdReturnAmount')"
+                          @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                       </div>
 
                       <div class="col-md-6 col-sm-12 q-mt-md">
@@ -362,7 +365,8 @@
                         </label>
                         <q-input v-model.number="usdReturnAmount" type="number" min="0" step="0.01" dense outlined
                           suffix="USD" class="payment-input"
-                          :placeholder="t('transactionAlpha.enterUsdReturnAmount')" />
+                          :placeholder="t('transactionAlpha.enterUsdReturnAmount')"
+                          @focus="(e) => (e.target as HTMLInputElement)?.select()" />
                       </div>
                     </div>
                   </div>
@@ -381,7 +385,7 @@
                       </label>
                       <q-input v-model.number="forgivenPrice" type="number" min="0" dense outlined suffix="IQD"
                       class="payment-input forgiven-input" :placeholder="t('transactionAlpha.enterForgivenAmount')"
-                      :rules="[val => !val || val >= 0 || t('transactionAlpha.forgivenPriceMustBePositive')]">
+                      :rules="[val => !val || val >= 0 || t('transactionAlpha.forgivenPriceMustBePositive')]" @focus="(e) => (e.target as HTMLInputElement)?.select()">
                       <template v-slot:hint>
                         <div class="forgiven-hint">
                         <q-icon name="info" size="12px" />
