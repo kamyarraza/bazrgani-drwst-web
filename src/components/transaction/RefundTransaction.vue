@@ -252,7 +252,7 @@ const form = ref({
   refund_price: 0,
   usd_iqd_rate: 1500, // Default rate
   reason: '',
-  details: [] as Array<{ item_id: number; quantity: number }>,
+  details: [] as Array<{ item_id: number; warehouse_id: number; quantity: number }>,
   iqd_price: 0,
   usd_price: 0,
   iqd_return_amount: 0,
@@ -330,10 +330,14 @@ const isFormValid = computed(() => {
 const updateRefundDetails = () => {
   form.value.details = Object.entries(refundQuantities.value)
     .filter(([_, quantity]) => quantity > 0)
-    .map(([itemId, quantity]) => ({
-      item_id: parseInt(itemId),
-      quantity: quantity
-    }))
+    .map(([itemId, quantity]) => {
+      const item = availableItems.value.find(i => i.id === parseInt(itemId))
+      return {
+        item_id: parseInt(itemId),
+        warehouse_id: item?.warehouse_id ?? 0,
+        quantity: quantity
+      }
+    })
 
   // Auto-calculate refund amount based on selected items
   form.value.refund_price = calculatedRefundAmount.value
