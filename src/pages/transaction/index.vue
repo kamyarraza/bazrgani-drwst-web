@@ -353,7 +353,9 @@ const menuItems = computed(() => {
     }
 
     // Always show cancel option for sell transactions
-    baseItems.push({ label: t('transaction.cancel'), icon: 'cancel', value: 'cancel' });
+    if (transactionType.value === 'sell') {
+      baseItems.push({ label: t('transaction.cancel'), icon: 'cancel', value: 'cancel' });
+    }
 
     return baseItems;
   };
