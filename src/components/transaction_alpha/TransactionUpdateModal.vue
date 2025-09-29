@@ -463,7 +463,7 @@ async function handleSelectCustomer(customer: any) {
 }
 
 function handleSelectBranch() {
-  selectedWarehouseId.value = null;
+  // selectedWarehouseId.value = null;
   if (isSell.value) {
     void nextTick(() => {
       if (itemSelectorRef.value && typeof itemSelectorRef.value.clearItems === 'function') {

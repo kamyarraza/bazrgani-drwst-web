@@ -4,7 +4,7 @@ import { api } from 'boot/axios';
 import type { BranchReportItem, BranchReportSummary, Pagination } from 'src/types/branchReport';
 import type { ApiResponse } from 'src/types';
 import { endPoints } from 'src/endpoint';
-import { showNotify } from 'src/composables/Notify';
+// import { showNotify } from 'src/composables/Notify';
 
 export const useBranchReportStore = defineStore('branchReport', () => {
   const reportItems = ref<BranchReportItem[]>([]);
@@ -60,12 +60,12 @@ export const useBranchReportStore = defineStore('branchReport', () => {
       
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch branch report';
       error.value = errorMessage;
-      showNotify({
-        type: 'negative',
-        message: error.value,
-        position: 'top',
-        duration: 3000,
-      });
+      // showNotify({
+      //   type: 'negative',
+      //   message: error.value,
+      //   position: 'top',
+      //   duration: 3000,
+      // });
     } finally {
       loading.value = false;
     }

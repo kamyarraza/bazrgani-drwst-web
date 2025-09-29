@@ -556,10 +556,10 @@ defineExpose({
                 <q-input v-model.number="selected.quantity" :label="t('transactionAlpha.quantity')" type="number" dense
                   outlined min="0" style="max-width:90px;"
                   @update:model-value="val => onQuantityChange(selected, val)" />
-                <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', {
+                <!-- <div class="text-caption text-grey-7 q-mt-xs">{{ t('transactionAlpha.totalItems', {
                   n: selected.quantity
                 }) }}
-                </div>
+                </div> -->
               </div>
               <div class="col q-gutter-md flex justify-end items-center">
                 <!-- For Purchase Transactions: Show all 3 price fields -->

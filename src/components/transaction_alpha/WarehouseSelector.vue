@@ -1,20 +1,10 @@
 <template>
   <div class="warehouse-selector q-pa-md">
-    <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectWarehouse') }} <span class="text-negative">*</span></div>
-    <q-input
-      v-model="searchQuery"
-      outlined
-      clearable
-      dense
-      :loading="loading"
-      @focus="onFocus"
-      @blur="onBlur"
-      hide-bottom-space
-      class="warehouse-input"
-      ref="inputRef"
-      :disable="disabled"
-      :hint="t('transactionAlpha.typeToSearchWarehouses')"
-    >
+    <div class="text-caption q-mb-xs">{{ t('transactionAlpha.selectWarehouse') }} <span class="text-negative">*</span>
+    </div>
+    <q-input v-model="searchQuery" outlined clearable dense :loading="loading" @focus="onFocus" @blur="onBlur"
+      hide-bottom-space class="warehouse-input" ref="inputRef" :disable="disabled"
+      :hint="t('transactionAlpha.typeToSearchWarehouses')">
       <template v-slot:prepend>
         <q-icon name="warehouse" />
       </template>
@@ -24,15 +14,9 @@
     <div v-if="showResultsList" class="warehouse-results q-mt-sm">
       <q-card flat bordered class="results-card">
         <q-list separator class="results-list">
-          <q-item
-            v-for="warehouse in warehouseOptions"
-            :key="warehouse.id"
-            clickable
-            v-ripple
-            @click="selectWarehouse(warehouse)"
-            class="warehouse-item"
-            :class="{ 'selected': modelValue === warehouse.id }"
-          >
+          <q-item v-for="warehouse in warehouseOptions" :key="warehouse.id" clickable v-ripple
+            @click="selectWarehouse(warehouse)" class="warehouse-item"
+            :class="{ 'selected': modelValue === warehouse.id }">
             <q-item-section avatar>
               <q-avatar color="primary" text-color="white" size="md">
                 {{ warehouse.name.charAt(0).toUpperCase() }}
@@ -42,10 +26,15 @@
               <q-item-label class="warehouse-name">
                 {{ warehouse.name }}
               </q-item-label>
-              <q-item-label caption v-if="warehouse.code || (warehouse.location && warehouse.location.name)" class="warehouse-details">
+              <q-item-label caption v-if="warehouse.code || (warehouse.location && warehouse.location.name)"
+                class="warehouse-details">
                 <span v-if="'code' in warehouse && warehouse.code">{{ warehouse.code ?? '' }}</span>
-                <span v-if="'code' in warehouse && warehouse.code && 'location' in warehouse && warehouse.location && 'name' in warehouse.location && warehouse.location.name"> • </span>
-                <span v-if="'location' in warehouse && warehouse.location && 'name' in warehouse.location && warehouse.location.name">{{ warehouse.location.name }}</span>
+                <span
+                  v-if="'code' in warehouse && warehouse.code && 'location' in warehouse && warehouse.location && 'name' in warehouse.location && warehouse.location.name">
+                  • </span>
+                <span
+                  v-if="'location' in warehouse && warehouse.location && 'name' in warehouse.location && warehouse.location.name">{{
+                    warehouse.location.name }}</span>
               </q-item-label>
             </q-item-section>
             <q-item-section side v-if="modelValue === warehouse.id">
@@ -111,6 +100,7 @@ watch(() => props.branchId, async (branchId) => {
       code: w.code,
       location: { name: (w as any).location?.name || '' }
     }));
+
     // Auto-select first warehouse if none is selected
     if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
       const first = warehouseOptions.value[0];
@@ -149,6 +139,10 @@ watch(searchQuery, (val) => {
 });
 
 onMounted(async () => {
+  if (props.modelValue) {
+    selectedWarehouseId.value = props.modelValue;
+  }
+
   if (props.branchId) {
     loading.value = true;
     await itemTransactionStore.fetchBranchWarehouses(props.branchId);
@@ -158,13 +152,19 @@ onMounted(async () => {
       code: w.code,
       location: { name: (w as any).location?.name || '' }
     }));
+    
     // Auto-select first warehouse if none is selected
-    if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+    // First, try to select the existing modelValue if it exists in the options
+    const found = warehouseOptions.value.find(w => w.id === props.modelValue);
+    if (found) {
+      selectWarehouse(found);
+    } else if (warehouseOptions.value.length > 0 && (props.modelValue === null || props.modelValue === undefined)) {
+      // Otherwise, auto-select the first warehouse if none is selected
       const first = warehouseOptions.value[0];
       if (first) {
-        emit('update:modelValue', first.id);
-        selectedWarehouseId.value = first.id;
-        searchQuery.value = first.name;
+      emit('update:modelValue', first.id);
+      selectedWarehouseId.value = first.id;
+      searchQuery.value = first.name;
       }
     }
     loading.value = false;
@@ -191,10 +191,12 @@ function onBlur() {
   max-width: 340px;
   padding-top: 0;
 }
+
 .warehouse-input {
   width: 100%;
   margin-top: 0;
 }
+
 .warehouse-item.selected {
   background: #e0f7fa;
 }
