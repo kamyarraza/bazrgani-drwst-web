@@ -294,6 +294,7 @@ import { useI18n } from 'vue-i18n';
 
 interface SelectedItem {
   item: any;
+  warehouse_id: number;
   unit_cost: number;
   solo_unit_cost: number;
   bulk_unit_cost: number;
@@ -394,6 +395,7 @@ watch(
         package_units: 0,
         packet_units: 0
       },
+      warehouse_id: typeof it.warehouse_id === 'number' ? it.warehouse_id : 0,
       unit_cost: Number(it.unit_price) || 0,
       solo_unit_cost: Number(it.solo_unit_price || it.unit_price || 0),
       bulk_unit_cost: Number(it.bulk_unit_price || it.unit_price || 0),
@@ -509,6 +511,7 @@ async function handleSubmit() {
       forgiven_price: forgivenPrice.value || 0,
       details: selectedItems.value.map((sel) => ({
         item_id: sel.item.id,
+        warehouse_id: sel.warehouse_id,
         quantity: Number(sel.quantity || 0),
         unit_price: Number(sel.unit_cost || 0),
         // solo_unit_price: Number(sel.solo_unit_cost || sel.unit_cost || 0),

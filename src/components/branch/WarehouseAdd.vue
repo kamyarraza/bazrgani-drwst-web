@@ -69,7 +69,7 @@
 import { ref, reactive, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useWarehouseStore } from 'src/stores/warehouseStore';
-import { showNotify } from 'src/composables/Notify';
+// import { showNotify } from 'src/composables/Notify';
 import QModalForm from 'src/components/common/QModalForm.vue';
 import Qinput from 'src/components/common/Qinput.vue';
 import Qbtn from 'src/components/common/Qbtn.vue';
@@ -150,10 +150,10 @@ async function submitForm() {
     const success = await warehouseStore.createWarehouse(payload);
     if (success) {
       model.value = false;
-      showNotify({
-        message: t('warehouse.addSuccess', 'Warehouse created successfully'),
-        type: 'positive'
-      });
+      // showNotify({
+      //   message: t('warehouse.addSuccess', 'Warehouse created successfully'),
+      //   type: 'positive'
+      // });
       // Emit event to parent
       emit('submit');
     }

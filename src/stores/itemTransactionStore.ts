@@ -483,6 +483,7 @@ export const useItemTransactionStore = defineStore('itemTransaction', () => {
           // throw new Error(`Invalid detail at index ${index}: missing item_id, quantity, or unit_price`);
         }
         formData.append(`details[${index}][item_id]`, Number(detail.item_id).toString());
+        formData.append(`details[${index}][warehouse_id]`, Number(detail.warehouse_id).toString());
         formData.append(`details[${index}][quantity]`, Number(detail.quantity).toString());
         formData.append(`details[${index}][unit_price]`, Number(detail.unit_price).toString());
         formData.append(`details[${index}][solo_unit_price]`, Number(detail.solo_unit_price || detail.unit_price).toString());

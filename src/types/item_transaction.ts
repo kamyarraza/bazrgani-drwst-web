@@ -85,6 +85,7 @@ export interface List {
     unit_price: number;
     solo_unit_price?: number;
     bulk_unit_price?: number;
+    warehouse_id?: number;
   }[];
   payment?: {
     total_usd_in: number;
