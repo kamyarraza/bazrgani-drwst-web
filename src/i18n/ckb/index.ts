@@ -2197,6 +2197,7 @@ export default {
       usd: "دۆلاری ئەمریکی",
       iqd: "دیناری عێراقی",
     },
+    note: "تێبینی"
   },
   payment: {
     receiveFromCustomer: {

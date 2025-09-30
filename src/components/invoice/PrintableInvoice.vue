@@ -134,6 +134,15 @@
               </template> -->
             </div>
 
+            <div v-if="transactionData?.note" class="invoice-note q-pa-sm q-mt-md rounded-borders">
+
+              <small class="note-label">{{ t('invoice.note') }}:</small>
+
+              <span class="note-content">
+                {{ transactionData.note }}
+              </span>
+            </div>
+
             <!-- Footer Section -->
             <div class="invoice-footer">
               <table>
@@ -141,7 +150,8 @@
                   <td><b>{{ t('invoice.footer.thankYou') }}</b></td>
                   <td><em>{{ t('invoice.footer.copyright') }}</em></td>
                   <td style="text-align: left;">
-                      <span>{{ t('invoice.footer.phone') }}: <span dir="ltr">{{ (me as any)?.phone || '.........................................' }}</span></span>
+                    <span>{{ t('invoice.footer.phone') }}: <span dir="ltr">{{ (me as any)?.phone ||
+                        '.........................................' }}</span></span>
                   </td>
                 </tr>
               </table>
@@ -571,5 +581,29 @@ const close = () => {
   z-index: 1000;
   background: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.invoice-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  align-items: start;
+  border-left: 3px solid #fbbf24; /* amber highlight */
+  background-color: #fff8e1;      /* very light amber */
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.invoice-note .note-label {
+  font-weight: 600;
+  color: #b8860b;
+  margin-right: 6px;
+}
+
+.invoice-note .note-content {
+  flex: 1;
+  word-break: break-word;
+  text-align: justify;
 }
 </style>
