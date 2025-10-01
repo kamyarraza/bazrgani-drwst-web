@@ -417,7 +417,7 @@ export default {
     searchLabel: "گەڕان بە ناو یان کۆد",
     resetFilters: "ڕێکخستنەوە",
     branchFilter: "فلتەر بە پێی لق",
-    name: "ناو",
+    name: "ناوی کۆگا",
     code: "کۆد",
     branch: "لق",
     branchId: "ناسنامەی لق",

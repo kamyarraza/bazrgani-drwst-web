@@ -136,9 +136,13 @@ const selectedWarehouse = ref<Warehouse | null>(null);
 const isAdmin = computed(() => meStore.me?.type === 'admin');
 
 // Fetch branches on component mount
-onMounted(async () => {
+onMounted(() => {
   // Data fetching is now handled by the Main component with pagination
   // No need to fetch here to avoid conflicts
+
+  if (meStore.me?.type === 'employee' && meStore.me.branch) {
+    selectedBranch.value = meStore.me.branch as Branch;
+  }
 });
 
 // Watch for tab changes to load warehouses if needed

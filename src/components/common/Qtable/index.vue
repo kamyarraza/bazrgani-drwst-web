@@ -102,7 +102,7 @@
           </template>
 
           <!-- item-movements Column -->
-          <template v-else-if="col.name === 'item-movements' && isAdmin">
+          <template v-else-if="col.name === 'item-movements'">
             <slot name="body-cell-actions" :props="props" :row="props.row">
               <Qbutton @click="() => $emit('handle-item-movements', props.row.id)" is-flat round btn-label=""
                 btn-color="purple">
@@ -234,7 +234,7 @@ import GridCard from './GridCard.vue';
 import TablePagination from './TablePagination.vue';
 import { useTableLogic } from 'src/composables/useTableLogic';
 import type { Column, MenuItem } from 'src/composables/useTableLogic';
-import { useMeStore } from 'src/stores/meStore';
+// import { useMeStore } from 'src/stores/meStore';
 import { computed } from 'vue';
 
 // Props
@@ -319,10 +319,10 @@ const filteredColumns = computed(() => {
 // Override internalColumns to use filtered version
 const finalInternalColumns = computed(() => filteredColumns.value);
 
-const meStore = useMeStore();
+// const meStore = useMeStore();
 
 // Check if user is admin
-const isAdmin = computed(() => meStore.me?.type === 'admin');
+// const isAdmin = computed(() => meStore.me?.type === 'admin');
 
 // Helper functions
 function getBadgeValue(rowIndex: number): string {

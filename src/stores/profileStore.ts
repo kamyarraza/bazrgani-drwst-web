@@ -12,7 +12,7 @@ export const useProfileStore = defineStore('profileStore', () => {
   const authenticatedDevices = ref<AuthenticatedDevice[]>([]);
   const profileImageUrl = ref<string | null>(null);
 
-  const fetchUserProfile = async (force = false, errorMessage = 'Failed to fetch user profile') => {
+  const fetchUserProfile = async (force = false, errorMessage = 'وەرگرتنی داتای کەسی شکستی هێنا !') => {
     // Prevent duplicate API calls if data is already being loaded, unless forced
     if (loading.value || (!force && userProfile.value)) {
       return userProfile.value;
@@ -39,7 +39,7 @@ export const useProfileStore = defineStore('profileStore', () => {
     }
   };
 
-  const updateProfile = async (profileData: UpdateProfileRequest, successMessage = 'Profile updated successfully', errorMessage = 'Failed to update profile') => {
+  const updateProfile = async (profileData: UpdateProfileRequest, successMessage = 'زانیاری پڕۆفایل بە سەرکەوتوویی نوێکرایەوە', errorMessage = 'نوێکردنەوەی زانیاری پڕۆفایل شکستی هێنا') => {
     loading.value = true;
     error.value = null;
     try {
@@ -67,7 +67,7 @@ export const useProfileStore = defineStore('profileStore', () => {
     }
   };
 
-  const changePassword = async (passwordData: ChangePasswordRequest, successMessage = 'Password changed successfully', errorMessage = 'Failed to change password') => {
+  const changePassword = async (passwordData: ChangePasswordRequest, successMessage = 'ووشەی تێپەڕبوون بە سەرکەوتوویی گۆڕدرا', errorMessage = 'گۆڕینی ووشەی تێپەڕبوون شکستی هێنا') => {
     loading.value = true;
     error.value = null;
     try {
@@ -97,7 +97,7 @@ export const useProfileStore = defineStore('profileStore', () => {
     }
   };
 
-  const updateProfileImage = async (formData: FormData, successMessage = 'Profile image updated successfully', errorMessage = 'Failed to update profile image') => {
+  const updateProfileImage = async (formData: FormData, successMessage = 'گۆڕینی وێنەی پڕۆفایل سەرکەوتوو بوو', errorMessage = 'گۆڕینی وێنەی پڕۆفایل شکستی هێنا') => {
     loading.value = true;
     error.value = null;
     try {
@@ -210,7 +210,7 @@ export const useProfileStore = defineStore('profileStore', () => {
       authenticatedDevices.value = [];
       showNotify({
         type: 'positive',
-        message: 'Logged out from all devices successfully',
+        message: 'بە سەرکەوتوویی لە هەموو ئامێرەکان چوویتەدەرەوە',
         position: 'top',
         duration: 3000,
       });

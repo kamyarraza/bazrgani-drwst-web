@@ -30,7 +30,7 @@
         <Qtable v-if="warehouseStore.branchWarehouses" :show-bottom="false" :menu-items="menuItems"
           :columns="warehouseColumns" :rows="warehouseStore.branchWarehouses.warehouses"
           :loading="warehouseStore.loading" row-key="id" class="warehouse-table" @menu-action="handleAction"
-          @handle-items="handleViewItems" @handle-item-movements="handleViewItemMovements" :top-right="isAdmin || isUserBranch"
+          @handle-items="handleViewItems" @handle-item-movements="handleViewItemMovements" :top-right="isAdmin"
           :top-right-title="t('warehouse.addNew', 'Add Warehouse')" @top-right-action="handleAddWarehouse"
           :top-right-icon="'add_circle'" flat bordered>
           <template v-slot:body-cell-is_active="props">
@@ -54,7 +54,7 @@
           <div class="text-subtitle1 q-mt-sm">
             {{ t('warehouse.createFirst', 'Create your first warehouse for this branch') }}
           </div>
-          <q-btn v-if="isAdmin || isUserBranch" color="primary" class="q-mt-md" icon="add_circle"
+          <q-btn v-if="isAdmin" color="primary" class="q-mt-md" icon="add_circle"
             :label="t('warehouse.addNew', 'Add Warehouse')" @click="handleAddWarehouse" />
         </q-card>
       </div>
@@ -71,10 +71,11 @@
     </div>
 
     <!-- Add Warehouse Modal -->
-    <WarehouseAdd v-model="showAddWarehouseModal" :branch-id="branch?.id || 0" @submit="handleAddWarehouseSubmit" />
+    <WarehouseAdd v-if="isAdmin" v-model="showAddWarehouseModal" :branch-id="branch?.id || 0"
+      @submit="handleAddWarehouseSubmit" />
 
     <!-- Update Warehouse Modal -->
-    <WarehouseUpdate v-if="warehouseToEdit" :branch_id="branch?.id || 0" v-model="showUpdateWarehouseModal"
+    <WarehouseUpdate v-if="warehouseToEdit && isAdmin" :branch_id="branch?.id || 0" v-model="showUpdateWarehouseModal"
       :warehouse="warehouseToEdit" @update="handleUpdateWarehouseSubmit" />
   </div>
 </template>
@@ -90,6 +91,7 @@ import Qtable from 'src/components/common/Qtable.vue';
 import Filter from 'src/components/common/Filter.vue';
 import WarehouseAdd from './WarehouseAdd.vue';
 import WarehouseUpdate from './WarehouseUpdate.vue';
+import { formatNumber } from 'src/composables/useFormat';
 
 const props = defineProps<{
   branch: Branch | null;
@@ -158,7 +160,7 @@ function handleFilter(filterText: string) {
 function handleAddWarehouse() {
   // Security check - only admin or employee of the current branch can add warehouses
   if (!isAdmin.value && !isUserBranch.value) {
-    console.warn('Employee attempted to add warehouse to another branch');
+    console.warn('Employee attempted to add warehouse to another warehouse');
     return;
   }
 
@@ -169,6 +171,11 @@ function handleAddWarehouse() {
 
 // Handle add warehouse submit
 function handleAddWarehouseSubmit() {
+  if (!isAdmin.value) {
+    console.warn('Employee attempted to add warehouse to another warehouse');
+    return;
+  }
+
   showAddWarehouseModal.value = false;
   // Refresh the warehouse list
   if (props.branch) {
@@ -180,12 +187,18 @@ function handleAddWarehouseSubmit() {
 
 // Handle update warehouse submit
 function handleUpdateWarehouseSubmit() {
-  showUpdateWarehouseModal.value = false;
+  if (!isAdmin.value) {
+    console.warn('Employee attempted to update a branch');
+    return;
+  }
+
   warehouseToEdit.value = null;
   // Refresh the warehouse list
   if (props.branch) {
     void loadWarehousesForBranch(props.branch.id);
   }
+
+  showUpdateWarehouseModal.value = false;
 }
 
 // Menu items for warehouse actions - conditional based on user permissions
@@ -198,8 +211,8 @@ const menuItems = computed(() => {
     }
   ];
 
-  // Admin or employee can edit/manage warehouses only for their own branch
-  if (isAdmin.value || isUserBranch.value) {
+  // Admin can edit/manage warehouses
+  if (isAdmin.value) {
     baseItems.unshift(
       { label: t('common.edit', 'Edit'), icon: 'edit', value: 'edit' },
       {
@@ -263,85 +276,93 @@ async function handleToggleActive(warehouseId: number) {
 }
 
 // Warehouse columns
-const warehouseColumns = [
-  {
-    name: 'name',
-    required: true,
-    label: t('warehouse.name', 'Warehouse Name'),
-    align: 'left' as const,
-    field: 'name',
-    sortable: true,
-  },
-  {
-    name: 'code',
-    required: true,
-    label: t('warehouse.code', 'Code'),
-    align: 'left' as const,
-    field: 'code',
-    sortable: true,
-  },
-  // {
-  //   name: 'address',
-  //   required: true,
-  //   label: t('warehouse.address', 'Address'),
-  //   align: 'left' as const,
-  //   field: 'address',
-  //   sortable: true,
-  // },
-  {
-    name: 'capacity',
-    required: true,
-    label: t('warehouse.capacity', 'Capacity'),
-    align: 'right' as const,
-    field: 'capacity',
-    sortable: true,
-  },
+const warehouseColumns = computed(() => {
+  const columns = [
+    // id
+    {
+      name: 'id',
+      required: true,
+      label: "ID",
+      align: 'left' as const,
+      field: 'id',
+      sortable: true,
+    },
 
+    // name
+    {
+      name: 'name',
+      required: true,
+      label: t('warehouse.name', 'Warehouse Name'),
+      align: 'left' as const,
+      field: 'name',
+      sortable: true,
+    },
 
-  {
-    name: 'is_active',
-    required: true,
-    label: t('common.status', 'Status'),
-    align: 'center' as const,
-    field: 'is_active',
-    sortable: true,
-    format: (_value: unknown, _row: Record<string, unknown>) => _value ? '✓' : '✗'
-  },
-  // {
-  //   name: 'created_at',
-  //   required: true,
-  //   label: t('common.createdAt', 'Created At'),
-  //   align: 'left' as const,
-  //   field: 'created_at',
-  //   format: (val: unknown, _row: Record<string, unknown>) =>
-  //     date.formatDate(val as string, 'MMM YYYY'),
-  //   sortable: true,
-  // },
-  {
-    name: 'items',
-    required: true,
-    label: t('common.items', 'Items'),
-    align: 'center' as const,
-    field: 'items',
-    sortable: false,
-  },
-  {
-    name: 'item-movements',
-    required: true,
-    label: t('common.itemMovements', 'Item Movements'),
-    align: 'center' as const,
-    field: 'itemMovements',
-    sortable: false,
-  },
-  {
-    name: 'actions',
-    required: true,
-    label: t('common.actions', 'Actions'),
-    align: 'center' as const,
-    field: 'actions',
-    sortable: false,
-  },
-];
+    // code
+    {
+      name: 'code',
+      required: true,
+      label: t('warehouse.code', 'Code'),
+      align: 'left' as const,
+      field: 'code',
+      sortable: true,
+    },
+
+    // address
+    {
+      name: 'address',
+      required: true,
+      label: t('warehouse.address', 'Address'),
+      align: 'left' as const,
+      field: 'address',
+      sortable: true,
+    },
+
+    // capacity
+    {
+      name: 'capacity',
+      required: true,
+      label: t('warehouse.capacity', 'Capacity'),
+      align: 'right' as const,
+      field: (row: any) => formatNumber(row.capacity) + ' م³',
+      sortable: true,
+    },
+
+    // view item movements
+    {
+      name: 'item-movements',
+      required: true,
+      label: t('common.itemMovements', 'Item Movements'),
+      align: 'center' as const,
+      field: 'itemMovements',
+      sortable: false,
+    },
+
+    // view items
+    {
+      name: 'items',
+      required: true,
+      label: t('common.items', 'Items'),
+      align: 'center' as const,
+      field: 'items',
+      sortable: false,
+    },
+  ];
+
+  if (isAdmin.value) {
+    // actions
+    columns.push({
+      name: 'actions',
+      required: true,
+      label: t('common.actions', 'Actions'),
+      align: 'center' as const,
+      field: 'actions',
+      sortable: false,
+    });
+  }
+
+  return columns;
+});
 </script>
 
 <style lang="scss" scoped>
