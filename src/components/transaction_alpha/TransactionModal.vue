@@ -310,7 +310,7 @@
 
                 <div class="row q-col-gutter-md items-start">
                   <!-- Left side: 2x2 grid -->
-                  <div class="col-md-6 col-sm-12">
+                  <div class="col-md-6 col-sm-12"  v-if="selectedPaymentType === 'cash'">
                     <div class="row q-col-gutter-md">
                       <!-- First row: IQD & USD -->
                       <div class="col-md-6 col-sm-12">

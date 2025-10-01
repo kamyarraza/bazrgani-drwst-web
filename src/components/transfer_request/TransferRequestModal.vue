@@ -351,13 +351,13 @@ const submitTransferRequest = async () => {
       result = await transferStore.createTransfer(submitData);
     }
 
-    $q.notify({
-      type: 'positive',
-      message: formData.value.transferType === 'request'
-        ? t('transferRequest.requestCreatedSuccessfully')
-        : t('transferRequest.transferCreatedSuccessfully'),
-      position: 'top'
-    });
+    // $q.notify({
+    //   type: 'positive',
+    //   message: formData.value.transferType === 'request'
+    //     ? t('transferRequest.requestCreatedSuccessfully')
+    //     : t('transferRequest.transferCreatedSuccessfully'),
+    //   position: 'top'
+    // });
 
     emit('transfer-created', result);
     resetForm();
@@ -371,11 +371,11 @@ const submitTransferRequest = async () => {
       validationErrors.value = error.response.data.errors;
     }
 
-    $q.notify({
-      type: 'negative',
-      message: error.response?.data?.message || t('transferRequest.errorCreatingRequest'),
-      position: 'top'
-    });
+    // $q.notify({
+    //   type: 'negative',
+    //   message: error.response?.data?.message || t('transferRequest.errorCreatingRequest'),
+    //   position: 'top'
+    // });
   } finally {
     submitting.value = false;
   }
