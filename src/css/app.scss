@@ -180,6 +180,20 @@ html, body {
   font-size: 0.9rem !important;
 }
 
+/* Sleek Indigo/Blue text selection */
+::selection {
+  background: #e0e7ff; /* lavender-indigo */
+  color: #3730a3;      /* bold indigo */
+  text-shadow: 1px 1px 5px #f1101066; /* subtle red shadow */
+}
+
+::-moz-selection {
+  background: #e0e7ff;
+  color: #3730a3;
+  text-shadow: 1px 1px 5px #f1101066;
+}
+
+
 /* ===============================
    Responsive Adjustments
    =============================== */
